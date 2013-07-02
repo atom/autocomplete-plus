@@ -1,7 +1,7 @@
 $ = require 'jquery'
 {$$} = require 'space-pen'
 _ = require 'underscore'
-Range = require 'range'
+{Range} = require 'telepath'
 SelectList = require 'select-list'
 
 module.exports =

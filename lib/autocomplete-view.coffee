@@ -90,12 +90,12 @@ class AutocompleteView extends SelectList
   cancelled: ->
     super
 
-    @editor.abort()
+    @editor.abortTransaction()
     @editor.setSelectedBufferRange(@originalSelectionBufferRange)
     rootView.focus() if @miniEditor.isFocused
 
   attach: ->
-    @editor.transact()
+    @editor.beginTransaction()
 
     @aboveCursor = false
     @originalSelectionBufferRange = @editor.getSelection().getBufferRange()

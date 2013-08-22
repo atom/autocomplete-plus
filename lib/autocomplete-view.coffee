@@ -65,8 +65,13 @@ class AutocompleteView extends SelectList
 
   buildWordList: ->
     wordHash = {}
-    matches = @currentBuffer.getText().match(@wordRegex)
-    wordHash[word] ?= true for word in matches ? []
+    if config.get('autocomplete.includeCompletionsFromAllEditors')
+      buffers = project.getBuffers()
+    else
+      buffers = [@currentBuffer]
+    matches = []
+    matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
+    wordHash[word] ?= true for word in _.flatten(matches)
     wordHash[word] ?= true for word in @getCompletionsForCursorScope()
 
     @wordList = Object.keys(wordHash).sort (word1, word2) ->

@@ -1,6 +1,9 @@
 AutocompleteView = require './autocomplete-view'
 
 module.exports =
+  configDefaults:
+    includeCompletionsFromAllEditors: false
+
   autoCompleteViews: []
   editorSubscription: null
 

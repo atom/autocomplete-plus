@@ -103,7 +103,7 @@ describe "AutocompleteView", ->
 
         expect(autocomplete.list.find('li').length).toBe 0
 
-      it "shows all words there is no prefix or suffix", ->
+      it "shows all words when there is no prefix or suffix", ->
         editor.setCursorBufferPosition([10, 0])
         autocomplete.attach()
 
@@ -119,6 +119,18 @@ describe "AutocompleteView", ->
         expect(editor.lineForBufferRow(10)).toBe "extra:sort:extra"
         expect(editor.getCursorBufferPosition()).toEqual [10,10]
         expect(editor.getSelection().isEmpty()).toBeTruthy()
+
+      describe "when `autocomplete.includeCompletionsFromAllEditors` is true", ->
+        it "shows words from all open buffers", ->
+          config.set('autocomplete.includeAllBuffers', true)
+          project.open('sample.txt')
+          editor.getBuffer().insert([10,0] ,"extra:SO:extra")
+          editor.setCursorBufferPosition([10,8])
+          autocomplete.attach()
+
+          expect(autocomplete.list.find('li').length).toBe 2
+          expect(autocomplete.list.find('li:eq(0)')).toHaveText('Some')
+          expect(autocomplete.list.find('li:eq(1)')).toHaveText('sort')
 
     describe "when text is selected", ->
       it 'autocompletes word when there is only a prefix', ->

@@ -120,9 +120,9 @@ describe "AutocompleteView", ->
         expect(editor.getCursorBufferPosition()).toEqual [10,10]
         expect(editor.getSelection().isEmpty()).toBeTruthy()
 
-      describe "when `autocomplete.includeCompletionsFromAllEditors` is true", ->
+      describe "when `autocomplete.includeCompletionsFromAllBuffers` is true", ->
         it "shows words from all open buffers", ->
-          config.set('autocomplete.includeAllBuffers', true)
+          config.set('autocomplete.includeCompletionsFromAllBuffers', true)
           project.open('sample.txt')
           editor.getBuffer().insert([10,0] ,"extra:SO:extra")
           editor.setCursorBufferPosition([10,8])

@@ -65,7 +65,7 @@ class AutocompleteView extends SelectList
 
   buildWordList: ->
     wordHash = {}
-    if config.get('autocomplete.includeCompletionsFromAllEditors')
+    if config.get('autocomplete.includeCompletionsFromAllBuffers')
       buffers = project.getBuffers()
     else
       buffers = [@currentBuffer]

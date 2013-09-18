@@ -1,4 +1,4 @@
-_ = require 'underscore'
+{_} = require 'atom-api'
 
 AutocompleteView = require './autocomplete-view'
 

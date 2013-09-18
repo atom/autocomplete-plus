@@ -1,9 +1,6 @@
-$ = require 'jquery'
+{$, Editor, RootView} = require 'atom-api'
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
-Buffer = require 'text-buffer'
-Editor = require 'editor'
-RootView = require 'root-view'
 
 describe "Autocomplete", ->
   beforeEach ->

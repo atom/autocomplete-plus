@@ -1,8 +1,5 @@
-$ = require 'jquery'
-{$$} = require 'space-pen'
-_ = require 'underscore'
+{_, $, $$, SelectList}  = require 'atom-api'
 {Range} = require 'telepath'
-SelectList = require 'select-list'
 
 module.exports =
 class AutocompleteView extends SelectList

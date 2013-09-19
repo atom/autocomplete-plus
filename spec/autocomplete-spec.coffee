@@ -1,4 +1,4 @@
-{$, Editor, RootView} = require 'atom-api'
+{$, Editor, RootView} = require 'atom'
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 

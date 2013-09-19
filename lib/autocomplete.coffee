@@ -1,4 +1,4 @@
-{_} = require 'atom-api'
+{_} = require 'atom'
 
 AutocompleteView = require './autocomplete-view'
 

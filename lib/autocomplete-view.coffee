@@ -1,5 +1,4 @@
-{_, $, $$, SelectList}  = require 'atom-api'
-{Range} = require 'telepath'
+{_, $, $$, Range, SelectList}  = require 'atom-api'
 
 module.exports =
 class AutocompleteView extends SelectList

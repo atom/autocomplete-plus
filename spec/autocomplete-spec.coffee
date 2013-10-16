@@ -55,6 +55,7 @@ describe "AutocompleteView", ->
 
   describe 'autocomplete:attach event', ->
     it "shows autocomplete view and focuses its mini-editor", ->
+      editor.attachToDom()
       expect(editor.find('.autocomplete')).not.toExist()
 
       editor.trigger "autocomplete:attach"

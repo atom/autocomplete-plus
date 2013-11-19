@@ -10,7 +10,7 @@ module.exports =
   editorSubscription: null
 
   activate: ->
-    @editorSubscription = rootView.eachEditor (editor) =>
+    @editorSubscription = atom.rootView.eachEditor (editor) =>
       if editor.attached and not editor.mini
         autocompleteView = new AutocompleteView(editor)
         editor.on 'editor:will-be-removed', =>

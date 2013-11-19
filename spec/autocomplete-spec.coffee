@@ -4,17 +4,17 @@ Autocomplete = require '../lib/autocomplete'
 
 describe "Autocomplete", ->
   beforeEach ->
-    window.rootView = new RootView
-    rootView.openSync('sample.js')
-    rootView.simulateDomAttachment()
+    atom.rootView = new RootView
+    atom.rootView.openSync('sample.js')
+    atom.rootView.simulateDomAttachment()
 
   describe "@activate()", ->
     it "activates autocomplete on all existing and future editors (but not on autocomplete's own mini editor)", ->
       spyOn(AutocompleteView.prototype, 'initialize').andCallThrough()
-      autocompletePackage = atom.activatePackage("autocomplete")
+      autocompletePackage = atom.packages.activatePackage("autocomplete")
       expect(AutocompleteView.prototype.initialize).not.toHaveBeenCalled()
 
-      leftEditor = rootView.getActiveView()
+      leftEditor = atom.rootView.getActiveView()
       rightEditor = leftEditor.splitRight()
 
       leftEditor.trigger 'autocomplete:attach'
@@ -32,14 +32,14 @@ describe "Autocomplete", ->
 
   describe "@deactivate()", ->
     it "removes all autocomplete views and doesn't create new ones when new editors are opened", ->
-      atom.activatePackage('autocomplete')
-      rootView.getActiveView().trigger "autocomplete:attach"
-      expect(rootView.getActiveView().find('.autocomplete')).toExist()
-      atom.deactivatePackage('autocomplete')
-      expect(rootView.getActiveView().find('.autocomplete')).not.toExist()
-      rootView.getActiveView().splitRight()
-      rootView.getActiveView().trigger "autocomplete:attach"
-      expect(rootView.getActiveView().find('.autocomplete')).not.toExist()
+      atom.packages.activatePackage('autocomplete')
+      atom.rootView.getActiveView().trigger "autocomplete:attach"
+      expect(atom.rootView.getActiveView().find('.autocomplete')).toExist()
+      atom.packages.deactivatePackage('autocomplete')
+      expect(atom.rootView.getActiveView().find('.autocomplete')).not.toExist()
+      atom.rootView.getActiveView().splitRight()
+      atom.rootView.getActiveView().trigger "autocomplete:attach"
+      expect(atom.rootView.getActiveView().find('.autocomplete')).not.toExist()
 
 describe "AutocompleteView", ->
   autocomplete = null
@@ -48,8 +48,8 @@ describe "AutocompleteView", ->
 
   beforeEach ->
     window.rootView = new RootView
-    editor = new Editor(editSession: project.openSync('sample.js'))
-    atom.activatePackage('autocomplete')
+    editor = new Editor(editSession: atom.project.openSync('sample.js'))
+    atom.packages.activatePackage('autocomplete')
     autocomplete = new AutocompleteView(editor)
     miniEditor = autocomplete.miniEditor
 
@@ -120,7 +120,7 @@ describe "AutocompleteView", ->
 
       describe "when `autocomplete.includeCompletionsFromAllBuffers` is true", ->
         it "shows words from all open buffers", ->
-          config.set('autocomplete.includeCompletionsFromAllBuffers', true)
+          atom.config.set('autocomplete.includeCompletionsFromAllBuffers', true)
           project.openSync('sample.txt')
           editor.getBuffer().insert([10,0] ,"extra:SO:extra")
           editor.setCursorBufferPosition([10,8])

@@ -449,7 +449,7 @@ describe "AutocompleteView", ->
     expect(autocomplete.list.prop('scrollWidth')).toBe autocomplete.list.width()
 
   it "includes completions for the scope's completion preferences", ->
-    atom.activatePackage('language-css', sync: true)
+    atom.packages.activatePackage('language-css', sync: true)
     cssEditor = new Editor(editSession: project.openSync('css.css'))
     autocomplete = new AutocompleteView(cssEditor)
 

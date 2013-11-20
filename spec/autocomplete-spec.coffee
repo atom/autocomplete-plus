@@ -47,7 +47,7 @@ describe "AutocompleteView", ->
   miniEditor = null
 
   beforeEach ->
-    window.rootView = new RootView
+    atom.rootView = new RootView
     editor = new Editor(editSession: atom.project.openSync('sample.js'))
     atom.packages.activatePackage('autocomplete')
     autocomplete = new AutocompleteView(editor)
@@ -121,7 +121,7 @@ describe "AutocompleteView", ->
       describe "when `autocomplete.includeCompletionsFromAllBuffers` is true", ->
         it "shows words from all open buffers", ->
           atom.config.set('autocomplete.includeCompletionsFromAllBuffers', true)
-          project.openSync('sample.txt')
+          atom.project.openSync('sample.txt')
           editor.getBuffer().insert([10,0] ,"extra:SO:extra")
           editor.setCursorBufferPosition([10,8])
           autocomplete.attach()
@@ -450,7 +450,7 @@ describe "AutocompleteView", ->
 
   it "includes completions for the scope's completion preferences", ->
     atom.packages.activatePackage('language-css', sync: true)
-    cssEditor = new Editor(editSession: project.openSync('css.css'))
+    cssEditor = new Editor(editSession: atom.project.openSync('css.css'))
     autocomplete = new AutocompleteView(cssEditor)
 
     cssEditor.attachToDom()

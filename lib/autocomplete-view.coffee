@@ -62,7 +62,7 @@ class AutocompleteView extends SelectList
   buildWordList: ->
     wordHash = {}
     if atom.config.get('autocomplete.includeCompletionsFromAllBuffers')
-      buffers = project.getBuffers()
+      buffers = atom.project.getBuffers()
     else
       buffers = [@currentBuffer]
     matches = []
@@ -93,7 +93,7 @@ class AutocompleteView extends SelectList
 
     @editor.abortTransaction()
     @editor.setSelectedBufferRange(@originalSelectionBufferRange)
-    rootView.focus() if @miniEditor.isFocused
+    atom.rootView.focus() if @miniEditor.isFocused
 
   attach: ->
     @editor.beginTransaction()

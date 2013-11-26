@@ -1,12 +1,12 @@
-{$, Editor, RootView} = require 'atom'
+{$, Editor, WorkspaceView} = require 'atom'
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 
 describe "Autocomplete", ->
   beforeEach ->
-    atom.rootView = new RootView
-    atom.rootView.openSync('sample.js')
-    atom.rootView.simulateDomAttachment()
+    atom.workspaceView = new WorkspaceView
+    atom.workspaceView.openSync('sample.js')
+    atom.workspaceView.simulateDomAttachment()
 
   describe "@activate()", ->
     it "activates autocomplete on all existing and future editors (but not on autocomplete's own mini editor)", ->
@@ -14,7 +14,7 @@ describe "Autocomplete", ->
       autocompletePackage = atom.packages.activatePackage("autocomplete")
       expect(AutocompleteView.prototype.initialize).not.toHaveBeenCalled()
 
-      leftEditor = atom.rootView.getActiveView()
+      leftEditor = atom.workspaceView.getActiveView()
       rightEditor = leftEditor.splitRight()
 
       leftEditor.trigger 'autocomplete:attach'
@@ -33,13 +33,13 @@ describe "Autocomplete", ->
   describe "@deactivate()", ->
     it "removes all autocomplete views and doesn't create new ones when new editors are opened", ->
       atom.packages.activatePackage('autocomplete')
-      atom.rootView.getActiveView().trigger "autocomplete:attach"
-      expect(atom.rootView.getActiveView().find('.autocomplete')).toExist()
+      atom.workspaceView.getActiveView().trigger "autocomplete:attach"
+      expect(atom.workspaceView.getActiveView().find('.autocomplete')).toExist()
       atom.packages.deactivatePackage('autocomplete')
-      expect(atom.rootView.getActiveView().find('.autocomplete')).not.toExist()
-      atom.rootView.getActiveView().splitRight()
-      atom.rootView.getActiveView().trigger "autocomplete:attach"
-      expect(atom.rootView.getActiveView().find('.autocomplete')).not.toExist()
+      expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
+      atom.workspaceView.getActiveView().splitRight()
+      atom.workspaceView.getActiveView().trigger "autocomplete:attach"
+      expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
 
 describe "AutocompleteView", ->
   autocomplete = null
@@ -47,7 +47,7 @@ describe "AutocompleteView", ->
   miniEditor = null
 
   beforeEach ->
-    atom.rootView = new RootView
+    atom.workspaceView = new WorkspaceView
     editor = new Editor(editSession: atom.project.openSync('sample.js'))
     atom.packages.activatePackage('autocomplete')
     autocomplete = new AutocompleteView(editor)

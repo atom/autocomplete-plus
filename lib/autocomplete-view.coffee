@@ -93,7 +93,7 @@ class AutocompleteView extends SelectList
 
     @editor.abortTransaction()
     @editor.setSelectedBufferRange(@originalSelectionBufferRange)
-    atom.rootView.focus() if @miniEditor.isFocused
+    atom.workspaceView.focus() if @miniEditor.isFocused
 
   attach: ->
     @editor.beginTransaction()

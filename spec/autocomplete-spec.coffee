@@ -1,4 +1,4 @@
-{$, Editor, WorkspaceView} = require 'atom'
+{$, EditorView, WorkspaceView} = require 'atom'
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 
@@ -48,7 +48,7 @@ describe "AutocompleteView", ->
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
-    editor = new Editor(editSession: atom.project.openSync('sample.js'))
+    editor = new EditorView(editor: atom.project.openSync('sample.js'))
     atom.packages.activatePackage('autocomplete')
     autocomplete = new AutocompleteView(editor)
     miniEditor = autocomplete.miniEditor
@@ -450,7 +450,7 @@ describe "AutocompleteView", ->
 
   it "includes completions for the scope's completion preferences", ->
     atom.packages.activatePackage('language-css', sync: true)
-    cssEditor = new Editor(editSession: atom.project.openSync('css.css'))
+    cssEditor = new EditorView(editor: atom.project.openSync('css.css'))
     autocomplete = new AutocompleteView(cssEditor)
 
     cssEditor.attachToDom()

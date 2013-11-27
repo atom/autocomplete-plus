@@ -10,7 +10,7 @@ module.exports =
   editorSubscription: null
 
   activate: ->
-    @editorSubscription = atom.workspaceView.eachEditor (editor) =>
+    @editorSubscription = atom.workspaceView.eachEditorView (editor) =>
       if editor.attached and not editor.mini
         autocompleteView = new AutocompleteView(editor)
         editor.on 'editor:will-be-removed', =>

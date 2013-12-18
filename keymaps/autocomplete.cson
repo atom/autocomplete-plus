@@ -6,3 +6,4 @@
 
 '.autocomplete .mini.editor input':
   'enter': 'core:confirm'
+  'tab': 'core:confirm'

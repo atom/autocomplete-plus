@@ -13,8 +13,9 @@ class AutocompleteView extends SelectList
   aboveCursor: false
   filterKey: 'word'
 
-  initialize: (@editor) ->
+  initialize: (@editorView) ->
     super
+    {@editor} = @editorView
     @handleEvents()
     @setCurrentBuffer(@editor.getBuffer())
 
@@ -26,10 +27,10 @@ class AutocompleteView extends SelectList
   handleEvents: ->
     @list.on 'mousewheel', (event) -> event.stopPropagation()
 
-    @editor.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
-    @editor.command 'autocomplete:attach', => @attach()
-    @editor.command 'autocomplete:next', => @selectNextItem()
-    @editor.command 'autocomplete:previous', => @selectPreviousItem()
+    @editorView.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
+    @editorView.command 'autocomplete:attach', => @attach()
+    @editorView.command 'autocomplete:next', => @selectNextItem()
+    @editorView.command 'autocomplete:previous', => @selectPreviousItem()
 
     @miniEditor.preempt 'textInput', (e) =>
       text = e.originalEvent.data
@@ -109,23 +110,23 @@ class AutocompleteView extends SelectList
     if matches.length is 1
       @confirmSelection()
     else
-      @editor.appendToLinesView(this)
+      @editorView.appendToLinesView(this)
       @setPosition()
       @miniEditor.focus()
 
   detach: ->
     super
 
-    @editor.off(".autocomplete")
-    @editor.focus()
+    @editorView.off(".autocomplete")
+    @editorView.focus()
 
   setPosition: ->
-    { left, top } = @editor.pixelPositionForScreenPosition(@originalCursorPosition)
+    { left, top } = @editorView.pixelPositionForScreenPosition(@originalCursorPosition)
     height = @outerHeight()
-    potentialTop = top + @editor.lineHeight
-    potentialBottom = potentialTop - @editor.scrollTop() + height
+    potentialTop = top + @editorView.lineHeight
+    potentialBottom = potentialTop - @editorView.scrollTop() + height
 
-    if @aboveCursor or potentialBottom > @editor.outerHeight()
+    if @aboveCursor or potentialBottom > @editorView.outerHeight()
       @aboveCursor = true
       @css(left: left, top: top - height, bottom: 'inherit')
     else

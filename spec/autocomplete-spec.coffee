@@ -42,24 +42,23 @@ describe "Autocomplete", ->
       expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
 
 describe "AutocompleteView", ->
-  autocomplete = null
-  editor = null
-  miniEditor = null
+  [autocomplete, editorView, editor, miniEditor] = []
 
   beforeEach ->
     atom.workspaceView = new WorkspaceView
-    editor = new EditorView(editor: atom.project.openSync('sample.js'))
+    editorView = new EditorView(editor: atom.project.openSync('sample.js'))
+    {editor} = editorView
     atom.packages.activatePackage('autocomplete')
-    autocomplete = new AutocompleteView(editor)
+    autocomplete = new AutocompleteView(editorView)
     miniEditor = autocomplete.miniEditor
 
   describe 'autocomplete:attach event', ->
     it "shows autocomplete view and focuses its mini-editor", ->
-      editor.attachToDom()
-      expect(editor.find('.autocomplete')).not.toExist()
+      editorView.attachToDom()
+      expect(editorView.find('.autocomplete')).not.toExist()
 
-      editor.trigger "autocomplete:attach"
-      expect(editor.find('.autocomplete')).toExist()
+      editorView.trigger "autocomplete:attach"
+      expect(editorView.find('.autocomplete')).toExist()
       expect(autocomplete.editor.isFocused).toBeFalsy()
       expect(autocomplete.miniEditor.isFocused).toBeTruthy()
 
@@ -172,17 +171,17 @@ describe "AutocompleteView", ->
         expect(editor.lineForBufferRow(10)).toBe "extra:shift:extra"
         expect(editor.getCursorBufferPosition()).toEqual [10,11]
         expect(editor.getSelection().isEmpty()).toBeTruthy()
-        expect(editor.find('.autocomplete')).not.toExist()
+        expect(editorView.find('.autocomplete')).not.toExist()
 
     describe "when the editor is scrolled to the right", ->
       it "does not scroll it to the left", ->
-        editor.width(300)
-        editor.height(300)
-        editor.attachToDom()
+        editorView.width(300)
+        editorView.height(300)
+        editorView.attachToDom()
         editor.setCursorBufferPosition([6, 6])
-        previousScrollLeft = editor.scrollLeft()
+        previousScrollLeft = editorView.scrollLeft()
         autocomplete.attach()
-        expect(editor.scrollLeft()).toBe previousScrollLeft
+        expect(editorView.scrollLeft()).toBe previousScrollLeft
 
   describe 'core:confirm event', ->
     describe "where there are matches", ->
@@ -195,7 +194,7 @@ describe "AutocompleteView", ->
           expect(editor.lineForBufferRow(10)).toBe "extra:shift:extra"
           expect(editor.getCursorBufferPosition()).toEqual [10,11]
           expect(editor.getSelection().isEmpty()).toBeTruthy()
-          expect(editor.find('.autocomplete')).not.toExist()
+          expect(editorView.find('.autocomplete')).not.toExist()
 
   describe 'core:cancel event', ->
     describe "when there are no matches", ->
@@ -210,7 +209,7 @@ describe "AutocompleteView", ->
         expect(editor.lineForBufferRow(10)).toBe "xxx"
         expect(editor.getCursorBufferPosition()).toEqual [10,3]
         expect(editor.getSelection().isEmpty()).toBeTruthy()
-        expect(editor.find('.autocomplete')).not.toExist()
+        expect(editorView.find('.autocomplete')).not.toExist()
 
     it 'does not replace selection, removes autocomplete view and returns focus to editor', ->
       editor.getBuffer().insert([10,0] ,"extra:so:extra")
@@ -223,7 +222,7 @@ describe "AutocompleteView", ->
 
       expect(editor.lineForBufferRow(10)).toBe "extra:so:extra"
       expect(editor.getSelection().getBufferRange()).toEqual originalSelectionBufferRange
-      expect(editor.find('.autocomplete')).not.toExist()
+      expect(editorView.find('.autocomplete')).not.toExist()
 
     it "does not clear out a previously confirmed selection when canceling with an empty list", ->
       editor.getBuffer().insert([10, 0], "ort\n")
@@ -312,7 +311,7 @@ describe "AutocompleteView", ->
 
   describe "when the mini-editor receives keyboard input", ->
     beforeEach ->
-      editor.attachToDom()
+      editorView.attachToDom()
 
     describe "when text is removed from the mini-editor", ->
       it "reloads the match list based on the mini-editor's text", ->
@@ -324,7 +323,7 @@ describe "AutocompleteView", ->
         miniEditor.textInput('c')
         window.advanceClock(autocomplete.inputThrottle)
         expect(autocomplete.list.find('li').length).toBe 3
-        miniEditor.backspace()
+        miniEditor.editor.backspace()
         window.advanceClock(autocomplete.inputThrottle)
         expect(autocomplete.list.find('li').length).toBe 8
 
@@ -368,28 +367,28 @@ describe "AutocompleteView", ->
 
   describe 'when the mini-editor loses focus before the selection is confirmed', ->
     it "cancels the autocomplete", ->
-      editor.attachToDom()
+      editorView.attachToDom()
       autocomplete.attach()
       spyOn(autocomplete, "cancel")
 
-      editor.focus()
+      editorView.focus()
 
       expect(autocomplete.cancel).toHaveBeenCalled()
 
   describe ".attach()", ->
     beforeEach ->
-      editor.attachToDom()
-      setEditorHeightInLines(editor, 13)
-      editor.resetDisplay() # Ensures the editor only has 13 lines visible
+      editorView.attachToDom()
+      setEditorHeightInLines(editorView, 13)
+      editorView.resetDisplay() # Ensures the editor only has 13 lines visible
 
     describe "when the autocomplete view fits below the cursor", ->
       it "adds the autocomplete view to the editor below the cursor", ->
         editor.setCursorBufferPosition [1, 2]
-        cursorPixelPosition = editor.pixelPositionForScreenPosition(editor.getCursorScreenPosition())
+        cursorPixelPosition = editorView.pixelPositionForScreenPosition(editor.getCursorScreenPosition())
         autocomplete.attach()
-        expect(editor.find('.autocomplete')).toExist()
+        expect(editorView.find('.autocomplete')).toExist()
 
-        expect(autocomplete.position().top).toBe cursorPixelPosition.top + editor.lineHeight
+        expect(autocomplete.position().top).toBe cursorPixelPosition.top + editorView.lineHeight
         expect(autocomplete.position().left).toBe cursorPixelPosition.left
 
     describe "when the autocomplete view does not fit below the cursor", ->
@@ -397,7 +396,7 @@ describe "AutocompleteView", ->
         editor.setCursorScreenPosition([11, 0])
         editor.insertText('t ')
         editor.setCursorScreenPosition([11, 0])
-        cursorPixelPosition = editor.pixelPositionForScreenPosition(editor.getCursorScreenPosition())
+        cursorPixelPosition = editorView.pixelPositionForScreenPosition(editor.getCursorScreenPosition())
         autocomplete.attach()
 
         expect(autocomplete.parent()).toExist()
@@ -409,7 +408,7 @@ describe "AutocompleteView", ->
         editor.setCursorScreenPosition([11, 0])
         editor.insertText('s')
         editor.setCursorScreenPosition([11, 0])
-        cursorPixelPosition = editor.pixelPositionForScreenPosition(editor.getCursorScreenPosition())
+        cursorPixelPosition = editorView.pixelPositionForScreenPosition(editor.getCursorScreenPosition())
         autocomplete.attach()
 
         expect(autocomplete.parent()).toExist()
@@ -433,14 +432,14 @@ describe "AutocompleteView", ->
       autocomplete.cancel()
       expect(miniEditor.getText()).toBe ''
 
-      editor.trigger 'core:move-down'
+      editorView.trigger 'core:move-down'
       expect(editor.getCursorBufferPosition().row).toBe 1
 
-      editor.trigger 'core:move-up'
+      editorView.trigger 'core:move-up'
       expect(editor.getCursorBufferPosition().row).toBe 0
 
   it "sets the width of the view to be wide enough to contain the longest completion without scrolling", ->
-    editor.attachToDom()
+    editorView.attachToDom()
     editor.insertText('thisIsAReallyReallyReallyLongCompletion ')
     editor.moveCursorToBottom()
     editor.insertNewline()
@@ -450,10 +449,11 @@ describe "AutocompleteView", ->
 
   it "includes completions for the scope's completion preferences", ->
     atom.packages.activatePackage('language-css', sync: true)
-    cssEditor = new EditorView(editor: atom.project.openSync('css.css'))
-    autocomplete = new AutocompleteView(cssEditor)
+    cssEditorView = new EditorView(editor: atom.project.openSync('css.css'))
+    cssEditor = cssEditorView.editor
+    autocomplete = new AutocompleteView(cssEditorView)
 
-    cssEditor.attachToDom()
+    cssEditorView.attachToDom()
     cssEditor.moveCursorToEndOfLine()
     cssEditor.insertText(' out')
     cssEditor.moveCursorToEndOfLine()

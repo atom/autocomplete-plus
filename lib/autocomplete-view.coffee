@@ -117,7 +117,6 @@ class AutocompleteView extends SelectList
   detach: ->
     super
 
-    @editorView.off(".autocomplete")
     @editorView.focus()
 
   setPosition: ->

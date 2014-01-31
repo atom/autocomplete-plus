@@ -1,7 +1,7 @@
-{_, $, $$, Range, SelectList}  = require 'atom'
+{_, $, $$, Range, SelectListView}  = require 'atom'
 
 module.exports =
-class AutocompleteView extends SelectList
+class AutocompleteView extends SelectListView
   @viewClass: -> "autocomplete #{super} popover-list"
 
   editor: null

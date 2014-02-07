@@ -3,43 +3,54 @@ AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 
 describe "Autocomplete", ->
+  [activationPromise] = []
+
   beforeEach ->
     atom.workspaceView = new WorkspaceView
     atom.workspaceView.openSync('sample.js')
     atom.workspaceView.simulateDomAttachment()
+    activationPromise = atom.packages.activatePackage('autocomplete')
 
   describe "@activate()", ->
     it "activates autocomplete on all existing and future editors (but not on autocomplete's own mini editor)", ->
       spyOn(AutocompleteView.prototype, 'initialize').andCallThrough()
-      autocompletePackage = atom.packages.activatePackage("autocomplete")
+
       expect(AutocompleteView.prototype.initialize).not.toHaveBeenCalled()
 
       leftEditor = atom.workspaceView.getActiveView()
       rightEditor = leftEditor.splitRight()
 
       leftEditor.trigger 'autocomplete:attach'
-      expect(leftEditor.find('.autocomplete')).toExist()
-      expect(rightEditor.find('.autocomplete')).not.toExist()
 
-      expect(AutocompleteView.prototype.initialize).toHaveBeenCalled()
+      waitsForPromise ->
+        activationPromise
 
-      autoCompleteView = leftEditor.find('.autocomplete').view()
-      autoCompleteView.trigger 'core:cancel'
-      expect(leftEditor.find('.autocomplete')).not.toExist()
+      runs ->
+        expect(leftEditor.find('.autocomplete')).toExist()
+        expect(rightEditor.find('.autocomplete')).not.toExist()
+        expect(AutocompleteView.prototype.initialize).toHaveBeenCalled()
 
-      rightEditor.trigger 'autocomplete:attach'
-      expect(rightEditor.find('.autocomplete')).toExist()
+        autoCompleteView = leftEditor.find('.autocomplete').view()
+        autoCompleteView.trigger 'core:cancel'
+        expect(leftEditor.find('.autocomplete')).not.toExist()
+
+        rightEditor.trigger 'autocomplete:attach'
+        expect(rightEditor.find('.autocomplete')).toExist()
 
   describe "@deactivate()", ->
     it "removes all autocomplete views and doesn't create new ones when new editors are opened", ->
-      atom.packages.activatePackage('autocomplete')
       atom.workspaceView.getActiveView().trigger "autocomplete:attach"
-      expect(atom.workspaceView.getActiveView().find('.autocomplete')).toExist()
-      atom.packages.deactivatePackage('autocomplete')
-      expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
-      atom.workspaceView.getActiveView().splitRight()
-      atom.workspaceView.getActiveView().trigger "autocomplete:attach"
-      expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
+
+      waitsForPromise ->
+        activationPromise
+
+      runs ->
+        expect(atom.workspaceView.getActiveView().find('.autocomplete')).toExist()
+        atom.packages.deactivatePackage('autocomplete')
+        expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
+        atom.workspaceView.getActiveView().splitRight()
+        atom.workspaceView.getActiveView().trigger "autocomplete:attach"
+        expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
 
 describe "AutocompleteView", ->
   [autocomplete, editorView, editor, miniEditor] = []
@@ -48,7 +59,6 @@ describe "AutocompleteView", ->
     atom.workspaceView = new WorkspaceView
     editorView = new EditorView(editor: atom.project.openSync('sample.js'))
     {editor} = editorView
-    atom.packages.activatePackage('autocomplete')
     autocomplete = new AutocompleteView(editorView)
     miniEditor = autocomplete.miniEditor
 
@@ -448,19 +458,22 @@ describe "AutocompleteView", ->
     expect(autocomplete.list.prop('scrollWidth')).toBe autocomplete.list.width()
 
   it "includes completions for the scope's completion preferences", ->
-    atom.packages.activatePackage('language-css', sync: true)
-    cssEditorView = new EditorView(editor: atom.project.openSync('css.css'))
-    cssEditor = cssEditorView.editor
-    autocomplete = new AutocompleteView(cssEditorView)
+    waitsForPromise ->
+      atom.packages.activatePackage('language-css')
 
-    cssEditorView.attachToDom()
-    cssEditor.moveCursorToEndOfLine()
-    cssEditor.insertText(' out')
-    cssEditor.moveCursorToEndOfLine()
+    runs ->
+      cssEditorView = new EditorView(editor: atom.project.openSync('css.css'))
+      cssEditor = cssEditorView.editor
+      autocomplete = new AutocompleteView(cssEditorView)
 
-    autocomplete.attach()
-    expect(autocomplete.list.find('li').length).toBe 4
-    expect(autocomplete.list.find('li:eq(0)')).toHaveText 'outline'
-    expect(autocomplete.list.find('li:eq(1)')).toHaveText 'outline-color'
-    expect(autocomplete.list.find('li:eq(2)')).toHaveText 'outline-style'
-    expect(autocomplete.list.find('li:eq(3)')).toHaveText 'outline-width'
+      cssEditorView.attachToDom()
+      cssEditor.moveCursorToEndOfLine()
+      cssEditor.insertText(' out')
+      cssEditor.moveCursorToEndOfLine()
+
+      autocomplete.attach()
+      expect(autocomplete.list.find('li').length).toBe 4
+      expect(autocomplete.list.find('li:eq(0)')).toHaveText 'outline'
+      expect(autocomplete.list.find('li:eq(1)')).toHaveText 'outline-color'
+      expect(autocomplete.list.find('li:eq(2)')).toHaveText 'outline-style'
+      expect(autocomplete.list.find('li:eq(3)')).toHaveText 'outline-width'

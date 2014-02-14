@@ -2,38 +2,38 @@
 
 module.exports =
 class AutocompleteView extends SelectListView
-  @viewClass: -> "autocomplete #{super} popover-list"
-
-  editor: null
   currentBuffer: null
   wordList: null
   wordRegex: /\w+/g
   originalSelectionBufferRange: null
   originalCursorPosition: null
   aboveCursor: false
-  filterKey: 'word'
 
   initialize: (@editorView) ->
     super
+    @addClass('autocomplete popover-list')
     {@editor} = @editorView
     @handleEvents()
     @setCurrentBuffer(@editor.getBuffer())
 
-  itemForElement: (match) ->
+  getFilterKey: ->
+    'word'
+
+  viewForItem: ({word}) ->
     $$ ->
       @li =>
-        @span match.word
+        @span word
 
   handleEvents: ->
     @list.on 'mousewheel', (event) -> event.stopPropagation()
 
     @editorView.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
     @editorView.command 'autocomplete:attach', => @attach()
-    @editorView.command 'autocomplete:next', => @selectNextItem()
-    @editorView.command 'autocomplete:previous', => @selectPreviousItem()
+    @editorView.command 'autocomplete:next', => @selectNextItemView()
+    @editorView.command 'autocomplete:previous', => @selectPreviousItemView()
 
-    @miniEditor.preempt 'textInput', (e) =>
-      text = e.originalEvent.data
+    @filterEditorView.preempt 'textInput', ({originalEvent}) =>
+      text = originalEvent.data
       unless text.match(@wordRegex)
         @confirmSelection()
         @editor.insertText(text)
@@ -41,16 +41,16 @@ class AutocompleteView extends SelectListView
 
   setCurrentBuffer: (@currentBuffer) ->
 
-  selectItem: (item) ->
+  selectItemView: (item) ->
     super
-    match = @getSelectedElement()
-    @replaceSelectedTextWithMatch(match) if match
+    if match = @getSelectedItem()
+      @replaceSelectedTextWithMatch(match)
 
-  selectNextItem: ->
+  selectNextItemView: ->
     super
     false
 
-  selectPreviousItem: ->
+  selectPreviousItemView: ->
     super
     false
 
@@ -72,14 +72,7 @@ class AutocompleteView extends SelectListView
     wordHash[word] ?= true for word in @getCompletionsForCursorScope()
 
     @wordList = Object.keys(wordHash).sort (word1, word2) ->
-      word1 = word1.toLowerCase()
-      word2 = word2.toLowerCase()
-      if word1 > word2
-        1
-      else if word1 < word2
-        -1
-      else
-        0
+      word1.toLowerCase().localeCompare(word2.toLowerCase())
 
   confirmed: (match) ->
     @editor.getSelection().clear()
@@ -94,7 +87,7 @@ class AutocompleteView extends SelectListView
 
     @editor.abortTransaction()
     @editor.setSelectedBufferRange(@originalSelectionBufferRange)
-    atom.workspaceView.focus() if @miniEditor.isFocused
+    @editorView.focus()
 
   attach: ->
     @editor.beginTransaction()
@@ -105,19 +98,14 @@ class AutocompleteView extends SelectListView
 
     @buildWordList()
     matches = @findMatchesForCurrentSelection()
-    @setArray(matches)
+    @setItems(matches)
 
     if matches.length is 1
       @confirmSelection()
     else
       @editorView.appendToLinesView(this)
       @setPosition()
-      @miniEditor.focus()
-
-  detach: ->
-    super
-
-    @editorView.focus()
+      @focusFilterEditor()
 
   setPosition: ->
     { left, top } = @editorView.pixelPositionForScreenPosition(@originalCursorPosition)

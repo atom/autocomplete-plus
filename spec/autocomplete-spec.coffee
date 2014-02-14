@@ -60,7 +60,7 @@ describe "AutocompleteView", ->
     editorView = new EditorView(editor: atom.project.openSync('sample.js'))
     {editor} = editorView
     autocomplete = new AutocompleteView(editorView)
-    miniEditor = autocomplete.miniEditor
+    miniEditor = autocomplete.filterEditorView
 
   describe 'autocomplete:attach event', ->
     it "shows autocomplete view and focuses its mini-editor", ->
@@ -70,7 +70,7 @@ describe "AutocompleteView", ->
       editorView.trigger "autocomplete:attach"
       expect(editorView.find('.autocomplete')).toExist()
       expect(autocomplete.editor.isFocused).toBeFalsy()
-      expect(autocomplete.miniEditor.isFocused).toBeTruthy()
+      expect(autocomplete.filterEditorView.isFocused).toBeTruthy()
 
     describe "when no text is selected", ->
       it 'autocompletes word when there is only a prefix', ->

@@ -2,7 +2,7 @@
   "name": "autocomplete",
   "version": "0.23.0",
   "main": "./lib/autocomplete",
-  "description": "Display possible completions from the current editor with `ctrl-space`.",
+  "description": "Display possible completions in the editor with `ctrl-space`.",
   "activationEvents": {
     "autocomplete:attach": ".editor"
   },

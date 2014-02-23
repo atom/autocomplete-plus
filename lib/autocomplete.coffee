@@ -1,5 +1,4 @@
-{_} = require 'atom'
-
+_ = require 'underscore-plus'
 AutocompleteView = require './autocomplete-view'
 
 module.exports =

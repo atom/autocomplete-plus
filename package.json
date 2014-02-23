@@ -9,5 +9,8 @@
   "repository": "https://github.com/atom/autocomplete",
   "engines": {
     "atom": "*"
+  },
+  "dependencies": {
+    "underscore-plus": "1.x"
   }
 }

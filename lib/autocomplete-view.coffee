@@ -1,4 +1,5 @@
-{_, $, $$, Range, SelectListView}  = require 'atom'
+_ = require 'underscore-plus'
+{$, $$, Range, SelectListView}  = require 'atom'
 
 module.exports =
 class AutocompleteView extends SelectListView

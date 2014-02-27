@@ -1,8 +1,9 @@
 _ = require 'underscore-plus'
-{$, $$, Range, SelectListView}  = require 'atom'
+SimpleSelectListView = require './simple-select-list-view'
+{Editor, $, $$, Range, SelectListView}  = require 'atom'
 
 module.exports =
-class AutocompleteView extends SelectListView
+class AutocompleteView extends SimpleSelectListView
   currentBuffer: null
   wordList: null
   wordRegex: /\w+/g
@@ -14,6 +15,7 @@ class AutocompleteView extends SelectListView
     super
     @addClass('autocomplete popover-list')
     {@editor} = @editorView
+
     @handleEvents()
     @setCurrentBuffer(@editor.getBuffer())
 
@@ -29,23 +31,12 @@ class AutocompleteView extends SelectListView
     @list.on 'mousewheel', (event) -> event.stopPropagation()
 
     @editorView.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
-    @editorView.command 'autocomplete:attach', => @attach()
+
+    @editor.on 'contents-modified', => @contentsModified()
     @editorView.command 'autocomplete:next', => @selectNextItemView()
     @editorView.command 'autocomplete:previous', => @selectPreviousItemView()
 
-    @filterEditorView.preempt 'textInput', ({originalEvent}) =>
-      text = originalEvent.data
-      unless text.match(@wordRegex)
-        @confirmSelection()
-        @editor.insertText(text)
-        false
-
   setCurrentBuffer: (@currentBuffer) ->
-
-  selectItemView: (item) ->
-    super
-    if match = @getSelectedItem()
-      @replaceSelectedTextWithMatch(match)
 
   selectNextItemView: ->
     super
@@ -79,34 +70,39 @@ class AutocompleteView extends SelectListView
     @editor.getSelection().clear()
     @cancel()
     return unless match
-    @replaceSelectedTextWithMatch match
+    @replaceSelectedTextWithMatch matchf
     position = @editor.getCursorBufferPosition()
-    @editor.setCursorBufferPosition([position.row, position.column + match.suffix.length])
+    @editor.setCursorBufferPosition([position.row, position.column])
 
-  cancelled: ->
-    super
+  contentsModified: ->
+    @buildWordList()
 
-    @editor.abortTransaction()
-    @editor.setSelectedBufferRange(@originalSelectionBufferRange)
-    @editorView.focus()
+    selection = @editor.getSelection()
+    prefix = @prefixOfSelection selection
 
-  attach: ->
+    # No prefix? Don't autocomplete!
+    return unless prefix.length
+
+    suggestions = @findMatchesForWord prefix
+
+    # No suggestions? Don't autocomplete!
+    return unless suggestions.length
+
+    # Now we're ready - display the suggestions
     @editor.beginTransaction()
 
-    @aboveCursor = false
     @originalSelectionBufferRange = @editor.getSelection().getBufferRange()
     @originalCursorPosition = @editor.getCursorScreenPosition()
 
-    @buildWordList()
-    matches = @findMatchesForCurrentSelection()
-    @setItems(matches)
+    @setItems suggestions
+    @editorView.appendToLinesView this
+    @setPosition()
+    @focusFilterEditor()
 
-    if matches.length is 1
-      @confirmSelection()
-    else
-      @editorView.appendToLinesView(this)
-      @setPosition()
-      @focusFilterEditor()
+  findMatchesForWord: (prefix) ->
+    regex = new RegExp "^#{prefix}.+$", "i"
+    for word in @wordList when regex.test(word) and word isnt prefix
+      {prefix, word}
 
   setPosition: ->
     { left, top } = @editorView.pixelPositionForScreenPosition(@originalCursorPosition)
@@ -120,48 +116,33 @@ class AutocompleteView extends SelectListView
     else
       @css(left: left, top: potentialTop, bottom: 'inherit')
 
-  findMatchesForCurrentSelection: ->
-    selection = @editor.getSelection()
-    {prefix, suffix} = @prefixAndSuffixOfSelection(selection)
-
-    if (prefix.length + suffix.length) > 0
-      regex = new RegExp("^#{prefix}.+#{suffix}$", "i")
-      currentWord = prefix + @editor.getSelectedText() + suffix
-      for word in @wordList when regex.test(word) and word != currentWord
-        {prefix, suffix, word}
-    else
-      {word, prefix, suffix} for word in @wordList
-
   replaceSelectedTextWithMatch: (match) ->
+    console.log match
     selection = @editor.getSelection()
     startPosition = selection.getBufferRange().start
     buffer = @editor.getBuffer()
 
     selection.deleteSelectedText()
     cursorPosition = @editor.getCursorBufferPosition()
-    buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, match.suffix.length))
     buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, -match.prefix.length))
     @editor.insertText(match.word)
 
-    infixLength = match.word.length - match.prefix.length - match.suffix.length
+    infixLength = match.word.length - match.prefix.length
     @editor.setSelectedBufferRange([startPosition, [startPosition.row, startPosition.column + infixLength]])
 
-  prefixAndSuffixOfSelection: (selection) ->
+  prefixOfSelection: (selection) ->
     selectionRange = selection.getBufferRange()
     lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineLengthForBufferRow(selectionRange.end.row)]]
-    [prefix, suffix] = ["", ""]
+    prefix = ""
 
     @currentBuffer.scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
       stop() if range.start.isGreaterThan(selectionRange.end)
 
       if range.intersectsWith(selectionRange)
         prefixOffset = selectionRange.start.column - range.start.column
-        suffixOffset = selectionRange.end.column - range.end.column
-
         prefix = match[0][0...prefixOffset] if range.start.isLessThan(selectionRange.start)
-        suffix = match[0][suffixOffset..] if range.end.isGreaterThan(selectionRange.end)
 
-    {prefix, suffix}
+    prefix
 
   afterAttach: (onDom) ->
     if onDom

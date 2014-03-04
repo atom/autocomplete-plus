@@ -4,6 +4,7 @@ _ = require "underscore-plus"
 Keys =
   Escape: 27
   Enter: 13
+  Tab: 9
 
 class SimpleSelectListView extends SelectListView
   eventsAttached: false
@@ -35,7 +36,7 @@ class SimpleSelectListView extends SelectListView
 
       @fakeInput.keydown (e) =>
         switch e.keyCode
-          when Keys.Enter
+          when Keys.Enter, Keys.Tab
             @confirmSelection()
           when Keys.Escape
             @cancel()

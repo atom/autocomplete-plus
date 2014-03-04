@@ -39,19 +39,6 @@ class SimpleSelectListView extends SelectListView
         if e.keyCode in _.values(Keys)
           return false
 
-  initialize: ->
-    @on "core:move-up", (e) =>
-      @selectPreviousItemView()
-
-    @on "core:move-down", =>
-      @selectNextItemView()
-
-    @on "core:confirm", =>
-      @confirmSelection()
-
-    @on "core:cancel", =>
-      @cancel()
-
   populateList: ->
     return unless @items?
 

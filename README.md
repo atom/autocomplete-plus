@@ -23,4 +23,3 @@ $ npm install
 ## Known bugs
 
 * Sometimes double completions appear (e.g. `DispDisplayObject` when entering `Disp` and selecting `DisplayObject`)
-* `Uncaught TypeError: Object #<AutocompleteView> has no method 'getModel'` when confirming selection

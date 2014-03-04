@@ -2,6 +2,8 @@
 
 View and insert possible completions in the editor while typing
 
+![Autocomplete+](http://s14.directupload.net/images/140304/y7r7g5df.gif)
+
 ## Features
 
 * Shows autocompletion suggestions while typing

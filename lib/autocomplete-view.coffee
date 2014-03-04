@@ -86,9 +86,29 @@ class AutocompleteView extends SimpleSelectListView
       p.start()
 
       matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
-      wordHash[word] ?= true for word in _.flatten(matches)
-      wordHash[word] ?= true for word in @getCompletionsForCursorScope()
-      @wordList = Object.keys(wordHash)
+      matches.push(@getCompletionsForCursorScope())
+
+      # Uniqueness workaround
+      words = _.flatten(matches)
+      for word in words
+        wordHash[word] ?= true
+      wordList = Object.keys(wordHash)
+
+      # We can't set the value for the following keys.
+      # Check whether they're in the `words` variable
+      # and add them to `wordList`
+      objectKeyBlacklist = [
+        'toString',
+        'toLocaleString',
+        'valueOf',
+        'hasOwnProperty',
+        'isPrototypeOf',
+        'propertyIsEnumerable',
+        'constructor'
+      ]
+      for word in objectKeyBlacklist when word in words
+        wordList.push word
+      @wordList = wordList
 
       p.stop()
 

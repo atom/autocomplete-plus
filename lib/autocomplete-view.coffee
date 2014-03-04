@@ -39,9 +39,7 @@ class AutocompleteView extends SimpleSelectListView
 
     @editorView.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
 
-    if atom.config.get('autocomplete-plus.liveCompletion')
-      @editor.on 'screen-lines-changed', => @contentsModified()
-    else
+    unless atom.config.get('autocomplete-plus.liveCompletion')
       @editor.on 'contents-modified', => @contentsModified()
 
     @editorView.command 'autocomplete:next', => @selectNextItemView()
@@ -247,6 +245,13 @@ class AutocompleteView extends SimpleSelectListView
     @buildWordList()
     @currentBuffer.on "saved", =>
       @buildWordList()
+
+    if atom.config.get('autocomplete-plus.liveCompletion')
+      @currentBuffer.on "changed", (e) =>
+        if e.newText.length
+          @contentsModified()
+        else
+          @cancel()
 
   ###
    * Defines which key we would like to use for filtering

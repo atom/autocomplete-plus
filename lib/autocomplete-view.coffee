@@ -14,8 +14,6 @@ class AutocompleteView extends SimpleSelectListView
   initialize: (@editorView) ->
     super
 
-    @data "view", false
-
     @addClass('autocomplete popover-list')
     {@editor} = @editorView
 
@@ -204,7 +202,8 @@ class AutocompleteView extends SimpleSelectListView
       widestCompletion = parseInt(@css('min-width')) or 0
       @list.find('span').each ->
         widestCompletion = Math.max(widestCompletion, $(this).outerWidth())
-      @list.width(widestCompletion + 20)
+
+      @list.width(widestCompletion + 15)
       @width(@list.outerWidth())
 
   ###
@@ -227,3 +226,5 @@ class AutocompleteView extends SimpleSelectListView
    * Defines which key we would like to use for filtering
   ###
   getFilterKey: -> 'word'
+
+  getModel: -> null

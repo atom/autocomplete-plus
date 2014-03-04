@@ -19,17 +19,18 @@ class SimpleSelectListView extends SelectListView
   ###
    * Overrides default initialization
   ###
-  initialize: -> return
+  initialize: ->
+    @on "core:move-up", (e) =>
+      @selectPreviousItemView()
+
+    @on "core:move-down", =>
+      @selectNextItemView()
 
   setActive: ->
     @fakeInput.focus()
 
     unless @eventsAttached
       @eventsAttached = true
-
-      # Makes sure that `autosave` does not try to run `getModel` when
-      # losing focus. Weird stuff going on here.
-      @fakeInput.focusout -> false
 
       @fakeInput.keydown (e) =>
         switch e.keyCode

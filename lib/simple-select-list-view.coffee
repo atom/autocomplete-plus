@@ -7,6 +7,7 @@ Keys =
 
 class SimpleSelectListView extends SelectListView
   eventsAttached: false
+  maxItems: 10
   @content: ->
     @div class: "select-list", =>
       @input class: "fake-input", outlet: "fakeInput"

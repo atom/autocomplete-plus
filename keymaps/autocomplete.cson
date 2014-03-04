@@ -1,5 +1,5 @@
 '.editor':
-  'ctrl-space': 'autocomplete:attach'
+  'ctrl-space': 'autocomplete:toggle'
 
 '.autocomplete .editor':
   'ctrl-space': 'core:cancel'

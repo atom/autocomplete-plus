@@ -4,7 +4,7 @@
   "main": "./lib/autocomplete",
   "description": "Display possible completions in the editor with `ctrl-space`.",
   "activationEvents": {
-    "autocomplete:attach": ".editor"
+    "autocomplete:toggle": ".editor"
   },
   "repository": "https://github.com/atom/autocomplete",
   "engines": {

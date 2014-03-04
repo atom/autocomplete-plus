@@ -29,7 +29,11 @@ class AutocompleteView extends SelectListView
     @list.on 'mousewheel', (event) -> event.stopPropagation()
 
     @editorView.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
-    @editorView.command 'autocomplete:attach', => @attach()
+    @editorView.command 'autocomplete:toggle', =>
+      if @hasParent()
+        @cancel()
+      else
+        @attach()
     @editorView.command 'autocomplete:next', => @selectNextItemView()
     @editorView.command 'autocomplete:previous', => @selectPreviousItemView()
 

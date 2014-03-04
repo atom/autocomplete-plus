@@ -20,7 +20,7 @@ describe "Autocomplete", ->
       leftEditor = atom.workspaceView.getActiveView()
       rightEditor = leftEditor.splitRight()
 
-      leftEditor.trigger 'autocomplete:attach'
+      leftEditor.trigger 'autocomplete:toggle'
 
       waitsForPromise ->
         activationPromise
@@ -34,12 +34,12 @@ describe "Autocomplete", ->
         autoCompleteView.trigger 'core:cancel'
         expect(leftEditor.find('.autocomplete')).not.toExist()
 
-        rightEditor.trigger 'autocomplete:attach'
+        rightEditor.trigger 'autocomplete:toggle'
         expect(rightEditor.find('.autocomplete')).toExist()
 
   describe "@deactivate()", ->
     it "removes all autocomplete views and doesn't create new ones when new editors are opened", ->
-      atom.workspaceView.getActiveView().trigger "autocomplete:attach"
+      atom.workspaceView.getActiveView().trigger "autocomplete:toggle"
 
       waitsForPromise ->
         activationPromise
@@ -49,7 +49,7 @@ describe "Autocomplete", ->
         atom.packages.deactivatePackage('autocomplete')
         expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
         atom.workspaceView.getActiveView().splitRight()
-        atom.workspaceView.getActiveView().trigger "autocomplete:attach"
+        atom.workspaceView.getActiveView().trigger "autocomplete:toggle"
         expect(atom.workspaceView.getActiveView().find('.autocomplete')).not.toExist()
 
 describe "AutocompleteView", ->
@@ -62,12 +62,12 @@ describe "AutocompleteView", ->
     autocomplete = new AutocompleteView(editorView)
     miniEditor = autocomplete.filterEditorView
 
-  describe 'autocomplete:attach event', ->
+  describe 'autocomplete:toggle event', ->
     it "shows autocomplete view and focuses its mini-editor", ->
       editorView.attachToDom()
       expect(editorView.find('.autocomplete')).not.toExist()
 
-      editorView.trigger "autocomplete:attach"
+      editorView.trigger "autocomplete:toggle"
       expect(editorView.find('.autocomplete')).toExist()
       expect(autocomplete.editor.isFocused).toBeFalsy()
       expect(autocomplete.filterEditorView.isFocused).toBeTruthy()

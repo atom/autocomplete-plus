@@ -35,15 +35,23 @@ class AutocompleteView extends SimpleSelectListView
    * Handles editor events
   ###
   handleEvents: ->
+    # Make sure we don't scroll in the editor view when scrolling
+    # in the list
     @list.on 'mousewheel', (event) -> event.stopPropagation()
 
-    @editorView.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
-
+    # Listen to `contents-modified` event when live completion is disabled
     unless atom.config.get('autocomplete-plus.liveCompletion')
       @editor.on 'contents-modified', => @contentsModified()
 
-    @editorView.command 'autocomplete:next', => @selectNextItemView()
-    @editorView.command 'autocomplete:previous', => @selectPreviousItemView()
+    # Is this the event for switching tabs? Dunno...
+    @editor.on 'title-changed-subscription-removed', =>
+      @cancel()
+
+    # Close the overlay when the cursor moved without
+    # changing any text
+    @editor.on 'cursor-moved', (data) =>
+      unless data.textChanged
+        @cancel()
 
   ###
    * Return false so that the events don't bubble up to the editor

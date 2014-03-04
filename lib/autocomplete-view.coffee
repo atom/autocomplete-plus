@@ -8,7 +8,6 @@ class AutocompleteView extends SimpleSelectListView
   currentBuffer: null
   wordList: null
   wordRegex: /\w+/g
-  originalSelectionBufferRange: null
   originalCursorPosition: null
   aboveCursor: false
 
@@ -93,19 +92,31 @@ class AutocompleteView extends SimpleSelectListView
     @editor.setCursorBufferPosition([position.row, position.column])
 
   ###
+   * Activates
+  ###
+  setActive: ->
+    super
+    @active = true
+
+  ###
    * Clears the list, sets back the cursor, focuses the editor and
    * detaches the list DOM element
   ###
   cancel: ->
+    @active = false
+
     @list.empty()
 
-    @editor.abortTransaction()
-    @editor.setSelectedBufferRange(@originalSelectionBufferRange)
     @editorView.focus()
 
     @detach()
 
   contentsModified: ->
+    if @active
+      @detach()
+      @list.empty()
+      @editorView.focus()
+
     @buildWordList()
 
     selection = @editor.getSelection()
@@ -120,11 +131,6 @@ class AutocompleteView extends SimpleSelectListView
     return unless suggestions.length
 
     # Now we're ready - display the suggestions
-    @editor.beginTransaction()
-
-    @originalSelectionBufferRange = @editor.getSelection().getBufferRange()
-    @originalCursorPosition = @editor.getCursorScreenPosition()
-
     @setItems suggestions
     @editorView.appendToLinesView this
     @setPosition()
@@ -137,7 +143,7 @@ class AutocompleteView extends SimpleSelectListView
       {prefix, word}
 
   setPosition: ->
-    { left, top } = @editorView.pixelPositionForScreenPosition(@originalCursorPosition)
+    { left, top } = @editorView.pixelPositionForScreenPosition(@editor.getCursorScreenPosition())
     height = @outerHeight()
     potentialTop = top + @editorView.lineHeight
     potentialBottom = potentialTop - @editorView.scrollTop() + height

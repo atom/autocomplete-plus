@@ -6,7 +6,6 @@ Keys =
   Enter: 13
 
 class SimpleSelectListView extends SelectListView
-  verticalCursorMovementBlocked: false
   @content: ->
     @div class: "select-list", =>
       @input class: "fake-input", outlet: "fakeInput"

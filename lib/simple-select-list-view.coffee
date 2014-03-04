@@ -6,6 +6,7 @@ Keys =
   Enter: 13
 
 class SimpleSelectListView extends SelectListView
+  eventsAttached: false
   @content: ->
     @div class: "select-list", =>
       @input class: "fake-input", outlet: "fakeInput"
@@ -21,19 +22,22 @@ class SimpleSelectListView extends SelectListView
   setActive: ->
     @fakeInput.focus()
 
-    # Makes sure that `autosave` does not try to run `getModel` when
-    # losing focus. Weird stuff going on here.
-    @fakeInput.focusout -> false
+    unless @eventsAttached
+      @eventsAttached = true
 
-    @fakeInput.keydown (e) =>
-      switch e.keyCode
-        when Keys.Enter
-          @confirmSelection()
-        when Keys.Escape
-          @cancel()
+      # Makes sure that `autosave` does not try to run `getModel` when
+      # losing focus. Weird stuff going on here.
+      @fakeInput.focusout -> false
 
-      if e.keyCode in _.values(Keys)
-        return false
+      @fakeInput.keydown (e) =>
+        switch e.keyCode
+          when Keys.Enter
+            @confirmSelection()
+          when Keys.Escape
+            @cancel()
+
+        if e.keyCode in _.values(Keys)
+          return false
 
   initialize: ->
     @on "core:move-up", (e) =>

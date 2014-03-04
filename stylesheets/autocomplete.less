@@ -3,8 +3,13 @@
     box-sizing: content-box;
     margin-left: 0;
 
+    margin-top: 0;
+    padding-top: 0;
+
     ol li {
       padding: 5px 0 5px 0;
+      width: 100%;
+      position: relative;
     }
   }
 
@@ -13,6 +18,7 @@
     position: relative;
     overflow-y: scroll;
     max-height: 200px;
+    margin: 0 !important;
   }
 
   span {
@@ -22,5 +28,11 @@
 
   .error-message {
     margin: 2px;
+  }
+
+  .fake-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
   }
 }

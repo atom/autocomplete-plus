@@ -192,7 +192,7 @@ class AutocompleteView extends SimpleSelectListView
       widestCompletion = parseInt(@css('min-width')) or 0
       @list.find('span').each ->
         widestCompletion = Math.max(widestCompletion, $(this).outerWidth())
-      @list.width(widestCompletion)
+      @list.width(widestCompletion + 20)
       @width(@list.outerWidth())
 
   ###

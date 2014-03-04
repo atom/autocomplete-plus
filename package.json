@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "underscore-plus": "1.x",
-    "fuzzaldrin": "~1.0.0"
+    "fuzzaldrin": "~1.0.0",
+    "q": "~1.0.0"
   }
 }

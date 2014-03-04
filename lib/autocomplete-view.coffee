@@ -2,14 +2,17 @@ _ = require 'underscore-plus'
 SimpleSelectListView = require './simple-select-list-view'
 {Editor, $, $$, Range, SelectListView}  = require 'atom'
 fuzzaldrin = require 'fuzzaldrin'
+Perf = require './perf'
+Q = require 'q'
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView
   currentBuffer: null
   wordList: null
-  wordRegex: /\w+/g
+  wordRegex: /\b\w*[a-zA-Z_]\w*\b/g
   originalCursorPosition: null
   aboveCursor: false
+  debug: false
 
   initialize: (@editorView) ->
     super
@@ -71,18 +74,29 @@ class AutocompleteView extends SimpleSelectListView
    * Generates the word list from the editor buffer(s)
   ###
   buildWordList: ->
-    wordHash = {}
-    if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
-      buffers = atom.project.getBuffers()
-    else
-      buffers = [@currentBuffer]
-    matches = []
-    matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
-    wordHash[word] ?= true for word in _.flatten(matches)
-    wordHash[word] ?= true for word in @getCompletionsForCursorScope()
 
-    @wordList = Object.keys(wordHash).sort (word1, word2) ->
-      word1.toLowerCase().localeCompare(word2.toLowerCase())
+    deferred = Q.defer()
+    process.nextTick =>
+      wordHash = {}
+      if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
+        buffers = atom.project.getBuffers()
+      else
+        buffers = [@currentBuffer]
+      matches = []
+
+      p = new Perf "Building word list", {@debug}
+      p.start()
+
+      matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
+      wordHash[word] ?= true for word in _.flatten(matches)
+      wordHash[word] ?= true for word in @getCompletionsForCursorScope()
+      @wordList = Object.keys(wordHash)
+
+      p.stop()
+
+      deferred.resolve()
+
+    return deferred.promise
 
   ###
    * Handles confirmation (the user pressed enter)
@@ -141,9 +155,16 @@ class AutocompleteView extends SimpleSelectListView
     @setActive()
 
   findMatchesForWord: (prefix) ->
-    results = fuzzaldrin.filter @wordList, prefix
-    for word in results when word isnt prefix
+    p = new Perf "Finding matches for '#{prefix}'", {@debug}
+    p.start()
+
+    words = fuzzaldrin.filter @wordList, prefix
+
+    results = for word in words when word isnt prefix
       {prefix, word}
+
+    p.stop()
+    return results
 
   setPosition: ->
     { left, top } = @editorView.pixelPositionForScreenPosition(@editor.getCursorScreenPosition())
@@ -210,7 +231,12 @@ class AutocompleteView extends SimpleSelectListView
    * Updates the list's position when populating results
   ###
   populateList: ->
+    p = new Perf "Populating list", {@debug}
+    p.start()
+
     super
+
+    p.stop()
 
     @setPosition()
 

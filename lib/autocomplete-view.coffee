@@ -1,4 +1,6 @@
 _ = require 'underscore-plus'
+path = require 'path'
+minimatch = require 'minimatch'
 SimpleSelectListView = require './simple-select-list-view'
 {Editor, $, $$, Range, SelectListView}  = require 'atom'
 fuzzaldrin = require 'fuzzaldrin'
@@ -20,8 +22,25 @@ class AutocompleteView extends SimpleSelectListView
     @addClass('autocomplete popover-list')
     {@editor} = @editorView
 
+    return if @currentFileBlacklisted()
+
     @handleEvents()
     @setCurrentBuffer(@editor.getBuffer())
+
+  ###
+   * Checks whether the current file is blacklisted
+  ###
+  currentFileBlacklisted: ->
+    blacklist = atom.config.get("autocomplete-plus.fileBlacklist")
+      .split ","
+      .map (s) -> s.trim()
+
+    fileName = path.basename @editor.getBuffer().getPath()
+    for blacklistGlob in blacklist
+      if minimatch fileName, blacklistGlob
+        return true
+
+    return false
 
   ###
    * Creates a view for the given item
@@ -80,7 +99,6 @@ class AutocompleteView extends SimpleSelectListView
    * Generates the word list from the editor buffer(s)
   ###
   buildWordList: ->
-
     deferred = Q.defer()
     process.nextTick =>
       wordHash = {}

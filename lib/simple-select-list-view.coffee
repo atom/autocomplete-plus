@@ -62,4 +62,5 @@ class SimpleSelectListView extends SelectListView
     @detach()
     @cancelling = false
 
+
 module.exports = SimpleSelectListView

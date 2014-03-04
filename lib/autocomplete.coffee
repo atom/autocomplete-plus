@@ -5,6 +5,7 @@ module.exports =
   configDefaults:
     liveCompletion: false
     includeCompletionsFromAllBuffers: false
+    fileBlacklist: ".*, *.md"
 
   autocompleteViews: []
   editorSubscription: null

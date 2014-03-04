@@ -3,6 +3,7 @@ AutocompleteView = require './autocomplete-view'
 
 module.exports =
   configDefaults:
+    liveCompletion: false
     includeCompletionsFromAllBuffers: false
 
   autocompleteViews: []

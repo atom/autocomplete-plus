@@ -35,7 +35,11 @@ class AutocompleteView extends SimpleSelectListView
 
     @editorView.on 'editor:path-changed', => @setCurrentBuffer(@editor.getBuffer())
 
-    @editor.on 'contents-modified', => @contentsModified()
+    if atom.config.get('autocomplete-plus.liveCompletion')
+      @editor.on 'screen-lines-changed', => @contentsModified()
+    else
+      @editor.on 'contents-modified', => @contentsModified()
+
     @editorView.command 'autocomplete:next', => @selectNextItemView()
     @editorView.command 'autocomplete:previous', => @selectPreviousItemView()
 
@@ -67,7 +71,7 @@ class AutocompleteView extends SimpleSelectListView
   ###
   buildWordList: ->
     wordHash = {}
-    if atom.config.get('autocomplete.includeCompletionsFromAllBuffers')
+    if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
       buffers = atom.project.getBuffers()
     else
       buffers = [@currentBuffer]
@@ -116,8 +120,6 @@ class AutocompleteView extends SimpleSelectListView
       @detach()
       @list.empty()
       @editorView.focus()
-
-    @buildWordList()
 
     selection = @editor.getSelection()
     prefix = @prefixOfSelection selection
@@ -213,7 +215,10 @@ class AutocompleteView extends SimpleSelectListView
   ###
    * Sets the current buffer
   ###
-  setCurrentBuffer: (@currentBuffer) -> return
+  setCurrentBuffer: (@currentBuffer) ->
+    @buildWordList()
+    @currentBuffer.on "saved", =>
+      @buildWordList()
 
   ###
    * Defines which key we would like to use for filtering

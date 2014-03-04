@@ -2,7 +2,7 @@ _ = require 'underscore-plus'
 path = require 'path'
 minimatch = require 'minimatch'
 SimpleSelectListView = require './simple-select-list-view'
-{Editor, $, $$, Range, SelectListView}  = require 'atom'
+{Editor, $, $$, Range, Point, SelectListView}  = require 'atom'
 fuzzaldrin = require 'fuzzaldrin'
 Perf = require './perf'
 Q = require 'q'
@@ -256,6 +256,32 @@ class AutocompleteView extends SimpleSelectListView
     return prefix
 
   ###
+   * Finds the last typed word. If newLine is set to true, it looks
+   * for the last word in the previous line.
+  ###
+  lastTypedWord: (newLine) ->
+    selectionRange = @editor.getSelection().getBufferRange()
+    {row} = selectionRange.start
+
+    # The user pressed enter, check previous line
+    if newLine
+      row--
+
+    # The user presed enter, check everything until the end
+    if newLine
+      maxColumn = @editor.lineLengthForBufferRow row
+    else
+      maxColumn = selectionRange.start.column
+
+    lineRange = [[row, 0], [row, maxColumn]]
+
+    lastWord = null
+    @currentBuffer.scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
+      lastWord = match[0]
+
+    return lastWord
+
+  ###
    * As soon as the list is in the DOM tree, it calculates the
    * maximum width of all list items and resizes the list so that
    * all items fit
@@ -294,10 +320,23 @@ class AutocompleteView extends SimpleSelectListView
 
     if atom.config.get('autocomplete-plus.liveCompletion')
       @currentBuffer.on "changed", (e) =>
+        if e.newText in ["\n", " "]
+          @addLastWordToList e.newText is "\n"
+
         if e.newText.length
           @contentsModified()
         else
           @cancel()
+
+  ###
+   * Adds the last typed word to the wordList
+  ###
+  addLastWordToList: (newLine) ->
+    lastWord = @lastTypedWord newLine
+    return unless lastWord
+
+    if @wordList.indexOf(lastWord) < 0
+      @wordList.push lastWord
 
   ###
    * Defines which key we would like to use for filtering

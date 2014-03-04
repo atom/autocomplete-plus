@@ -16,8 +16,10 @@ class SimpleSelectListView extends SelectListView
         @span class: "badge", outlet: "loadingBadge"
       @ol class: "list-group", outlet: "list"
 
-  focusList: ->
-    @filterEditorView.focus()
+  ###
+   * Overrides default initialization
+  ###
+  initialize: -> return
 
   setActive: ->
     @fakeInput.focus()

@@ -20,6 +20,11 @@ class SimpleSelectListView extends SelectListView
 
   setActive: ->
     @fakeInput.focus()
+
+    # Makes sure that `autosave` does not try to run `getModel` when
+    # losing focus. Weird stuff going on here.
+    @fakeInput.focusout -> false
+
     @fakeInput.keydown (e) =>
       switch e.keyCode
         when Keys.Enter

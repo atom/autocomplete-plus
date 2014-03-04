@@ -13,6 +13,9 @@ class AutocompleteView extends SimpleSelectListView
 
   initialize: (@editorView) ->
     super
+
+    @data "view", false
+
     @addClass('autocomplete popover-list')
     {@editor} = @editorView
 

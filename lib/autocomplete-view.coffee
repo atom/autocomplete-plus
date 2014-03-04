@@ -1,6 +1,7 @@
 _ = require 'underscore-plus'
 SimpleSelectListView = require './simple-select-list-view'
 {Editor, $, $$, Range, SelectListView}  = require 'atom'
+fuzzaldrin = require 'fuzzaldrin'
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView
@@ -131,8 +132,8 @@ class AutocompleteView extends SimpleSelectListView
     @setActive()
 
   findMatchesForWord: (prefix) ->
-    regex = new RegExp "^#{prefix}.+$", "i"
-    for word in @wordList when regex.test(word) and word isnt prefix
+    results = fuzzaldrin.filter @wordList, prefix
+    for word in results when word isnt prefix
       {prefix, word}
 
   setPosition: ->

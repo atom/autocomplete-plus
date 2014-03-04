@@ -8,6 +8,7 @@
     "atom": "*"
   },
   "dependencies": {
-    "underscore-plus": "1.x"
+    "underscore-plus": "1.x",
+    "fuzzaldrin": "~1.0.0"
   }
 }

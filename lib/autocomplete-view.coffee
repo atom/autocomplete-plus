@@ -19,14 +19,17 @@ class AutocompleteView extends SimpleSelectListView
     @handleEvents()
     @setCurrentBuffer(@editor.getBuffer())
 
-  getFilterKey: ->
-    'word'
-
+  ###
+   * Creates a view for the given item
+  ###
   viewForItem: ({word}) ->
     $$ ->
       @li =>
         @span word
 
+  ###
+   * Handles editor events
+  ###
   handleEvents: ->
     @list.on 'mousewheel', (event) -> event.stopPropagation()
 
@@ -36,22 +39,32 @@ class AutocompleteView extends SimpleSelectListView
     @editorView.command 'autocomplete:next', => @selectNextItemView()
     @editorView.command 'autocomplete:previous', => @selectPreviousItemView()
 
-  setCurrentBuffer: (@currentBuffer) ->
-
+  ###
+   * Return false so that the events don't bubble up to the editor
+  ###
   selectNextItemView: ->
     super
     false
 
+  ###
+   * Return false so that the events don't bubble up to the editor
+  ###
   selectPreviousItemView: ->
     super
     false
 
+  ###
+   * Don't really know what that does...
+  ###
   getCompletionsForCursorScope: ->
     cursorScope = @editor.scopesForBufferPosition(@editor.getCursorBufferPosition())
     completions = atom.syntax.propertiesForScope(cursorScope, 'editor.completions')
     completions = completions.map (properties) -> _.valueForKeyPath(properties, 'editor.completions')
     _.uniq(_.flatten(completions))
 
+  ###
+   * Generates the word list from the editor buffer(s)
+  ###
   buildWordList: ->
     wordHash = {}
     if atom.config.get('autocomplete.includeCompletionsFromAllBuffers')
@@ -66,13 +79,30 @@ class AutocompleteView extends SimpleSelectListView
     @wordList = Object.keys(wordHash).sort (word1, word2) ->
       word1.toLowerCase().localeCompare(word2.toLowerCase())
 
+  ###
+   * Handles confirmation (the user pressed enter)
+  ###
   confirmed: (match) ->
     @editor.getSelection().clear()
+
     @cancel()
     return unless match
-    @replaceSelectedTextWithMatch matchf
+    @replaceTextWithMatch match
     position = @editor.getCursorBufferPosition()
     @editor.setCursorBufferPosition([position.row, position.column])
+
+  ###
+   * Clears the list, sets back the cursor, focuses the editor and
+   * detaches the list DOM element
+  ###
+  cancel: ->
+    @list.empty()
+
+    @editor.abortTransaction()
+    @editor.setSelectedBufferRange(@originalSelectionBufferRange)
+    @editorView.focus()
+
+    @detach()
 
   contentsModified: ->
     @buildWordList()
@@ -97,7 +127,8 @@ class AutocompleteView extends SimpleSelectListView
     @setItems suggestions
     @editorView.appendToLinesView this
     @setPosition()
-    @focusFilterEditor()
+
+    @setActive()
 
   findMatchesForWord: (prefix) ->
     regex = new RegExp "^#{prefix}.+$", "i"
@@ -116,8 +147,10 @@ class AutocompleteView extends SimpleSelectListView
     else
       @css(left: left, top: potentialTop, bottom: 'inherit')
 
-  replaceSelectedTextWithMatch: (match) ->
-    console.log match
+  ###
+   * Replaces the current prefix with the given match
+  ###
+  replaceTextWithMatch: (match) ->
     selection = @editor.getSelection()
     startPosition = selection.getBufferRange().start
     buffer = @editor.getBuffer()
@@ -130,6 +163,9 @@ class AutocompleteView extends SimpleSelectListView
     infixLength = match.word.length - match.prefix.length
     @editor.setSelectedBufferRange([startPosition, [startPosition.row, startPosition.column + infixLength]])
 
+  ###
+   * Finds and returns the content before the current cursor position
+  ###
   prefixOfSelection: (selection) ->
     selectionRange = selection.getBufferRange()
     lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineLengthForBufferRow(selectionRange.end.row)]]
@@ -142,8 +178,15 @@ class AutocompleteView extends SimpleSelectListView
         prefixOffset = selectionRange.start.column - range.start.column
         prefix = match[0][0...prefixOffset] if range.start.isLessThan(selectionRange.start)
 
-    prefix
+    return prefix
 
+  ###
+   * As soon as the list is in the DOM tree, it calculates the
+   * maximum width of all list items and resizes the list so that
+   * all items fit
+   *
+   * @todo: Fix this. Doesn't work well yet.
+  ###
   afterAttach: (onDom) ->
     if onDom
       widestCompletion = parseInt(@css('min-width')) or 0
@@ -152,7 +195,20 @@ class AutocompleteView extends SimpleSelectListView
       @list.width(widestCompletion)
       @width(@list.outerWidth())
 
+  ###
+   * Updates the list's position when populating results
+  ###
   populateList: ->
     super
 
     @setPosition()
+
+  ###
+   * Sets the current buffer
+  ###
+  setCurrentBuffer: (@currentBuffer) -> return
+
+  ###
+   * Defines which key we would like to use for filtering
+  ###
+  getFilterKey: -> 'word'

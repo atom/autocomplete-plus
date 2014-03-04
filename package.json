@@ -1,12 +1,9 @@
 {
-  "name": "autocomplete",
-  "version": "0.24.0",
+  "name": "autocomplete-plus",
+  "version": "0.0.1",
   "main": "./lib/autocomplete",
-  "description": "Display possible completions in the editor with `ctrl-space`.",
-  "activationEvents": {
-    "autocomplete:attach": ".editor"
-  },
-  "repository": "https://github.com/atom/autocomplete",
+  "description": "Display possible completions in the editor while typing",
+  "repository": "https://github.com/saschagehlich/autocomplete-plus",
   "engines": {
     "atom": "*"
   },

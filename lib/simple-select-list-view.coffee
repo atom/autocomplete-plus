@@ -1,9 +1,15 @@
 {$, SelectListView, EditorView} = require "atom"
+_ = require "underscore-plus"
+
+Keys =
+  Escape: 27
+  Enter: 13
 
 class SimpleSelectListView extends SelectListView
   verticalCursorMovementBlocked: false
   @content: ->
     @div class: "select-list", =>
+      @input class: "fake-input", outlet: "fakeInput"
       @div class: "error-message", outlet: "error"
       @div class: "loading", outlet: "loadingArea", =>
         @span class: "loading-message", outlet: "loading"
@@ -12,6 +18,18 @@ class SimpleSelectListView extends SelectListView
 
   focusList: ->
     @filterEditorView.focus()
+
+  setActive: ->
+    @fakeInput.focus()
+    @fakeInput.keydown (e) =>
+      switch e.keyCode
+        when Keys.Enter
+          @confirmSelection()
+        when Keys.Escape
+          @cancel()
+
+      if e.keyCode in _.values(Keys)
+        return false
 
   initialize: ->
     @on "core:move-up", (e) =>

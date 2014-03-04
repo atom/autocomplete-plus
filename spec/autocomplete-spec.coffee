@@ -2,6 +2,10 @@
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 
+###
+  Needs to be updated to the new package
+###
+
 describe "Autocomplete", ->
   [activationPromise] = []
 

@@ -9,6 +9,8 @@ Since this is still in beta, you'll have to install it manually (I'll add it to 
 ```
 $ cd ~/.atom/packages
 $ git clone git@github.com:saschagehlich/autocomplete-plus.git
+$ cd autocomplete-plus
+$ npm install
 ```
 
 ## Known bugs

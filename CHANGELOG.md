@@ -1,0 +1,19 @@
+0.5.0 (Mar 4 2014)
+==================
+
+* Added file blacklisting option (glob supported, separated by commas)
+* Added TAB as a completion key
+* Adds words to the wordlist as they are typed
+
+0.4.0 (Mar 4 2014)
+==================
+
+* Only display up to 10 items
+* Removed sorting from the word list generator
+* Only run autocompletion when the buffer really changed
+* More cancellation cases (on line switch, on tab switch)
+
+0.1.0 - 0.3.0 (Mar 4 2014)
+==========================
+
+* Initial release

@@ -472,8 +472,9 @@ describe "AutocompleteView", ->
       cssEditor.moveCursorToEndOfLine()
 
       autocomplete.attach()
-      expect(autocomplete.list.find('li').length).toBe 4
+      expect(autocomplete.list.find('li').length).toBe 5
       expect(autocomplete.list.find('li:eq(0)')).toHaveText 'outline'
       expect(autocomplete.list.find('li:eq(1)')).toHaveText 'outline-color'
-      expect(autocomplete.list.find('li:eq(2)')).toHaveText 'outline-style'
-      expect(autocomplete.list.find('li:eq(3)')).toHaveText 'outline-width'
+      expect(autocomplete.list.find('li:eq(2)')).toHaveText 'outline-offset'
+      expect(autocomplete.list.find('li:eq(3)')).toHaveText 'outline-style'
+      expect(autocomplete.list.find('li:eq(4)')).toHaveText 'outline-width'

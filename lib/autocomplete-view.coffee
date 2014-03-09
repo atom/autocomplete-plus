@@ -99,48 +99,42 @@ class AutocompleteView extends SimpleSelectListView
    * Generates the word list from the editor buffer(s)
   ###
   buildWordList: ->
-    deferred = Q.defer()
-    process.nextTick =>
-      wordHash = {}
-      if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
-        buffers = atom.project.getBuffers()
-      else
-        buffers = [@currentBuffer]
-      matches = []
+    wordHash = {}
+    if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
+      buffers = atom.project.getBuffers()
+    else
+      buffers = [@currentBuffer]
+    matches = []
 
-      p = new Perf "Building word list", {@debug}
-      p.start()
+    p = new Perf "Building word list", {@debug}
+    p.start()
 
-      matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
-      matches.push(@getCompletionsForCursorScope())
+    matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
+    matches.push(@getCompletionsForCursorScope())
 
-      # Uniqueness workaround
-      words = _.flatten(matches)
-      for word in words
-        wordHash[word] ?= true
-      wordList = Object.keys(wordHash)
+    # Uniqueness workaround
+    words = _.flatten(matches)
+    for word in words
+      wordHash[word] ?= true
+    wordList = Object.keys(wordHash)
 
-      # We can't set the value for the following keys.
-      # Check whether they're in the `words` variable
-      # and add them to `wordList`
-      objectKeyBlacklist = [
-        'toString',
-        'toLocaleString',
-        'valueOf',
-        'hasOwnProperty',
-        'isPrototypeOf',
-        'propertyIsEnumerable',
-        'constructor'
-      ]
-      for word in objectKeyBlacklist when word in words
-        wordList.push word
-      @wordList = wordList
+    # We can't set the value for the following keys.
+    # Check whether they're in the `words` variable
+    # and add them to `wordList`
+    objectKeyBlacklist = [
+      'toString',
+      'toLocaleString',
+      'valueOf',
+      'hasOwnProperty',
+      'isPrototypeOf',
+      'propertyIsEnumerable',
+      'constructor'
+    ]
+    for word in objectKeyBlacklist when word in words
+      wordList.push word
+    @wordList = wordList
 
-      p.stop()
-
-      deferred.resolve()
-
-    return deferred.promise
+    p.stop()
 
   ###
    * Handles confirmation (the user pressed enter)

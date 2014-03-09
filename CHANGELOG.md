@@ -1,3 +1,8 @@
+0.6.0 (Mar 9 2014)
+==================
+
+* Fixes a bug that caused an uncaught exception when closing a tab with autosave enabled
+
 0.5.0 (Mar 4 2014)
 ==================
 

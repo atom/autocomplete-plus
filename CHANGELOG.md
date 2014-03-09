@@ -1,3 +1,8 @@
+0.7.0 (Mar 9 2014)
+==================
+
+* Fixes an issue where moving the cursor is slowed down
+
 0.6.0 (Mar 9 2014)
 ==================
 

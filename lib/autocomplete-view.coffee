@@ -18,7 +18,6 @@ class AutocompleteView extends SimpleSelectListView
 
   initialize: (@editorView) ->
     super
-
     @addClass('autocomplete popover-list')
     {@editor} = @editorView
 
@@ -69,7 +68,7 @@ class AutocompleteView extends SimpleSelectListView
     # Close the overlay when the cursor moved without
     # changing any text
     @editor.on 'cursor-moved', (data) =>
-      unless data.textChanged
+      if not data.textChanged and @active
         @cancel()
 
   ###

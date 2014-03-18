@@ -310,6 +310,7 @@ class AutocompleteView extends SimpleSelectListView
     @buildWordList()
     @currentBuffer.on "saved", =>
       @buildWordList()
+      @cancel()
 
     if atom.config.get('autocomplete-plus.liveCompletion')
       @currentBuffer.on "changed", (e) =>

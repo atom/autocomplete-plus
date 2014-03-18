@@ -1,3 +1,9 @@
+0.8.0 (Mar 18 2014)
+===================
+
+* Pasting content will no longer toggle autocompletion
+* Saving will cancel autocompletion
+
 0.7.0 (Mar 9 2014)
 ==================
 

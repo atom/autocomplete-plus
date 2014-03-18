@@ -317,7 +317,7 @@ class AutocompleteView extends SimpleSelectListView
         if e.newText in ["\n", " "]
           @addLastWordToList e.newText is "\n"
 
-        if e.newText.length
+        if e.newText.length is 1
           @contentsModified()
         else
           @cancel()

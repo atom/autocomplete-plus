@@ -1,3 +1,7 @@
+0.9.0 (Mar 19 2014)
+===================
+* Correctly clean up registered events on the editor etc. Fixes an issue where closed tabs would result in uncaught exceptions.
+
 0.8.0 (Mar 18 2014)
 ===================
 

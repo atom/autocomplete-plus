@@ -59,17 +59,14 @@ class AutocompleteView extends SimpleSelectListView
 
     # Listen to `contents-modified` event when live completion is disabled
     unless atom.config.get('autocomplete-plus.liveCompletion')
-      @editor.on 'contents-modified', => @contentsModified()
+      @editor.on 'contents-modified', @contentsModified
 
     # Is this the event for switching tabs? Dunno...
-    @editor.on 'title-changed-subscription-removed', =>
-      @cancel()
+    @editor.on 'title-changed-subscription-removed', @cancel
 
     # Close the overlay when the cursor moved without
     # changing any text
-    @editor.on 'cursor-moved', (data) =>
-      if not data.textChanged and @active
-        @cancel()
+    @editor.on 'cursor-moved', @cursorMoved
 
   ###
    * Return false so that the events don't bubble up to the editor
@@ -158,7 +155,7 @@ class AutocompleteView extends SimpleSelectListView
    * Clears the list, sets back the cursor, focuses the editor and
    * detaches the list DOM element
   ###
-  cancel: ->
+  cancel: =>
     @active = false
 
     @list.empty()
@@ -167,7 +164,7 @@ class AutocompleteView extends SimpleSelectListView
 
     @detach()
 
-  contentsModified: ->
+  contentsModified: =>
     if @active
       @detach()
       @list.empty()
@@ -190,6 +187,23 @@ class AutocompleteView extends SimpleSelectListView
     @setPosition()
 
     @setActive()
+
+  cursorMoved: (data) =>
+    if not data.textChanged and @active
+      @cancel()
+
+  onSaved: =>
+    @buildWordList()
+    @cancel()
+
+  onChanged: (e) =>
+    if e.newText in ["\n", " "]
+      @addLastWordToList e.newText is "\n"
+
+    if e.newText.length is 1
+      @contentsModified()
+    else
+      @cancel()
 
   findMatchesForWord: (prefix) ->
     p = new Perf "Finding matches for '#{prefix}'", {@debug}
@@ -308,19 +322,10 @@ class AutocompleteView extends SimpleSelectListView
   ###
   setCurrentBuffer: (@currentBuffer) ->
     @buildWordList()
-    @currentBuffer.on "saved", =>
-      @buildWordList()
-      @cancel()
+    @currentBuffer.on "saved", @onSaved
 
     if atom.config.get('autocomplete-plus.liveCompletion')
-      @currentBuffer.on "changed", (e) =>
-        if e.newText in ["\n", " "]
-          @addLastWordToList e.newText is "\n"
-
-        if e.newText.length is 1
-          @contentsModified()
-        else
-          @cancel()
+      @currentBuffer.on "changed", @onChanged
 
   ###
    * Adds the last typed word to the wordList
@@ -338,3 +343,11 @@ class AutocompleteView extends SimpleSelectListView
   getFilterKey: -> 'word'
 
   getModel: -> null
+
+  dispose: ->
+    @editor.off "contents-modified", @contentsModified
+    @currentBuffer?.off "changed", @onChanged
+    @currentBuffer?.off "saved", @onSaved
+    @editor.off "contents-modified", @contentsModified
+    @editor.off "title-changed-subscription-removed", @cancel
+    @editor.off "cursor-moved", @cursorMoved

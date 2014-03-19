@@ -16,6 +16,7 @@ module.exports =
         autocompleteView = new AutocompleteView(editor)
         editor.on 'editor:will-be-removed', =>
           autocompleteView.remove() unless autocompleteView.hasParent()
+          autocompleteView.dispose()
           _.remove(@autocompleteViews, autocompleteView)
         @autocompleteViews.push(autocompleteView)
 

@@ -15,6 +15,7 @@ class AutocompleteView extends SimpleSelectListView
   originalCursorPosition: null
   aboveCursor: false
   debug: false
+  lastConfirmedWord: null
 
   initialize: (@editorView) ->
     super
@@ -137,9 +138,11 @@ class AutocompleteView extends SimpleSelectListView
   ###
   confirmed: (match) ->
     @editor.getSelection().clear()
-
     @cancel()
+
     return unless match
+
+    @lastConfirmedWord = match.word
     @replaceTextWithMatch match
     position = @editor.getCursorBufferPosition()
     @editor.setCursorBufferPosition([position.row, position.column])
@@ -172,6 +175,9 @@ class AutocompleteView extends SimpleSelectListView
 
     selection = @editor.getSelection()
     prefix = @prefixOfSelection selection
+
+    # Stop completion if the word was already confirmed
+    return if prefix is @lastConfirmedWord
 
     # No prefix? Don't autocomplete!
     return unless prefix.length

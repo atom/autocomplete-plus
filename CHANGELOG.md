@@ -1,3 +1,8 @@
+0.10.0 (Apr 3 2014)
+===================
+
+* Fixing a little issue where the autocompletion would appear even though the word was already confirmed (#23, #25 - thanks to @rpg600)
+
 0.9.0 (Mar 19 2014)
 ===================
 * Correctly clean up registered events on the editor etc. Fixes an issue where closed tabs would result in uncaught exceptions.

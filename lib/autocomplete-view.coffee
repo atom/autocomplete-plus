@@ -361,6 +361,8 @@ class AutocompleteView extends SimpleSelectListView
 
   ###
    * Why are we doing this again...?
+   * Might be because of autosave:
+   * http://git.io/iF32wA
    * @private
   ###
   getModel: -> null

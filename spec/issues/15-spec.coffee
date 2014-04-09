@@ -30,14 +30,14 @@ describe "Autocomplete", ->
 
       runs ->
         editorView.attachToDom()
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
         editor.moveCursorToBottom()
         editor.insertText "r"
 
-        expect(editorView.find(".autocomplete")).toExist()
+        expect(editorView.find(".autocomplete-plus")).toExist()
 
         editor.saveAs("spec/tmp/issue-11.js")
 
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()

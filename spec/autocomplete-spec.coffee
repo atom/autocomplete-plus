@@ -31,7 +31,7 @@ describe "Autocomplete", ->
         activationPromise
 
       runs ->
-        expect(editor.find(".autocomplete")).not.toExist()
+        expect(editor.find(".autocomplete-plus")).not.toExist()
 
   describe "@deactivate()", ->
     it "removes all autocomplete views", ->
@@ -46,11 +46,11 @@ describe "Autocomplete", ->
         # Trigger an autocompletion
         editor.moveCursorToBottom()
         editor.insertText("A")
-        expect(editorView.find(".autocomplete")).toExist()
+        expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Deactivate the package
         atom.packages.deactivatePackage "autocomplete-plus"
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()
 
   describe "AutocompleteView", ->
     [autocomplete, editorView, editor] = []
@@ -64,11 +64,11 @@ describe "Autocomplete", ->
     describe "on changed events", ->
       it "should attach when finding suggestions", ->
         editorView.attachToDom()
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
         triggerAutocompletion editor
-        expect(editorView.find(".autocomplete")).toExist()
+        expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Check suggestions
         suggestions = ["function", "if", "left", "shift"]
@@ -78,18 +78,18 @@ describe "Autocomplete", ->
 
       it "should not attach when not finding suggestions", ->
         editorView.attachToDom()
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
         editor.moveCursorToBottom()
         editor.insertText("x")
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()
 
     describe "accepting suggestions", ->
       describe "when pressing enter while suggestions are visible", ->
         it "inserts the word and moves the cursor to the end of the word", ->
           editorView.attachToDom()
-          expect(editorView.find(".autocomplete")).not.toExist()
+          expect(editorView.find(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
           triggerAutocompletion editor
@@ -107,18 +107,18 @@ describe "Autocomplete", ->
 
         it "hides the suggestions", ->
           editorView.attachToDom()
-          expect(editorView.find(".autocomplete")).not.toExist()
+          expect(editorView.find(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
           editor.moveCursorToBottom()
           editor.moveCursorToBeginningOfLine()
           editor.insertText("f")
-          expect(editorView.find(".autocomplete")).toExist()
+          expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Accept suggestion
           autocomplete.trigger "core:confirm"
 
-          expect(editorView.find(".autocomplete")).not.toExist()
+          expect(editorView.find(".autocomplete-plus")).not.toExist()
 
     describe "move-up event", ->
       it "selects the previous item in the list", ->
@@ -127,18 +127,18 @@ describe "Autocomplete", ->
         # Trigger an autocompletion
         triggerAutocompletion editor
 
-        expect(editorView.find(".autocomplete li:eq(0)")).toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(1)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(2)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(3)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(0)")).toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(1)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(2)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(3)")).not.toHaveClass("selected")
 
         # Accept suggestion
         autocomplete.trigger "core:move-up"
 
-        expect(editorView.find(".autocomplete li:eq(0)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(1)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(2)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(3)")).toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(0)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(1)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(2)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(3)")).toHaveClass("selected")
 
     describe "move-down event", ->
       it "selects the next item in the list", ->
@@ -147,18 +147,18 @@ describe "Autocomplete", ->
         # Trigger an autocompletion
         triggerAutocompletion editor
 
-        expect(editorView.find(".autocomplete li:eq(0)")).toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(1)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(2)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(3)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(0)")).toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(1)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(2)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(3)")).not.toHaveClass("selected")
 
         # Accept suggestion
         autocomplete.trigger "core:move-down"
 
-        expect(editorView.find(".autocomplete li:eq(0)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(1)")).toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(2)")).not.toHaveClass("selected")
-        expect(editorView.find(".autocomplete li:eq(3)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(0)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(1)")).toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(2)")).not.toHaveClass("selected")
+        expect(editorView.find(".autocomplete-plus li:eq(3)")).not.toHaveClass("selected")
 
     describe "when a suggestion is clicked", ->
       it "should select the item and confirm the selection", ->
@@ -168,7 +168,7 @@ describe "Autocomplete", ->
         triggerAutocompletion editor
 
         # Get the second item
-        item = editorView.find(".autocomplete li:eq(1)")
+        item = editorView.find(".autocomplete-plus li:eq(1)")
 
         # Click the item, expect list to be hidden and
         # text to be added
@@ -176,7 +176,7 @@ describe "Autocomplete", ->
         expect(item).toHaveClass "selected"
         item.mouseup()
 
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()
         expect(editor.getBuffer().getLastLine()).toEqual item.text()
 
     describe "Positioning", ->
@@ -189,7 +189,7 @@ describe "Autocomplete", ->
         it "adds the autocomplete view to the editor below the cursor", ->
           editor.setCursorBufferPosition [1, 2]
           editor.insertText "f"
-          expect(editorView.find(".autocomplete")).toExist()
+          expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Check position
           cursorPixelPosition = editorView.pixelPositionForScreenPosition editor.getCursorScreenPosition()
@@ -201,7 +201,7 @@ describe "Autocomplete", ->
           # Trigger autocompletion
           editor.setCursorScreenPosition [11, 0]
           editor.insertText "t"
-          expect(editorView.find(".autocomplete")).toExist()
+          expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Check position
           cursorPixelPosition = editorView.pixelPositionForScreenPosition editor.getCursorScreenPosition()
@@ -250,7 +250,7 @@ describe "Autocomplete", ->
         cssEditor.insertText "u"
         cssEditor.insertText "t"
 
-        expect(cssEditorView.find(".autocomplete")).toExist()
+        expect(cssEditorView.find(".autocomplete-plus")).toExist()
 
         expect(autocomplete.list.find("li").length).toBe 10
         expect(autocomplete.list.find("li:eq(0)")).toHaveText "outline"
@@ -270,4 +270,4 @@ describe "Autocomplete", ->
 
         editor.insertText "a"
 
-        expect(editorView.find(".autocomplete")).not.toExist()
+        expect(editorView.find(".autocomplete-plus")).not.toExist()

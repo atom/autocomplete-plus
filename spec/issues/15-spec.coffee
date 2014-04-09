@@ -1,7 +1,7 @@
-require "./spec-helper"
+require "../spec-helper"
 {$, EditorView, WorkspaceView} = require 'atom'
-AutocompleteView = require '../lib/autocomplete-view'
-Autocomplete = require '../lib/autocomplete'
+AutocompleteView = require '../../lib/autocomplete-view'
+Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
   [activationPromise, autocomplete, editorView, editor] = []
@@ -10,7 +10,7 @@ describe "Autocomplete", ->
     beforeEach ->
       # Create a fake workspace and open a sample file
       atom.workspaceView = new WorkspaceView
-      atom.workspaceView.openSync "issue-11.js"
+      atom.workspaceView.openSync "issues/11.js"
       atom.workspaceView.simulateDomAttachment()
 
       # Set to live completion

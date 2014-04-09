@@ -1,16 +1,16 @@
-require "./spec-helper"
+require "../spec-helper"
 {$, EditorView, WorkspaceView} = require 'atom'
-AutocompleteView = require '../lib/autocomplete-view'
-Autocomplete = require '../lib/autocomplete'
+AutocompleteView = require '../../lib/autocomplete-view'
+Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
   [activationPromise, autocomplete, editorView, editor] = []
 
-  describe "Issue 23 and 25", ->
+  describe "Issue 11", ->
     beforeEach ->
       # Create a fake workspace and open a sample file
       atom.workspaceView = new WorkspaceView
-      atom.workspaceView.openSync "issue-23-25.js"
+      atom.workspaceView.openSync "issues/11.js"
       atom.workspaceView.simulateDomAttachment()
 
       # Set to live completion
@@ -23,7 +23,7 @@ describe "Autocomplete", ->
       {editor} = editorView
       autocomplete = new AutocompleteView editorView
 
-    it "does not show suggestions after a word has been completed", ->
+    it "does not trigger autocompletion when pasting", ->
 
       waitsForPromise ->
         activationPromise
@@ -34,11 +34,6 @@ describe "Autocomplete", ->
 
         # Trigger an autocompletion
         editor.moveCursorToBottom()
-        editor.insertText c for c in "red"
-
-        expect(editorView.find(".autocomplete")).toExist()
-
-        # Accept suggestion
-        autocomplete.trigger "core:confirm"
+        editor.insertText "red"
 
         expect(editorView.find(".autocomplete")).not.toExist()

@@ -239,7 +239,7 @@ class AutocompleteView extends SimpleSelectListView
     # The position if we would put it above the line
     abovePosition = cursorTop
 
-    if belowLowerPosition > @editorView.outerHeight()
+    if belowLowerPosition > @editorView.outerHeight() + @editorView.scrollTop()
       # We can't put it below - put it above. Using CSS transforms to
       # move it 100% up so that the lower edge is above the current line
       @css left: cursorLeft, top: abovePosition

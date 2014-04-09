@@ -1,11 +1,12 @@
-_ = require 'underscore-plus'
-path = require 'path'
-minimatch = require 'minimatch'
-SimpleSelectListView = require './simple-select-list-view'
-{Editor, $, $$, Range, Point, SelectListView}  = require 'atom'
-fuzzaldrin = require 'fuzzaldrin'
-Perf = require './perf'
-Q = require 'q'
+_ = require "underscore-plus"
+path = require "path"
+minimatch = require "minimatch"
+SimpleSelectListView = require "./simple-select-list-view"
+{Editor, $, $$, Range, Point, SelectListView}  = require "atom"
+
+console.log require "atom"
+fuzzaldrin = require "fuzzaldrin"
+Perf = require "./perf"
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView

@@ -1,4 +1,4 @@
-{$, View} = require "atom"
+{$, $$, View} = require "atom"
 _ = require "underscore-plus"
 
 Keys =
@@ -49,6 +49,8 @@ class SimpleSelectListView extends View
       view = @list.find "li:last"
     @selectItemView view
 
+    return false
+
   ###
    * Selects the next item view
    * @private
@@ -58,6 +60,8 @@ class SimpleSelectListView extends View
     unless view.length
       view = @list.find "li:first"
     @selectItemView view
+
+    return false
 
   ###
    * Sets the items, displays the list
@@ -159,6 +163,20 @@ class SimpleSelectListView extends View
 
     @selectItemView @list.find "li:first"
 
+  ###
+   * Creates a view for the given item
+   * @return {jQuery}
+   * @private
+  ###
+  viewForItem: ({word}) ->
+    $$ ->
+      @li =>
+        @span word
+
+  ###
+   * Clears the list, detaches the element
+   * @private
+  ###
   cancel: ->
     @list.empty()
     @detach()

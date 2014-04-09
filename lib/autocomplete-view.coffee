@@ -1,12 +1,11 @@
+{Editor, $, Range, Point, SelectListView}  = require "atom"
 _ = require "underscore-plus"
 path = require "path"
 minimatch = require "minimatch"
 SimpleSelectListView = require "./simple-select-list-view"
-{Editor, $, $$, Range, Point, SelectListView}  = require "atom"
-
-console.log require "atom"
 fuzzaldrin = require "fuzzaldrin"
 Perf = require "./perf"
+Utils = require "./utils"
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView
@@ -18,18 +17,27 @@ class AutocompleteView extends SimpleSelectListView
   debug: false
   lastConfirmedWord: null
 
+  ###
+   * Makes sure we're listening to editor and buffer events, sets
+   * the current buffer
+   * @param  {EditorView} @editorView
+   * @private
+  ###
   initialize: (@editorView) ->
     super
-    @addClass('autocomplete popover-list')
-    {@editor} = @editorView
 
+    {@editor} = @editorView
     return if @currentFileBlacklisted()
 
+    @addClass "autocomplete popover-list"
+
     @handleEvents()
-    @setCurrentBuffer(@editor.getBuffer())
+    @setCurrentBuffer @editor.getBuffer()
 
   ###
    * Checks whether the current file is blacklisted
+   * @return {Boolean}
+   * @private
   ###
   currentFileBlacklisted: ->
     blacklist = (atom.config.get("autocomplete-plus.fileBlacklist") or "")
@@ -44,15 +52,8 @@ class AutocompleteView extends SimpleSelectListView
     return false
 
   ###
-   * Creates a view for the given item
-  ###
-  viewForItem: ({word}) ->
-    $$ ->
-      @li =>
-        @span word
-
-  ###
    * Handles editor events
+   * @private
   ###
   handleEvents: ->
     # Make sure we don't scroll in the editor view when scrolling
@@ -71,64 +72,39 @@ class AutocompleteView extends SimpleSelectListView
     @editor.on 'cursor-moved', @cursorMoved
 
   ###
-   * Return false so that the events don't bubble up to the editor
-  ###
-  selectNextItemView: ->
-    super
-    false
-
-  ###
-   * Return false so that the events don't bubble up to the editor
-  ###
-  selectPreviousItemView: ->
-    super
-    false
-
-  ###
-   * Don't really know what that does...
+   * Finds autocompletions in the current syntax scope (e.g. css values)
+   * @return {Array}
+   * @private
   ###
   getCompletionsForCursorScope: ->
-    cursorScope = @editor.scopesForBufferPosition(@editor.getCursorBufferPosition())
-    completions = atom.syntax.propertiesForScope(cursorScope, 'editor.completions')
-    completions = completions.map (properties) -> _.valueForKeyPath(properties, 'editor.completions')
-    _.uniq(_.flatten(completions))
+    cursorScope = @editor.scopesForBufferPosition @editor.getCursorBufferPosition()
+    completions = atom.syntax.propertiesForScope cursorScope, "editor.completions"
+    completions = completions.map (properties) -> _.valueForKeyPath properties, "editor.completions"
+    return Utils.unique _.flatten(completions)
 
   ###
    * Generates the word list from the editor buffer(s)
   ###
   buildWordList: ->
-    wordHash = {}
-    if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
+    # Abuse the Hash as a Set
+    wordList = []
+
+    # Do we want autocompletions from all open buffers?
+    if atom.config.get "autocomplete-plus.includeCompletionsFromAllBuffers"
       buffers = atom.project.getBuffers()
     else
       buffers = [@currentBuffer]
-    matches = []
 
+    # Check how long the word list building took
     p = new Perf "Building word list", {@debug}
     p.start()
 
+    # Collect words from all buffers using the regular expression
+    matches = []
     matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
 
-    # Uniqueness workaround
-    words = _.flatten(matches)
-    for word in words
-      wordHash[word] ?= true
-    wordList = Object.keys(wordHash)
-
-    # We can't set the value for the following keys.
-    # Check whether they're in the `words` variable
-    # and add them to `wordList`
-    objectKeyBlacklist = [
-      'toString',
-      'toLocaleString',
-      'valueOf',
-      'hasOwnProperty',
-      'isPrototypeOf',
-      'propertyIsEnumerable',
-      'constructor'
-    ]
-    for word in objectKeyBlacklist when word in words
-      wordList.push word
+    wordList = _.flatten matches
+    wordList = Utils.unique wordList
     @wordList = wordList
 
     p.stop()
@@ -310,7 +286,7 @@ class AutocompleteView extends SimpleSelectListView
         widestCompletion = Math.max(widestCompletion, $(this).outerWidth())
 
       @list.width widestCompletion
-      @width(@list.outerWidth())
+      @width @list.outerWidth()
 
   ###
    * Updates the list's position when populating results

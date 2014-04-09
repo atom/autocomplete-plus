@@ -257,3 +257,17 @@ describe "Autocomplete", ->
         expect(autocomplete.list.find("li:eq(1)")).toHaveText "outline-color"
         expect(autocomplete.list.find("li:eq(2)")).toHaveText "outline-width"
         expect(autocomplete.list.find("li:eq(3)")).toHaveText "outline-style"
+
+    describe "File blacklist", ->
+      beforeEach ->
+        atom.workspaceView = new WorkspaceView
+        editorView = new EditorView editor: atom.project.openSync("blacklisted.md")
+        {editor} = editorView
+        autocomplete = new AutocompleteView editorView
+
+      it "should not show autocompletion for files that match the blacklist", ->
+        editorView.attachToDom()
+
+        editor.insertText "a"
+
+        expect(editorView.find(".autocomplete")).not.toExist()

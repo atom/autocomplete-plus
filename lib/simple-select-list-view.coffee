@@ -15,21 +15,17 @@ class SimpleSelectListView extends View
       @ol class: "list-group", outlet: "list"
 
   ###
-   * Overrides default initialization
+   * Listens to events, delegates them to instance methods
+   * @private
   ###
   initialize: ->
-    @on "core:move-up", (e) =>
-      @selectPreviousItemView()
+    # Core events for keyboard handling
+    @on "core:move-up", (e) => @selectPreviousItemView()
+    @on "core:move-down", => @selectNextItemView()
+    @on "core:confirm", => @confirmSelection()
+    @on "core:cancel", => @cancel()
 
-    @on "core:move-down", =>
-      @selectNextItemView()
-
-    @on "core:confirm", =>
-      @confirmSelection()
-
-    @on "core:cancel", =>
-      @cancel()
-
+    # List mouse events
     @list.on "mousedown", "li", (e) =>
       e.preventDefault()
       e.stopPropagation()
@@ -43,24 +39,40 @@ class SimpleSelectListView extends View
       if $(e.target).closest("li").hasClass "selected"
         @confirmSelection()
 
-  setMaxItems: (@maxItems) -> return
-
-  setItems: (items=[]) ->
-    @items = items
-    @populateList()
-
+  ###
+   * Selects the previous item view
+   * @private
+  ###
   selectPreviousItemView: ->
     view = @getSelectedItemView().prev()
     unless view.length
       view = @list.find "li:last"
     @selectItemView view
 
+  ###
+   * Selects the next item view
+   * @private
+  ###
   selectNextItemView: ->
     view = @getSelectedItemView().next()
     unless view.length
       view = @list.find "li:first"
     @selectItemView view
 
+  ###
+   * Sets the items, displays the list
+   * @param {Array} items
+   * @private
+  ###
+  setItems: (items=[]) ->
+    @items = items
+    @populateList()
+
+  ###
+   * Unselects all views, selects the given view
+   * @param  {jQuery} view
+   * @private
+  ###
   selectItemView: (view) ->
     return unless view.length
 
@@ -68,6 +80,11 @@ class SimpleSelectListView extends View
     view.addClass "selected"
     @scrollToItemView view
 
+  ###
+   * Sets the scroll position to match the given view's position
+   * @param  {jQuery} view
+   * @private
+  ###
   scrollToItemView: (view) ->
     scrollTop = @list.scrollTop()
     desiredTop = view.position().top + scrollTop
@@ -78,12 +95,27 @@ class SimpleSelectListView extends View
     else
       @list.scrollBottom desiredBottom
 
+  ###
+   * Returns the currently selected item view
+   * @return {jQuery}
+   * @private
+  ###
   getSelectedItemView: ->
     @list.find "li.selected"
 
+  ###
+   * Returns the currently selected item (NOT the view)
+   * @return {Object}
+   * @private
+  ###
   getSelectedItem: ->
     @getSelectedItemView().data "select-list-item"
 
+  ###*
+   * Confirms the currently selected item or cancels the list view
+   * if no item has been selected
+   * @private
+  ###
   confirmSelection: ->
     item = @getSelectedItem()
     if item?
@@ -91,6 +123,10 @@ class SimpleSelectListView extends View
     else
       @cancel()
 
+  ###
+   * Focuses the hidden input, starts listening to keyboard events
+   * @private
+  ###
   setActive: ->
     @hiddenInput.focus()
 
@@ -104,9 +140,13 @@ class SimpleSelectListView extends View
           when Keys.Escape
             @trigger "core:cancel"
 
-        if e.keyCode in _.values(Keys)
+        if e.keyCode in _.values Keys
           return false
 
+  ###
+   * Re-builds the list with the current items
+   * @private
+  ###
   populateList: ->
     return unless @items?
 

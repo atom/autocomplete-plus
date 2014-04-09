@@ -1,5 +1,6 @@
 require "./spec-helper"
 {$, EditorView, WorkspaceView} = require 'atom'
+_ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 
@@ -242,10 +243,14 @@ describe "Autocomplete", ->
 
         cssEditorView.attachToDom()
         cssEditor.moveCursorToEndOfLine()
-        cssEditor.insertText " out"
+        cssEditor.insertText "o"
+        cssEditor.insertText "u"
+        cssEditor.insertText "t"
 
-        expect(autocomplete.list.find("li").length).toBe 4
+        expect(cssEditorView.find(".autocomplete")).toExist()
+
+        expect(autocomplete.list.find("li").length).toBe 10
         expect(autocomplete.list.find("li:eq(0)")).toHaveText "outline"
         expect(autocomplete.list.find("li:eq(1)")).toHaveText "outline-color"
-        expect(autocomplete.list.find("li:eq(2)")).toHaveText "outline-style"
-        expect(autocomplete.list.find("li:eq(3)")).toHaveText "outline-width"
+        expect(autocomplete.list.find("li:eq(2)")).toHaveText "outline-width"
+        expect(autocomplete.list.find("li:eq(3)")).toHaveText "outline-style"

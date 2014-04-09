@@ -107,7 +107,6 @@ class AutocompleteView extends SimpleSelectListView
     p.start()
 
     matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
-    matches.push(@getCompletionsForCursorScope())
 
     # Uniqueness workaround
     words = _.flatten(matches)
@@ -215,7 +214,9 @@ class AutocompleteView extends SimpleSelectListView
     p = new Perf "Finding matches for '#{prefix}'", {@debug}
     p.start()
 
-    words = fuzzaldrin.filter @wordList, prefix
+    # Merge the scope specific words into the default word list
+    wordList = _.union @wordList, @getCompletionsForCursorScope()
+    words = fuzzaldrin.filter wordList, prefix
 
     results = for word in words when word isnt prefix
       {prefix, word}

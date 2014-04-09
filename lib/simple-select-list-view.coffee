@@ -115,7 +115,7 @@ class SimpleSelectListView extends View
   getSelectedItem: ->
     @getSelectedItemView().data "select-list-item"
 
-  ###*
+  ###
    * Confirms the currently selected item or cancels the list view
    * if no item has been selected
    * @private
@@ -132,6 +132,7 @@ class SimpleSelectListView extends View
    * @private
   ###
   setActive: ->
+    @active = true
     @hiddenInput.focus()
 
     unless @eventsAttached
@@ -178,6 +179,9 @@ class SimpleSelectListView extends View
    * @private
   ###
   cancel: ->
+    return unless @active
+
+    @active = false
     @list.empty()
     @detach()
 

@@ -1,4 +1,4 @@
-{$, SelectListView, EditorView} = require "atom"
+{$, View} = require "atom"
 _ = require "underscore-plus"
 
 Keys =
@@ -6,16 +6,12 @@ Keys =
   Enter: 13
   Tab: 9
 
-class SimpleSelectListView extends SelectListView
+class SimpleSelectListView extends View
   eventsAttached: false
   maxItems: 10
   @content: ->
     @div class: "select-list", =>
-      @input class: "fake-input", outlet: "fakeInput"
-      @div class: "error-message", outlet: "error"
-      @div class: "loading", outlet: "loadingArea", =>
-        @span class: "loading-message", outlet: "loading"
-        @span class: "badge", outlet: "loadingBadge"
+      @input class: "hidden-input", outlet: "hiddenInput"
       @ol class: "list-group", outlet: "list"
 
   ###
@@ -47,13 +43,61 @@ class SimpleSelectListView extends SelectListView
       if $(e.target).closest("li").hasClass "selected"
         @confirmSelection()
 
+  setMaxItems: (@maxItems) -> return
+
+  setItems: (items=[]) ->
+    @items = items
+    @populateList()
+
+  selectPreviousItemView: ->
+    view = @getSelectedItemView().prev()
+    unless view.length
+      view = @list.find "li:last"
+    @selectItemView view
+
+  selectNextItemView: ->
+    view = @getSelectedItemView().next()
+    unless view.length
+      view = @list.find "li:first"
+    @selectItemView view
+
+  selectItemView: (view) ->
+    return unless view.length
+
+    @list.find(".selected").removeClass "selected"
+    view.addClass "selected"
+    @scrollToItemView view
+
+  scrollToItemView: (view) ->
+    scrollTop = @list.scrollTop()
+    desiredTop = view.position().top + scrollTop
+    desiredBottom = desiredTop + view.outerHeight()
+
+    if desiredTop < scrollTop
+      @list.scrollTop desiredTop
+    else
+      @list.scrollBottom desiredBottom
+
+  getSelectedItemView: ->
+    @list.find "li.selected"
+
+  getSelectedItem: ->
+    @getSelectedItemView().data "select-list-item"
+
+  confirmSelection: ->
+    item = @getSelectedItem()
+    if item?
+      @confirmed item
+    else
+      @cancel()
+
   setActive: ->
-    @fakeInput.focus()
+    @hiddenInput.focus()
 
     unless @eventsAttached
       @eventsAttached = true
 
-      @fakeInput.keydown (e) =>
+      @hiddenInput.keydown (e) =>
         switch e.keyCode
           when Keys.Enter, Keys.Tab
             @trigger "core:confirm"
@@ -67,7 +111,6 @@ class SimpleSelectListView extends SelectListView
     return unless @items?
 
     @list.empty()
-    @setError null
     for i in [0...Math.min(@items.length, @maxItems)]
       item = @items[i]
       itemView = @viewForItem item
@@ -78,9 +121,6 @@ class SimpleSelectListView extends SelectListView
 
   cancel: ->
     @list.empty()
-    @cancelling = true
     @detach()
-    @cancelling = false
-
 
 module.exports = SimpleSelectListView

@@ -98,11 +98,11 @@ describe "Autocomplete", ->
           autocomplete.trigger "core:confirm"
 
           # Check for result
-          expect(editor.getBuffer().getLastLine()).toEqual "function};"
+          expect(editor.getBuffer().getLastLine()).toEqual "function"
 
           # Check for cursor position
           bufferPosition = editor.getCursorBufferPosition()
-          expect(bufferPosition.row).toEqual 12
+          expect(bufferPosition.row).toEqual 13
           expect(bufferPosition.column).toEqual 8
 
         it "hides the suggestions", ->
@@ -177,7 +177,7 @@ describe "Autocomplete", ->
         item.mouseup()
 
         expect(editorView.find(".autocomplete")).not.toExist()
-        expect(editor.getBuffer().getLastLine()).toEqual "#{item.text()}};"
+        expect(editor.getBuffer().getLastLine()).toEqual item.text()
 
     describe "Positioning", ->
       beforeEach ->

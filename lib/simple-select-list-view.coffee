@@ -7,7 +7,6 @@ Keys =
   Tab: 9
 
 class SimpleSelectListView extends View
-  eventsAttached: false
   maxItems: 10
   @content: ->
     @div class: "select-list popover-list", =>
@@ -134,19 +133,6 @@ class SimpleSelectListView extends View
   setActive: ->
     @active = true
     @hiddenInput.focus()
-
-    unless @eventsAttached
-      @eventsAttached = true
-
-      @hiddenInput.keydown (e) =>
-        switch e.keyCode
-          when Keys.Enter, Keys.Tab
-            @trigger "core:confirm"
-          when Keys.Escape
-            @trigger "core:cancel"
-
-        if e.keyCode in _.values Keys
-          return false
 
   ###
    * Re-builds the list with the current items

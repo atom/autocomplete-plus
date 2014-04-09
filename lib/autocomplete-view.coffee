@@ -13,7 +13,6 @@ class AutocompleteView extends SimpleSelectListView
   wordList: null
   wordRegex: /\b\w*[a-zA-Z_]\w*\b/g
   originalCursorPosition: null
-  aboveCursor: false
   debug: false
   lastConfirmedWord: null
 
@@ -228,15 +227,27 @@ class AutocompleteView extends SimpleSelectListView
   ###
   setPosition: ->
     { left, top } = @editorView.pixelPositionForScreenPosition @editor.getCursorScreenPosition()
-    height = @outerHeight()
-    potentialTop = top + @editorView.lineHeight
-    potentialBottom = potentialTop - @editorView.scrollTop() + height
+    cursorLeft = left
+    cursorTop = top
 
-    if @aboveCursor or potentialBottom > @editorView.outerHeight()
-      @aboveCursor = true
-      @css left: left, top: top - height, bottom: "inherit"
+    # The top position if we would put it below the current line
+    belowPosition = cursorTop + @editorView.lineHeight
+
+    # The top position of the lower edge if we would put it below the current line
+    belowLowerPosition = belowPosition + @outerHeight()
+
+    # The position if we would put it above the line
+    abovePosition = cursorTop
+
+    if belowLowerPosition > @editorView.outerHeight()
+      # We can't put it below - put it above. Using CSS transforms to
+      # move it 100% up so that the lower edge is above the current line
+      @css left: cursorLeft, top: abovePosition
+      @css "-webkit-transform", "translateY(-100%)"
     else
-      @css left: left, top: potentialTop, bottom: "inherit"
+      # We can put it below, remove possible previous CSS transforms
+      @css left: cursorLeft, top: belowPosition
+      @css "-webkit-transform", ""
 
   ###
    * Replaces the current prefix with the given match

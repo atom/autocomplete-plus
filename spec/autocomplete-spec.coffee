@@ -220,6 +220,13 @@ describe "Autocomplete", ->
         editorView.trigger "core:move-up"
         expect(editor.getCursorBufferPosition().row).toBe 0
 
+    it "adds words to the wordlist after they have been written", ->
+      editorView.attachToDom()
+      editor.insertText "somethingNew"
+      editor.insertText " "
+
+      expect(autocomplete.wordList.indexOf("somethingNew")).not.toEqual(-1)
+
     it "sets the width of the view to be wide enough to contain the longest completion without scrolling (+ 15 pixels)", ->
       editorView.attachToDom()
       editor.insertText('thisIsAReallyReallyReallyLongCompletion ')

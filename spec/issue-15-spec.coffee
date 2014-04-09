@@ -6,7 +6,7 @@ Autocomplete = require '../lib/autocomplete'
 describe "Autocomplete", ->
   [activationPromise, autocomplete, editorView, editor] = []
 
-  describe "Issue 11", ->
+  describe "Issue 15", ->
     beforeEach ->
       # Create a fake workspace and open a sample file
       atom.workspaceView = new WorkspaceView
@@ -23,7 +23,7 @@ describe "Autocomplete", ->
       {editor} = editorView
       autocomplete = new AutocompleteView editorView
 
-    it "does not trigger autocompletion when pasting", ->
+    it "does dismiss autocompletion when saving", ->
 
       waitsForPromise ->
         activationPromise
@@ -34,6 +34,10 @@ describe "Autocomplete", ->
 
         # Trigger an autocompletion
         editor.moveCursorToBottom()
-        editor.insertText "red"
+        editor.insertText "r"
+
+        expect(editorView.find(".autocomplete")).toExist()
+
+        editor.saveAs("spec/tmp/issue-11.js")
 
         expect(editorView.find(".autocomplete")).not.toExist()

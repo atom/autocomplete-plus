@@ -10,7 +10,7 @@ class SimpleSelectListView extends View
   eventsAttached: false
   maxItems: 10
   @content: ->
-    @div class: "select-list", =>
+    @div class: "select-list popover-list", =>
       @input class: "hidden-input", outlet: "hiddenInput"
       @ol class: "list-group", outlet: "list"
 

@@ -29,7 +29,7 @@ class AutocompleteView extends SimpleSelectListView
     {@editor} = @editorView
     return if @currentFileBlacklisted()
 
-    @addClass "autocomplete popover-list"
+    @addClass "autocomplete-plus"
 
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()

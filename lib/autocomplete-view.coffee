@@ -31,7 +31,7 @@ class AutocompleteView extends SimpleSelectListView
    * Checks whether the current file is blacklisted
   ###
   currentFileBlacklisted: ->
-    blacklist = atom.config.get("autocomplete-plus.fileBlacklist")
+    blacklist = (atom.config.get("autocomplete-plus.fileBlacklist") or "")
       .split ","
       .map (s) -> s.trim()
 
@@ -280,7 +280,7 @@ class AutocompleteView extends SimpleSelectListView
     if newLine
       row--
 
-    # The user presed enter, check everything until the end
+    # The user pressed enter, check everything until the end
     if newLine
       maxColumn = @editor.lineLengthForBufferRow row
     else
@@ -307,7 +307,7 @@ class AutocompleteView extends SimpleSelectListView
       @list.find('span').each ->
         widestCompletion = Math.max(widestCompletion, $(this).outerWidth())
 
-      @list.width(widestCompletion + 15)
+      @list.width widestCompletion
       @width(@list.outerWidth())
 
   ###

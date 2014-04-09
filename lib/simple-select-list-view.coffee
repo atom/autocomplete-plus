@@ -28,6 +28,25 @@ class SimpleSelectListView extends SelectListView
     @on "core:move-down", =>
       @selectNextItemView()
 
+    @on "core:confirm", =>
+      @confirmSelection()
+
+    @on "core:cancel", =>
+      @cancel()
+
+    @list.on "mousedown", "li", (e) =>
+      e.preventDefault()
+      e.stopPropagation()
+
+      @selectItemView $(e.target).closest("li")
+
+    @list.on "mouseup", "li", (e) =>
+      e.preventDefault()
+      e.stopPropagation()
+
+      if $(e.target).closest("li").hasClass "selected"
+        @confirmSelection()
+
   setActive: ->
     @fakeInput.focus()
 
@@ -37,9 +56,9 @@ class SimpleSelectListView extends SelectListView
       @fakeInput.keydown (e) =>
         switch e.keyCode
           when Keys.Enter, Keys.Tab
-            @confirmSelection()
+            @trigger "core:confirm"
           when Keys.Escape
-            @cancel()
+            @trigger "core:cancel"
 
         if e.keyCode in _.values(Keys)
           return false

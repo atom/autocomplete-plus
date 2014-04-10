@@ -241,6 +241,7 @@ describe "Autocomplete", ->
           editorView.trigger "core:move-up"
           expect(editor.getCursorBufferPosition().row).toBe 0
 
+      # TODO: Move this to a separate fuzzyprovider spec
       it "adds words to the wordlist after they have been written", ->
         editorView.attachToDom()
         editor.insertText "somethingNew"

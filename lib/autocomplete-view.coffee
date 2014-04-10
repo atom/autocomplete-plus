@@ -59,10 +59,6 @@ class AutocompleteView extends SimpleSelectListView
     # in the list
     @list.on "mousewheel", (event) -> event.stopPropagation()
 
-    # Listen to `contents-modified` event when live completion is disabled
-    unless atom.config.get "autocomplete-plus.liveCompletion"
-      @editor.on "contents-modified", @contentsModified
-
     # Is this the event for switching tabs? Dunno...
     @editor.on "title-changed-subscription-removed", @cancel
 
@@ -134,16 +130,11 @@ class AutocompleteView extends SimpleSelectListView
     @editorView.focus()
 
   ###
-   * Gets called when the content has been modified. Sets the list's items,
-   * appends and positions the list view
+   * Finds suggestions for the current prefix, sets the list items,
+   * positions the overlay and shows it
    * @private
   ###
-  contentsModified: =>
-    if @active
-      @detach()
-      @list.empty()
-      @editorView.focus()
-
+  runAutocompletion: =>
     selection = @editor.getSelection()
     prefix = @prefixOfSelection selection
 
@@ -164,6 +155,22 @@ class AutocompleteView extends SimpleSelectListView
     @setPosition()
 
     @setActive()
+
+  ###
+   * Gets called when the content has been modified
+   * @private
+  ###
+  contentsModified: =>
+    if @active
+      @detach()
+      @list.empty()
+      @editorView.focus()
+
+    delay = parseInt(atom.config.get "autocomplete-plus.completionDelay")
+    if @delayTimeout
+      clearTimeout @delayTimeout
+
+    @delayTimeout = setTimeout @runAutocompletion, delay
 
   ###
    * Gets called when the cursor has moved. Cancels the autocompletion if
@@ -193,7 +200,8 @@ class AutocompleteView extends SimpleSelectListView
   ###
   onChanged: (e) =>
     if e.newText in ["\n", " "]
-      @addLastWordToList e.newText is "\n"
+      newLine = e.newText is "\n"
+      @addLastWordToList newLine
 
     if e.newText.length is 1
       @contentsModified()
@@ -354,9 +362,7 @@ class AutocompleteView extends SimpleSelectListView
   setCurrentBuffer: (@currentBuffer) ->
     @buildWordList()
     @currentBuffer.on "saved", @onSaved
-
-    if atom.config.get "autocomplete-plus.liveCompletion"
-      @currentBuffer.on "changed", @onChanged
+    @currentBuffer.on "changed", @onChanged
 
   ###
    * Adds the last typed word to the wordList

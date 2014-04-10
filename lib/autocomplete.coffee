@@ -3,9 +3,9 @@ AutocompleteView = require "./autocomplete-view"
 
 module.exports =
   configDefaults:
-    liveCompletion: false
     includeCompletionsFromAllBuffers: false
     fileBlacklist: ".*, *.md"
+    completionDelay: 100
 
   autocompleteViews: []
   editorSubscription: null

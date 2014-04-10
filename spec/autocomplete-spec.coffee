@@ -5,7 +5,7 @@ AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 
 describe "Autocomplete", ->
-  [activationPromise] = []
+  [activationPromise, completionDelay] = []
 
   beforeEach ->
     # Create a fake workspace and open a sample file
@@ -15,6 +15,11 @@ describe "Autocomplete", ->
 
     # Set to live completion
     atom.config.set "autocomplete-plus.liveCompletion", true
+
+    # Set the completion delay
+    completionDelay = 100
+    atom.config.set "autocomplete-plus.completionDelay", completionDelay
+    completionDelay += 100 # Rendering delay
 
     # Spy on AutocompleteView#initialize
     spyOn(AutocompleteView.prototype, "initialize").andCallThrough()
@@ -35,6 +40,8 @@ describe "Autocomplete", ->
 
   describe "@deactivate()", ->
     it "removes all autocomplete views", ->
+      [editorView] = []
+
       waitsForPromise ->
         activationPromise
 
@@ -46,6 +53,9 @@ describe "Autocomplete", ->
         # Trigger an autocompletion
         editor.moveCursorToBottom()
         editor.insertText("A")
+
+        advanceClock completionDelay
+
         expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Deactivate the package
@@ -68,6 +78,7 @@ describe "Autocomplete", ->
 
         # Trigger an autocompletion
         triggerAutocompletion editor
+        advanceClock completionDelay
         expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Check suggestions
@@ -83,6 +94,7 @@ describe "Autocomplete", ->
         # Trigger an autocompletion
         editor.moveCursorToBottom()
         editor.insertText("x")
+        advanceClock completionDelay
         expect(editorView.find(".autocomplete-plus")).not.toExist()
 
     describe "accepting suggestions", ->
@@ -93,6 +105,7 @@ describe "Autocomplete", ->
 
           # Trigger an autocompletion
           triggerAutocompletion editor
+          advanceClock completionDelay
 
           # Accept suggestion
           autocomplete.trigger "autocomplete-plus:confirm"
@@ -113,6 +126,7 @@ describe "Autocomplete", ->
           editor.moveCursorToBottom()
           editor.moveCursorToBeginningOfLine()
           editor.insertText("f")
+          advanceClock completionDelay
           expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Accept suggestion
@@ -126,6 +140,7 @@ describe "Autocomplete", ->
 
         # Trigger an autocompletion
         triggerAutocompletion editor
+        advanceClock completionDelay
 
         expect(editorView.find(".autocomplete-plus li:eq(0)")).toHaveClass("selected")
         expect(editorView.find(".autocomplete-plus li:eq(1)")).not.toHaveClass("selected")
@@ -146,6 +161,7 @@ describe "Autocomplete", ->
 
         # Trigger an autocompletion
         triggerAutocompletion editor
+        advanceClock completionDelay
 
         expect(editorView.find(".autocomplete-plus li:eq(0)")).toHaveClass("selected")
         expect(editorView.find(".autocomplete-plus li:eq(1)")).not.toHaveClass("selected")
@@ -166,6 +182,7 @@ describe "Autocomplete", ->
 
         # Trigger an autocompletion
         triggerAutocompletion editor
+        advanceClock completionDelay
 
         # Get the second item
         item = editorView.find(".autocomplete-plus li:eq(1)")
@@ -189,6 +206,7 @@ describe "Autocomplete", ->
         it "adds the autocomplete view to the editor below the cursor", ->
           editor.setCursorBufferPosition [1, 2]
           editor.insertText "f"
+          advanceClock completionDelay
           expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Check position
@@ -201,6 +219,7 @@ describe "Autocomplete", ->
           # Trigger autocompletion
           editor.setCursorScreenPosition [11, 0]
           editor.insertText "t"
+          advanceClock completionDelay
           expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Check position
@@ -233,6 +252,7 @@ describe "Autocomplete", ->
       editor.moveCursorToBottom()
       editor.insertNewline()
       editor.insertText "t"
+      advanceClock completionDelay
       expect(autocomplete.list.prop('scrollWidth') + 15).toBe autocomplete.list.width()
 
     it "includes completions for the scope's completion preferences", ->
@@ -249,6 +269,8 @@ describe "Autocomplete", ->
         cssEditor.insertText "o"
         cssEditor.insertText "u"
         cssEditor.insertText "t"
+
+        advanceClock completionDelay
 
         expect(cssEditorView.find(".autocomplete-plus")).toExist()
 
@@ -269,5 +291,6 @@ describe "Autocomplete", ->
         editorView.attachToDom()
 
         editor.insertText "a"
+        advanceClock completionDelay
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()

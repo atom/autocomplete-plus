@@ -4,7 +4,7 @@ AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
-  [activationPromise, autocomplete, editorView, editor] = []
+  [activationPromise, autocomplete, editorView, editor, completionDelay] = []
 
   describe "Issue 23 and 25", ->
     beforeEach ->
@@ -15,6 +15,11 @@ describe "Autocomplete", ->
 
       # Set to live completion
       atom.config.set "autocomplete-plus.liveCompletion", true
+
+      # Set the completion delay
+      completionDelay = 100
+      atom.config.set "autocomplete-plus.completionDelay", completionDelay
+      completionDelay += 100 # Rendering delay
 
       # Activate the package
       activationPromise = atom.packages.activatePackage "autocomplete-plus"
@@ -35,6 +40,8 @@ describe "Autocomplete", ->
         # Trigger an autocompletion
         editor.moveCursorToBottom()
         editor.insertText c for c in "red"
+
+        advanceClock completionDelay
 
         expect(editorView.find(".autocomplete-plus")).toExist()
 

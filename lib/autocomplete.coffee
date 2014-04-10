@@ -1,5 +1,6 @@
 _ = require "underscore-plus"
 AutocompleteView = require "./autocomplete-view"
+Provider = require "./provider"
 
 module.exports =
   configDefaults:
@@ -44,3 +45,5 @@ module.exports =
     @editorSubscription = null
     @autocompleteViews.forEach (autocompleteView) -> autocompleteView.remove()
     @autocompleteViews = []
+
+  Provider: Provider

@@ -3,18 +3,14 @@ _ = require "underscore-plus"
 path = require "path"
 minimatch = require "minimatch"
 SimpleSelectListView = require "./simple-select-list-view"
-fuzzaldrin = require "fuzzaldrin"
+FuzzyProvider = require "./fuzzy-provider"
 Perf = require "./perf"
 Utils = require "./utils"
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView
   currentBuffer: null
-  wordList: null
-  wordRegex: /\b\w*[a-zA-Z_]\w*\b/g
-  originalCursorPosition: null
   debug: false
-  lastConfirmedWord: null
 
   ###
    * Makes sure we're listening to editor and buffer events, sets
@@ -23,12 +19,16 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   initialize: (@editorView) ->
+    {@editor} = @editorView
+
     super
 
-    {@editor} = @editorView
+    @addClass "autocomplete-plus"
+    @providers = []
+
     return if @currentFileBlacklisted()
 
-    @addClass "autocomplete-plus"
+    @registerProvider new FuzzyProvider(@editorView)
 
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
@@ -69,44 +69,12 @@ class AutocompleteView extends SimpleSelectListView
     @editor.on "cursor-moved", @cursorMoved
 
   ###
-   * Finds autocompletions in the current syntax scope (e.g. css values)
-   * @return {Array}
+   * Registers the given provider
+   * @param  {Provider} provider
    * @private
   ###
-  getCompletionsForCursorScope: ->
-    cursorScope = @editor.scopesForBufferPosition @editor.getCursorBufferPosition()
-    completions = atom.syntax.propertiesForScope cursorScope, "editor.completions"
-    completions = completions.map (properties) -> _.valueForKeyPath properties, "editor.completions"
-    return Utils.unique _.flatten(completions)
-
-  ###
-   * Generates the word list from the editor buffer(s)
-   * @private
-  ###
-  buildWordList: ->
-    # Abuse the Hash as a Set
-    wordList = []
-
-    # Do we want autocompletions from all open buffers?
-    if atom.config.get "autocomplete-plus.includeCompletionsFromAllBuffers"
-      buffers = atom.project.getBuffers()
-    else
-      buffers = [@currentBuffer]
-
-    # Check how long the word list building took
-    p = new Perf "Building word list", {@debug}
-    p.start()
-
-    # Collect words from all buffers using the regular expression
-    matches = []
-    matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
-
-    # Flatten the matches, make it an unique array
-    wordList = _.flatten matches
-    wordList = Utils.unique wordList
-    @wordList = wordList
-
-    p.stop()
+  registerProvider: (provider) ->
+    @providers.push provider
 
   ###
    * Gets called when the user successfully confirms a suggestion
@@ -142,16 +110,17 @@ class AutocompleteView extends SimpleSelectListView
       @list.empty()
       @editorView.focus()
 
-    selection = @editor.getSelection()
-    prefix = @prefixOfSelection selection
+    # Iterate over all providers, ask them to build word lists
+    suggestions = []
+    for provider in @providers.slice().reverse()
+      providerSuggestions = provider.buildSuggestions()
+      continue unless providerSuggestions?.length
 
-    # Stop completion if the word was already confirmed
-    return if prefix is @lastConfirmedWord
-
-    # No prefix? Don't autocomplete!
-    return unless prefix.length
-
-    suggestions = @findMatchesForWord prefix
+      if provider.exclusive
+        suggestions = providerSuggestions
+        break
+      else
+        suggestions = suggestions.concat providerSuggestions
 
     # No suggestions? Don't autocomplete!
     return unless suggestions.length
@@ -189,46 +158,19 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   onSaved: =>
-    @buildWordList()
     @cancel()
 
   ###
-   * Gets called when the buffer's text has been changed. Checks if the user
-   * has potentially finished a word and adds the new word to the word list.
    * Cancels the autocompletion if the user entered more than one character
    * with a single keystroke. (= pasting)
    * @param  {Event} e
    * @private
   ###
   onChanged: (e) =>
-    if e.newText in ["\n", " "]
-      newLine = e.newText is "\n"
-      @addLastWordToList newLine
-
     if e.newText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
       @contentsModified()
     else
       @cancel()
-
-  ###
-   * Finds possible matches for the given string / prefix
-   * @param  {String} prefix
-   * @return {Array}
-   * @private
-  ###
-  findMatchesForWord: (prefix) ->
-    p = new Perf "Finding matches for '#{prefix}'", {@debug}
-    p.start()
-
-    # Merge the scope specific words into the default word list
-    wordList = @wordList.concat @getCompletionsForCursorScope()
-    words = fuzzaldrin.filter wordList, prefix
-
-    results = for word in words when word isnt prefix
-      {prefix, word}
-
-    p.stop()
-    return results
 
   ###
    * Repositions the list view. Checks for boundaries and moves the view
@@ -279,54 +221,6 @@ class AutocompleteView extends SimpleSelectListView
     @editor.setSelectedBufferRange [startPosition, [startPosition.row, startPosition.column + suffixLength]]
 
   ###
-   * Finds and returns the content before the current cursor position
-   * @return {String}
-   * @private
-  ###
-  prefixOfSelection: (selection) ->
-    selectionRange = selection.getBufferRange()
-    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineLengthForBufferRow(selectionRange.end.row)]]
-    prefix = ""
-
-    @currentBuffer.scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
-      stop() if range.start.isGreaterThan(selectionRange.end)
-
-      if range.intersectsWith(selectionRange)
-        prefixOffset = selectionRange.start.column - range.start.column
-        prefix = match[0][0...prefixOffset] if range.start.isLessThan(selectionRange.start)
-
-    return prefix
-
-  ###
-   * Finds the last typed word. If newLine is set to true, it looks
-   * for the last word in the previous line.
-   * @param {Boolean} newLine
-   * @return {String}
-   * @private
-  ###
-  lastTypedWord: (newLine) ->
-    selectionRange = @editor.getSelection().getBufferRange()
-    {row} = selectionRange.start
-
-    # The user pressed enter, check previous line
-    if newLine
-      row--
-
-    # The user pressed enter, check everything until the end
-    if newLine
-      maxColumn = @editor.lineLengthForBufferRow row
-    else
-      maxColumn = selectionRange.start.column
-
-    lineRange = [[row, 0], [row, maxColumn]]
-
-    lastWord = null
-    @currentBuffer.scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
-      lastWord = match[0]
-
-    return lastWord
-
-  ###
    * As soon as the list is in the DOM tree, it calculates the maximum width of
    * all list items and resizes the list so that all items fit
    * @param {Boolean} onDom
@@ -362,21 +256,8 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   setCurrentBuffer: (@currentBuffer) ->
-    @buildWordList()
     @currentBuffer.on "saved", @onSaved
     @currentBuffer.on "changed", @onChanged
-
-  ###
-   * Adds the last typed word to the wordList
-   * @param {Boolean} newLine
-   * @private
-  ###
-  addLastWordToList: (newLine) ->
-    lastWord = @lastTypedWord newLine
-    return unless lastWord
-
-    if @wordList.indexOf(lastWord) < 0
-      @wordList.push lastWord
 
   ###
    * Why are we doing this again...?
@@ -393,6 +274,5 @@ class AutocompleteView extends SimpleSelectListView
   dispose: ->
     @currentBuffer?.off "changed", @onChanged
     @currentBuffer?.off "saved", @onSaved
-    @editor.off "contents-modified", @contentsModified
     @editor.off "title-changed-subscription-removed", @cancel
     @editor.off "cursor-moved", @cursorMoved

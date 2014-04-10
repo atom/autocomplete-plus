@@ -39,6 +39,6 @@ describe "Autocomplete", ->
         expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Accept suggestion
-        autocomplete.trigger "core:confirm"
+        autocomplete.trigger "autocomplete-plus:confirm"
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()

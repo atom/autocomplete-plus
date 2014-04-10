@@ -95,7 +95,7 @@ describe "Autocomplete", ->
           triggerAutocompletion editor
 
           # Accept suggestion
-          autocomplete.trigger "core:confirm"
+          autocomplete.trigger "autocomplete-plus:confirm"
 
           # Check for result
           expect(editor.getBuffer().getLastLine()).toEqual "function"
@@ -116,7 +116,7 @@ describe "Autocomplete", ->
           expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Accept suggestion
-          autocomplete.trigger "core:confirm"
+          autocomplete.trigger "autocomplete-plus:confirm"
 
           expect(editorView.find(".autocomplete-plus")).not.toExist()
 

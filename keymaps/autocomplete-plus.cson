@@ -1,2 +1,2 @@
 ".autocomplete-plus input.hidden-input":
-  "tab": "core:confirm"
+  "tab": "autocomplete-plus:confirm"

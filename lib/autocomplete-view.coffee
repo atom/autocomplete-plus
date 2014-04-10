@@ -33,6 +33,8 @@ class AutocompleteView extends SimpleSelectListView
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
 
+    @subscribeToCommand @editorView, "autocomplete-plus:activate", @runAutocompletion
+
   ###
    * Checks whether the current file is blacklisted
    * @return {Boolean}
@@ -166,7 +168,7 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   contentsModified: =>
-    delay = parseInt(atom.config.get "autocomplete-plus.completionDelay")
+    delay = parseInt(atom.config.get "autocomplete-plus.autoActivationDelay")
     if @delayTimeout
       clearTimeout @delayTimeout
 
@@ -203,7 +205,7 @@ class AutocompleteView extends SimpleSelectListView
       newLine = e.newText is "\n"
       @addLastWordToList newLine
 
-    if e.newText.length is 1
+    if e.newText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
       @contentsModified()
     else
       @cancel()

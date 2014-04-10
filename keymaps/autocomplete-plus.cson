@@ -1,2 +1,5 @@
 ".autocomplete-plus input.hidden-input":
   "tab": "autocomplete-plus:confirm"
+
+".editor":
+  "ctrl-shift-space": "autocomplete-plus:activate"

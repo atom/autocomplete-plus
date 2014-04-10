@@ -5,7 +5,8 @@ module.exports =
   configDefaults:
     includeCompletionsFromAllBuffers: false
     fileBlacklist: ".*, *.md"
-    completionDelay: 100
+    enableAutoActivation: true
+    autoActivationDelay: 100
 
   autocompleteViews: []
   editorSubscription: null
@@ -14,6 +15,18 @@ module.exports =
    * Creates AutocompleteView instances for all active and future editors
   ###
   activate: ->
+    # If both autosave and autocomplete+'s auto-activation feature are enabled,
+    # disable the auto-activation
+    if atom.packages.isPackageLoaded("autosave") and
+      atom.config.get("autocomplete-plus.enableAutoActivation")
+        atom.config.set "autocomplete-plus.enableAutoActivation", false
+
+        alert """Warning from autocomplete+:
+
+        autocomplete+ is not compatible with the autosave package when the auto-activation feature is enabled. Therefore, auto-activation has been disabled.
+
+        autocomplete+ can now only be triggered using the keyboard shortcut `ctrl+space`."""
+
     @editorSubscription = atom.workspaceView.eachEditorView (editor) =>
       if editor.attached and not editor.mini
         autocompleteView = new AutocompleteView(editor)

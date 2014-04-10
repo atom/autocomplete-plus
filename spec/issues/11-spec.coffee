@@ -14,11 +14,11 @@ describe "Autocomplete", ->
       atom.workspaceView.simulateDomAttachment()
 
       # Set to live completion
-      atom.config.set "autocomplete-plus.liveCompletion", true
+      atom.config.set "autocomplete-plus.enableAutoActivation", true
 
       # Set the completion delay
       completionDelay = 100
-      atom.config.set "autocomplete-plus.completionDelay", completionDelay
+      atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
       completionDelay += 100 # Rendering delay
 
       # Activate the package

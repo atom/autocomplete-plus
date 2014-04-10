@@ -135,6 +135,11 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   runAutocompletion: =>
+    if @active
+      @detach()
+      @list.empty()
+      @editorView.focus()
+
     selection = @editor.getSelection()
     prefix = @prefixOfSelection selection
 
@@ -161,11 +166,6 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   contentsModified: =>
-    if @active
-      @detach()
-      @list.empty()
-      @editorView.focus()
-
     delay = parseInt(atom.config.get "autocomplete-plus.completionDelay")
     if @delayTimeout
       clearTimeout @delayTimeout

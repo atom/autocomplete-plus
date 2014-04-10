@@ -1,15 +1,22 @@
 0.11.0 (Apr 10 2014)
 ====================
 
-* Code has been refactored and tested
+Features
+--------
+
 * Added hotkey-activation back in (defaults to Ctrl+Shift+Space)
 * Added warning when both auto-activation and the autosave package are active
+* Added a delay option (integer) that defines when the autocompletion should happen after pressing a key
+* Confirm button is now customizable (defaults to Tab)
+
+Code stuff
+----------
+
+* Code has been refactored and tested
 * Fixed styling
 * Fixed positioning of the overlay (using CSS3 transforms)
-* Added a delay option (integer) that defines when the autocompletion should happen after pressing a key
 * Scope autocompletion words are now added to the wordlist every time autocompletion happens
 * Using the ES6 Set feature for unique arrays
-* Confirm button is now customizable (defaults to Tab)
 * Using atom's keymap feature instead of handling the keyboard input manually
 * Got rid of Atom's SelectListView, moved over to our own view class
 

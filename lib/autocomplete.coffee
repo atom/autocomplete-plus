@@ -1,6 +1,7 @@
 _ = require "underscore-plus"
 AutocompleteView = require "./autocomplete-view"
 Provider = require "./provider"
+Suggestion = require "./suggestion"
 
 module.exports =
   configDefaults:
@@ -47,3 +48,4 @@ module.exports =
     @autocompleteViews = []
 
   Provider: Provider
+  Suggestion: Suggestion

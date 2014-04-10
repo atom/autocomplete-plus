@@ -57,7 +57,6 @@ class FuzzyProvider extends Provider
   confirm: (item) ->
     return true
 
-
   # ! Private Methods
 
   ###

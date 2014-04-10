@@ -219,7 +219,7 @@ class AutocompleteView extends SimpleSelectListView
     p.start()
 
     # Merge the scope specific words into the default word list
-    wordList = _.union @wordList, @getCompletionsForCursorScope()
+    wordList = @wordList.concat @getCompletionsForCursorScope()
     words = fuzzaldrin.filter wordList, prefix
 
     results = for word in words when word isnt prefix

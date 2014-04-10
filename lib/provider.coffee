@@ -7,6 +7,7 @@
 module.exports =
 class Provider
   constructor: (@editorView) ->
+    {@editor} = editorView
     @initialize.apply this, arguments
 
   ###
@@ -24,9 +25,9 @@ class Provider
   exclusive: false
 
   ###
-   * Builds an array of suggestions for the given prefix string. If `exclusive`
-   * is set to true and this method does not return an empty array or a falsy
-   * value, the returned suggestions will be the only ones that are displayed.
+   * Gets called when the document has been changed. Returns an array with
+   * suggestions. If `exclusive` is set to true and this method returns suggestions,
+   * the suggestions will be the only ones that are displayed.
    * @return {Array}
    * @public
   ###

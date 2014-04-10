@@ -1,4 +1,5 @@
 _ = require "underscore-plus"
+Suggestion = require "./suggestion"
 Utils = require "./utils"
 fuzzaldrin = require "fuzzaldrin"
 Provider = require "./provider"
@@ -11,13 +12,53 @@ class FuzzyProvider extends Provider
   wordList: null
   debug: false
 
-  initialize: (editorView) ->
-    {@editor} = editorView
+  initialize: ->
     @buildWordList()
 
     @currentBuffer = @editor.getBuffer()
     @currentBuffer.on "saved", @onSaved
     @currentBuffer.on "changed", @onChanged
+
+  # ! Public API
+
+  ###
+   * Gets called when the document has been changed. Returns an array with
+   * suggestions. If `exclusive` is set to true and this method returns suggestions,
+   * the suggestions will be the only ones that are displayed.
+   * @return {Array}
+   * @public
+  ###
+  buildSuggestions: ->
+    selection = @editor.getSelection()
+    prefix = @prefixOfSelection selection
+
+    # Stop completion if the word was already confirmed
+    return if prefix is @lastConfirmedWord
+
+    # No prefix? Don't autocomplete!
+    return unless prefix.length
+
+    suggestions = @findSuggestionsForWord prefix
+
+    # No suggestions? Don't autocomplete!
+    return unless suggestions.length
+
+    # Now we're ready - display the suggestions
+    return suggestions
+
+  ###
+   * Gets called when a suggestion has been confirmed by the user. Return true
+   * to replace the word with the suggestion. Return false if you want to handle
+   * the behavior yourself.
+   * @param  {Suggestion} suggestion
+   * @return {Boolean}
+   * @public
+  ###
+  confirm: (item) ->
+    return true
+
+
+  # ! Private Methods
 
   ###
    * Gets called when the user saves the document. Rebuilds the word list
@@ -78,27 +119,6 @@ class FuzzyProvider extends Provider
 
     return lastWord
 
-  buildSuggestions: ->
-    selection = @editor.getSelection()
-    prefix = @prefixOfSelection selection
-
-    # Stop completion if the word was already confirmed
-    return if prefix is @lastConfirmedWord
-
-    # No prefix? Don't autocomplete!
-    return unless prefix.length
-
-    suggestions = @findMatchesForWord prefix
-
-    # No suggestions? Don't autocomplete!
-    return unless suggestions.length
-
-    # Now we're ready - display the suggestions
-    return suggestions
-
-  confirm: (item) ->
-    return true
-
   ###
    * Generates the word list from the editor buffer(s)
    * @private
@@ -153,7 +173,7 @@ class FuzzyProvider extends Provider
    * @return {Array}
    * @private
   ###
-  findMatchesForWord: (prefix) ->
+  findSuggestionsForWord: (prefix) ->
     p = new Perf "Finding matches for '#{prefix}'", {@debug}
     p.start()
 
@@ -162,7 +182,7 @@ class FuzzyProvider extends Provider
     words = fuzzaldrin.filter wordList, prefix
 
     results = for word in words when word isnt prefix
-      {prefix, word}
+      new Suggestion word: word, prefix: prefix
 
     p.stop()
     return results

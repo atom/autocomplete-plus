@@ -12,6 +12,13 @@ View and insert possible completions in the editor while typing
 
 You can install autocomplete+ using the Preferences pane.
 
+## Plugins
+
+Also grab one of these awesome additions for autocomplete+:
+
+* [autocomplete-snippets](https://atom.io/packages/autocomplete-snippets)
+* [autocomplete-paths](https://atom.io/packages/autocomplete-paths)
+
 ## Usage
 
 Just type some stuff, autocomplete+ will automatically show you some suggestions.

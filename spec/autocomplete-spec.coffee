@@ -16,6 +16,7 @@ describe "Autocomplete", ->
 
     # Set to live completion
     atom.config.set "autocomplete-plus.enableAutoActivation", true
+    atom.config.set "autocomplete-plus.fileBlacklist", ".*, *.md"
 
     # Set the completion delay
     completionDelay = 100
@@ -300,7 +301,7 @@ describe "Autocomplete", ->
 
             # Check position
             cursorPixelPosition = editorView.pixelPositionForScreenPosition editor.getCursorScreenPosition()
-            expect(autocomplete.position().top).toBe cursorPixelPosition.top + editorView.lineHeight
+            expect(parseInt autocomplete.css("top")).toBe cursorPixelPosition.top + editorView.lineHeight
             expect(autocomplete.position().left).toBe cursorPixelPosition.left
 
         describe "when the autocomplete view does not fit below the cursor", ->
@@ -313,8 +314,7 @@ describe "Autocomplete", ->
 
             # Check position
             cursorPixelPosition = editorView.pixelPositionForScreenPosition editor.getCursorScreenPosition()
-            autocompleteBottom = autocomplete.position().top + autocomplete.outerHeight()
-            expect(autocompleteBottom).toBe cursorPixelPosition.top
+            expect(parseInt autocomplete.css("top")).toBe cursorPixelPosition.top
             expect(autocomplete.position().left).toBe cursorPixelPosition.left
 
       describe ".cancel()", ->

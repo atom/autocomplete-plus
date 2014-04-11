@@ -1,3 +1,9 @@
+0.12.0 (Apr 11 2014)
+====================
+
+* Other packages can now register suggestion providers, see an example here: https://github.com/saschagehlich/autocomplete-snippets
+* Moved suggestion generation to FuzzyProvider class
+
 0.11.0 (Apr 10 2014)
 ====================
 

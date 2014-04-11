@@ -1,4 +1,4 @@
-{Editor, $, Range}  = require "atom"
+{Editor, $, $$, Range}  = require "atom"
 _ = require "underscore-plus"
 path = require "path"
 minimatch = require "minimatch"
@@ -53,6 +53,18 @@ class AutocompleteView extends SimpleSelectListView
     return false
 
   ###
+   * Creates a view for the given item
+   * @return {jQuery}
+   * @private
+  ###
+  viewForItem: ({word, label}) ->
+    $$ ->
+      @li =>
+        @span word
+        if label?
+          @span label, class: "label"
+
+  ###
    * Handles editor events
    * @private
   ###
@@ -81,15 +93,17 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   confirmed: (match) ->
+    replace = match.provider.confirm match
+
     @editor.getSelection().clear()
     @cancel()
 
     return unless match
 
-    @lastConfirmedWord = match.word
-    @replaceTextWithMatch match
-    position = @editor.getCursorBufferPosition()
-    @editor.setCursorBufferPosition [position.row, position.column]
+    if replace
+      @replaceTextWithMatch match
+      position = @editor.getCursorBufferPosition()
+      @editor.setCursorBufferPosition [position.row, position.column]
 
   ###
    * Focuses the editor again

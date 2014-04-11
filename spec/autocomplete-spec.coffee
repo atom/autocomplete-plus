@@ -247,7 +247,8 @@ describe "Autocomplete", ->
         editor.insertText "somethingNew"
         editor.insertText " "
 
-        expect(autocomplete.wordList.indexOf("somethingNew")).not.toEqual(-1)
+        provider = autocomplete.providers[0];
+        expect(provider.wordList.indexOf("somethingNew")).not.toEqual(-1)
 
       it "sets the width of the view to be wide enough to contain the longest completion without scrolling (+ 15 pixels)", ->
         editorView.attachToDom()

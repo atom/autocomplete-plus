@@ -1,5 +1,17 @@
+.clearfix() {
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+}
+
 .autocomplete-plus {
-  width: 200px;
+  width: auto !important;
+  display: inline-block;
   min-width: 200px;
   margin-left: 0;
   position: relative;
@@ -8,13 +20,14 @@
   ol.list-group {
     overflow-y: auto !important;
     margin-top: 0;
-    width: 100% !important;
+    display: inline-block;
     li {
-      position: relative;
+      .clearfix();
+      .word {
+        float: left;
+      }
       .label {
-        position: absolute;
-        right: 0;
-        top: 0;
+        float: right;
         opacity: 0.3;
         padding-top: 8px;
       }

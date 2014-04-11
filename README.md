@@ -25,3 +25,9 @@ Press UP and DOWN to select another suggestion, press ENTER or TAB to confirm yo
 * Suggestions are calculated using `fuzzaldrin` (better results)
 * File blacklisting
 * Automatic wordlist expansion while typing
+
+## Geeky Stuff: Adding Suggestion Providers
+
+Since version 0.12.0, other packages are able to register suggestion providers to the autocomplete-plus package.
+
+[See the tutorial on how to create and register suggestion providers](https://github.com/saschagehlich/autocomplete-plus/wiki/Tutorial:-Registering-and-creating-a-suggestion-provider)

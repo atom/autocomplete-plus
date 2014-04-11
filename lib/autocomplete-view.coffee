@@ -60,7 +60,7 @@ class AutocompleteView extends SimpleSelectListView
   viewForItem: ({word, label}) ->
     $$ ->
       @li =>
-        @span word
+        @span word, class: "word"
         if label?
           @span label, class: "label"
 
@@ -244,8 +244,12 @@ class AutocompleteView extends SimpleSelectListView
     return unless onDom
 
     widestCompletion = parseInt(@css("min-width")) or 0
-    @list.find("span").each ->
-      widestCompletion = Math.max widestCompletion, $(this).outerWidth()
+    @list.find("li").each ->
+      wordWidth = $(this).find("span.word").outerWidth()
+      labelWidth = $(this).find("span.label").outerWidth()
+
+      totalWidth = wordWidth + labelWidth + 40
+      widestCompletion = Math.max widestCompletion, totalWidth
 
     @list.width widestCompletion
     @width @list.outerWidth()

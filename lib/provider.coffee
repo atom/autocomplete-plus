@@ -6,6 +6,7 @@
 
 module.exports =
 class Provider
+  wordRegex: /\b\w*[a-zA-Z_]\w*\b/g
   constructor: (@editorView) ->
     {@editor} = editorView
     @initialize.apply this, arguments
@@ -44,3 +45,22 @@ class Provider
   ###
   confirm: (suggestion) ->
     return true
+
+  ###
+   * Finds and returns the content before the current cursor position
+   * @param {Selection} selection
+   * @return {String}
+   * @private
+  ###
+  prefixOfSelection: (selection) ->
+    selectionRange = selection.getBufferRange()
+    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineLengthForBufferRow(selectionRange.end.row)]]
+    prefix = ""
+    @editor.getBuffer().scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
+      stop() if range.start.isGreaterThan(selectionRange.end)
+
+      if range.intersectsWith(selectionRange)
+        prefixOffset = selectionRange.start.column - range.start.column
+        prefix = match[0][0...prefixOffset] if range.start.isLessThan(selectionRange.start)
+
+    return prefix

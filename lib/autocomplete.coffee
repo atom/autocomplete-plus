@@ -47,5 +47,20 @@ module.exports =
     @autocompleteViews.forEach (autocompleteView) -> autocompleteView.remove()
     @autocompleteViews = []
 
+  ###
+   * Finds the autocomplete view for the given EditorView
+   * and registers the given provider
+   * @param  {Provider} provider
+   * @param  {EditorView} editorView
+   * @return {Boolean}
+  ###
+  registerProviderForEditorView: (provider, editorView) ->
+    autocompleteView = _.findWhere @autocompleteViews, editorView: editorView
+    unless autocompleteView?
+      throw new Error("Could not register provider", provider.constructor.name)
+
+    autocompleteView.registerProvider provider
+
   Provider: Provider
   Suggestion: Suggestion
+

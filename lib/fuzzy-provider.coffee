@@ -7,8 +7,6 @@ Perf = require "./perf"
 
 module.exports =
 class FuzzyProvider extends Provider
-  wordRegex: /\b\w*[a-zA-Z_]\w*\b/g
-  lastConfirmedWord: null
   wordList: null
   debug: false
 
@@ -31,9 +29,6 @@ class FuzzyProvider extends Provider
   buildSuggestions: ->
     selection = @editor.getSelection()
     prefix = @prefixOfSelection selection
-
-    # Stop completion if the word was already confirmed
-    return if prefix is @lastConfirmedWord
 
     # No prefix? Don't autocomplete!
     return unless prefix.length
@@ -148,25 +143,6 @@ class FuzzyProvider extends Provider
     p.stop()
 
   ###
-   * Finds and returns the content before the current cursor position
-   * @param {Selection} selection
-   * @return {String}
-   * @private
-  ###
-  prefixOfSelection: (selection) ->
-    selectionRange = selection.getBufferRange()
-    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineLengthForBufferRow(selectionRange.end.row)]]
-    prefix = ""
-    @editor.getBuffer().scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
-      stop() if range.start.isGreaterThan(selectionRange.end)
-
-      if range.intersectsWith(selectionRange)
-        prefixOffset = selectionRange.start.column - range.start.column
-        prefix = match[0][0...prefixOffset] if range.start.isLessThan(selectionRange.start)
-
-    return prefix
-
-  ###
    * Finds possible matches for the given string / prefix
    * @param  {String} prefix
    * @return {Array}
@@ -181,7 +157,7 @@ class FuzzyProvider extends Provider
     words = fuzzaldrin.filter wordList, prefix
 
     results = for word in words when word isnt prefix
-      new Suggestion word: word, prefix: prefix
+      new Suggestion this, word: word, prefix: prefix
 
     p.stop()
     return results

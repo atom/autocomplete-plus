@@ -2,3 +2,5 @@
 
 module.exports =
 class TestProvider extends Provider
+  buildSuggestions: ->
+    []

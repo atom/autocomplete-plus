@@ -99,6 +99,30 @@ describe "Autocomplete", ->
           autocomplete.unregisterProviderFromEditorView testProvider, editorView
           expect(autocompleteView.providers[1]).not.toExist
 
+    describe "a registered provider", ->
+      autocomplete = null
+      it "is asked to provide a list of suggestions", ->
+        waitsForPromise ->
+          activationPromise
+            .then (pkg) =>
+              autocomplete = pkg.mainModule
+
+        runs ->
+          editorView = atom.workspaceView.getActiveView()
+          {editor} = editorView
+          testProvider = new TestProvider(editorView)
+          autocomplete.registerProviderForEditorView testProvider, editorView
+
+          spyOn(testProvider, "buildSuggestions").andCallThrough()
+
+          editorView.attachToDom()
+
+          # Trigger an autocompletion
+          triggerAutocompletion editor
+          advanceClock completionDelay
+
+          expect(testProvider.buildSuggestions).toHaveBeenCalled()
+
   describe "AutocompleteView", ->
     [autocomplete, editorView, editor] = []
 
@@ -295,7 +319,7 @@ describe "Autocomplete", ->
         editor.insertText "t"
         advanceClock completionDelay
         expect(autocomplete.list.prop('scrollWidth') + 15).toBe autocomplete.list.width()
-
+  
       it "includes completions for the scope's completion preferences", ->
         waitsForPromise ->
           atom.packages.activatePackage('language-css')
@@ -310,7 +334,7 @@ describe "Autocomplete", ->
           cssEditor.insertText "o"
           cssEditor.insertText "u"
           cssEditor.insertText "t"
-  
+
           advanceClock completionDelay
 
           expect(cssEditorView.find(".autocomplete-plus")).toExist()

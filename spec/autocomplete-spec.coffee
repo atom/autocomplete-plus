@@ -3,6 +3,7 @@ require "./spec-helper"
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
+TestProvider = require "./lib/test-provider"
 
 describe "Autocomplete", ->
   [activationPromise, completionDelay] = []
@@ -61,6 +62,42 @@ describe "Autocomplete", ->
         # Deactivate the package
         atom.packages.deactivatePackage "autocomplete-plus"
         expect(editorView.find(".autocomplete-plus")).not.toExist()
+
+  describe "Providers", ->
+    describe "registerProviderForEditorView", ->
+      it "registers the given provider for the given editor view", ->
+        autocomplete = null
+        waitsForPromise ->
+          activationPromise
+            .then (pkg) =>
+              autocomplete = pkg.mainModule
+
+        runs ->
+          editorView = atom.workspaceView.getActiveView()
+          testProvider = new TestProvider(editorView)
+          autocomplete.registerProviderForEditorView testProvider, editorView
+
+          autocompleteView = autocomplete.autocompleteViews[0]
+          expect(autocompleteView.providers[1]).toBe testProvider
+
+    describe "unregisterProviderFromEditorView", ->
+      it "unregisters the provider from all editor views", ->
+        autocomplete = null
+        waitsForPromise ->
+          activationPromise
+            .then (pkg) =>
+              autocomplete = pkg.mainModule
+
+        runs ->
+          editorView = atom.workspaceView.getActiveView()
+          testProvider = new TestProvider(editorView)
+          autocomplete.registerProviderForEditorView testProvider, editorView
+
+          autocompleteView = autocomplete.autocompleteViews[0]
+          expect(autocompleteView.providers[1]).toBe testProvider
+
+          autocomplete.unregisterProviderFromEditorView testProvider, editorView
+          expect(autocompleteView.providers[1]).not.toExist
 
   describe "AutocompleteView", ->
     [autocomplete, editorView, editor] = []
@@ -273,7 +310,7 @@ describe "Autocomplete", ->
           cssEditor.insertText "o"
           cssEditor.insertText "u"
           cssEditor.insertText "t"
-
+  
           advanceClock completionDelay
 
           expect(cssEditorView.find(".autocomplete-plus")).toExist()

@@ -83,10 +83,18 @@ class AutocompleteView extends SimpleSelectListView
   ###
    * Registers the given provider
    * @param  {Provider} provider
-   * @private
+   * @public
   ###
   registerProvider: (provider) ->
     @providers.push provider
+
+  ###
+   * Unregisters the given provider
+   * @param  {Provider} provider
+   * @public
+  ###
+  unregisterProvider: (provider) ->
+    _.remove @providers, provider
 
   ###
    * Gets called when the user successfully confirms a suggestion

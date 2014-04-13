@@ -20,6 +20,7 @@ module.exports =
     # If both autosave and autocomplete+'s auto-activation feature are enabled,
     # disable the auto-activation
     if atom.packages.isPackageLoaded("autosave") and
+      atom.config.get("autosave.enabled") and
       atom.config.get("autocomplete-plus.enableAutoActivation")
         atom.config.set "autocomplete-plus.enableAutoActivation", false
 

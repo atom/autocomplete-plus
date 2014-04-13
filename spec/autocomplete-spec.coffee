@@ -81,6 +81,25 @@ describe "Autocomplete", ->
           autocompleteView = autocomplete.autocompleteViews[0]
           expect(autocompleteView.providers[1]).toBe testProvider
 
+    describe "registerMultipleIdenticalProvidersForEditorView", ->
+      it "registers the given provider once when called multiple times for the given editor view", ->
+        autocomplete = null
+        waitsForPromise ->
+          activationPromise
+            .then (pkg) =>
+              autocomplete = pkg.mainModule
+
+        runs ->
+          editorView = atom.workspaceView.getActiveView()
+          testProvider = new TestProvider(editorView)
+          autocomplete.registerProviderForEditorView testProvider, editorView
+          autocomplete.registerProviderForEditorView testProvider, editorView
+          autocomplete.registerProviderForEditorView testProvider, editorView
+
+          autocompleteView = autocomplete.autocompleteViews[0]
+          expect(autocompleteView.providers[1]).toBe testProvider
+          expect(_.size(autocompleteView.providers)).toBe 2
+
     describe "unregisterProviderFromEditorView", ->
       it "unregisters the provider from all editor views", ->
         autocomplete = null

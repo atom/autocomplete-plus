@@ -1,3 +1,8 @@
+0.14.0 (Apr 13 2014)
+====================
+
+* Fix provider unregistration API (#unregisterProviderFromEditorView(Provider, EditorView) -> #unregisterProvider(Provider))
+
 0.13.0 (Apr 13 2014)
 ====================
 

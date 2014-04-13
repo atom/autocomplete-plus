@@ -67,12 +67,8 @@ module.exports =
    * @param  {Provider} provider
    * @param  {EditorView} editorView
   ###
-  unregisterProviderFromEditorView: (provider, editorView) ->
-    autocompleteView = _.findWhere @autocompleteViews, editorView: editorView
-    unless autocompleteView?
-      throw new Error("Could not unregister provider", provider.constructor.name)
-
-    autocompleteView.unregisterProvider provider
+  unregisterProvider: (provider) ->
+    view.unregisterProvider for view in @autocompleteViews
 
   Provider: Provider
   Suggestion: Suggestion

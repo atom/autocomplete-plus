@@ -116,7 +116,7 @@ describe "Autocomplete", ->
           autocompleteView = autocomplete.autocompleteViews[0]
           expect(autocompleteView.providers[1]).toBe testProvider
 
-          autocomplete.unregisterProviderFromEditorView testProvider, editorView
+          autocomplete.unregisterProvider testProvider
           expect(autocompleteView.providers[1]).not.toExist
 
     describe "a registered provider", ->

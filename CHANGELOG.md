@@ -1,3 +1,9 @@
+0.13.0 (Apr 13 2014)
+====================
+
+* Fix notification for compatibility issues with autosave (@joefitzgerald)
+* Fix bug where multiple calls to registerProviderForEditorView could result in the same provider being registered multiple times (@joefitzgerald)
+
 0.12.0 (Apr 11 2014)
 ====================
 

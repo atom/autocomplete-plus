@@ -86,7 +86,7 @@ class AutocompleteView extends SimpleSelectListView
    * @public
   ###
   registerProvider: (provider) ->
-    @providers.push provider
+    @providers.push(provider) unless _.findWhere(@providers, provider)?
 
   ###
    * Unregisters the given provider

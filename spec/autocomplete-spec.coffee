@@ -82,7 +82,7 @@ describe "Autocomplete", ->
           expect(autocompleteView.providers[1]).toBe testProvider
 
     describe "registerMultipleIdenticalProvidersForEditorView", ->
-      it "registers the given provider multiple times for the given editor view", ->
+      it "registers the given provider once when called multiple times for the given editor view", ->
         autocomplete = null
         waitsForPromise ->
           activationPromise

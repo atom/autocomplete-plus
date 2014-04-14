@@ -8,8 +8,9 @@
     "atom": "*"
   },
   "dependencies": {
-    "underscore-plus": "1.x",
     "fuzzaldrin": "~1.0.0",
-    "minimatch": "~0.2.14"
+    "minimatch": "~0.2.14",
+    "temp": ">=0.7.0",
+    "underscore-plus": "1.x"
   }
 }

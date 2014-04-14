@@ -2,12 +2,15 @@ require "../spec-helper"
 {$, EditorView, WorkspaceView} = require 'atom'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
+path = require 'path'
+temp = require('temp').track()
 
 describe "Autocomplete", ->
-  [activationPromise, autocomplete, editorView, editor, completionDelay] = []
+  [activationPromise, autocomplete, directory, editorView, editor, completionDelay] = []
 
   describe "Issue 15", ->
     beforeEach ->
+      directory = temp.mkdirSync()
       # Create a fake workspace and open a sample file
       atom.workspaceView = new WorkspaceView
       atom.workspaceView.openSync "issues/11.js"
@@ -45,6 +48,6 @@ describe "Autocomplete", ->
 
         expect(editorView.find(".autocomplete-plus")).toExist()
 
-        editor.saveAs("spec/tmp/issue-11.js")
+        editor.saveAs(path.join(directory, "spec", "tmp", "issue-11.js"))
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()

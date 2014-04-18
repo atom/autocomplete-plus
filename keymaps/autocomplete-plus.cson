@@ -1,4 +1,5 @@
 ".autocomplete-plus input.hidden-input":
+  "enter": "autocomplete-plus:confirm"
   "tab": "autocomplete-plus:confirm"
 
 ".editor":

@@ -119,11 +119,12 @@ class AutocompleteView extends SimpleSelectListView
 
   ###
    * Focuses the editor again
+   * @param {Boolean} focus
    * @private
   ###
-  cancel: =>
+  cancel: (focus=true) =>
     super
-    @editorView.focus()
+    @editorView.focus() if focus
 
   ###
    * Finds suggestions for the current prefix, sets the list items,
@@ -190,6 +191,9 @@ class AutocompleteView extends SimpleSelectListView
   onChanged: (e) =>
     if e.newText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
       @contentsModified()
+    else
+      # Don't refocus since we probably still have focus
+      @cancel focus = false
 
   ###
    * Repositions the list view. Checks for boundaries and moves the view

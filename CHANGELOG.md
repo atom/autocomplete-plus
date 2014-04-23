@@ -1,3 +1,9 @@
+0.15.0 (Apr 25 2014)
+====================
+
+* Fix a bug that caused a stack overflow when using spanish / italian / korean keyboard layouts (Issues #22 and #40)
+* `autocomplete-plus:select-next`, `autocomplete-plus:select-previous` and `autocomplete-plus:cancel` keymaps
+
 0.14.0 (Apr 13 2014)
 ====================
 

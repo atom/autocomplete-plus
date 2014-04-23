@@ -19,9 +19,6 @@ class SimpleSelectListView extends View
   ###
   initialize: ->
     # Core events for keyboard handling
-    @on "core:move-up", (e) => @selectPreviousItemView()
-    @on "core:move-down", => @selectNextItemView()
-    @on "core:cancel", => @cancel()
     @on "autocomplete-plus:confirm", => @confirmSelection()
 
     # List mouse events

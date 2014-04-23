@@ -243,7 +243,7 @@ describe "Autocomplete", ->
 
             expect(editorView.find(".autocomplete-plus")).not.toExist()
 
-      describe "move-up event", ->
+      describe "select-previous event", ->
         it "selects the previous item in the list", ->
           editorView.attachToDom()
 
@@ -256,15 +256,15 @@ describe "Autocomplete", ->
           expect(editorView.find(".autocomplete-plus li:eq(2)")).not.toHaveClass("selected")
           expect(editorView.find(".autocomplete-plus li:eq(3)")).not.toHaveClass("selected")
 
-          # Accept suggestion
-          autocomplete.trigger "core:move-up"
+          # Select previous item
+          autocomplete.trigger "autocomplete-plus:select-previous"
 
           expect(editorView.find(".autocomplete-plus li:eq(0)")).not.toHaveClass("selected")
           expect(editorView.find(".autocomplete-plus li:eq(1)")).not.toHaveClass("selected")
           expect(editorView.find(".autocomplete-plus li:eq(2)")).not.toHaveClass("selected")
           expect(editorView.find(".autocomplete-plus li:eq(3)")).toHaveClass("selected")
 
-      describe "move-down event", ->
+      describe "select-next event", ->
         it "selects the next item in the list", ->
           editorView.attachToDom()
 
@@ -277,8 +277,8 @@ describe "Autocomplete", ->
           expect(editorView.find(".autocomplete-plus li:eq(2)")).not.toHaveClass("selected")
           expect(editorView.find(".autocomplete-plus li:eq(3)")).not.toHaveClass("selected")
 
-          # Accept suggestion
-          autocomplete.trigger "core:move-down"
+          # Select next item
+          autocomplete.trigger "autocomplete-plus:select-next"
 
           expect(editorView.find(".autocomplete-plus li:eq(0)")).not.toHaveClass("selected")
           expect(editorView.find(".autocomplete-plus li:eq(1)")).toHaveClass("selected")

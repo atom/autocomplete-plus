@@ -35,6 +35,10 @@ class AutocompleteView extends SimpleSelectListView
 
     @subscribeToCommand @editorView, "autocomplete-plus:activate", @runAutocompletion
 
+    @on "autocomplete-plus:select-next", => @selectNextItemView()
+    @on "autocomplete-plus:select-previous", => @selectPreviousItemView()
+    @on "autocomplete-plus:cancel", => @cancel()
+
   ###
    * Checks whether the current file is blacklisted
    * @return {Boolean}

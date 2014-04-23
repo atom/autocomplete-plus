@@ -127,11 +127,6 @@ class AutocompleteView extends SimpleSelectListView
    * @private
   ###
   runAutocompletion: =>
-    if @active
-      @detach()
-      @list.empty()
-      @editorView.focus()
-
     # Iterate over all providers, ask them to build word lists
     suggestions = []
     for provider in @providers.slice().reverse()
@@ -191,8 +186,6 @@ class AutocompleteView extends SimpleSelectListView
   onChanged: (e) =>
     if e.newText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
       @contentsModified()
-    else
-      @cancel()
 
   ###
    * Repositions the list view. Checks for boundaries and moves the view

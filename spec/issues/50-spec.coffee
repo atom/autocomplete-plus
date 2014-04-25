@@ -1,60 +1,50 @@
-# require "../spec-helper"
-# {$, EditorView, WorkspaceView} = require 'atom'
-# AutocompleteView = require '../../lib/autocomplete-view'
-# Autocomplete = require '../../lib/autocomplete'
+require "../spec-helper"
+{$, EditorView, WorkspaceView} = require 'atom'
+AutocompleteView = require '../../lib/autocomplete-view'
+Autocomplete = require '../../lib/autocomplete'
 
-# describe "Autocomplete", ->
-#   [activationPromise, autocomplete, completionDelay] = []
-#   [leftPaneView, rightPaneView] = []
-#   [leftEditor, rightEditor] = []
-#   [leftEditorView, rightEditorView] = []
-#   [leftAutocomplete, rightAutocomplete] = []
+describe "Autocomplete", ->
+  [activationPromise, autocomplete, editorView, editor, completionDelay] = []
 
-#   describe "Issue 50", ->
-#     beforeEach ->
-#       # Create a fake workspace and open a sample file
-#       atom.workspaceView = new WorkspaceView
-#       atom.workspaceView.openSync "sample.js"
-#       atom.workspaceView.simulateDomAttachment()
+  describe "Issue 50", ->
+    beforeEach ->
+      # Create a fake workspace and open a sample file
+      atom.workspaceView = new WorkspaceView
+      atom.workspaceView.openSync "issues/50.js"
+      atom.workspaceView.simulateDomAttachment()
 
-#       # Set to live completion
-#       atom.config.set "autocomplete-plus.enableAutoActivation", true
+      # Set to live completion
+      atom.config.set "autocomplete-plus.enableAutoActivation", true
 
-#       # Set the completion delay
-#       completionDelay = 100
-#       atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
-#       completionDelay += 100 # Rendering delay
+      # Set the completion delay
+      completionDelay = 100
+      atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
+      completionDelay += 100 # Rendering delay
 
-#       # Activate the package
-#       activationPromise = atom.packages.activatePackage "autocomplete-plus"
+      # Activate the package
+      activationPromise = atom.packages.activatePackage "autocomplete-plus"
 
-#       leftPaneView = atom.workspaceView.getActivePaneView()
-#       rightPaneView = leftPaneView.splitRight(leftPaneView.copyActiveItem())
+      editorView = atom.workspaceView.getActiveView()
+      {editor} = editorView
 
-#       [leftEditorView, rightEditorView] = atom.workspaceView.getEditorViews()
-#       leftEditor = leftEditorView.editor
-#       rightEditor = rightEditorView.editor
+    it "works after closing one of the copied tabs", ->
+      waitsForPromise ->
+        activationPromise
+          .then (pkg) =>
+            autocomplete = pkg.mainModule
 
-#       leftAutocomplete = new AutocompleteView leftEditorView
-#       rightAutocomplete = new AutocompleteView rightEditorView
+      runs ->
+        expect(autocomplete.autocompleteViews.length).toEqual(1)
 
-#     describe "when splitting the view and closing it", ->
-#       it "does not throw an error when triggering autocompletion", ->
-#         waitsForPromise ->
-#           activationPromise
+        editorView.splitRight()
+        expect(autocomplete.autocompleteViews.length).toEqual(2)
 
-#         runs ->
-#           leftEditorView.attachToDom()
-#           rightEditorView.attachToDom()
+        atom.workspaceView.destroyActivePane()
+        expect(autocomplete.autocompleteViews.length).toEqual(1)
 
-#           leftEditor.moveCursorToBottom()
-#           leftEditor.insertText "c"
+        editor.moveCursorToEndOfLine
+        editor.insertNewline()
+        editor.insertText "f"
 
-#           advanceClock completionDelay
-
-#           expect(leftEditorView.find(".autocomplete-plus")).toExist()
-
-#           rightEditorView.trigger "pane:close"
-
-#           leftEditor.moveCursorToBottom()
-#           leftEditor.insertText "c"
+        advanceClock completionDelay
+        expect(editorView.find(".autocomplete-plus")).toExist()

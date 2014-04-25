@@ -256,3 +256,5 @@ class AutocompleteView extends SimpleSelectListView
     @currentBuffer?.off "saved", @onSaved
     @editor.off "title-changed-subscription-removed", @cancel
     @editor.off "cursor-moved", @cursorMoved
+    for provider in @providers when provider.dispose?
+      provider.dispose()

@@ -54,5 +54,7 @@
 
 #           expect(leftEditorView.find(".autocomplete-plus")).toExist()
 
-#           # This fails, even though in atom, it works...
-#           expect(rightEditorView.find(".autocomplete-plus")).toExist()
+#           rightEditorView.trigger "pane:close"
+
+#           leftEditor.moveCursorToBottom()
+#           leftEditor.insertText "c"

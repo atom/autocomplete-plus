@@ -13,9 +13,7 @@ module.exports =
   autocompleteViews: []
   editorSubscription: null
 
-  ###
-   * Creates AutocompleteView instances for all active and future editors
-  ###
+  # Public: Creates AutocompleteView instances for all active and future editors
   activate: ->
     # If both autosave and autocomplete+'s auto-activation feature are enabled,
     # disable the auto-activation
@@ -39,21 +37,18 @@ module.exports =
           _.remove(@autocompleteViews, autocompleteView)
         @autocompleteViews.push(autocompleteView)
 
-  ###
-   * Cleans everything up, removes all AutocompleteView instances
-  ###
+  # Public: Cleans everything up, removes all AutocompleteView instances
   deactivate: ->
     @editorSubscription?.off()
     @editorSubscription = null
     @autocompleteViews.forEach (autocompleteView) -> autocompleteView.remove()
     @autocompleteViews = []
 
-  ###
-   * Finds the autocomplete view for the given EditorView
-   * and registers the given provider
-   * @param  {Provider} provider
-   * @param  {EditorView} editorView
-  ###
+  # Public: Finds the autocomplete view for the given EditorView
+  # and registers the given provider
+  #
+  # provider - The new {Provider}
+  # editorView - The {EditorView} we should register the provider with
   registerProviderForEditorView: (provider, editorView) ->
     autocompleteView = _.findWhere @autocompleteViews, editorView: editorView
     unless autocompleteView?
@@ -61,12 +56,10 @@ module.exports =
 
     autocompleteView.registerProvider provider
 
-  ###
-   * Finds the autocomplete view for the given EditorView
-   * and unregisters the given provider
-   * @param  {Provider} provider
-   * @param  {EditorView} editorView
-  ###
+  # Public: Finds the autocomplete view for the given EditorView
+  # and unregisters the given provider
+  #
+  # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
     view.unregisterProvider for view in @autocompleteViews
 

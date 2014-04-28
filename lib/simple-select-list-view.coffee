@@ -13,10 +13,7 @@ class SimpleSelectListView extends View
       @input class: "hidden-input", outlet: "hiddenInput"
       @ol class: "list-group", outlet: "list"
 
-  ###
-   * Listens to events, delegates them to instance methods
-   * @private
-  ###
+  # Private: Listens to events, delegates them to instance methods
   initialize: ->
     # Core events for keyboard handling
     @on "autocomplete-plus:confirm", => @confirmSelection()
@@ -35,10 +32,7 @@ class SimpleSelectListView extends View
       if $(e.target).closest("li").hasClass "selected"
         @confirmSelection()
 
-  ###
-   * Selects the previous item view
-   * @private
-  ###
+  # Private: Selects the previous item view
   selectPreviousItemView: ->
     view = @getSelectedItemView().prev()
     unless view.length
@@ -47,10 +41,7 @@ class SimpleSelectListView extends View
 
     return false
 
-  ###
-   * Selects the next item view
-   * @private
-  ###
+  # Private: Selects the next item view
   selectNextItemView: ->
     view = @getSelectedItemView().next()
     unless view.length
@@ -59,20 +50,16 @@ class SimpleSelectListView extends View
 
     return false
 
-  ###
-   * Sets the items, displays the list
-   * @param {Array} items
-   * @private
-  ###
+  # Private: Sets the items, displays the list
+  #
+  # items - {Array} of items to display
   setItems: (items=[]) ->
     @items = items
     @populateList()
 
-  ###
-   * Unselects all views, selects the given view
-   * @param  {jQuery} view
-   * @private
-  ###
+  # Private: Unselects all views, selects the given view
+  #
+  # view - the {jQuery} view to be selected
   selectItemView: (view) ->
     return unless view.length
 
@@ -80,11 +67,9 @@ class SimpleSelectListView extends View
     view.addClass "selected"
     @scrollToItemView view
 
-  ###
-   * Sets the scroll position to match the given view's position
-   * @param  {jQuery} view
-   * @private
-  ###
+  # Private: Sets the scroll position to match the given view's position
+  #
+  # view - the {jQuery} view to scroll to
   scrollToItemView: (view) ->
     scrollTop = @list.scrollTop()
     desiredTop = view.position().top + scrollTop
@@ -95,27 +80,20 @@ class SimpleSelectListView extends View
     else
       @list.scrollBottom desiredBottom
 
-  ###
-   * Returns the currently selected item view
-   * @return {jQuery}
-   * @private
-  ###
+  # Private: Get the currently selected item view
+  #
+  # Returns the selected {jQuery} view
   getSelectedItemView: ->
     @list.find "li.selected"
 
-  ###
-   * Returns the currently selected item (NOT the view)
-   * @return {Object}
-   * @private
-  ###
+  # Private: Get the currently selected item (*not* the view)
+  #
+  # Returns the selected {Object}
   getSelectedItem: ->
     @getSelectedItemView().data "select-list-item"
 
-  ###
-   * Confirms the currently selected item or cancels the list view
-   * if no item has been selected
-   * @private
-  ###
+  # Private: Confirms the currently selected item or cancels the list view
+  # if no item has been selected
   confirmSelection: ->
     item = @getSelectedItem()
     if item?
@@ -123,18 +101,12 @@ class SimpleSelectListView extends View
     else
       @cancel()
 
-  ###
-   * Focuses the hidden input, starts listening to keyboard events
-   * @private
-  ###
+  # Private: Focuses the hidden input, starts listening to keyboard events
   setActive: ->
     @active = true
     @hiddenInput.focus()
 
-  ###
-   * Re-builds the list with the current items
-   * @private
-  ###
+  # Private: Re-builds the list with the current items
   populateList: ->
     return unless @items?
 
@@ -147,20 +119,17 @@ class SimpleSelectListView extends View
 
     @selectItemView @list.find "li:first"
 
-  ###
-   * Creates a view for the given item
-   * @return {jQuery}
-   * @private
-  ###
+  # Private: Creates a view for the given item
+  #
+  # word - the item
+  #
+  # Returns the {jQuery} view for the item
   viewForItem: ({word}) ->
     $$ ->
       @li =>
         @span word
 
-  ###
-   * Clears the list, detaches the element
-   * @private
-  ###
+  # Private: Clears the list, detaches the element
   cancel: ->
     return unless @active
 

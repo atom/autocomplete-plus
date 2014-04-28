@@ -12,12 +12,10 @@ class AutocompleteView extends SimpleSelectListView
   currentBuffer: null
   debug: false
 
-  ###
-   * Makes sure we're listening to editor and buffer events, sets
-   * the current buffer
-   * @param  {EditorView} @editorView
-   * @private
-  ###
+  # Private: Makes sure we're listening to editor and buffer events, sets
+  # the current buffer
+  #
+  # editorView - {EditorView}
   initialize: (@editorView) ->
     {@editor} = @editorView
 
@@ -39,11 +37,9 @@ class AutocompleteView extends SimpleSelectListView
     @on "autocomplete-plus:select-previous", => @selectPreviousItemView()
     @on "autocomplete-plus:cancel", => @cancel()
 
-  ###
-   * Checks whether the current file is blacklisted
-   * @return {Boolean}
-   * @private
-  ###
+  # Private: Checks whether the current file is blacklisted
+  #
+  # Returns {Boolean} that defines whether the current file is blacklisted
   currentFileBlacklisted: ->
     blacklist = (atom.config.get("autocomplete-plus.fileBlacklist") or "")
       .split ","
@@ -56,11 +52,9 @@ class AutocompleteView extends SimpleSelectListView
 
     return false
 
-  ###
-   * Creates a view for the given item
-   * @return {jQuery}
-   * @private
-  ###
+  # Private: Creates a view for the given item
+  #
+  # Returns a {jQuery} object that represents the item view
   viewForItem: ({word, label}) ->
     $$ ->
       @li =>
@@ -68,10 +62,7 @@ class AutocompleteView extends SimpleSelectListView
         if label?
           @span label, class: "label"
 
-  ###
-   * Handles editor events
-   * @private
-  ###
+  # Private: Handles editor events
   handleEvents: ->
     # Make sure we don't scroll in the editor view when scrolling
     # in the list
@@ -84,26 +75,21 @@ class AutocompleteView extends SimpleSelectListView
     # changing any text
     @editor.on "cursor-moved", @cursorMoved
 
-  ###
-   * Registers the given provider
-   * @param  {Provider} provider
-   * @public
-  ###
+  # Public: Registers the given provider
+  #
+  # provider - The {Provider} to register
   registerProvider: (provider) ->
     @providers.push(provider) unless _.findWhere(@providers, provider)?
 
-  ###
-   * Unregisters the given provider
-   * @param  {Provider} provider
-   * @public
-  ###
+  # Public: Unregisters the given provider
+  #
+  # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
     _.remove @providers, provider
 
-  ###
-   * Gets called when the user successfully confirms a suggestion
-   * @private
-  ###
+  # Private: Gets called when the user successfully confirms a suggestion
+  #
+  # match - An {Object} representing the confirmed suggestion
   confirmed: (match) ->
     replace = match.provider.confirm match
 
@@ -117,20 +103,15 @@ class AutocompleteView extends SimpleSelectListView
       position = @editor.getCursorBufferPosition()
       @editor.setCursorBufferPosition [position.row, position.column]
 
-  ###
-   * Focuses the editor again
-   * @param {Boolean} focus
-   * @private
-  ###
+  # Private: Focuses the editor view again
+  #
+  # focus - {Boolean} should focus
   cancel: (focus=true) =>
     super
     @editorView.focus() if focus
 
-  ###
-   * Finds suggestions for the current prefix, sets the list items,
-   * positions the overlay and shows it
-   * @private
-  ###
+  # Private: Finds suggestions for the current prefix, sets the list items,
+  # positions the overlay and shows it
   runAutocompletion: =>
     # Iterate over all providers, ask them to build word lists
     suggestions = []
@@ -154,10 +135,7 @@ class AutocompleteView extends SimpleSelectListView
 
     @setActive()
 
-  ###
-   * Gets called when the content has been modified
-   * @private
-  ###
+  # Private: Gets called when the content has been modified
   contentsModified: =>
     delay = parseInt(atom.config.get "autocomplete-plus.autoActivationDelay")
     if @delayTimeout
@@ -165,29 +143,22 @@ class AutocompleteView extends SimpleSelectListView
 
     @delayTimeout = setTimeout @runAutocompletion, delay
 
-  ###
-   * Gets called when the cursor has moved. Cancels the autocompletion if
-   * the text has not been changed and the autocompletion is
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
-  ###
+  # Private: Gets called when the cursor has moved. Cancels the autocompletion if
+  # the text has not been changed and the autocompletion is
+  #
+  # data - An {Object} containing information on why the cursor has been moved
   cursorMoved: (data) =>
     @cancel() unless data.textChanged
 
-  ###
-   * Gets called when the user saves the document. Rebuilds the word
-   * list and cancels the autocompletion
-   * @private
-  ###
+  # Private: Gets called when the user saves the document. Cancels the
+  # autocompletion
   onSaved: =>
     @cancel()
 
-  ###
-   * Cancels the autocompletion if the user entered more than one character
-   * with a single keystroke. (= pasting)
-   * @param  {Event} e
-   * @private
-  ###
+  # Private: Cancels the autocompletion if the user entered more than one character
+  # with a single keystroke. (= pasting)
+  #
+  # e - The change {Event}
   onChanged: (e) =>
     if e.newText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
       @contentsModified()
@@ -195,11 +166,8 @@ class AutocompleteView extends SimpleSelectListView
       # Don't refocus since we probably still have focus
       @cancel focus = false
 
-  ###
-   * Repositions the list view. Checks for boundaries and moves the view
-   * above or below the cursor if needed.
-   * @private
-  ###
+  # Private: Repositions the list view. Checks for boundaries and moves the view
+  # above or below the cursor if needed.
   setPosition: ->
     { left, top } = @editorView.pixelPositionForScreenPosition @editor.getCursorScreenPosition()
     cursorLeft = left
@@ -224,11 +192,9 @@ class AutocompleteView extends SimpleSelectListView
       @css left: cursorLeft, top: belowPosition
       @css "-webkit-transform", ""
 
-  ###
-   * Replaces the current prefix with the given match
-   * @param {Object} match
-   * @private
-  ###
+  # Private: Replaces the current prefix with the given match
+  #
+  # match - The match to replace the current prefix with
   replaceTextWithMatch: (match) ->
     selection = @editor.getSelection()
     startPosition = selection.getBufferRange().start
@@ -243,12 +209,10 @@ class AutocompleteView extends SimpleSelectListView
     suffixLength = match.word.length - match.prefix.length
     @editor.setSelectedBufferRange [startPosition, [startPosition.row, startPosition.column + suffixLength]]
 
-  ###
-   * As soon as the list is in the DOM tree, it calculates the maximum width of
-   * all list items and resizes the list so that all items fit
-   * @param {Boolean} onDom
-   *
-  ###
+  # Private: As soon as the list is in the DOM tree, it calculates the maximum width of
+  # all list items and resizes the list so that all items fit
+  #
+  # onDom - {Boolean} is the element in the DOM?
   afterAttach: (onDom) ->
     return unless onDom
 
@@ -263,10 +227,7 @@ class AutocompleteView extends SimpleSelectListView
     @list.width widestCompletion
     @width @list.outerWidth()
 
-  ###
-   * Updates the list's position when populating results
-   * @private
-  ###
+  # Private: Updates the list's position when populating results
   populateList: ->
     p = new Perf "Populating list", {@debug}
     p.start()
@@ -276,28 +237,20 @@ class AutocompleteView extends SimpleSelectListView
     p.stop()
     @setPosition()
 
-  ###
-   * Sets the current buffer, starts listening to change events and delegates
-   * them to #onChanged()
-   * @param {TextBuffer}
-   * @private
-  ###
+  # Private: Sets the current buffer, starts listening to change events and delegates
+  # them to #onChanged()
+  #
+  # currentBuffer - The current {TextBuffer}
   setCurrentBuffer: (@currentBuffer) ->
     @currentBuffer.on "saved", @onSaved
     @currentBuffer.on "changed", @onChanged
 
-  ###
-   * Why are we doing this again...?
-   * Might be because of autosave:
-   * http://git.io/iF32wA
-   * @private
-  ###
+  # Private: Why are we doing this again...?
+  # Might be because of autosave:
+  # http://git.io/iF32wA
   getModel: -> null
 
-  ###
-   * Clean up, stop listening to events
-   * @public
-  ###
+  # Public: Clean up, stop listening to events
   dispose: ->
     @currentBuffer?.off "changed", @onChanged
     @currentBuffer?.off "saved", @onSaved

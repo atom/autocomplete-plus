@@ -1,15 +1,10 @@
 module.exports =
 
-  ###
-   * Returns a unique version of the array using ES6's Set
-   * implementation
-   *
-   * Damn, that shit is _fast_:
-   * http://jsperf.com/array-unique2/15
-   *
-   * @param  {Array} arr
-   * @return {Array}
-  ###
+  # Internal: De-duplicate an array
+  #
+  # arr - The {Array} to de-depulicate
+  #
+  # Returns {Array} that has no duplicate elements
   unique: (arr) ->
     out = []
     seen = new Set

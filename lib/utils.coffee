@@ -3,6 +3,7 @@ module.exports =
   # Internal: De-duplicate an array
   #
   # arr - The {Array} to de-depulicate
+  #
   # Returns {Array} that has no duplicate elements
   unique: (arr) ->
     out = []

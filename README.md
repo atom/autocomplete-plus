@@ -1,4 +1,4 @@
-# autocomplete+ package
+# autocomplete+ package [![Build Status](https://travis-ci.org/saschagehlich/autocomplete-plus.svg?branch=master)](https://travis-ci.org/saschagehlich/autocomplete-plus)
 
 [View the changelog](https://github.com/saschagehlich/autocomplete-plus/blob/master/CHANGELOG.md)
 

@@ -7,6 +7,10 @@
   "engines": {
     "atom": "*"
   },
+  "contributors": [
+    "Sascha Gehlich <sascha@gehlich.us>",
+    "Joe Fitzgerald <jfitzgerald@gopivotal.com>"
+  ],
   "dependencies": {
     "fuzzaldrin": "~1.0.0",
     "minimatch": "~0.2.14",

@@ -59,14 +59,14 @@ class FuzzyProvider extends Provider
   # e - The change {Event}
   onChanged: (e) =>
     if e.newText in ["\n", " "]
-      newLine = e.newText is "\n"
-      @addLastWordToList newLine
+      newline = e.newText is "\n"
+      @addLastWordToList e.newRange.start.row, e.newRange.start.column, newline
 
   # Private: Adds the last typed word to the wordList
   #
   # newLine - {Boolean} Has a new line been typed?
-  addLastWordToList: (newLine) ->
-    lastWord = @lastTypedWord newLine
+  addLastWordToList: (row, column, newline) ->
+    lastWord = @lastTypedWord row, column, newline
     return unless lastWord
 
     if @wordList.indexOf(lastWord) < 0
@@ -78,21 +78,14 @@ class FuzzyProvider extends Provider
   # newLine - {Boolean} Has a new line been typed?
   #
   # Returns {String} the last typed word
-  lastTypedWord: (newLine) ->
-    selectionRange = @editor.getSelection().getBufferRange()
-    {row} = selectionRange.start
-
-    # The user pressed enter, check previous line
-    if newLine
-      row--
-
+  lastTypedWord: (row, column, newline) ->
     # The user pressed enter, check everything until the end
-    if newLine
-      maxColumn = @editor.lineLengthForBufferRow row
+    if newline
+      maxColumn = column - 1 unless column = 0
     else
-      maxColumn = selectionRange.start.column
+      maxColumn = column
 
-    lineRange = [[row, 0], [row, maxColumn]]
+    lineRange = [[row, 0], [row, column]]
 
     lastWord = null
     @currentBuffer.scanInRange @wordRegex, lineRange, ({match, range, stop}) ->

@@ -17,15 +17,11 @@ class FuzzyProvider extends Provider
     @currentBuffer.on "saved", @onSaved
     @currentBuffer.on "changed", @onChanged
 
-  # ! Public API
-
-  ###
-   * Gets called when the document has been changed. Returns an array with
-   * suggestions. If `exclusive` is set to true and this method returns suggestions,
-   * the suggestions will be the only ones that are displayed.
-   * @return {Array}
-   * @public
-  ###
+  # Public:  Gets called when the document has been changed. Returns an array
+  # with suggestions. If `exclusive` is set to true and this method returns
+  # suggestions, the suggestions will be the only ones that are displayed.
+  #
+  # Returns an {Array} of Suggestion instances
   buildSuggestions: ->
     selection = @editor.getSelection()
     prefix = @prefixOfSelection selection
@@ -41,42 +37,34 @@ class FuzzyProvider extends Provider
     # Now we're ready - display the suggestions
     return suggestions
 
-  ###
-   * Gets called when a suggestion has been confirmed by the user. Return true
-   * to replace the word with the suggestion. Return false if you want to handle
-   * the behavior yourself.
-   * @param  {Suggestion} suggestion
-   * @return {Boolean}
-   * @public
-  ###
+  # Public: Gets called when a suggestion has been confirmed by the user. Return
+  # true to replace the word with the suggestion. Return false if you want to
+  # handle the behavior yourself.
+  #
+  # item - The confirmed {Suggestion}
+  #
+  # Returns a {Boolean} that specifies whether autocomplete+ should replace
+  # the word with the suggestion.
   confirm: (item) ->
     return true
 
-  # ! Private Methods
-
-  ###
-   * Gets called when the user saves the document. Rebuilds the word list
-   * @private
-  ###
+  # Private: Gets called when the user saves the document. Rebuilds the word
+  # list.
   onSaved: =>
     @buildWordList()
 
-  ###
-   * Gets called when the buffer's text has been changed. Checks if the user
-   * has potentially finished a word and adds the new word to the word list.
-   * @param  {Event} e
-   * @private
-  ###
+  # Private: Gets called when the buffer's text has been changed. Checks if the
+  # user has potentially finished a word and adds the new word to the word list.
+  #
+  # e - The change {Event}
   onChanged: (e) =>
     if e.newText in ["\n", " "]
       newLine = e.newText is "\n"
       @addLastWordToList newLine
 
-  ###
-   * Adds the last typed word to the wordList
-   * @param {Boolean} newLine
-   * @private
-  ###
+  # Private: Adds the last typed word to the wordList
+  #
+  # newLine - {Boolean} Has a new line been typed?
   addLastWordToList: (newLine) ->
     lastWord = @lastTypedWord newLine
     return unless lastWord
@@ -84,13 +72,12 @@ class FuzzyProvider extends Provider
     if @wordList.indexOf(lastWord) < 0
       @wordList.push lastWord
 
-  ###
-   * Finds the last typed word. If newLine is set to true, it looks
-   * for the last word in the previous line.
-   * @param {Boolean} newLine
-   * @return {String}
-   * @private
-  ###
+  # Private: Finds the last typed word. If newLine is set to true, it looks
+  # for the last word in the previous line.
+  #
+  # newLine - {Boolean} Has a new line been typed?
+  #
+  # Returns {String} the last typed word
   lastTypedWord: (newLine) ->
     selectionRange = @editor.getSelection().getBufferRange()
     {row} = selectionRange.start
@@ -113,10 +100,7 @@ class FuzzyProvider extends Provider
 
     return lastWord
 
-  ###
-   * Generates the word list from the editor buffer(s)
-   * @private
-  ###
+  # Private: Generates the word list from the editor buffer(s)
   buildWordList: ->
     # Abuse the Hash as a Set
     wordList = []
@@ -142,12 +126,11 @@ class FuzzyProvider extends Provider
 
     p.stop()
 
-  ###
-   * Finds possible matches for the given string / prefix
-   * @param  {String} prefix
-   * @return {Array}
-   * @private
-  ###
+  # Private: Finds possible matches for the given string / prefix
+  #
+  # prefix - {String} The prefix
+  #
+  # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (prefix) ->
     p = new Perf "Finding matches for '#{prefix}'", {@debug}
     p.start()
@@ -162,11 +145,9 @@ class FuzzyProvider extends Provider
     p.stop()
     return results
 
-  ###
-   * Finds autocompletions in the current syntax scope (e.g. css values)
-   * @return {Array}
-   * @private
-  ###
+  # Private: Finds autocompletions in the current syntax scope (e.g. css values)
+  #
+  # Returns an {Array} of strings
   getCompletionsForCursorScope: ->
     cursorScope = @editor.scopesForBufferPosition @editor.getCursorBufferPosition()
     completions = atom.syntax.propertiesForScope cursorScope, "editor.completions"

@@ -146,3 +146,8 @@ class FuzzyProvider extends Provider
     completions = atom.syntax.propertiesForScope cursorScope, "editor.completions"
     completions = completions.map (properties) -> _.valueForKeyPath properties, "editor.completions"
     return Utils.unique _.flatten(completions)
+
+  # Public: Clean up, stop listening to events
+  dispose: ->
+    @currentBuffer?.off "changed", @onChanged
+    @currentBuffer?.off "saved", @onSaved

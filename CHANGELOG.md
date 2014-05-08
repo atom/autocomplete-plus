@@ -1,3 +1,10 @@
+0.18.0 (May 8 2014)
+===================
+
+* Refocus editor when hitting enter
+* Cancel autocompletion when entering space
+* Fix a bug that occurred when duplicating an editor (thanks @yosisa)
+
 0.15.0 (Apr 25 2014)
 ====================
 

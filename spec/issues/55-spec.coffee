@@ -6,7 +6,7 @@ Autocomplete = require '../../lib/autocomplete'
 describe "Autocomplete", ->
   [activationPromise, autocomplete, editorView, editor, completionDelay] = []
 
-  describe "Issue 52", ->
+  describe "Issue 56", ->
     beforeEach ->
       # Create a fake workspace and open a sample file
       atom.workspaceView = new WorkspaceView
@@ -28,7 +28,7 @@ describe "Autocomplete", ->
       {editor} = editorView
       autocomplete = new AutocompleteView editorView
 
-    it "cancels autocompletion when entering an empty string (e.g. space)", ->
+    it "it refocuses the editor after pressing enter", ->
 
       waitsForPromise ->
         activationPromise
@@ -45,6 +45,8 @@ describe "Autocomplete", ->
 
         expect(editorView.find(".autocomplete-plus")).toExist()
 
-        editor.insertText " "
+        editor.insertText "\n"
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()
+
+        expect(editorView.hasFocus()).toEqual true

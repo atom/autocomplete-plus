@@ -106,9 +106,10 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Focuses the editor view again
   #
   # focus - {Boolean} should focus
-  cancel: (focus=true) =>
+  cancel: =>
     super
-    @editorView.focus() if focus
+    unless @editorView.hasFocus()
+      @editorView.focus()
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it

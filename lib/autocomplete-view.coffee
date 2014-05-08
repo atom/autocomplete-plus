@@ -160,11 +160,12 @@ class AutocompleteView extends SimpleSelectListView
   #
   # e - The change {Event}
   onChanged: (e) =>
-    if e.newText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
+    typedText = e.newText.trim()
+    if typedText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
       @contentsModified()
     else
       # Don't refocus since we probably still have focus
-      @cancel focus = false
+      @cancel()
 
   # Private: Repositions the list view. Checks for boundaries and moves the view
   # above or below the cursor if needed.

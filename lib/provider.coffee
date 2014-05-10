@@ -3,7 +3,7 @@
 # suggestions list.
 module.exports =
 class Provider
-  wordRegex: /\b\w*[a-zA-Z_]\w*\b/g
+  wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: (@editorView) ->
     {@editor} = editorView

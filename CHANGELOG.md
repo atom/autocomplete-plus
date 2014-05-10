@@ -1,3 +1,10 @@
+0.19.0 (May 10 2014)
+====================
+
+* Allow hyphens in wordlist. (#64)
+* Add new words to wordlist when a special character has been entered. (#63)
+* Cancel autocompletion when no suggestions are available. (#65)
+
 0.18.0 (May 8 2014)
 ===================
 

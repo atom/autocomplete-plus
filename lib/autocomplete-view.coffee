@@ -126,8 +126,8 @@ class AutocompleteView extends SimpleSelectListView
       else
         suggestions = suggestions.concat providerSuggestions
 
-    # No suggestions? Don't autocomplete!
-    return unless suggestions.length
+    # No suggestions? Cancel autocompletion.
+    return @cancel() unless suggestions.length
 
     # Now we're ready - display the suggestions
     @setItems suggestions

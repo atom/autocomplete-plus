@@ -58,7 +58,9 @@ class FuzzyProvider extends Provider
   #
   # e - The change {Event}
   onChanged: (e) =>
-    if e.newText in ["\n", " "]
+    wordChars = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź" +
+      "abcdefghijklmnopqrstuvwxyz1234567890"
+    if wordChars.indexOf(e.newText.toLowerCase()) is -1
       newline = e.newText is "\n"
       @addLastWordToList e.newRange.start.row, e.newRange.start.column, newline
 

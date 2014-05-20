@@ -6,7 +6,9 @@ View and insert possible completions in the editor while typing
 
 ![Autocomplete+](http://s14.directupload.net/images/140304/y7r7g5df.gif)
 
-**Please note:** In the example above I have "Live completion" enabled.
+**Please note:** In the example above I have "Enable Auto Activation" enabled.
+
+![Enable auto activation setting](https://cloud.githubusercontent.com/assets/119684/3029677/fab41bb0-e037-11e3-85bf-a696996f2478.png)
 
 ## Installation
 

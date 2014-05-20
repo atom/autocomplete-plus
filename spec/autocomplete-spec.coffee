@@ -420,3 +420,29 @@ describe "Autocomplete", ->
         advanceClock completionDelay
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()
+
+    describe "HTML label support", ->
+      [autocompleteView, autocomplete] = []
+
+      it "should allow HTML in labels", ->
+        waitsForPromise ->
+          activationPromise
+            .then (pkg) =>
+              autocomplete = pkg.mainModule
+              autocompleteView = autocomplete.autocompleteViews[0]
+
+        runs ->
+          editorView = atom.workspaceView.getActiveView()
+          editor = editorView.getEditor()
+
+          # Register the test provider
+          testProvider = new TestProvider(editorView)
+          autocomplete.registerProviderForEditorView testProvider, editorView
+
+          editorView.attachToDom()
+          editor.moveCursorToBottom()
+          editor.insertText "o"
+
+          advanceClock completionDelay
+
+          expect(autocompleteView.list.find("li:eq(0) .label")).toHaveHtml "<span style=\"color: red\">ohai</span>"

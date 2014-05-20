@@ -55,12 +55,32 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Creates a view for the given item
   #
   # Returns a {jQuery} object that represents the item view
-  viewForItem: ({word, label}) ->
-    $$ ->
+  viewForItem: ({word, label, renderLabelAsHtml}) ->
+    item = $$ ->
       @li =>
         @span word, class: "word"
         if label?
           @span label, class: "label"
+
+    if renderLabelAsHtml
+      item.find(".label").html label
+
+    return item
+
+  # Private: Escapes HTML from the given string
+  #
+  # string - The {String} to escape
+  #
+  # Returns the escaped {String}
+  escapeHtml: (string) ->
+    escapedString = string
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+
+    return escapedString
 
   # Private: Handles editor events
   handleEvents: ->

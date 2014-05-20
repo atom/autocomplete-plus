@@ -1,3 +1,8 @@
+0.20.0 (May 20 2014)
+====================
+
+* Added an `renderLabelAsHtml` option to the `Suggestion` class that specifies whether the label for this suggestion should be rendered as HTML or not (default: false)
+
 0.19.0 (May 10 2014)
 ====================
 

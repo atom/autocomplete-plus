@@ -64,6 +64,8 @@ class AutocompleteView extends SimpleSelectListView
 
     if renderLabelAsHtml
       item.find(".label").html label
+      if renderLabelAsHtml.style?
+        item.find(".label").css renderLabelAsHtml.style
 
     return item
 

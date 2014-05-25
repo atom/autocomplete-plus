@@ -7,5 +7,5 @@ class TestProvider extends Provider
       word: "ohai",
       prefix: "ohai",
       label: "<span style=\"color: red\">ohai</span>",
-      renderLabelAsHtml: true
+      renderLabelAsHtml: {style: {opacity: 0.5}}
     )]

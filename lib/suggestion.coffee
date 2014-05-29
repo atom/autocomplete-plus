@@ -6,3 +6,4 @@ class Suggestion
     @label = options.label if options.label?
     @data = options.data if options.data?
     @renderLabelAsHtml = options.renderLabelAsHtml if options.renderLabelAsHtml?
+    @className = options.className if options.className?

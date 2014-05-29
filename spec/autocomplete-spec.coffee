@@ -446,3 +446,4 @@ describe "Autocomplete", ->
           advanceClock completionDelay
 
           expect(autocompleteView.list.find("li:eq(0) .label")).toHaveHtml "<span style=\"color: red\">ohai</span>"
+          expect(autocompleteView.list.find("li:eq(0)")).toHaveClass "ohai"

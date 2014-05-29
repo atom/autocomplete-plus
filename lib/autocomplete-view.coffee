@@ -55,7 +55,7 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Creates a view for the given item
   #
   # Returns a {jQuery} object that represents the item view
-  viewForItem: ({word, label, renderLabelAsHtml}) ->
+  viewForItem: ({word, label, renderLabelAsHtml, className}) ->
     item = $$ ->
       @li =>
         @span word, class: "word"
@@ -64,8 +64,9 @@ class AutocompleteView extends SimpleSelectListView
 
     if renderLabelAsHtml
       item.find(".label").html label
-      if renderLabelAsHtml.style?
-        item.find(".label").css renderLabelAsHtml.style
+
+    if className?
+      item.addClass className
 
     return item
 

@@ -98,6 +98,14 @@ class AutocompleteView extends SimpleSelectListView
     # changing any text
     @editor.on "cursor-moved", @cursorMoved
 
+    @hiddenInput.on 'compositionstart', =>
+      @compositionInProgress = true
+      null
+
+    @hiddenInput.on 'compositionend', =>
+      @compositionInProgress = false
+      null
+
   # Public: Registers the given provider
   #
   # provider - The {Provider} to register
@@ -137,6 +145,8 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   runAutocompletion: =>
+    return if @compositionInProgress
+
     # Iterate over all providers, ask them to build word lists
     suggestions = []
     for provider in @providers.slice().reverse()

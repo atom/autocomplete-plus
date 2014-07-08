@@ -1,4 +1,4 @@
-require "./spec-helper"
+{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
 {$, EditorView, WorkspaceView} = require 'atom'
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
@@ -205,6 +205,33 @@ describe "Autocomplete", ->
           editor.insertText("x")
           advanceClock completionDelay
           expect(editorView.find(".autocomplete-plus")).not.toExist()
+
+        it "should not update completions when composing characters", ->
+          # Use the React editor
+          editor = atom.workspace.openSync("sample.js")
+          editorView = atom.workspaceView.getActiveView()
+          autocomplete = new AutocompleteView editorView
+
+          editorView.attachToDom()
+          triggerAutocompletion editor
+          advanceClock completionDelay
+          autocompleteView = editorView.find(".autocomplete-plus").view()
+          inputNode = autocompleteView.hiddenInput[0]
+
+          spyOn(autocompleteView, 'setItems').andCallThrough()
+
+          inputNode.value = "~"
+          inputNode.setSelectionRange(0, 1)
+          inputNode.dispatchEvent(buildIMECompositionEvent('compositionstart', target: inputNode))
+          inputNode.dispatchEvent(buildIMECompositionEvent('compositionupdate', data: "~", target: inputNode))
+          advanceClock completionDelay
+
+          expect(autocompleteView.setItems).not.toHaveBeenCalled()
+
+          inputNode.dispatchEvent(buildIMECompositionEvent('compositionend', target: inputNode))
+          editorView[0].firstChild.dispatchEvent(buildTextInputEvent(data: 'ã', target: inputNode))
+
+          expect(editor.lineForBufferRow(13)).toBe 'fã'
 
       describe "accepting suggestions", ->
         describe "when pressing enter while suggestions are visible", ->

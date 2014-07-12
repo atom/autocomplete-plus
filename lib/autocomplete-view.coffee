@@ -138,6 +138,7 @@ class AutocompleteView extends SimpleSelectListView
   #
   # focus - {Boolean} should focus
   cancel: =>
+    return unless @active
     super
     unless @editorView.hasFocus()
       @editorView.focus()

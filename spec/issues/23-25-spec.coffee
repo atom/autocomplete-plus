@@ -19,7 +19,7 @@ describe "Autocomplete", ->
         atom.workspaceView = new WorkspaceView()
         atom.workspace = atom.workspaceView.model
 
-      waitsForPromise -> atom.workspace.open("issues/11.js").then (e) ->
+      waitsForPromise -> atom.workspace.open("issues/23-25.js").then (e) ->
         editor = e
         atom.workspaceView.simulateDomAttachment()
 

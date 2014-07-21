@@ -26,7 +26,7 @@ class AutocompleteView extends SimpleSelectListView
 
     return if @currentFileBlacklisted()
 
-    @registerProvider new FuzzyProvider(@editorView)
+    @registerProvider new FuzzyProvider(@editor)
 
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()

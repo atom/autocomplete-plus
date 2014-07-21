@@ -12,6 +12,7 @@ describe "AutocompleteView", ->
     runs ->
       # Set to live completion
       atom.config.set "autocomplete-plus.enableAutoActivation", true
+      atom.config.set "editor.fontSize", "16"
 
       # Set the completion delay
       completionDelay = 100
@@ -197,14 +198,30 @@ describe "AutocompleteView", ->
         editorView.trigger "core:move-up"
         expect(editor.getCursorBufferPosition().row).toBe 0
 
+  describe "when a long completion exists", ->
+    beforeEach ->
+      runs ->
+        atom.config.set "autocomplete-plus.enableAutoActivation", true
+
+      waitsForPromise -> atom.workspace.open("samplelong.js").then (e) ->
+        editor = e
+        atom.workspaceView.simulateDomAttachment()
+
+      # Activate the package
+      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
+        autocomplete = a.mainModule
+        autocompleteView = autocomplete.autocompleteViews[0]
+
+      runs ->
+        editorView = atom.workspaceView.getActiveView()
+
     it "sets the width of the view to be wide enough to contain the longest completion without scrolling (+ 15 pixels)", ->
       editorView.attachToDom()
-      editor.insertText('thisIsAReallyReallyReallyLongCompletion ')
       editor.moveCursorToBottom()
       editor.insertNewline()
       editor.insertText "t"
       advanceClock completionDelay
-      expect(autocompleteView.list.prop('scrollWidth') + 15).toBe autocompleteView.list.width()
+      expect(autocompleteView.list.width()).toBe 430
 
   describe "css", ->
     [css] = []

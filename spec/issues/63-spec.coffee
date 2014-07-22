@@ -8,31 +8,29 @@ describe "Autocomplete", ->
 
   describe "Issue 63", ->
     beforeEach ->
-      # Create a fake workspace and open a sample file
-      atom.workspaceView = new WorkspaceView
-      atom.workspaceView.openSync "sample.js"
-      atom.workspaceView.simulateDomAttachment()
+      runs ->
+        # Set to live completion
+        atom.config.set "autocomplete-plus.enableAutoActivation", true
 
-      # Set to live completion
-      atom.config.set "autocomplete-plus.enableAutoActivation", true
+        # Set the completion delay
+        completionDelay = 100
+        atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
+        completionDelay += 100 # Rendering delay
+        atom.workspaceView = new WorkspaceView()
+        atom.workspace = atom.workspaceView.model
 
-      # Set the completion delay
-      completionDelay = 100
-      atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
-      completionDelay += 100 # Rendering delay
+      waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
+        editor = e
+        atom.workspaceView.simulateDomAttachment()
 
       # Activate the package
-      activationPromise = atom.packages.activatePackage "autocomplete-plus"
+      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a
 
-      editorView = atom.workspaceView.getActiveView()
-      {editor} = editorView
-      autocomplete = new AutocompleteView editorView
+      runs ->
+        editorView = atom.workspaceView.getActiveView()
+        autocomplete = new AutocompleteView editorView
 
     it "it adds words to the wordlist when pressing a special character", ->
-
-      waitsForPromise ->
-        activationPromise
-
       runs ->
         editorView.attachToDom()
         editor.insertText "somethingNew"

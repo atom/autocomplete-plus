@@ -263,11 +263,7 @@ describe "AutocompleteView", ->
 
   describe "Positioning", ->
     beforeEach ->
-      runs ->
-        atom.config.set "autocomplete-plus.enableAutoActivation", true
-
-        # React Editor Incompatibility with setEditorHeightInLines
-        atom.config.set('core.useReactEditor', false)
+      runs -> atom.config.set "autocomplete-plus.enableAutoActivation", true
 
       waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
         editor = e

@@ -124,15 +124,14 @@ class AutocompleteView extends SimpleSelectListView
   confirmed: (match) ->
     replace = match.provider.confirm match
 
-    @editor.getSelection().clear()
+    @editor.getSelections().forEach (selection) -> selection.clear()
+
     @cancel()
-
-    return unless match
-
-    if replace
-      @replaceTextWithMatch match
-      position = @editor.getCursorBufferPosition()
-      @editor.setCursorBufferPosition [position.row, position.column]
+    return unless replace
+    @replaceTextWithMatch match
+    @editor.getCursors().forEach (cursor) ->
+      position = cursor.getBufferPosition()
+      cursor.setBufferPosition([position.row, position.column])
 
   # Private: Focuses the editor view again
   #
@@ -232,18 +231,24 @@ class AutocompleteView extends SimpleSelectListView
   #
   # match - The match to replace the current prefix with
   replaceTextWithMatch: (match) ->
-    selection = @editor.getSelection()
-    startPosition = selection.getBufferRange().start
-    buffer = @editor.getBuffer()
+    newSelectedBufferRanges = []
+    selections = @editor.getSelections()
 
-    # Replace the prefix with the new word
-    cursorPosition = @editor.getCursorBufferPosition()
-    buffer.delete Range.fromPointWithDelta(cursorPosition, 0, -match.prefix.length)
-    @editor.insertText match.word
+    selections.forEach (selection, i) =>
+      startPosition = selection.getBufferRange().start
+      buffer = @editor.getBuffer()
 
-    # Move the cursor behind the new word
-    suffixLength = match.word.length - match.prefix.length
-    @editor.setSelectedBufferRange [startPosition, [startPosition.row, startPosition.column + suffixLength]]
+      selection.deleteSelectedText()
+      cursorPosition = @editor.getCursors()[i].getBufferPosition()
+      # buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, match.suffix.length))
+      buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, -match.prefix.length))
+
+      infixLength = match.word.length - match.prefix.length
+
+      newSelectedBufferRanges.push([startPosition, [startPosition.row, startPosition.column + infixLength]])
+
+    @editor.insertText(match.word)
+    @editor.setSelectedBufferRanges(newSelectedBufferRanges)
 
   # Private: As soon as the list is in the DOM tree, it calculates the maximum width of
   # all list items and resizes the list so that all items fit

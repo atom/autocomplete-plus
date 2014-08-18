@@ -132,7 +132,12 @@ class FuzzyProvider extends Provider
 
     # Merge the scope specific words into the default word list
     wordList = @wordList.concat @getCompletionsForCursorScope()
-    words = fuzzaldrin.filter wordList, prefix
+
+    words =
+      if atom.config.get("autocomplete-plus.strictMatching")
+        @wordList.filter (word) -> word.indexOf(prefix) is 0
+      else
+        fuzzaldrin.filter wordList, prefix
 
     results = for word in words when word isnt prefix
       new Suggestion this, word: word, prefix: prefix

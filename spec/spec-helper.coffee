@@ -1,8 +1,8 @@
-exports.triggerAutocompletion = (editor, moveCursor=true) ->
+exports.triggerAutocompletion = (editor, moveCursor=true, char='f') ->
   if moveCursor
     editor.moveCursorToBottom()
     editor.moveCursorToBeginningOfLine()
-  editor.insertText "f"
+  editor.insertText char
 
 exports.buildIMECompositionEvent = (event, {data, target}={}) ->
   event = new CustomEvent(event, bubbles: true)

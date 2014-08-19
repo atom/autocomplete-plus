@@ -280,6 +280,7 @@ describe "AutocompleteView", ->
       runs ->
         editorView.attachToDom()
         setEditorHeightInLines editorView, 13
+        editorView.height(13 * editorView.lineHeight)
         editorView.resetDisplay() # Ensures the editor only has 13 lines visible
 
     describe "when the autocomplete view fits below the cursor", ->

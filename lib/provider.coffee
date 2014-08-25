@@ -5,25 +5,27 @@ module.exports =
 class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
-  constructor: (@editorView) ->
-    {@editor} = editorView
+  constructor: (@editor) ->
     @initialize.apply this, arguments
 
   # Public: An initializer for subclasses
   initialize: ->
     return
 
-  # Public: Defines whether the words returned at {::buildWordList} should be added to
+  # Public: Defines whether the words returned at {::buildSuggestions} should be added to
   # the default suggestions or should be displayed exclusively
   exclusive: false
+
+  # Public: The version of the provider spec that this provider satisfies
+  providerVersion: 2
 
   # Public: Gets called when the document has been changed. Returns an array with
   # suggestions. If `exclusive` is set to true and this method returns suggestions,
   # the suggestions will be the only ones that are displayed.
   #
   # Returns An {Array} of suggestions.
-  buildSuggestions: ->
-    throw new Error "Subclass must implement a buildWordList(prefix) method"
+  buildSuggestions: (done, position) ->
+    throw new Error "Subclass must implement a buildSuggestions(done, position) method"
 
   # Public: Gets called when a suggestion has been confirmed by the user. Return true
   # to replace the word with the suggestion. Return false if you want to handle
@@ -42,7 +44,7 @@ class Provider
   # Returns {String} with the prefix of the {Selection}
   prefixOfSelection: (selection) ->
     selectionRange = selection.getBufferRange()
-    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineLengthForBufferRow(selectionRange.end.row)]]
+    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.getBuffer().lineLengthForRow(selectionRange.end.row)]]
     prefix = ""
     @editor.getBuffer().scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
       stop() if range.start.isGreaterThan(selectionRange.end)

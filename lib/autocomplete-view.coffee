@@ -164,8 +164,10 @@ class AutocompleteView extends SimpleSelectListView
 
     # Now we're ready - display the suggestions
     @setItems suggestions
-    @editorView.appendToLinesView this
-    @setPosition()
+    try
+      @editorView.appendToLinesView this
+      @setPosition()
+    catch error
 
     @setActive()
 

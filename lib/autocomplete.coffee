@@ -2,6 +2,7 @@ _ = require "underscore-plus"
 AutocompleteView = require "./autocomplete-view"
 Provider = require "./provider"
 Suggestion = require "./suggestion"
+semver = require "semver"
 
 module.exports =
   configDefaults:
@@ -18,9 +19,12 @@ module.exports =
     # If both autosave and autocomplete+'s auto-activation feature are enabled,
     # disable the auto-activation
     if atom.packages.isPackageLoaded("autosave") and
+      semver.lt(atom.packages.getLoadedPackage("autosave").metadata.version, "0.17.0") and
       atom.config.get("autosave.enabled") and
       atom.config.get("autocomplete-plus.enableAutoActivation")
         atom.config.set "autocomplete-plus.enableAutoActivation", false
+
+        console.log(atom.packages)
 
         alert """Warning from autocomplete+:
 

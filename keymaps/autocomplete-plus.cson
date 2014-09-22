@@ -1,5 +1,6 @@
 ".autocomplete-plus input.hidden-input":
   "tab": "autocomplete-plus:confirm"
+  "enter": "autocomplete-plus:confirm"
   "down": "autocomplete-plus:select-next"
   "ctrl-n": "autocomplete-plus:select-next"
   "up": "autocomplete-plus:select-previous"

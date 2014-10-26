@@ -15,7 +15,7 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Makes sure we're listening to editor and buffer events, sets
   # the current buffer
   #
-  # editorView - {EditorView}
+  # editorView - {TextEditorView}
   initialize: (@editorView) ->
     {@editor} = @editorView
 

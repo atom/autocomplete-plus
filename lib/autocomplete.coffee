@@ -54,11 +54,11 @@ module.exports =
     @autocompleteViews.forEach (autocompleteView) -> autocompleteView.remove()
     @autocompleteViews = []
 
-  # Public: Finds the autocomplete view for the given EditorView
+  # Public: Finds the autocomplete view for the given TextEditorView
   # and registers the given provider
   #
   # provider - The new {Provider}
-  # editorView - The {EditorView} we should register the provider with
+  # editorView - The {TextEditorView} we should register the provider with
   registerProviderForEditorView: (provider, editorView) ->
     autocompleteView = _.findWhere @autocompleteViews, editorView: editorView
     unless autocompleteView?
@@ -66,7 +66,7 @@ module.exports =
 
     autocompleteView.registerProvider provider
 
-  # Public: Finds the autocomplete view for the given EditorView
+  # Public: Finds the autocomplete view for the given TextEditorView
   # and unregisters the given provider
   #
   # provider - The {Provider} to unregister

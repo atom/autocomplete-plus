@@ -1,5 +1,5 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "../spec-helper"
-{$, EditorView, WorkspaceView} = require 'atom'
+{$, TextEditorView, WorkspaceView} = require 'atom'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 TestProvider = require '../lib/test-provider'

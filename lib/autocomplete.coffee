@@ -31,10 +31,12 @@ module.exports =
     @editorSubscription = atom.workspaceView.eachEditorView (editor) =>
       if editor.attached and not editor.mini
         autocompleteView = new AutocompleteView(editor)
-        editor.on "editor:will-be-removed", =>
+
+        editor.getModel().onDidDestroy =>
           autocompleteView.remove() unless autocompleteView.hasParent()
           autocompleteView.dispose()
           _.remove(@autocompleteViews, autocompleteView)
+
         @autocompleteViews.push(autocompleteView)
 
   # Public: Cleans everything up, removes all AutocompleteView instances

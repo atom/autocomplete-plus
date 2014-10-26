@@ -32,7 +32,7 @@ describe "Autocomplete", ->
       runs ->
         expect(autocomplete.autocompleteViews.length).toEqual(1)
 
-        editorView.splitRight()
+        editorView.getPaneView().getModel().splitRight(copyActiveItem: true)
         expect(autocomplete.autocompleteViews.length).toEqual(2)
 
         atom.workspaceView.destroyActivePane()

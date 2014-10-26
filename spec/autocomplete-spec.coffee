@@ -49,7 +49,7 @@ describe "Autocomplete", ->
         buffer = editor.getBuffer()
 
         # Trigger an autocompletion
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
         editor.insertText("A")
 
         advanceClock completionDelay

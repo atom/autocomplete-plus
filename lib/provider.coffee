@@ -42,7 +42,7 @@ class Provider
   # Returns {String} with the prefix of the {Selection}
   prefixOfSelection: (selection) ->
     selectionRange = selection.getBufferRange()
-    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineLengthForBufferRow(selectionRange.end.row)]]
+    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineTextForBufferRow(selectionRange.end.row).length]]
     prefix = ""
     @editor.getBuffer().scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
       stop() if range.start.isGreaterThan(selectionRange.end)

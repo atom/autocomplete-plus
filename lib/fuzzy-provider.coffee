@@ -14,8 +14,10 @@ class FuzzyProvider extends Provider
     @buildWordList()
 
     @currentBuffer = @editor.getBuffer()
-    @currentBuffer.on "saved", @onSaved
-    @currentBuffer.on "changed", @onChanged
+    @disposableEvents = [
+      @currentBuffer.onDidSave @onSaved
+      @currentBuffer.onDidChange @onChanged
+    ]
 
   # Public:  Gets called when the document has been changed. Returns an array
   # with suggestions. If `exclusive` is set to true and this method returns
@@ -23,7 +25,7 @@ class FuzzyProvider extends Provider
   #
   # Returns an {Array} of Suggestion instances
   buildSuggestions: ->
-    selection = @editor.getSelection()
+    selection = @editor.getLastSelection()
     prefix = @prefixOfSelection selection
 
     # No prefix? Don't autocomplete!
@@ -144,12 +146,12 @@ class FuzzyProvider extends Provider
   #
   # Returns an {Array} of strings
   getCompletionsForCursorScope: ->
-    cursorScope = @editor.scopesForBufferPosition @editor.getCursorBufferPosition()
-    completions = atom.syntax.propertiesForScope cursorScope, "editor.completions"
+    cursorScope = @editor.scopeDescriptorForBufferPosition @editor.getCursorBufferPosition()
+    completions = atom.config.settingsForScopeDescriptor cursorScope.getScopesArray(), "editor.completions"
     completions = completions.map (properties) -> _.valueForKeyPath properties, "editor.completions"
     return Utils.unique _.flatten(completions)
 
   # Public: Clean up, stop listening to events
   dispose: ->
-    @currentBuffer?.off "changed", @onChanged
-    @currentBuffer?.off "saved", @onSaved
+    for disposable in @disposableEvents
+      disposable.dispose()

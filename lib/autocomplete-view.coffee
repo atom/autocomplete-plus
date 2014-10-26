@@ -23,6 +23,7 @@ class AutocompleteView extends SimpleSelectListView
 
     @addClass "autocomplete-plus"
     @providers = []
+    @disposableEvents = []
 
     return if @currentFileBlacklisted()
 
@@ -87,16 +88,18 @@ class AutocompleteView extends SimpleSelectListView
 
   # Private: Handles editor events
   handleEvents: ->
+    @disposableEvents = [
+      # Close the overlay when the cursor moved without
+      # changing any text
+      @editor.onDidChangeCursorPosition @cursorMoved
+
+      # Is this the event for switching tabs? Dunno...
+      @editor.onDidChangeTitle @cancel
+    ]
+
     # Make sure we don't scroll in the editor view when scrolling
     # in the list
     @list.on "mousewheel", (event) -> event.stopPropagation()
-
-    # Is this the event for switching tabs? Dunno...
-    @editor.on "title-changed-subscription-removed", @cancel
-
-    # Close the overlay when the cursor moved without
-    # changing any text
-    @editor.on "cursor-moved", @cursorMoved
 
     @hiddenInput.on 'compositionstart', =>
       @compositionInProgress = true
@@ -204,7 +207,7 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Repositions the list view. Checks for boundaries and moves the view
   # above or below the cursor if needed.
   setPosition: ->
-    { left, top } = @editorView.pixelPositionForScreenPosition @editor.getCursorScreenPosition()
+    { left, top } = @editor.pixelPositionForScreenPosition @editor.getCursorScreenPosition()
     cursorLeft = left
     cursorTop = top
 
@@ -283,8 +286,8 @@ class AutocompleteView extends SimpleSelectListView
   #
   # currentBuffer - The current {TextBuffer}
   setCurrentBuffer: (@currentBuffer) ->
-    @currentBuffer.on "saved", @onSaved
-    @currentBuffer.on "changed", @onChanged
+    @disposableEvents.push @currentBuffer.onDidSave(@onSaved)
+    @disposableEvents.push @currentBuffer.onDidChange(@onChanged)
 
   # Private: Why are we doing this again...?
   # Might be because of autosave:
@@ -293,9 +296,8 @@ class AutocompleteView extends SimpleSelectListView
 
   # Public: Clean up, stop listening to events
   dispose: ->
-    @currentBuffer?.off "changed", @onChanged
-    @currentBuffer?.off "saved", @onSaved
-    @editor.off "title-changed-subscription-removed", @cancel
-    @editor.off "cursor-moved", @cursorMoved
     for provider in @providers when provider.dispose?
       provider.dispose()
+
+    for disposable in @disposableEvents
+      disposable.dispose()

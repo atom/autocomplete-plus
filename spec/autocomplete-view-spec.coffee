@@ -62,7 +62,7 @@ describe "AutocompleteView", ->
         expect(editorView.find(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
         editor.insertText("x")
         advanceClock completionDelay
         expect(editorView.find(".autocomplete-plus")).not.toExist()
@@ -86,7 +86,7 @@ describe "AutocompleteView", ->
         inputNode.dispatchEvent(buildIMECompositionEvent('compositionend', target: inputNode))
         editorView[0].firstChild.dispatchEvent(buildTextInputEvent(data: 'ã', target: inputNode))
 
-        expect(editor.lineForBufferRow(13)).toBe 'fã'
+        expect(editor.lineTextForBufferRow(13)).toBe 'fã'
 
     describe "accepting suggestions", ->
       describe "when pressing enter while suggestions are visible", ->
@@ -114,8 +114,8 @@ describe "AutocompleteView", ->
           expect(editorView.find(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
-          editor.moveCursorToBottom()
-          editor.moveCursorToBeginningOfLine()
+          editor.moveToBottom()
+          editor.moveToBeginningOfLine()
           editor.insertText("f")
           advanceClock completionDelay
           expect(editorView.find(".autocomplete-plus")).toExist()
@@ -217,7 +217,7 @@ describe "AutocompleteView", ->
 
     it "sets the width of the view to be wide enough to contain the longest completion without scrolling (+ 15 pixels)", ->
       editorView.attachToDom()
-      editor.moveCursorToBottom()
+      editor.moveToBottom()
       editor.insertNewline()
       editor.insertText "t"
       advanceClock completionDelay
@@ -281,7 +281,6 @@ describe "AutocompleteView", ->
         editorView.attachToDom()
         setEditorHeightInLines editorView, 13
         editorView.height(13 * editorView.lineHeight)
-        editorView.resetDisplay() # Ensures the editor only has 13 lines visible
 
     describe "when the autocomplete view fits below the cursor", ->
       it "adds the autocomplete view to the editor below the cursor", ->
@@ -291,7 +290,7 @@ describe "AutocompleteView", ->
         expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Check position
-        cursorPixelPosition = editorView.pixelPositionForScreenPosition editor.getCursorScreenPosition()
+        cursorPixelPosition = editorView.getModel().pixelPositionForScreenPosition editor.getCursorScreenPosition()
         expect(parseInt autocompleteView.css("top")).toBe cursorPixelPosition.top + editorView.lineHeight
         expect(autocompleteView.position().left).toBe cursorPixelPosition.left
 
@@ -304,7 +303,7 @@ describe "AutocompleteView", ->
         expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Check position
-        cursorPixelPosition = editorView.pixelPositionForScreenPosition editor.getCursorScreenPosition()
+        cursorPixelPosition = editorView.getModel().pixelPositionForScreenPosition editor.getCursorScreenPosition()
         expect(parseInt autocompleteView.css("top")).toBe cursorPixelPosition.top
         expect(autocompleteView.position().left).toBe cursorPixelPosition.left
 
@@ -358,7 +357,7 @@ describe "AutocompleteView", ->
         autocomplete.registerProviderForEditorView testProvider, editorView
 
         editorView.attachToDom()
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
         editor.insertText "o"
 
         advanceClock completionDelay

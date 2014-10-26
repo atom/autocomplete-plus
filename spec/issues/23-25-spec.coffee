@@ -36,7 +36,7 @@ describe "Autocomplete", ->
         expect(editorView.find(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
         editor.insertText c for c in "red"
 
         advanceClock completionDelay

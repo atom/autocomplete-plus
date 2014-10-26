@@ -43,9 +43,9 @@ describe "Autocomplete", ->
 
         autocomplete.trigger "autocomplete-plus:confirm"
 
-        expect(editor.lineForBufferRow(10)).toBe "shift:extra:shift"
+        expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
         expect(editor.getCursorBufferPosition()).toEqual [10,12]
-        expect(editor.getSelection().getBufferRange()).toEqual({
+        expect(editor.getLastSelection().getBufferRange()).toEqual({
           start:
             row: 10
             column: 12
@@ -68,7 +68,7 @@ describe "Autocomplete", ->
           autocomplete = autocompleteModule.autocompleteViews[0]
           autocomplete.trigger "autocomplete-plus:confirm"
 
-          expect(editor.lineForBufferRow(10)).toBe "sh:extra:ah"
+          expect(editor.lineTextForBufferRow(10)).toBe "sh:extra:ah"
           expect(editor.getSelections().length).toEqual(2)
           expect(editor.getSelections()[0].getBufferRange()).toEqual [[10,2], [10,2]]
           expect(editor.getSelections()[1].getBufferRange()).toEqual [[10,11], [10,11]]

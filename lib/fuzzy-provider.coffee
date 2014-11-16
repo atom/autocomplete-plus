@@ -119,6 +119,12 @@ class FuzzyProvider extends Provider
     # Flatten the matches, make it an unique array
     wordList = _.flatten matches
     wordList = Utils.unique wordList
+
+    # Filter words by length
+    minimumWordLength = atom.config.get("autocomplete-plus.minimumWordLength")
+    if minimumWordLength
+      wordList = wordList.filter (word) -> word?.length >= minimumWordLength
+
     @wordList = wordList
 
     p.stop()

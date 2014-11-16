@@ -1,5 +1,5 @@
 require "../spec-helper"
-{$, EditorView, WorkspaceView} = require 'atom'
+{$, TextEditorView, WorkspaceView} = require 'atom'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
@@ -36,7 +36,7 @@ describe "Autocomplete", ->
         expect(editorView.find(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
         editor.insertText "r"
 
         advanceClock completionDelay

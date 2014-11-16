@@ -1,5 +1,5 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
-{$, EditorView, WorkspaceView} = require 'atom'
+{$, TextEditorView, WorkspaceView} = require 'atom'
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
@@ -49,7 +49,7 @@ describe "Autocomplete", ->
         buffer = editor.getBuffer()
 
         # Trigger an autocompletion
-        editor.moveCursorToBottom()
+        editor.moveToBottom()
         editor.insertText("A")
 
         advanceClock completionDelay

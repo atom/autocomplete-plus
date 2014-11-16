@@ -1,7 +1,7 @@
 exports.triggerAutocompletion = (editor, moveCursor=true, char='f') ->
   if moveCursor
-    editor.moveCursorToBottom()
-    editor.moveCursorToBeginningOfLine()
+    editor.moveToBottom()
+    editor.moveToBeginningOfLine()
   editor.insertText char
 
 exports.buildIMECompositionEvent = (event, {data, target}={}) ->

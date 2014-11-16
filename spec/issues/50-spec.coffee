@@ -1,5 +1,5 @@
 require "../spec-helper"
-{$, EditorView, WorkspaceView} = require 'atom'
+{$, TextEditorView, WorkspaceView} = require 'atom'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
@@ -32,7 +32,7 @@ describe "Autocomplete", ->
       runs ->
         expect(autocomplete.autocompleteViews.length).toEqual(1)
 
-        editorView.splitRight()
+        editorView.getPaneView().getModel().splitRight(copyActiveItem: true)
         expect(autocomplete.autocompleteViews.length).toEqual(2)
 
         atom.workspaceView.destroyActivePane()

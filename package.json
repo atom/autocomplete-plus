@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-plus",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "main": "./lib/autocomplete",
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/saschagehlich/autocomplete-plus",

@@ -189,9 +189,15 @@ class AutocompleteView extends SimpleSelectListView
   cursorMoved: (data) =>
     @cancel() unless data.textChanged
 
+  editorHasFocus: =>
+    editorView = @editorView
+    editorView = editorView[0] if editorView.jquery
+    return editorView.hasFocus()
+
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion
   onSaved: =>
+    return unless @editorHasFocus()
     @cancel()
 
   # Private: Cancels the autocompletion if the user entered more than one character
@@ -199,6 +205,7 @@ class AutocompleteView extends SimpleSelectListView
   #
   # e - The change {Event}
   onChanged: (e) =>
+    return unless @editorHasFocus()
     typedText = e.newText.trim()
     if typedText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
       @contentsModified()

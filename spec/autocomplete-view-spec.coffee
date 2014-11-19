@@ -31,7 +31,7 @@ describe "AutocompleteView", ->
 
       waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
@@ -205,7 +205,7 @@ describe "AutocompleteView", ->
 
       waitsForPromise -> atom.workspace.open("samplelong.js").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
@@ -231,7 +231,7 @@ describe "AutocompleteView", ->
 
       waitsForPromise -> atom.workspace.open("css.css").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("language-css").then (c) -> css = c
@@ -267,7 +267,7 @@ describe "AutocompleteView", ->
 
       waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
@@ -314,7 +314,7 @@ describe "AutocompleteView", ->
 
       waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
@@ -340,7 +340,7 @@ describe "AutocompleteView", ->
     beforeEach ->
       waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->

@@ -22,7 +22,7 @@ describe "Autocomplete", ->
 
       waitsForPromise -> atom.workspace.open("issues/57.js").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocompleteModule = a.mainModule

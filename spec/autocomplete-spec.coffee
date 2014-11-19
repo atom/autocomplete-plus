@@ -27,7 +27,7 @@ describe "Autocomplete", ->
 
     waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
       editor = e
-      atom.workspaceView.simulateDomAttachment()
+      atom.workspaceView.attachToDom()
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a.mainModule

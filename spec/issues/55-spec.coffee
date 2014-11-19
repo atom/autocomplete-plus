@@ -21,14 +21,13 @@ describe "Autocomplete", ->
 
       waitsForPromise -> atom.workspace.open("issues/50.js").then (e) ->
         editor = e
-        atom.workspaceView.simulateDomAttachment()
+        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
-        autocomplete = new AutocompleteView editorView
 
     it "it refocuses the editor after pressing enter", ->
       runs ->
@@ -47,4 +46,4 @@ describe "Autocomplete", ->
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()
 
-        expect(editorView.hasFocus()).toEqual true
+        expect(editorView).toHaveFocus()

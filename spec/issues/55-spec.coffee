@@ -28,7 +28,6 @@ describe "Autocomplete", ->
 
       runs ->
         editorView = atom.workspaceView.getActiveView()
-        autocomplete = new AutocompleteView editorView
 
     it "it refocuses the editor after pressing enter", ->
       runs ->
@@ -47,4 +46,4 @@ describe "Autocomplete", ->
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()
 
-        expect(editorView.hasFocus()).toEqual true
+        expect(editorView).toHaveFocus()

@@ -206,8 +206,7 @@ class AutocompleteView extends SimpleSelectListView
   # e - The change {Event}
   onChanged: (e) =>
     return unless @editorHasFocus()
-    typedText = e.newText.trim()
-    if typedText.length is 1 and atom.config.get "autocomplete-plus.enableAutoActivation"
+    if atom.config.get("autocomplete-plus.enableAutoActivation") and ( e.newText.trim().length is 1 or e.oldText.trim().length is 1 )
       @contentsModified()
     else
       # Don't refocus since we probably still have focus

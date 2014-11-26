@@ -1,6 +1,6 @@
-# autocomplete+ package [![Build Status](https://travis-ci.org/saschagehlich/autocomplete-plus.svg?branch=master)](https://travis-ci.org/saschagehlich/autocomplete-plus)
+# autocomplete+ package [![Build Status](https://travis-ci.org/atom-community/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom-community/autocomplete-plus)
 
-[View the changelog](https://github.com/saschagehlich/autocomplete-plus/blob/master/CHANGELOG.md)
+[View the changelog](https://github.com/atom-community/autocomplete-plus/blob/master/CHANGELOG.md)
 
 View and insert possible completions in the editor while typing
 
@@ -44,4 +44,4 @@ Additional confirmation keymapping can be customised in your keymap.cson:
 
 Since version 0.12.0, other packages are able to register suggestion providers to the autocomplete-plus package.
 
-[See the tutorial on how to create and register suggestion providers](https://github.com/saschagehlich/autocomplete-plus/wiki/Tutorial:-Registering-and-creating-a-suggestion-provider)
+[See the tutorial on how to create and register suggestion providers](https://github.com/atom-community/autocomplete-plus/wiki/Tutorial:-Registering-and-creating-a-suggestion-provider)

@@ -1,6 +1,6 @@
 # autocomplete+ package [![Build Status](https://travis-ci.org/atom-community/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom-community/autocomplete-plus)
 
-[View the changelog](https://github.com/atom-community/autocomplete-plus/blob/master/CHANGELOG.md)
+[View the changelog](https://github.com/atom-community/autocomplete-plus/releases)
 
 View and insert possible completions in the editor while typing
 

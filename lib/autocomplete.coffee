@@ -75,7 +75,7 @@ module.exports =
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
-    view.unregisterProvider for view in @autocompleteViews
+    view.unregisterProvider provider for view in @autocompleteViews
 
   Provider: Provider
   Suggestion: Suggestion

@@ -304,7 +304,8 @@ describe "AutocompleteView", ->
 
         # Check position
         cursorPixelPosition = editorView.getModel().pixelPositionForScreenPosition editor.getCursorScreenPosition()
-        expect(parseInt autocompleteView.css("top")).toBe cursorPixelPosition.top
+        autocompleteBottom = autocompleteView.position().top + autocompleteView.outerHeight()
+        expect(autocompleteBottom).toBe cursorPixelPosition.top
         expect(autocompleteView.position().left).toBe cursorPixelPosition.left
 
   describe "when auto-activation is disabled", ->

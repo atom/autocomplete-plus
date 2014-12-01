@@ -216,27 +216,20 @@ class AutocompleteView extends SimpleSelectListView
   # above or below the cursor if needed.
   setPosition: ->
     { left, top } = @editor.pixelPositionForScreenPosition @editor.getCursorScreenPosition()
-    cursorLeft = left
-    cursorTop = top
+    height = @outerHeight()
+    width = @outerWidth()
 
-    # The top position if we would put it below the current line
-    belowPosition = cursorTop + @editorView.lineHeight
+    potentialTop = top + @editorView.lineHeight
+    potentialBottom = potentialTop - @editorView.scrollTop() + height
+    parentWidth = @parent().width()
 
-    # The top position of the lower edge if we would put it below the current line
-    belowLowerPosition = belowPosition + @outerHeight()
+    left = parentWidth - width if left + width > parentWidth
 
-    # The position if we would put it above the line
-    abovePosition = cursorTop
-
-    if belowLowerPosition > @editorView.outerHeight() + @editorView.scrollTop()
-      # We can't put it below - put it above. Using CSS transforms to
-      # move it 100% up so that the lower edge is above the current line
-      @css left: cursorLeft, top: abovePosition
-      @css "-webkit-transform", "translateY(-100%)"
+    if @aboveCursor or potentialBottom > @editorView.outerHeight()
+      @aboveCursor = true
+      @css(left: left, top: top - height, bottom: 'inherit')
     else
-      # We can put it below, remove possible previous CSS transforms
-      @css left: cursorLeft, top: belowPosition
-      @css "-webkit-transform", ""
+      @css(left: left, top: potentialTop, bottom: 'inherit')
 
   # Private: Replaces the current prefix with the given match
   #

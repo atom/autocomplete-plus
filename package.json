@@ -3,14 +3,10 @@
   "version": "0.22.3",
   "main": "./lib/autocomplete",
   "description": "Display possible completions in the editor while typing",
-  "repository": "https://github.com/saschagehlich/autocomplete-plus",
+  "repository": "https://github.com/atom-community/autocomplete-plus",
   "engines": {
     "atom": "*"
   },
-  "contributors": [
-    "Sascha Gehlich <sascha@gehlich.us>",
-    "Joe Fitzgerald <jfitzgerald@gopivotal.com>"
-  ],
   "dependencies": {
     "async": ">=0.9.0",
     "atom-space-pen-views": ">=0.21.0",

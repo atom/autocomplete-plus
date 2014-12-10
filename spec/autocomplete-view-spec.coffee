@@ -215,13 +215,13 @@ describe "AutocompleteView", ->
       runs ->
         editorView = atom.workspaceView.getActiveView()
 
-    it "sets the width of the view to be wide enough to contain the longest completion without scrolling (+ 15 pixels)", ->
+    it "sets the width of the view to be wide enough to contain the longest completion without scrolling", ->
       editorView.attachToDom()
       editor.moveToBottom()
       editor.insertNewline()
       editor.insertText "t"
       advanceClock completionDelay
-      expect(autocompleteView.list.width()).toBe 430
+      expect(autocompleteView.list.width()).toBe 390
 
   describe "css", ->
     [css] = []
@@ -260,53 +260,6 @@ describe "AutocompleteView", ->
         expect(autocompleteView.list.find("li:eq(1)")).toHaveText "outline-color"
         expect(autocompleteView.list.find("li:eq(2)")).toHaveText "outline-width"
         expect(autocompleteView.list.find("li:eq(3)")).toHaveText "outline-style"
-
-  describe "Positioning", ->
-    beforeEach ->
-      runs -> atom.config.set "autocomplete-plus.enableAutoActivation", true
-
-      waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
-        editor = e
-        atom.workspaceView.attachToDom()
-
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
-        autocomplete = a.mainModule
-        autocompleteView = autocomplete.autocompleteViews[0]
-
-      runs ->
-        editorView = atom.workspaceView.getActiveView()
-
-      runs ->
-        editorView.attachToDom()
-        setEditorHeightInLines editorView, 13
-        editorView.height(13 * editorView.lineHeight)
-
-    describe "when the autocomplete view fits below the cursor", ->
-      it "adds the autocomplete view to the editor below the cursor", ->
-        editor.setCursorBufferPosition [1, 2]
-        editor.insertText "f"
-        advanceClock completionDelay
-        expect(editorView.find(".autocomplete-plus")).toExist()
-
-        # Check position
-        cursorPixelPosition = editorView.getModel().pixelPositionForScreenPosition editor.getCursorScreenPosition()
-        expect(parseInt autocompleteView.css("top")).toBe cursorPixelPosition.top + editorView.lineHeight
-        expect(autocompleteView.position().left).toBe cursorPixelPosition.left
-
-    describe "when the autocomplete view does not fit below the cursor", ->
-      it "adds the autocomplete view to the editor above the cursor", ->
-        # Trigger autocompletion
-        editor.setCursorScreenPosition [11, 0]
-        editor.insertText "t"
-        advanceClock completionDelay
-        expect(editorView.find(".autocomplete-plus")).toExist()
-
-        # Check position
-        cursorPixelPosition = editorView.getModel().pixelPositionForScreenPosition editor.getCursorScreenPosition()
-        autocompleteBottom = autocompleteView.position().top + autocompleteView.outerHeight()
-        expect(autocompleteBottom).toBe cursorPixelPosition.top
-        expect(autocompleteView.position().left).toBe cursorPixelPosition.left
 
   describe "when auto-activation is disabled", ->
     beforeEach ->

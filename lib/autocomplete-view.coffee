@@ -149,6 +149,7 @@ class AutocompleteView extends SimpleSelectListView
   # positions the overlay and shows it
   runAutocompletion: =>
     return if @compositionInProgress
+    @decoration.destroy() if @decoration
 
     # Iterate over all providers, ask them to build word lists
     suggestions = []
@@ -167,10 +168,14 @@ class AutocompleteView extends SimpleSelectListView
 
     # Now we're ready - display the suggestions
     @setItems suggestions
-    try
-      @editorView.appendToLinesView this
-      @setPosition()
-    catch error
+
+    cursor = @editor.getLastCursor()
+    if cursor
+      # it's only safe to call getCursorBufferPosition when there are cursors
+      marker = cursor.getMarker()
+      @decoration = @editor.decorateMarker marker,
+        type: 'overlay'
+        item: this
 
     @setActive()
 
@@ -211,25 +216,6 @@ class AutocompleteView extends SimpleSelectListView
     else
       # Don't refocus since we probably still have focus
       @cancel()
-
-  # Private: Repositions the list view. Checks for boundaries and moves the view
-  # above or below the cursor if needed.
-  setPosition: ->
-    { left, top } = @editor.pixelPositionForScreenPosition @editor.getCursorScreenPosition()
-    height = @outerHeight()
-    width = @outerWidth()
-
-    potentialTop = top + @editorView.lineHeight
-    potentialBottom = potentialTop - @editorView.scrollTop() + height
-    parentWidth = @parent().width()
-
-    left = parentWidth - width if left + width > parentWidth
-
-    if @aboveCursor or potentialBottom > @editorView.outerHeight()
-      @aboveCursor = true
-      @css(left: left, top: top - height, bottom: 'inherit')
-    else
-      @css(left: left, top: potentialTop, bottom: 'inherit')
 
   # Private: Replaces the current prefix with the given match
   #
@@ -280,7 +266,6 @@ class AutocompleteView extends SimpleSelectListView
     super
 
     p.stop()
-    @setPosition()
 
   # Private: Sets the current buffer, starts listening to change events and delegates
   # them to #onChanged()

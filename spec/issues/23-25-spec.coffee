@@ -1,5 +1,6 @@
 require "../spec-helper"
-{$, TextEditorView, WorkspaceView} = require 'atom'
+{TextEditorView, WorkspaceView} = require 'atom'
+{$} = require 'space-pen'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
@@ -44,6 +45,6 @@ describe "Autocomplete", ->
         expect(editorView.find(".autocomplete-plus")).toExist()
 
         # Accept suggestion
-        autocomplete.trigger "autocomplete-plus:confirm"
+        atom.commands.dispatch autocomplete.get(0), "autocomplete-plus:confirm"
 
         expect(editorView.find(".autocomplete-plus")).not.toExist()

@@ -1,5 +1,6 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "../spec-helper"
-{$, TextEditorView, WorkspaceView} = require 'atom'
+{TextEditorView, WorkspaceView} = require 'atom'
+{$} = require 'space-pen'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 TestProvider = require '../lib/test-provider'
@@ -41,7 +42,7 @@ describe "Autocomplete", ->
 
         autocomplete = autocompleteModule.autocompleteViews[0]
 
-        autocomplete.trigger "autocomplete-plus:confirm"
+        atom.commands.dispatch autocomplete.get(0), "autocomplete-plus:confirm"
 
         expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
         expect(editor.getCursorBufferPosition()).toEqual [10,12]
@@ -66,7 +67,7 @@ describe "Autocomplete", ->
           advanceClock completionDelay
 
           autocomplete = autocompleteModule.autocompleteViews[0]
-          autocomplete.trigger "autocomplete-plus:confirm"
+          atom.commands.dispatch autocomplete.get(0), "autocomplete-plus:confirm"
 
           expect(editor.lineTextForBufferRow(10)).toBe "sh:extra:ah"
           expect(editor.getSelections().length).toEqual(2)

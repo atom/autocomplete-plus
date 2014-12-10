@@ -1,5 +1,6 @@
 require "../spec-helper"
-{$, TextEditorView, WorkspaceView} = require 'atom'
+{TextEditorView, WorkspaceView} = require 'atom'
+{$} = require 'space-pen'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 path = require 'path'

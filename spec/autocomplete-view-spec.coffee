@@ -1,5 +1,6 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
-{$, TextEditorView, WorkspaceView} = require 'atom'
+{TextEditorView, WorkspaceView} = require 'atom'
+{$} = require 'space-pen'
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
@@ -99,7 +100,7 @@ describe "AutocompleteView", ->
           advanceClock completionDelay
 
           # Accept suggestion
-          autocompleteView.trigger "autocomplete-plus:confirm"
+          atom.commands.dispatch autocompleteView.get(0), "autocomplete-plus:confirm"
 
           # Check for result
           expect(editor.getBuffer().getLastLine()).toEqual "function"
@@ -121,7 +122,7 @@ describe "AutocompleteView", ->
           expect(editorView.find(".autocomplete-plus")).toExist()
 
           # Accept suggestion
-          autocompleteView.trigger "autocomplete-plus:confirm"
+          atom.commands.dispatch autocompleteView.get(0), "autocomplete-plus:confirm"
 
           expect(editorView.find(".autocomplete-plus")).not.toExist()
 
@@ -139,7 +140,7 @@ describe "AutocompleteView", ->
         expect(editorView.find(".autocomplete-plus li:eq(3)")).not.toHaveClass("selected")
 
         # Select previous item
-        autocompleteView.trigger "autocomplete-plus:select-previous"
+        atom.commands.dispatch autocompleteView.get(0), "autocomplete-plus:select-previous"
 
         expect(editorView.find(".autocomplete-plus li:eq(0)")).not.toHaveClass("selected")
         expect(editorView.find(".autocomplete-plus li:eq(1)")).not.toHaveClass("selected")
@@ -160,7 +161,7 @@ describe "AutocompleteView", ->
         expect(editorView.find(".autocomplete-plus li:eq(3)")).not.toHaveClass("selected")
 
         # Select next item
-        autocompleteView.trigger "autocomplete-plus:select-next"
+        atom.commands.dispatch autocompleteView.get(0), "autocomplete-plus:select-next"
 
         expect(editorView.find(".autocomplete-plus li:eq(0)")).not.toHaveClass("selected")
         expect(editorView.find(".autocomplete-plus li:eq(1)")).toHaveClass("selected")
@@ -176,7 +177,7 @@ describe "AutocompleteView", ->
         advanceClock completionDelay
 
         # Get the second item
-        item = editorView.find(".autocomplete-plus li:eq(1)")
+        item = $(editorView.find(".autocomplete-plus li:eq(1)").get(0))
 
         # Click the item, expect list to be hidden and
         # text to be added
@@ -192,10 +193,10 @@ describe "AutocompleteView", ->
         triggerAutocompletion editor, false
         autocompleteView.cancel()
 
-        editorView.trigger "core:move-down"
+        atom.commands.dispatch editorView.get(0), "core:move-down"
         expect(editor.getCursorBufferPosition().row).toBe 1
 
-        editorView.trigger "core:move-up"
+        atom.commands.dispatch editorView.get(0), "core:move-up"
         expect(editor.getCursorBufferPosition().row).toBe 0
 
   describe "when a long completion exists", ->
@@ -221,7 +222,7 @@ describe "AutocompleteView", ->
       editor.insertNewline()
       editor.insertText "t"
       advanceClock completionDelay
-      expect(autocompleteView.list.width()).toBe 390
+      expect(autocompleteView.get(0).scrollWidth).toBe autocompleteView.outerWidth()
 
   describe "css", ->
     [css] = []
@@ -287,7 +288,7 @@ describe "AutocompleteView", ->
       triggerAutocompletion editor
       advanceClock completionDelay
       expect(editorView.find(".autocomplete-plus")).not.toExist()
-      editorView.trigger "autocomplete-plus:activate"
+      atom.commands.dispatch editorView.get(0), "autocomplete-plus:activate"
       expect(editorView.find(".autocomplete-plus")).toExist()
 
   describe "HTML label support", ->

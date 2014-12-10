@@ -1,4 +1,4 @@
-{$, $$, View} = require "atom"
+{$, $$, View} = require "space-pen"
 _ = require "underscore-plus"
 
 Keys =
@@ -15,8 +15,6 @@ class SimpleSelectListView extends View
 
   # Private: Listens to events, delegates them to instance methods
   initialize: ->
-    # Core events for keyboard handling
-    @on "autocomplete-plus:confirm", => @confirmSelection()
 
     # List mouse events
     @list.on "mousedown", "li", (e) =>
@@ -33,7 +31,7 @@ class SimpleSelectListView extends View
         @confirmSelection()
 
   # Private: Selects the previous item view
-  selectPreviousItemView: ->
+  selectPreviousItemView: =>
     view = @getSelectedItemView().prev()
     unless view.length
       view = @list.find "li:last"
@@ -42,7 +40,7 @@ class SimpleSelectListView extends View
     return false
 
   # Private: Selects the next item view
-  selectNextItemView: ->
+  selectNextItemView: =>
     view = @getSelectedItemView().next()
     unless view.length
       view = @list.find "li:first"
@@ -94,7 +92,9 @@ class SimpleSelectListView extends View
 
   # Private: Confirms the currently selected item or cancels the list view
   # if no item has been selected
-  confirmSelection: ->
+  confirmSelection: =>
+
+    console.log('con act')
     item = @getSelectedItem()
     if item?
       @confirmed item

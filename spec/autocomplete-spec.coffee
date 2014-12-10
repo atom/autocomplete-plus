@@ -1,5 +1,6 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
-{$, TextEditorView, WorkspaceView} = require 'atom'
+{TextEditorView, WorkspaceView} = require 'atom'
+{$} = require 'space-pen'
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
@@ -125,6 +126,6 @@ describe "Autocomplete", ->
           advanceClock completionDelay
 
           autocompleteView = autocomplete.autocompleteViews[0]
-          autocompleteView.trigger "autocomplete-plus:confirm"
+          atom.commands.dispatch autocompleteView.get(0), "autocomplete-plus:confirm"
 
           expect(testProvider.confirm).toHaveBeenCalled()

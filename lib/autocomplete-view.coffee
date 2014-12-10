@@ -1,4 +1,6 @@
-{Editor, $, $$, Range}  = require "atom"
+{Editor, Range}  = require "atom"
+{CompositeDisposable} = require 'event-kit'
+{$, $$} = require 'space-pen'
 _ = require "underscore-plus"
 path = require "path"
 minimatch = require "minimatch"
@@ -18,12 +20,12 @@ class AutocompleteView extends SimpleSelectListView
   # editorView - {TextEditorView}
   initialize: (@editorView) ->
     {@editor} = @editorView
+    @compositeDisposable = new CompositeDisposable
 
     super
 
     @addClass "autocomplete-plus"
     @providers = []
-    @disposableEvents = []
 
     return if @currentFileBlacklisted()
 
@@ -32,11 +34,17 @@ class AutocompleteView extends SimpleSelectListView
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
 
-    @subscribeToCommand @editorView, "autocomplete-plus:activate", @runAutocompletion
+    @compositeDisposable.add atom.commands.add 'atom-text-editor',
+      "autocomplete-plus:activate": @runAutocompletion
 
-    @on "autocomplete-plus:select-next", => @selectNextItemView()
-    @on "autocomplete-plus:select-previous", => @selectPreviousItemView()
-    @on "autocomplete-plus:cancel", => @cancel()
+
+    # Core events for keyboard handling
+
+    @compositeDisposable.add atom.commands.add '.autocomplete-plus',
+      "autocomplete-plus:confirm": @confirmSelection,
+      "autocomplete-plus:select-next": @selectNextItemView,
+      "autocomplete-plus:select-previous": @selectPreviousItemView,
+      "autocomplete-plus:cancel": @cancel
 
   # Private: Checks whether the current file is blacklisted
   #
@@ -88,14 +96,12 @@ class AutocompleteView extends SimpleSelectListView
 
   # Private: Handles editor events
   handleEvents: ->
-    @disposableEvents = [
-      # Close the overlay when the cursor moved without
-      # changing any text
-      @editor.onDidChangeCursorPosition @cursorMoved
+    # Close the overlay when the cursor moved without
+    # changing any text
+    @compositeDisposable.add @editor.onDidChangeCursorPosition(@cursorMoved)
 
-      # Is this the event for switching tabs? Dunno...
-      @editor.onDidChangeTitle @cancel
-    ]
+    # Is this the event for switching tabs? Dunno...
+    @compositeDisposable.add @editor.onDidChangeTitle(@cancel)
 
     # Make sure we don't scroll in the editor view when scrolling
     # in the list
@@ -113,13 +119,16 @@ class AutocompleteView extends SimpleSelectListView
   #
   # provider - The {Provider} to register
   registerProvider: (provider) ->
-    @providers.push(provider) unless _.findWhere(@providers, provider)?
+    unless _.findWhere(@providers, provider)?
+      @providers.push provider
+      @compositeDisposable.add provider if provider.dispose?
 
   # Public: Unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
     _.remove @providers, provider
+    @compositeDisposable.remove provider
 
   # Private: Gets called when the user successfully confirms a suggestion
   #
@@ -149,7 +158,6 @@ class AutocompleteView extends SimpleSelectListView
   # positions the overlay and shows it
   runAutocompletion: =>
     return if @compositionInProgress
-    @decoration.destroy() if @decoration
 
     # Iterate over all providers, ask them to build word lists
     suggestions = []
@@ -164,18 +172,22 @@ class AutocompleteView extends SimpleSelectListView
         suggestions = suggestions.concat providerSuggestions
 
     # No suggestions? Cancel autocompletion.
-    return @cancel() unless suggestions.length
+    unless suggestions.length
+      @decoration.destroy() if @decoration
+      @decoration = undefined
+      return @cancel()
 
     # Now we're ready - display the suggestions
     @setItems suggestions
 
-    cursor = @editor.getLastCursor()
-    if cursor
-      # it's only safe to call getCursorBufferPosition when there are cursors
-      marker = cursor.getMarker()
-      @decoration = @editor.decorateMarker marker,
-        type: 'overlay'
-        item: this
+    unless @decoration
+      cursor = @editor.getLastCursor()
+      if cursor
+        # it's only safe to call getCursorBufferPosition when there are cursors
+        marker = cursor.getMarker()
+        @decoration = @editor.decorateMarker marker,
+          type: 'overlay'
+          item: this
 
     @setActive()
 
@@ -216,7 +228,6 @@ class AutocompleteView extends SimpleSelectListView
     else
       # Don't refocus since we probably still have focus
       @cancel()
-
   # Private: Replaces the current prefix with the given match
   #
   # match - The match to replace the current prefix with
@@ -272,8 +283,8 @@ class AutocompleteView extends SimpleSelectListView
   #
   # currentBuffer - The current {TextBuffer}
   setCurrentBuffer: (@currentBuffer) ->
-    @disposableEvents.push @currentBuffer.onDidSave(@onSaved)
-    @disposableEvents.push @currentBuffer.onDidChange(@onChanged)
+    @compositeDisposable.add @currentBuffer.onDidSave(@onSaved)
+    @compositeDisposable.add @currentBuffer.onDidChange(@onChanged)
 
   # Private: Why are we doing this again...?
   # Might be because of autosave:
@@ -282,8 +293,4 @@ class AutocompleteView extends SimpleSelectListView
 
   # Public: Clean up, stop listening to events
   dispose: ->
-    for provider in @providers when provider.dispose?
-      provider.dispose()
-
-    for disposable in @disposableEvents
-      disposable.dispose()
+    @compositeDisposable.dispose()

@@ -6,5 +6,5 @@
   "ctrl-p": "autocomplete-plus:select-previous"
   "escape": "autocomplete-plus:cancel"
 
-".editor":
+"atom-text-editor":
   "ctrl-shift-space": "autocomplete-plus:activate"

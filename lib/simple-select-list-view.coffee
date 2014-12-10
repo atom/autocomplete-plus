@@ -93,8 +93,6 @@ class SimpleSelectListView extends View
   # Private: Confirms the currently selected item or cancels the list view
   # if no item has been selected
   confirmSelection: =>
-
-    console.log('con act')
     item = @getSelectedItem()
     if item?
       @confirmed item

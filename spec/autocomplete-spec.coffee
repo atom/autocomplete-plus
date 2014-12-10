@@ -1,6 +1,6 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
-{TextEditorView, WorkspaceView} = require 'atom'
-{$} = require 'space-pen'
+{WorkspaceView} = require 'atom'
+{$, TextEditorView} = require 'atom-space-pen-views'
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'

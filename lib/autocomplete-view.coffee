@@ -1,6 +1,6 @@
 {Editor, Range}  = require "atom"
 {CompositeDisposable} = require 'event-kit'
-{$, $$} = require 'space-pen'
+{$, $$} = require 'atom-space-pen-views'
 _ = require "underscore-plus"
 path = require "path"
 minimatch = require "minimatch"

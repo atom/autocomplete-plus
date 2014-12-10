@@ -13,11 +13,12 @@
   ],
   "dependencies": {
     "async": ">=0.9.0",
-    "emissary": "1.x",
-    "fuzzaldrin": "~1.0.0",
-    "minimatch": "~0.2.14",
-    "semver": "~3.0.1",
+    "atom-space-pen-views": ">=0.21.0",
+    "event-kit": ">=0.8.1",
+    "fuzzaldrin": ">=1.0.0",
+    "minimatch": ">=0.2.14",
+    "semver": ">=3.0.1",
     "temp": ">=0.7.0",
-    "underscore-plus": "1.x"
+    "underscore-plus": ">=1.0.0"
   }
 }

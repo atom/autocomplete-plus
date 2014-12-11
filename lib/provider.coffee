@@ -5,8 +5,7 @@ module.exports =
 class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
-  constructor: (@editorView) ->
-    {@editor} = editorView
+  constructor: (@editor) ->
     @initialize.apply this, arguments
 
   # Public: An initializer for subclasses

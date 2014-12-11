@@ -40,38 +40,36 @@ module.exports =
 
         autocomplete+ can now only be triggered using the keyboard shortcut `ctrl+space`."""
 
-    @editorSubscription = atom.workspaceView.eachEditorView (editor) =>
-      if editor.attached and not editor.mini
-        autocompleteView = new AutocompleteView(editor)
+    @editorSubscription = atom.workspace.observeTextEditors (editor) =>
+      autocompleteView = new AutocompleteView(editor)
 
-        editor.getModel().onDidDestroy =>
-          autocompleteView.remove() unless autocompleteView.hasParent()
-          autocompleteView.dispose()
-          _.remove(@autocompleteViews, autocompleteView)
+      editor.onDidDestroy =>
+        autocompleteView.remove() unless autocompleteView.hasParent()
+        autocompleteView.dispose()
+        _.remove(@autocompleteViews, autocompleteView)
 
-        @autocompleteViews.push(autocompleteView)
+      @autocompleteViews.push(autocompleteView)
 
   # Public: Cleans everything up, removes all AutocompleteView instances
   deactivate: ->
-    @editorSubscription?.off()
+    @editorSubscription?.dispose()
     @editorSubscription = null
     @autocompleteViews.forEach (autocompleteView) -> autocompleteView.remove()
     @autocompleteViews = []
 
-  # Public: Finds the autocomplete view for the given TextEditorView
+  # Public: Finds the autocomplete view for the given TextEditor
   # and registers the given provider
   #
   # provider - The new {Provider}
-  # editorView - The {TextEditorView} we should register the provider with
-  registerProviderForEditorView: (provider, editorView) ->
-    autocompleteView = _.findWhere @autocompleteViews, editorView: editorView
+  # editor - The {TextEditor} we should register the provider with
+  registerProviderForEditor: (provider, editor) ->
+    autocompleteView = _.findWhere @autocompleteViews, editor: editor
     unless autocompleteView?
       throw new Error("Could not register provider", provider.constructor.name)
 
     autocompleteView.registerProvider provider
 
-  # Public: Finds the autocomplete view for the given TextEditorView
-  # and unregisters the given provider
+  # Public: unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->

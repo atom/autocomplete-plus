@@ -1,6 +1,4 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
-{WorkspaceView} = require 'atom'
-{$, TextEditorView} = require 'atom-space-pen-views'
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
@@ -23,25 +21,26 @@ describe "Autocomplete", ->
       # Spy on AutocompleteView#initialize
       spyOn(AutocompleteView.prototype, "initialize").andCallThrough()
 
-      atom.workspaceView = new WorkspaceView()
-      atom.workspace = atom.workspaceView.model
+
+      workspaceElement = atom.views.getView(atom.workspace)
+      jasmine.attachToDOM(workspaceElement)
 
     waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
       editor = e
-      atom.workspaceView.attachToDom()
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a.mainModule
 
     runs ->
-      editorView = atom.workspaceView.getActiveView()
+      editorView = atom.views.getView(editor)
+
 
   describe "@activate()", ->
     it "activates autocomplete and initializes AutocompleteView instances", ->
       expect(AutocompleteView.prototype.initialize).toHaveBeenCalled()
 
       runs ->
-        expect(editorView.find(".autocomplete-plus")).not.toExist()
+        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
   describe "@deactivate()", ->
     it "removes all autocomplete views", ->
@@ -54,19 +53,19 @@ describe "Autocomplete", ->
         editor.insertText("A")
 
         advanceClock completionDelay
-
-        expect(editorView.find(".autocomplete-plus")).toExist()
+        editorView = editorView
+        expect(editorView.querySelector(".autocomplete-plus")).toExist()
 
         # Deactivate the package
         atom.packages.deactivatePackage "autocomplete-plus"
-        expect(editorView.find(".autocomplete-plus")).not.toExist()
+        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
   describe "Providers", ->
-    describe "registerProviderForEditorView", ->
+    describe "registerProviderForEditor", ->
       it "registers the given provider for the given editor view", ->
         runs ->
-          testProvider = new TestProvider(editorView)
-          autocomplete.registerProviderForEditorView testProvider, editorView
+          testProvider = new TestProvider(editor)
+          autocomplete.registerProviderForEditor testProvider, editor
 
           autocompleteView = autocomplete.autocompleteViews[0]
           expect(autocompleteView.providers[1]).toBe testProvider
@@ -76,9 +75,9 @@ describe "Autocomplete", ->
 
         runs ->
           testProvider = new TestProvider(editorView)
-          autocomplete.registerProviderForEditorView testProvider, editorView
-          autocomplete.registerProviderForEditorView testProvider, editorView
-          autocomplete.registerProviderForEditorView testProvider, editorView
+          autocomplete.registerProviderForEditor testProvider, editor
+          autocomplete.registerProviderForEditor testProvider, editor
+          autocomplete.registerProviderForEditor testProvider, editor
 
           autocompleteView = autocomplete.autocompleteViews[0]
           expect(autocompleteView.providers[1]).toBe testProvider
@@ -87,8 +86,8 @@ describe "Autocomplete", ->
     describe "unregisterProviderFromEditorView", ->
       it "unregisters the provider from all editor views", ->
         runs ->
-          testProvider = new TestProvider(editorView)
-          autocomplete.registerProviderForEditorView testProvider, editorView
+          testProvider = new TestProvider(editor)
+          autocomplete.registerProviderForEditor testProvider, editor
 
           autocompleteView = autocomplete.autocompleteViews[0]
           expect(autocompleteView.providers[1]).toBe testProvider
@@ -99,12 +98,10 @@ describe "Autocomplete", ->
     describe "a registered provider", ->
       it "calls buildSuggestions()", ->
         runs ->
-          testProvider = new TestProvider(editorView)
-          autocomplete.registerProviderForEditorView testProvider, editorView
+          testProvider = new TestProvider(editor)
+          autocomplete.registerProviderForEditor testProvider, editor
 
           spyOn(testProvider, "buildSuggestions").andCallThrough()
-
-          editorView.attachToDom()
 
           # Trigger an autocompletion
           triggerAutocompletion editor
@@ -115,11 +112,9 @@ describe "Autocomplete", ->
       it "calls confirm()", ->
         runs ->
           testProvider = new TestProvider(editorView)
-          autocomplete.registerProviderForEditorView testProvider, editorView
+          autocomplete.registerProviderForEditor testProvider, editor
 
           spyOn(testProvider, "confirm").andCallThrough()
-
-          editorView.attachToDom()
 
           # Trigger an autocompletion
           triggerAutocompletion editor

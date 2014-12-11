@@ -1,6 +1,4 @@
 require "../spec-helper"
-{WorkspaceView} = require 'atom'
-{$, TextEditorView} = require 'atom-space-pen-views'
 AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
@@ -17,26 +15,27 @@ describe "Autocomplete", ->
         completionDelay = 100
         atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
         completionDelay += 100 # Rendering delay
-        atom.workspaceView = new WorkspaceView()
-        atom.workspace = atom.workspaceView.model
+
+        workspaceElement = atom.views.getView(atom.workspace)
+        jasmine.attachToDOM(workspaceElement)
 
       waitsForPromise -> atom.workspace.open("issues/50.js").then (e) ->
         editor = e
-        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a.mainModule
 
-      runs -> editorView = atom.workspaceView.getActiveView()
+      runs ->
+        editorView = atom.views.getView(editor)
 
     it "works after closing one of the copied tabs", ->
       runs ->
         expect(autocomplete.autocompleteViews.length).toEqual(1)
 
-        editorView.getPaneView().getModel().splitRight(copyActiveItem: true)
+        atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true)
         expect(autocomplete.autocompleteViews.length).toEqual(2)
 
-        atom.workspaceView.destroyActivePane()
+        atom.workspace.getActivePane().destroy()
         expect(autocomplete.autocompleteViews.length).toEqual(1)
 
         editor.moveCursorToEndOfLine
@@ -44,4 +43,4 @@ describe "Autocomplete", ->
         editor.insertText "f"
 
         advanceClock completionDelay
-        expect(editorView.find(".autocomplete-plus")).toExist()
+        expect(editorView.querySelector(".autocomplete-plus")).toExist()

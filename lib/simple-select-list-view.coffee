@@ -1,5 +1,5 @@
-{$, $$, View} = require "atom-space-pen-views"
-_ = require "underscore-plus"
+{$, $$, View} = require 'atom-space-pen-views'
+_ = require 'underscore-plus'
 
 Keys =
   Escape: 27

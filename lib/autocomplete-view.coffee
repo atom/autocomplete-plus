@@ -1,13 +1,13 @@
-{Editor, Range}  = require "atom"
+{Editor, Range}  = require 'atom'
 {CompositeDisposable} = require 'event-kit'
 {$, $$} = require 'atom-space-pen-views'
-_ = require "underscore-plus"
-path = require "path"
-minimatch = require "minimatch"
-SimpleSelectListView = require "./simple-select-list-view"
-FuzzyProvider = require "./fuzzy-provider"
-Perf = require "./perf"
-Utils = require "./utils"
+_ = require 'underscore-plus'
+path = require 'path'
+minimatch = require 'minimatch'
+SimpleSelectListView = require './simple-select-list-view'
+FuzzyProvider = require './fuzzy-provider'
+Perf = require './perf'
+Utils = require './utils'
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView
@@ -17,9 +17,9 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Makes sure we're listening to editor and buffer events, sets
   # the current buffer
   #
-  # editorView - {TextEditorView}
-  initialize: (@editorView) ->
-    {@editor} = @editorView
+  # editor - {TextEditor}
+  initialize: (@editor) ->
+    @editorView = atom.views.getView @editor
     @compositeDisposable = new CompositeDisposable
 
     super
@@ -29,7 +29,7 @@ class AutocompleteView extends SimpleSelectListView
 
     return if @currentFileBlacklisted()
 
-    @registerProvider new FuzzyProvider(@editorView)
+    @registerProvider new FuzzyProvider(@editor)
 
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
@@ -228,6 +228,7 @@ class AutocompleteView extends SimpleSelectListView
     else
       # Don't refocus since we probably still have focus
       @cancel()
+
   # Private: Replaces the current prefix with the given match
   #
   # match - The match to replace the current prefix with
@@ -259,9 +260,9 @@ class AutocompleteView extends SimpleSelectListView
     return unless onDom
 
     widestCompletion = parseInt(@css("min-width")) or 0
-    @list.find("li").each ->
-      wordWidth = $(this).find("span.word").outerWidth()
-      labelWidth = $(this).find("span.label").outerWidth()
+    @list.querySelector("li").each ->
+      wordWidth = $(this).querySelector("span.word").outerWidth()
+      labelWidth = $(this).querySelector("span.label").outerWidth()
 
       totalWidth = wordWidth + labelWidth + 40
       widestCompletion = Math.max widestCompletion, totalWidth

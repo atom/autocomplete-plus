@@ -13,7 +13,6 @@
     "event-kit": ">=0.8.1",
     "fuzzaldrin": ">=1.0.0",
     "minimatch": ">=0.2.14",
-    "semver": ">=3.0.1",
     "temp": ">=0.7.0",
     "underscore-plus": ">=1.0.0"
   }

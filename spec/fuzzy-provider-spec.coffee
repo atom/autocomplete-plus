@@ -1,6 +1,4 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
-{WorkspaceView} = require 'atom'
-{$, TextEditorView} = require 'atom-space-pen-views'
 _ = require "underscore-plus"
 AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
@@ -22,8 +20,9 @@ describe "AutocompleteView", ->
       # Spy on AutocompleteView#initialize
       spyOn(AutocompleteView.prototype, "initialize").andCallThrough()
 
-      atom.workspaceView = new WorkspaceView()
-      atom.workspace = atom.workspaceView.model
+
+      workspaceElement = atom.views.getView(atom.workspace)
+      jasmine.attachToDOM(workspaceElement)
 
   describe "when auto-activation is enabled", ->
     beforeEach ->
@@ -31,7 +30,6 @@ describe "AutocompleteView", ->
 
       waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
         editor = e
-        atom.workspaceView.attachToDom()
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
@@ -39,11 +37,10 @@ describe "AutocompleteView", ->
         autocompleteView = autocomplete.autocompleteViews[0]
 
       runs ->
-        editorView = atom.workspaceView.getActiveView()
+        editorView = atom.views.getView(editor)
 
     # TODO: Move this to a separate fuzzyprovider spec
     it "adds words to the wordlist after they have been written", ->
-      editorView.attachToDom()
       editor.insertText "somethingNew"
       editor.insertText " "
 

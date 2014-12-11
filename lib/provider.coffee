@@ -1,3 +1,6 @@
+{View} = require 'space-pen'
+{deprecate} = require 'grim'
+
 # Public: A provider provides an interface to the autocomplete package. Third-party
 # packages can register providers which will then be used to generate the
 # suggestions list.
@@ -6,6 +9,10 @@ class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: (@editor) ->
+    if @editor instanceof View
+      deprecate("Use of EditorView is deprecated, construct with a TextEditor model instead")
+      @editorView = @editor
+      @editor = @editorView
     @initialize.apply this, arguments
 
   # Public: An initializer for subclasses

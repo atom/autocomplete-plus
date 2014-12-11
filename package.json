@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-plus",
-  "version": "0.22.5",
+  "version": "0.22.6",
   "main": "./lib/autocomplete",
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/atom-community/autocomplete-plus",

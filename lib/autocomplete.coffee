@@ -3,6 +3,7 @@ AutocompleteView = require "./autocomplete-view"
 Provider = require "./provider"
 Suggestion = require "./suggestion"
 semver = require "semver"
+{deprecate} = require 'grim'
 
 module.exports =
   config:
@@ -56,6 +57,10 @@ module.exports =
     @editorSubscription = null
     @autocompleteViews.forEach (autocompleteView) -> autocompleteView.remove()
     @autocompleteViews = []
+
+  registerProviderForEditorView: (provider, editorView) ->
+    deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
+    @registerProviderForEditor(provider, editor.getModel())
 
   # Public: Finds the autocomplete view for the given TextEditor
   # and registers the given provider

@@ -1,13 +1,13 @@
-{Editor, Range}  = require "atom"
+{Editor, Range}  = require 'atom'
 {CompositeDisposable} = require 'event-kit'
-{$, $$} = require 'space-pen'
-_ = require "underscore-plus"
-path = require "path"
-minimatch = require "minimatch"
-SimpleSelectListView = require "./simple-select-list-view"
-FuzzyProvider = require "./fuzzy-provider"
-Perf = require "./perf"
-Utils = require "./utils"
+{$, $$} = require 'atom-space-pen-views'
+_ = require 'underscore-plus'
+path = require 'path'
+minimatch = require 'minimatch'
+SimpleSelectListView = require './simple-select-list-view'
+FuzzyProvider = require './fuzzy-provider'
+Perf = require './perf'
+Utils = require './utils'
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView

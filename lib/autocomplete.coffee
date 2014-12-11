@@ -1,9 +1,8 @@
-_ = require "underscore-plus"
-AutocompleteView = require "./autocomplete-view"
-Provider = require "./provider"
-Suggestion = require "./suggestion"
-semver = require "semver"
-{deprecate} = require 'grim'
+_ = require 'underscore-plus'
+AutocompleteView = require './autocomplete-view'
+Provider = require './provider'
+Suggestion = require './suggestion'
+{deprecate} = require 'atom-space-pen-views'
 
 module.exports =
   config:
@@ -25,22 +24,6 @@ module.exports =
 
   # Public: Creates AutocompleteView instances for all active and future editors
   activate: ->
-    # If both autosave and autocomplete+'s auto-activation feature are enabled,
-    # disable the auto-activation
-    if atom.packages.isPackageLoaded("autosave") and
-      semver.lt(atom.packages.getLoadedPackage("autosave").metadata.version, "0.17.0") and
-      atom.config.get("autosave.enabled") and
-      atom.config.get("autocomplete-plus.enableAutoActivation")
-        atom.config.set "autocomplete-plus.enableAutoActivation", false
-
-        console.log(atom.packages)
-
-        alert """Warning from autocomplete+:
-
-        autocomplete+ is not compatible with the autosave package when the auto-activation feature is enabled. Therefore, auto-activation has been disabled.
-
-        autocomplete+ can now only be triggered using the keyboard shortcut `ctrl+space`."""
-
     @editorSubscription = atom.workspace.observeTextEditors (editor) =>
       autocompleteView = new AutocompleteView(editor)
 

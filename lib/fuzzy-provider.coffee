@@ -1,9 +1,9 @@
-_ = require "underscore-plus"
-Suggestion = require "./suggestion"
-Utils = require "./utils"
-fuzzaldrin = require "fuzzaldrin"
-Provider = require "./provider"
-Perf = require "./perf"
+_ = require 'underscore-plus'
+Suggestion = require './suggestion'
+Utils = require './utils'
+fuzzaldrin = require 'fuzzaldrin'
+Provider = require './provider'
+Perf = require './perf'
 
 module.exports =
 class FuzzyProvider extends Provider

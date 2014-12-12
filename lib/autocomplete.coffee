@@ -2,7 +2,7 @@ _ = require 'underscore-plus'
 AutocompleteView = require './autocomplete-view'
 Provider = require './provider'
 Suggestion = require './suggestion'
-{deprecate} = require 'atom-space-pen-views'
+{deprecate} = require 'grim'
 
 module.exports =
   config:
@@ -43,7 +43,7 @@ module.exports =
 
   registerProviderForEditorView: (provider, editorView) ->
     deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
-    @registerProviderForEditor(provider, editor.getModel())
+    @registerProviderForEditor(provider, editorView.getModel())
 
   # Public: Finds the autocomplete view for the given TextEditor
   # and registers the given provider

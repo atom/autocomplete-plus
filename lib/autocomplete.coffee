@@ -2,7 +2,7 @@ _ = require 'underscore-plus'
 AutocompleteView = require './autocomplete-view'
 Provider = require './provider'
 Suggestion = require './suggestion'
-{deprecate} = require 'atom-space-pen-views'
+{deprecate} = require 'grim'
 
 module.exports =
   config:

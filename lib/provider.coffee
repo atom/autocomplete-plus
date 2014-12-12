@@ -1,5 +1,5 @@
 {View} = require 'atom-space-pen-views'
-{deprecate} = require 'atom-space-pen-views'
+{deprecate} = require 'grim'
 
 # Public: A provider provides an interface to the autocomplete package. Third-party
 # packages can register providers which will then be used to generate the

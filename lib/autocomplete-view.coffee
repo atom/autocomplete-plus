@@ -19,7 +19,7 @@ class AutocompleteView extends SimpleSelectListView
   #
   # editor - {TextEditor}
   initialize: (@editor) ->
-    @editorView = atom.views.getView @editor
+    @editorView = atom.views.getView(@editor)
     @compositeDisposable = new CompositeDisposable
 
     super
@@ -120,30 +120,32 @@ class AutocompleteView extends SimpleSelectListView
   # provider - The {Provider} to register
   registerProvider: (provider) ->
     unless _.findWhere(@providers, provider)?
-      @providers.push provider
-      @compositeDisposable.add provider if provider.dispose?
+      @providers.push(provider)
+      @compositeDisposable.add(provider) if provider.dispose?
 
   # Public: Unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
-    _.remove @providers, provider
-    @compositeDisposable.remove provider
+    _.remove(@providers, provider)
+    @compositeDisposable.remove(provider)
 
   # Private: Gets called when the user successfully confirms a suggestion
   #
   # match - An {Object} representing the confirmed suggestion
   confirmed: (match) ->
-    replace = match.provider.confirm match
-
-    @editor.getSelections().forEach (selection) -> selection.clear()
+    return unless match?.provider?
+    return unless @editor?
+    replace = match.provider.confirm(match)
+    return unless replace
+    @editor.getSelections()?.forEach (selection) -> selection?.clear()
 
     @cancel()
-    return unless replace
-    @replaceTextWithMatch match
-    @editor.getCursors().forEach (cursor) ->
-      position = cursor.getBufferPosition()
-      cursor.setBufferPosition([position.row, position.column])
+
+    @replaceTextWithMatch(match)
+    @editor.getCursors()?.forEach (cursor) ->
+      position = cursor?.getBufferPosition()
+      cursor.setBufferPosition([position.row, position.column]) if position?
 
   # Private: Focuses the editor view again
   #
@@ -151,7 +153,7 @@ class AutocompleteView extends SimpleSelectListView
   cancel: =>
     return unless @active
     super
-    unless @editorView.hasFocus()
+    unless @editorView?.hasFocus()
       @editorView.focus()
 
   # Private: Finds suggestions for the current prefix, sets the list items,
@@ -161,19 +163,19 @@ class AutocompleteView extends SimpleSelectListView
 
     # Iterate over all providers, ask them to build word lists
     suggestions = []
-    for provider in @providers.slice().reverse()
-      providerSuggestions = provider.buildSuggestions()
+    for provider in @providers?.slice()?.reverse()
+      providerSuggestions = provider?.buildSuggestions()
       continue unless providerSuggestions?.length
 
       if provider.exclusive
         suggestions = providerSuggestions
         break
       else
-        suggestions = suggestions.concat providerSuggestions
+        suggestions = suggestions.concat(providerSuggestions)
 
     # No suggestions? Cancel autocompletion.
-    unless suggestions.length
-      @decoration.destroy() if @decoration
+    unless suggestions?.length
+      @decoration?.destroy()
       @decoration = undefined
       return @cancel()
 
@@ -181,13 +183,11 @@ class AutocompleteView extends SimpleSelectListView
     @setItems suggestions
 
     unless @decoration
-      cursor = @editor.getLastCursor()
+      cursor = @editor?.getLastCursor()
       if cursor
         # it's only safe to call getCursorBufferPosition when there are cursors
-        marker = cursor.getMarker()
-        @decoration = @editor.decorateMarker marker,
-          type: 'overlay'
-          item: this
+        marker = cursor?.getMarker()
+        @decoration = @editor?.decorateMarker(marker, { type: 'overlay', item: this })
 
     @setActive()
 
@@ -233,21 +233,23 @@ class AutocompleteView extends SimpleSelectListView
   #
   # match - The match to replace the current prefix with
   replaceTextWithMatch: (match) ->
+    return unless @editor?
     newSelectedBufferRanges = []
+
+    buffer = @editor.getBuffer()
+    return unless buffer?
+
     selections = @editor.getSelections()
+    return unless selections?
 
     selections.forEach (selection, i) =>
-      startPosition = selection.getBufferRange().start
-      buffer = @editor.getBuffer()
-
-      selection.deleteSelectedText()
-      cursorPosition = @editor.getCursors()[i].getBufferPosition()
-      # buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, match.suffix.length))
-      buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, -match.prefix.length))
-
-      infixLength = match.word.length - match.prefix.length
-
-      newSelectedBufferRanges.push([startPosition, [startPosition.row, startPosition.column + infixLength]])
+      if selection?
+        startPosition = selection.getBufferRange()?.start
+        selection.deleteSelectedText()
+        cursorPosition = @editor.getCursors()?[i]?.getBufferPosition()
+        buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, -match.prefix.length))
+        infixLength = match.word.length - match.prefix.length
+        newSelectedBufferRanges.push([startPosition, [startPosition.row, startPosition.column + infixLength]])
 
     @editor.insertText(match.word)
     @editor.setSelectedBufferRanges(newSelectedBufferRanges)

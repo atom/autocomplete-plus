@@ -15,6 +15,6 @@
     "minimatch": ">=0.2.14",
     "temp": ">=0.7.0",
     "underscore-plus": ">=1.0.0",
-    "grim": "^0"
+    "grim": ">=0.12.0"
   }
 }

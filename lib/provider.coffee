@@ -1,4 +1,4 @@
-{View} = require 'atom-space-pen-views'
+{View} = require 'atom'
 {deprecate} = require 'grim'
 
 # Public: A provider provides an interface to the autocomplete package. Third-party
@@ -12,7 +12,7 @@ class Provider
     if @editor instanceof View
       deprecate("Use of EditorView is deprecated, construct with a TextEditor model instead")
       @editorView = @editor
-      @editor = @editorView
+      @editor = @editorView.getModel()
     @initialize.apply this, arguments
 
   # Public: An initializer for subclasses

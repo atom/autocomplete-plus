@@ -149,10 +149,12 @@ class AutocompleteView extends SimpleSelectListView
   #
   # focus - {Boolean} should focus
   cancel: =>
+    return unless @active
     @overlayDecoration?.destroy()
     @overlayDecoration = undefined
-    atom.workspace.getActivePane().activate()
     super
+    unless @editorView.hasFocus()
+      @editorView.focus()
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it

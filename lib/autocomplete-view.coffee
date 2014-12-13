@@ -192,8 +192,6 @@ class AutocompleteView extends SimpleSelectListView
       marker = @editor.getLastCursor()?.getMarker()
       @overlayDecoration = @editor?.decorateMarker(marker, { type: 'overlay', item: this })
 
-    @setActive()
-
   # Private: Gets called when the content has been modified
   contentsModified: =>
     delay = parseInt(atom.config.get "autocomplete-plus.autoActivationDelay")

@@ -99,8 +99,7 @@ class SimpleSelectListView extends View
     else
       @cancel()
 
-  # Private: Focuses the hidden input, starts listening to keyboard events
-  setActive: ->
+  attached:->
     @active = true
     @hiddenInput.focus()
 

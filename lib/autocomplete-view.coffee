@@ -6,13 +6,13 @@ path = require 'path'
 minimatch = require 'minimatch'
 SimpleSelectListView = require './simple-select-list-view'
 FuzzyProvider = require './fuzzy-provider'
-Perf = require './perf'
 Utils = require './utils'
 
 module.exports =
 class AutocompleteView extends SimpleSelectListView
   currentBuffer: null
   debug: false
+  originalCursorPosition: null
 
   # Private: Makes sure we're listening to editor and buffer events, sets
   # the current buffer
@@ -37,9 +37,7 @@ class AutocompleteView extends SimpleSelectListView
     @compositeDisposable.add atom.commands.add 'atom-text-editor',
       "autocomplete-plus:activate": @runAutocompletion
 
-
     # Core events for keyboard handling
-
     @compositeDisposable.add atom.commands.add '.autocomplete-plus',
       "autocomplete-plus:confirm": @confirmSelection,
       "autocomplete-plus:select-next": @selectNextItemView,
@@ -151,20 +149,30 @@ class AutocompleteView extends SimpleSelectListView
   #
   # focus - {Boolean} should focus
   cancel: =>
-    return unless @active
+    @overlayDecoration?.destroy()
+    @overlayDecoration = undefined
+    atom.workspace.getActivePane().activate()
     super
-    unless @editorView?.hasFocus()
-      @editorView.focus()
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   runAutocompletion: =>
     return if @compositionInProgress
+    @cancel()
+    @originalSelectionBufferRanges = @editor.getSelections().map (selection) -> selection.getBufferRange()
+    @originalCursorPosition = @editor.getCursorScreenPosition()
+    return unless @originalCursorPosition?
+    buffer = @editor?.getBuffer()
+    return unless buffer?
+    options =
+      path: buffer.getPath()
+      text: buffer.getText()
+      pos: @originalCursorPosition
 
-    # Iterate over all providers, ask them to build word lists
+    # Iterate over all providers, ask them to build suggestion(s)
     suggestions = []
     for provider in @providers?.slice()?.reverse()
-      providerSuggestions = provider?.buildSuggestions()
+      providerSuggestions = provider?.buildSuggestions(options)
       continue unless providerSuggestions?.length
 
       if provider.exclusive
@@ -174,20 +182,13 @@ class AutocompleteView extends SimpleSelectListView
         suggestions = suggestions.concat(providerSuggestions)
 
     # No suggestions? Cancel autocompletion.
-    unless suggestions?.length
-      @decoration?.destroy()
-      @decoration = undefined
-      return @cancel()
+    return @cancel() unless suggestions?.length
 
     # Now we're ready - display the suggestions
-    @setItems suggestions
-
-    unless @decoration
-      cursor = @editor?.getLastCursor()
-      if cursor
-        # it's only safe to call getCursorBufferPosition when there are cursors
-        marker = cursor?.getMarker()
-        @decoration = @editor?.decorateMarker(marker, { type: 'overlay', item: this })
+    @setItems(suggestions)
+    unless @overlayDecoration?
+      marker = @editor.getLastCursor()?.getMarker()
+      @overlayDecoration = @editor?.decorateMarker(marker, { type: 'overlay', item: this })
 
     @setActive()
 
@@ -274,12 +275,7 @@ class AutocompleteView extends SimpleSelectListView
 
   # Private: Updates the list's position when populating results
   populateList: ->
-    p = new Perf "Populating list", {@debug}
-    p.start()
-
     super
-
-    p.stop()
 
   # Private: Sets the current buffer, starts listening to change events and delegates
   # them to #onChanged()

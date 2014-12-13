@@ -51,11 +51,13 @@ module.exports =
   # provider - The new {Provider}
   # editor - The {TextEditor} we should register the provider with
   registerProviderForEditor: (provider, editor) ->
+    return unless provider?
+    return unless editor?
     autocompleteView = _.findWhere @autocompleteViews, editor: editor
     unless autocompleteView?
       throw new Error("Could not register provider", provider.constructor.name)
 
-    autocompleteView.registerProvider provider
+    autocompleteView.registerProvider(provider)
 
   # Public: unregisters the given provider
   #

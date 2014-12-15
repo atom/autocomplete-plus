@@ -1,4 +1,4 @@
-{View} = require 'space-pen'
+{View} = require 'atom'
 {deprecate} = require 'grim'
 
 # Public: A provider provides an interface to the autocomplete package. Third-party

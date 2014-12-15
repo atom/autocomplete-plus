@@ -1,4 +1,3 @@
-{View} = require 'atom'
 {deprecate} = require 'grim'
 
 # Public: A provider provides an interface to the autocomplete package. Third-party
@@ -9,7 +8,7 @@ class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: (@editor) ->
-    if @editor instanceof View
+    if @editor.constructor.name == "TextEditorView"
       deprecate("Use of EditorView is deprecated, construct with a TextEditor model instead")
       @editorView = @editor
       @editor = @editorView.getModel()

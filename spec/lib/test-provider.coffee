@@ -1,4 +1,4 @@
-{Provider, Suggestion} = require "../../lib/autocomplete"
+{Provider, Suggestion} = require "../../lib/main"
 
 module.exports =
 class TestProvider extends Provider

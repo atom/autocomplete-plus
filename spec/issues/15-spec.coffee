@@ -1,11 +1,10 @@
 require "../spec-helper"
-AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 path = require 'path'
 temp = require('temp').track()
 
 describe "Autocomplete", ->
-  [activationPromise, autocomplete, directory, editorView, editor, completionDelay] = []
+  [autocomplete, directory, editorView, editor, completionDelay] = []
 
   describe "Issue 15", ->
     beforeEach ->
@@ -27,11 +26,11 @@ describe "Autocomplete", ->
         editor = e
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a
+      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus")
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new AutocompleteView editor
+        autocomplete = new Autocomplete editor
 
     it "does dismiss autocompletion when saving", ->
       runs ->

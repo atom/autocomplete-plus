@@ -1,5 +1,4 @@
 require "../spec-helper"
-AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
@@ -23,11 +22,11 @@ describe "Autocomplete", ->
         editor = e
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a
+      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus")
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new AutocompleteView editor
+        autocomplete = new Autocomplete editor
 
     it "does not show suggestions after a word has been completed", ->
       runs ->
@@ -42,6 +41,7 @@ describe "Autocomplete", ->
         expect(editorView.querySelector(".autocomplete-plus")).toExist()
 
         # Accept suggestion
-        atom.commands.dispatch autocomplete.get(0), "autocomplete-plus:confirm"
+        autocompleteView = atom.views.getView(autocomplete)
+        atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()

@@ -10,6 +10,7 @@
 }
 
 .autocomplete-plus.popover-list {
+
   width: auto;
   display: inline-block;
   min-width: 200px;
@@ -17,6 +18,11 @@
   position: relative;
 
   ol.list-group {
+    > input {
+      position: absolute;
+      opacity: 0.01;
+    }
+
     overflow-y: auto;
     margin-top: 0;
     li {
@@ -30,11 +36,5 @@
         padding-top: 8px;
       }
     }
-  }
-
-  .hidden-input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
   }
 }

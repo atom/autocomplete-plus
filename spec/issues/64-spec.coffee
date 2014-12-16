@@ -1,9 +1,8 @@
 require "../spec-helper"
-AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
-  [activationPromise, autocomplete, editorView, editor, completionDelay] = []
+  [autocomplete, editorView, editor, completionDelay] = []
 
   describe "Issue 64", ->
     beforeEach ->
@@ -23,11 +22,11 @@ describe "Autocomplete", ->
         editor = e
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a
+      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus")
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new AutocompleteView editor
+        autocomplete = new Autocomplete editor
 
     it "it adds words hyphens to the wordlist", ->
       runs ->
@@ -37,4 +36,5 @@ describe "Autocomplete", ->
 
         expect(editorView.querySelector(".autocomplete-plus")).toExist()
 
-        expect(autocomplete.list.find("li:eq(0)")).toHaveText "bla-foo--bar"
+        autocompleteView = atom.views.getView(autocomplete)
+        expect(autocompleteView.querySelector("li")).toHaveText "bla-foo--bar"

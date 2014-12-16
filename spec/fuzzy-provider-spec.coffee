@@ -1,11 +1,10 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
 _ = require "underscore-plus"
-AutocompleteView = require '../lib/autocomplete-view'
 Autocomplete = require '../lib/autocomplete'
 TestProvider = require "./lib/test-provider"
 
-describe "AutocompleteView", ->
-  [activationPromise, completionDelay, editorView, editor, autocomplete, autocompleteView] = []
+describe "Autocomplete", ->
+  [completionDelay, editorView, editor, autocomplete, mainModule] = []
 
   beforeEach ->
     runs ->
@@ -15,11 +14,7 @@ describe "AutocompleteView", ->
       # Set the completion delay
       completionDelay = 100
       atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
-      completionDelay += 100 # Rendering delay
-
-      # Spy on AutocompleteView#initialize
-      spyOn(AutocompleteView.prototype, "initialize").andCallThrough()
-
+      completionDelay += 100 # Rendering delaya\
 
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
@@ -33,8 +28,8 @@ describe "AutocompleteView", ->
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
-        autocomplete = a.mainModule
-        autocompleteView = autocomplete.autocompleteViews[0]
+        mainModule = a.mainModule
+        autocomplete = mainModule.autocompletes[0]
 
       runs ->
         editorView = atom.views.getView(editor)
@@ -44,5 +39,5 @@ describe "AutocompleteView", ->
       editor.insertText "somethingNew"
       editor.insertText " "
 
-      provider = autocompleteView.providers[0];
+      provider = autocomplete.providers[0];
       expect(provider.wordList.indexOf("somethingNew")).not.toEqual(-1)

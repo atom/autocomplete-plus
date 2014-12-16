@@ -1,9 +1,8 @@
 require "../spec-helper"
-AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
-  [activationPromise, autocomplete, editorView, editor, completionDelay] = []
+  [autocomplete, editorView, editor, completionDelay] = []
 
   describe "Issue 11", ->
     beforeEach ->
@@ -23,11 +22,11 @@ describe "Autocomplete", ->
         editor = e
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a
+      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus")
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new AutocompleteView editor
+        autocomplete = new Autocomplete editor
 
     it "does not trigger autocompletion when pasting", ->
 

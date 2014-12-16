@@ -1,5 +1,6 @@
 require "../spec-helper"
-AutocompleteView = require '../../lib/autocomplete-view'
+Autocomplete = require '../../lib/autocomplete'
+
 describe "Autocomplete", ->
   [activationPromise, editorView, editor, completionDelay] = []
 
@@ -13,8 +14,6 @@ describe "Autocomplete", ->
         completionDelay = 100
         atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
         completionDelay += 100 # Rendering delay
-
-        spyOn(AutocompleteView.prototype, "initialize").andCallThrough()
 
         workspaceElement = atom.views.getView(atom.workspace)
         jasmine.attachToDOM(workspaceElement)
@@ -31,8 +30,8 @@ describe "Autocomplete", ->
         editorView2 = atom.views.getView(editor2)
         editorView.focus()
 
-        autocomplete = new AutocompleteView editor
-        autocomplete2 = new AutocompleteView editor2
+        autocomplete = new Autocomplete editor
+        autocomplete2 = new Autocomplete editor2
 
         autocomplete.name = "autocomplete"
         autocomplete2.name = "autocomplete2"
@@ -56,7 +55,8 @@ describe "Autocomplete", ->
         expect(editorView.querySelector(".autocomplete-plus")).toExist()
         expect(editorView2.querySelector(".autocomplete-plus")).not.toExist()
 
-        atom.commands.dispatch autocomplete.get(0), "autocomplete-plus:confirm"
+        autocompleteView = atom.views.getView(autocomplete)
+        atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
         expect(editorView).toHaveFocus()
         expect(editorView2).not.toHaveFocus()

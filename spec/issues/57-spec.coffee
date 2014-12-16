@@ -1,10 +1,9 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "../spec-helper"
-AutocompleteView = require '../../lib/autocomplete-view'
 Autocomplete = require '../../lib/autocomplete'
 TestProvider = require '../lib/test-provider'
 
 describe "Autocomplete", ->
-  [activationPromise, autocomplete, editorView, editor, completionDelay, autocompleteModule] = []
+  [autocomplete, editorView, editor, completionDelay, mainModule] = []
 
   describe "Issue 57 - Multiple selection completion", ->
     beforeEach ->
@@ -24,7 +23,9 @@ describe "Autocomplete", ->
         editor = e
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocompleteModule = a.mainModule
+      waitsForPromise ->
+        atom.packages.activatePackage("autocomplete-plus")
+          .then (a) -> mainModule = a.mainModule
 
       runs ->
         editorView = atom.views.getView(editor)
@@ -37,9 +38,10 @@ describe "Autocomplete", ->
         triggerAutocompletion editor, false, 'h'
         advanceClock completionDelay
 
-        autocomplete = autocompleteModule.autocompleteViews[0]
+        autocomplete = mainModule.autocompletes[0]
 
-        atom.commands.dispatch autocomplete.get(0), "autocomplete-plus:confirm"
+        autocompleteView = atom.views.getView(autocomplete)
+        atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
         expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
         expect(editor.getCursorBufferPosition()).toEqual [10,12]
@@ -62,8 +64,10 @@ describe "Autocomplete", ->
           triggerAutocompletion editor, false, 'h'
           advanceClock completionDelay
 
-          autocomplete = autocompleteModule.autocompleteViews[0]
-          atom.commands.dispatch autocomplete.get(0), "autocomplete-plus:confirm"
+          autocomplete = mainModule.autocompletes[0]
+
+          autocompleteView = atom.views.getView(autocomplete)
+          atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
           expect(editor.lineTextForBufferRow(10)).toBe "sh:extra:ah"
           expect(editor.getSelections().length).toEqual(2)

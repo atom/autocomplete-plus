@@ -1,4 +1,4 @@
-".autocomplete-plus input.hidden-input":
+".autocomplete-plus":
   "tab": "autocomplete-plus:confirm"
   "down": "autocomplete-plus:select-next"
   "ctrl-n": "autocomplete-plus:select-next"

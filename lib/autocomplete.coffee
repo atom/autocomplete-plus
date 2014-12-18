@@ -4,7 +4,6 @@ _ = require "underscore-plus"
 path = require "path"
 minimatch = require "minimatch"
 FuzzyProvider = require "./fuzzy-provider"
-Perf = require "./perf"
 Utils = require "./utils"
 
 module.exports =

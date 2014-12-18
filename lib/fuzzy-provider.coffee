@@ -3,7 +3,6 @@ Suggestion = require './suggestion'
 Utils = require './utils'
 fuzzaldrin = require 'fuzzaldrin'
 Provider = require './provider'
-Perf = require './perf'
 
 module.exports =
 class FuzzyProvider extends Provider
@@ -108,10 +107,6 @@ class FuzzyProvider extends Provider
     else
       buffers = [@editor.getBuffer()]
 
-    # Check how long the word list building took
-    p = new Perf "Building word list", {@debug}
-    p.start()
-
     # Collect words from all buffers using the regular expression
     matches = []
     matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
@@ -127,17 +122,12 @@ class FuzzyProvider extends Provider
 
     @wordList = wordList
 
-    p.stop()
-
   # Private: Finds possible matches for the given string / prefix
   #
   # prefix - {String} The prefix
   #
   # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (prefix) ->
-    p = new Perf "Finding matches for '#{prefix}'", {@debug}
-    p.start()
-
     # Merge the scope specific words into the default word list
     wordList = @wordList.concat @getCompletionsForCursorScope()
 
@@ -150,7 +140,6 @@ class FuzzyProvider extends Provider
     results = for word in words when word isnt prefix
       new Suggestion this, word: word, prefix: prefix
 
-    p.stop()
     return results
 
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)

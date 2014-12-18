@@ -50,7 +50,7 @@ module.exports =
 
   registerProviderForEditorView: (provider, editorView) ->
     deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
-    @registerProviderForEditor(provider, editor.getModel())
+    @registerProviderForEditor(provider, editorView?.getModel())
 
   # Public: Finds the autocomplete for the given TextEditor
   # and registers the given provider

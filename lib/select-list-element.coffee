@@ -37,7 +37,7 @@ SelectListComponent = React.createClass
     ol
       className: "list-group",
       input ref: 'input', key: 'autocomplete-plus-input'
-      @state.items.map ({word, label, renderLabelAsHtml, className}, index) =>
+      @state.items?.map ({word, label, renderLabelAsHtml, className}, index) =>
         itemClasses = []
         itemClasses.push className if className
         itemClasses.push 'selected' if index == @state.selectedIndex
@@ -96,7 +96,7 @@ class SelectListElement extends HTMLElement
 
   itemsChanged: (items) ->
     @component?.setState
-      items: items.slice(0, @maxItems),
+      items: items?.slice(0, @maxItems),
       selectedIndex: 0
 
   moveSelectionUp: () ->

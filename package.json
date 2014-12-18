@@ -15,7 +15,6 @@
     "minimatch": ">=0.2.14",
     "react-atom-fork": "^0.11.2",
     "reactionary-atom-fork": "^1.0.0",
-    "semver": ">=3.0.1",
     "temp": ">=0.7.0",
     "underscore-plus": ">=1.0.0"
   }

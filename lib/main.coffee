@@ -1,8 +1,8 @@
-_ = require "underscore-plus"
-Autocomplete = require "./autocomplete"
-SelectListElement = require "./select-list-element.coffee"
-Provider = require "./provider"
-Suggestion = require "./suggestion"
+_ = require 'underscore-plus'
+Autocomplete = require './autocomplete'
+SelectListElement = require './select-list-element.coffee'
+Provider = require './provider'
+Suggestion = require './suggestion'
 {deprecate} = require 'grim'
 
 module.exports =

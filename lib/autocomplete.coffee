@@ -1,10 +1,9 @@
-{Editor, Range}  = require "atom"
+{Range}  = require 'atom'
 {Emitter, CompositeDisposable} = require 'event-kit'
-_ = require "underscore-plus"
-path = require "path"
-minimatch = require "minimatch"
-FuzzyProvider = require "./fuzzy-provider"
-Utils = require "./utils"
+_ = require 'underscore-plus'
+path = require 'path'
+minimatch = require 'minimatch'
+FuzzyProvider = require './fuzzy-provider'
 
 module.exports =
 class Autocomplete

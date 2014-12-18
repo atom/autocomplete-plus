@@ -1,7 +1,7 @@
 React = require 'react-atom-fork'
 {ol, li, span, input} = require 'reactionary-atom-fork'
 {CompositeDisposable} = require 'event-kit'
-_ = require "underscore-plus"
+_ = require 'underscore-plus'
 
 SelectListComponent = React.createClass
   maxItems: 10

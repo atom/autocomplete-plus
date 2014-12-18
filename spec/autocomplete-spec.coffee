@@ -1,10 +1,9 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
 _ = require "underscore-plus"
-Autocomplete = require '../lib/autocomplete'
 TestProvider = require "./lib/test-provider"
 
 describe "Autocomplete", ->
-  [completionDelay, editorView, editor, autocomplete, mainModule] = []
+  [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
 
   beforeEach ->
     runs ->
@@ -30,7 +29,7 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocomplete = mainModule.autocompletes[0]
+        autocompleteManager = mainModule.autocompleteManagers[0]
 
       runs ->
         editorView = atom.views.getView(editor)
@@ -63,10 +62,10 @@ describe "Autocomplete", ->
         triggerAutocompletion editor
         advanceClock completionDelay
 
-        autocompleteView = atom.views.getView(autocomplete)
+        autocompleteView = atom.views.getView(autocompleteManager)
         inputNode = autocompleteView.querySelector('input')
 
-        spyOn(autocomplete, 'changeItems').andCallThrough()
+        spyOn(autocompleteManager, 'changeItems').andCallThrough()
 
         inputNode.value = "~"
         inputNode.setSelectionRange(0, 1)
@@ -74,7 +73,7 @@ describe "Autocomplete", ->
         inputNode.dispatchEvent(buildIMECompositionEvent('compositionupdate', data: "~", target: inputNode))
         advanceClock completionDelay
 
-        expect(autocomplete.changeItems).not.toHaveBeenCalled()
+        expect(autocompleteManager.changeItems).not.toHaveBeenCalled()
 
         inputNode.dispatchEvent(buildIMECompositionEvent('compositionend', target: inputNode))
         editorView.firstChild.dispatchEvent(buildTextInputEvent(data: 'ã', target: inputNode))
@@ -91,7 +90,7 @@ describe "Autocomplete", ->
           triggerAutocompletion editor
           advanceClock completionDelay
 
-          autocompleteView = atom.views.getView(autocomplete)
+          autocompleteView = atom.views.getView(autocompleteManager)
           # Accept suggestion
           atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
@@ -115,7 +114,7 @@ describe "Autocomplete", ->
           expect(editorView.querySelector(".autocomplete-plus")).toExist()
 
           # Accept suggestion
-          autocompleteView = atom.views.getView(autocomplete)
+          autocompleteView = atom.views.getView(autocompleteManager)
           atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
@@ -135,7 +134,7 @@ describe "Autocomplete", ->
         expect(items[3]).not.toHaveClass("selected")
 
 
-        autocompleteView = atom.views.getView(autocomplete)
+        autocompleteView = atom.views.getView(autocompleteManager)
         # Select previous item
         atom.commands.dispatch autocompleteView, "autocomplete-plus:select-previous"
 
@@ -160,7 +159,7 @@ describe "Autocomplete", ->
         expect(items[3]).not.toHaveClass("selected")
 
         # Select next item
-        autocompleteView = atom.views.getView(autocomplete)
+        autocompleteView = atom.views.getView(autocompleteManager)
         atom.commands.dispatch autocompleteView, "autocomplete-plus:select-next"
 
         items = editorView.querySelectorAll(".autocomplete-plus li")
@@ -195,7 +194,7 @@ describe "Autocomplete", ->
     describe ".cancel()", ->
       it "unbinds autocomplete event handlers for move-up and move-down", ->
         triggerAutocompletion editor, false
-        autocomplete.cancel()
+        autocompleteManager.cancel()
 
         atom.commands.dispatch atom.views.getView(editor), "core:move-down"
         expect(editor.getCursorBufferPosition().row).toBe 1
@@ -214,7 +213,7 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocomplete = mainModule.autocompletes[0]
+        autocompleteManager = mainModule.autocompleteManagers[0]
 
 
     it "sets the width of the view to be wide enough to contain the longest completion without scrolling", ->
@@ -223,7 +222,7 @@ describe "Autocomplete", ->
       editor.insertText "t"
       advanceClock completionDelay
 
-      autocompleteView = atom.views.getView(autocomplete)
+      autocompleteView = atom.views.getView(autocompleteManager)
       expect(autocompleteView.scrollWidth).toBe autocompleteView.offsetWidth
 
   describe "css", ->
@@ -241,7 +240,7 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocomplete = mainModule.autocompletes[0]
+        autocompleteManager = mainModule.autocompleteManagers[0]
 
       runs ->
         editorView = atom.views.getView(editor)
@@ -256,7 +255,7 @@ describe "Autocomplete", ->
 
         advanceClock completionDelay
 
-        autocompleteView = atom.views.getView(autocomplete)
+        autocompleteView = atom.views.getView(autocompleteManager)
         items = autocompleteView.querySelectorAll("li")
         expect(editorView.querySelector(".autocomplete-plus")).toExist()
         expect(items.length).toBe 10
@@ -276,7 +275,7 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocomplete = mainModule.autocompletes[0]
+        autocompleteManager = mainModule.autocompleteManagers[0]
 
       runs ->
 
@@ -303,7 +302,7 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocomplete = mainModule.autocompletes[0]
+        autocompleteManager = mainModule.autocompleteManagers[0]
 
       runs ->
         editorView = atom.workspace.getActiveTextEditor()
@@ -319,7 +318,7 @@ describe "Autocomplete", ->
 
         advanceClock completionDelay
 
-        autocompleteView = atom.views.getView(autocomplete)
+        autocompleteView = atom.views.getView(autocompleteManager)
 
         expect(autocompleteView.querySelector("li .label")).toHaveHtml "<span style=\"color: red\">ohai</span>"
         expect(autocompleteView.querySelector("li")).toHaveClass "ohai"

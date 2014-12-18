@@ -1,8 +1,7 @@
 require "../spec-helper"
-Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
-  [autocomplete, editorView, editor, completionDelay] = []
+  [editorView, editor, completionDelay] = []
 
   describe "Issue 11", ->
     beforeEach ->
@@ -26,7 +25,6 @@ describe "Autocomplete", ->
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new Autocomplete editor
 
     it "does not trigger autocompletion when pasting", ->
 

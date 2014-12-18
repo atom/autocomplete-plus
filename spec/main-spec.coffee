@@ -1,6 +1,5 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "./spec-helper"
 _ = require "underscore-plus"
-Autocomplete = require '../lib/autocomplete'
 TestProvider = require "./lib/test-provider"
 
 describe "Autocomplete", ->
@@ -35,7 +34,7 @@ describe "Autocomplete", ->
   describe "@activate()", ->
     it "activates autocomplete and initializes Autocomplete instances", ->
       runs ->
-        expect(mainModule.autocompletes.length).toBe 1
+        expect(mainModule.autocompleteManagers.length).toBe 1
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
   describe "@deactivate()", ->
@@ -63,7 +62,7 @@ describe "Autocomplete", ->
           testProvider = new TestProvider(editor)
           mainModule.registerProviderForEditor testProvider, editor
 
-          autocomplete = mainModule.autocompletes[0]
+          autocomplete = mainModule.autocompleteManagers[0]
           expect(autocomplete.providers[1]).toBe testProvider
 
     describe "registerMultipleIdenticalProvidersForEditorView", ->
@@ -75,7 +74,7 @@ describe "Autocomplete", ->
           mainModule.registerProviderForEditor testProvider, editor
           mainModule.registerProviderForEditor testProvider, editor
 
-          autocomplete = mainModule.autocompletes[0]
+          autocomplete = mainModule.autocompleteManagers[0]
           expect(autocomplete.providers[1]).toBe testProvider
           expect(_.size(autocomplete.providers)).toBe 2
 
@@ -85,7 +84,7 @@ describe "Autocomplete", ->
           testProvider = new TestProvider(editor)
           mainModule.registerProviderForEditor testProvider, editor
 
-          autocomplete = mainModule.autocompletes[0]
+          autocomplete = mainModule.autocompleteManagers[0]
           expect(autocomplete.providers[1]).toBe testProvider
 
           mainModule.unregisterProvider testProvider
@@ -116,7 +115,7 @@ describe "Autocomplete", ->
           triggerAutocompletion editor
           advanceClock completionDelay
 
-          autocomplete = mainModule.autocompletes[0]
+          autocomplete = mainModule.autocompleteManagers[0]
           autocompleteView = atom.views.getView(autocomplete)
           atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 

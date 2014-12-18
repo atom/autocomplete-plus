@@ -1,5 +1,4 @@
 require "../spec-helper"
-Autocomplete = require '../../lib/autocomplete'
 describe "Autocomplete", ->
   [editorView, editor, completionDelay] = []
 
@@ -26,7 +25,6 @@ describe "Autocomplete", ->
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new Autocomplete editor
 
     it "cancels autocompletion when entering an empty string (e.g. space)", ->
       runs ->

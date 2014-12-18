@@ -1,10 +1,9 @@
 require "../spec-helper"
-Autocomplete = require '../../lib/autocomplete'
 path = require 'path'
 temp = require('temp').track()
 
 describe "Autocomplete", ->
-  [autocomplete, directory, editorView, editor, completionDelay] = []
+  [directory, editorView, editor, completionDelay] = []
 
   describe "Issue 15", ->
     beforeEach ->
@@ -30,7 +29,6 @@ describe "Autocomplete", ->
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new Autocomplete editor
 
     it "does dismiss autocompletion when saving", ->
       runs ->

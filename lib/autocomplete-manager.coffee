@@ -6,7 +6,7 @@ minimatch = require 'minimatch'
 FuzzyProvider = require './fuzzy-provider'
 
 module.exports =
-class Autocomplete
+class AutocompleteManager
   currentBuffer: null
   debug: false
 

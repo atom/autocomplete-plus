@@ -19,7 +19,7 @@ module.exports =
     autoActivationDelay:
       type: "integer"
       default: 100
-    maxItems:
+    maxSuggestions:
       type: "integer"
       default: 10
 

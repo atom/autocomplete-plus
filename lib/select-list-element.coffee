@@ -128,7 +128,7 @@ class SelectListElement extends HTMLElement
       @model.cancel()
 
   mountComponent: ->
-    @maxItems = atom.config.get('autocomplete-plus.maxItems')
+    @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')
     @componentDescriptor ?= new SelectListComponent
       setComposition: (state) =>
         @model.compositionInProgress = state

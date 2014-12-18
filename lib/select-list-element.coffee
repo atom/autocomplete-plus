@@ -4,7 +4,6 @@ React = require 'react-atom-fork'
 _ = require 'underscore-plus'
 
 SelectListComponent = React.createClass
-  maxItems: 10
 
   getInitialState: ->
     items: @props.items || []
@@ -38,7 +37,7 @@ SelectListComponent = React.createClass
     ol
       className: "list-group",
       input ref: 'input', key: 'autocomplete-plus-input'
-      @state.items.slice(0, @maxItems).map ({word, label, renderLabelAsHtml, className}, index) =>
+      @state.items.map ({word, label, renderLabelAsHtml, className}, index) =>
         itemClasses = []
         itemClasses.push className if className
         itemClasses.push 'selected' if index == @state.selectedIndex
@@ -57,6 +56,8 @@ SelectListComponent = React.createClass
           span labelAttributes, (label unless renderLabelAsHtml) if label?
 
 class SelectListElement extends HTMLElement
+  maxItems: 10
+
   createdCallback: ->
     @subscriptions = new CompositeDisposable
     @classList.add "popover-list"
@@ -95,7 +96,7 @@ class SelectListElement extends HTMLElement
 
   itemsChanged: (items) ->
     @component?.setState
-      items: items,
+      items: items.slice(0, @maxItems),
       selectedIndex: 0
 
   moveSelectionUp: () ->
@@ -128,10 +129,10 @@ class SelectListElement extends HTMLElement
 
   mountComponent: ->
     @componentDescriptor ?= new SelectListComponent
-      items: @model.items,
       setComposition: (state) =>
         @model.compositionInProgress = state
     @component = React.renderComponent(@componentDescriptor, this)
+    @itemsChanged(@model.items)
 
   unmountComponent: ->
     return unless @component?.isMounted()

@@ -1,5 +1,5 @@
 require "../spec-helper"
-Autocomplete = require '../../lib/autocomplete'
+AutocompleteManager = require '../../lib/autocomplete-manager'
 
 describe "Autocomplete", ->
   [activationPromise, editorView, editor, completionDelay] = []
@@ -30,8 +30,8 @@ describe "Autocomplete", ->
         editorView2 = atom.views.getView(editor2)
         editorView.focus()
 
-        autocomplete = new Autocomplete editor
-        autocomplete2 = new Autocomplete editor2
+        autocomplete = new AutocompleteManager(editor)
+        autocomplete2 = new AutocompleteManager(editor2)
 
         autocomplete.name = "autocomplete"
         autocomplete2.name = "autocomplete2"

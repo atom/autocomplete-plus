@@ -1,9 +1,8 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "../spec-helper"
-Autocomplete = require '../../lib/autocomplete'
 TestProvider = require '../lib/test-provider'
 
 describe "Autocomplete", ->
-  [autocomplete, editorView, editor, completionDelay, mainModule] = []
+  [editorView, editor, completionDelay, mainModule] = []
 
   describe "Issue 57 - Multiple selection completion", ->
     beforeEach ->
@@ -31,16 +30,16 @@ describe "Autocomplete", ->
         editorView = atom.views.getView(editor)
 
     describe 'where many cursors are defined', ->
-      it 'autocompletes word when there is only a prefix', ->
+      it 'autocompleteManagers word when there is only a prefix', ->
         editor.getBuffer().insert([10,0] ,"s:extra:s")
         editor.setSelectedBufferRanges([[[10,1],[10,1]], [[10,9],[10,9]]])
 
         triggerAutocompletion editor, false, 'h'
         advanceClock completionDelay
 
-        autocomplete = mainModule.autocompletes[0]
+        autocompleteManager = mainModule.autocompleteManagers[0]
 
-        autocompleteView = atom.views.getView(autocomplete)
+        autocompleteView = atom.views.getView(autocompleteManager)
         atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
         expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
@@ -64,9 +63,9 @@ describe "Autocomplete", ->
           triggerAutocompletion editor, false, 'h'
           advanceClock completionDelay
 
-          autocomplete = mainModule.autocompletes[0]
+          autocompleteManager = mainModule.autocompleteManagers[0]
 
-          autocompleteView = atom.views.getView(autocomplete)
+          autocompleteView = atom.views.getView(autocompleteManager)
           atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
 
           expect(editor.lineTextForBufferRow(10)).toBe "sh:extra:ah"

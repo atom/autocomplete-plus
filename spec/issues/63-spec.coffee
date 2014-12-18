@@ -1,8 +1,7 @@
 require "../spec-helper"
-Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
-  [autocomplete, editorView, editor, completionDelay] = []
+  [mainModule, autocompleteManager, editorView, editor, completionDelay] = []
 
   describe "Issue 63", ->
     beforeEach ->
@@ -23,16 +22,17 @@ describe "Autocomplete", ->
         editor = e
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus")
+      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
+        mainModule = a.mainModule
+        autocompleteManager = mainModule.autocompleteManagers[0]
 
       runs ->
         editorView = atom.views.getView(editor)
-        autocomplete = new Autocomplete editor
 
     it "it adds words to the wordlist when pressing a special character", ->
       runs ->
         editor.insertText "somethingNew"
         editor.insertText ")"
 
-        provider = autocomplete.providers[0]
+        provider = autocompleteManager.providers[0]
         expect(provider.wordList.indexOf("somethingNew")).not.toEqual(-1)

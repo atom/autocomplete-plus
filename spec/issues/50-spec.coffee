@@ -1,5 +1,4 @@
 require "../spec-helper"
-Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
   [activationPromise, mainModule, editorView, editor, completionDelay] = []
@@ -31,13 +30,13 @@ describe "Autocomplete", ->
 
     it "works after closing one of the copied tabs", ->
       runs ->
-        expect(mainModule.autocompletes.length).toEqual(1)
+        expect(mainModule.autocompleteManagers.length).toEqual(1)
 
         atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true)
-        expect(mainModule.autocompletes.length).toEqual(2)
+        expect(mainModule.autocompleteManagers.length).toEqual(2)
 
         atom.workspace.getActivePane().destroy()
-        expect(mainModule.autocompletes.length).toEqual(1)
+        expect(mainModule.autocompleteManagers.length).toEqual(1)
 
         editor.moveCursorToEndOfLine
         editor.insertNewline()

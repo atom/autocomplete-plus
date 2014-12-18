@@ -19,6 +19,9 @@ module.exports =
     autoActivationDelay:
       type: "integer"
       default: 100
+    maxItems:
+      type: "integer"
+      default: 10
 
   autocompletes: []
   editorSubscription: null

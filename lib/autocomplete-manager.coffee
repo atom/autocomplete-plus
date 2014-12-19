@@ -28,6 +28,8 @@ class AutocompleteManager
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
 
+    @compositeDisposable.add atom.workspace.observeActivePaneItem(@updateCurrentEditor)
+
     @compositeDisposable.add atom.commands.add 'atom-text-editor',
       "autocomplete-plus:activate": @runAutocompletion
 
@@ -39,6 +41,9 @@ class AutocompleteManager
       "autocomplete-plus:select-next": @selectNext,
       "autocomplete-plus:select-previous": @selectPrevious,
       "autocomplete-plus:cancel": @cancel
+
+  updateCurrentEditor: (currentPaneItem) =>
+    @cancel() unless currentPaneItem == @editor
 
   confirmSelection: =>
     @emitter.emit 'do-confirm-selection'
@@ -237,24 +242,6 @@ class AutocompleteManager
 
     @editor.insertText(match.word)
     @editor.setSelectedBufferRanges(newSelectedBufferRanges)
-
-  # Private: As soon as the list is in the DOM tree, it calculates the maximum width of
-  # all list items and resizes the list so that all items fit
-  #
-  # onDom - {Boolean} is the element in the DOM?
-  afterAttach: (onDom) ->
-    return unless onDom
-
-    widestCompletion = parseInt(@css("min-width")) or 0
-    @list.querySelector("li").each ->
-      wordWidth = $(this).querySelector("span.word").outerWidth()
-      labelWidth = $(this).querySelector("span.label").outerWidth()
-
-      totalWidth = wordWidth + labelWidth + 40
-      widestCompletion = Math.max widestCompletion, totalWidth
-
-    @list.width widestCompletion
-    @width @list.outerWidth()
 
   # Private: Sets the current buffer, starts listening to change events and delegates
   # them to #onChanged()

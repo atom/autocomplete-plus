@@ -1,30 +1,24 @@
-{Editor, Range}  = require 'atom'
-{CompositeDisposable} = require 'event-kit'
-{$, $$} = require 'space-pen'
+{Range}  = require 'atom'
+{Emitter, CompositeDisposable} = require 'event-kit'
 _ = require 'underscore-plus'
 path = require 'path'
 minimatch = require 'minimatch'
-SimpleSelectListView = require './simple-select-list-view'
 FuzzyProvider = require './fuzzy-provider'
-Utils = require './utils'
 
 module.exports =
-class AutocompleteView extends SimpleSelectListView
+class AutocompleteManager
   currentBuffer: null
   debug: false
-  originalCursorPosition: null
 
   # Private: Makes sure we're listening to editor and buffer events, sets
   # the current buffer
   #
   # editor - {TextEditor}
-  initialize: (@editor) ->
+  constructor: (@editor) ->
     @editorView = atom.views.getView(@editor)
     @compositeDisposable = new CompositeDisposable
+    @emitter = new Emitter
 
-    super
-
-    @addClass "autocomplete-plus"
     @providers = []
 
     return if @currentFileBlacklisted()
@@ -34,15 +28,40 @@ class AutocompleteView extends SimpleSelectListView
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
 
+    @compositeDisposable.add atom.workspace.observeActivePaneItem(@updateCurrentEditor)
+
     @compositeDisposable.add atom.commands.add 'atom-text-editor',
       "autocomplete-plus:activate": @runAutocompletion
 
+
     # Core events for keyboard handling
+
     @compositeDisposable.add atom.commands.add '.autocomplete-plus',
       "autocomplete-plus:confirm": @confirmSelection,
-      "autocomplete-plus:select-next": @selectNextItemView,
-      "autocomplete-plus:select-previous": @selectPreviousItemView,
+      "autocomplete-plus:select-next": @selectNext,
+      "autocomplete-plus:select-previous": @selectPrevious,
       "autocomplete-plus:cancel": @cancel
+
+  updateCurrentEditor: (currentPaneItem) =>
+    @cancel() unless currentPaneItem == @editor
+
+  confirmSelection: =>
+    @emitter.emit 'do-confirm-selection'
+
+  onDoConfirmSelection: (cb) ->
+    @emitter.on 'do-confirm-selection', cb
+
+  selectNext: =>
+    @emitter.emit 'do-select-next'
+
+  onDoSelectNext: (cb) ->
+    @emitter.on 'do-select-next', cb
+
+  selectPrevious: =>
+    @emitter.emit 'do-select-previous'
+
+  onDoSelectPrevious: (cb) ->
+    @emitter.on 'do-select-previous', cb
 
   # Private: Checks whether the current file is blacklisted
   #
@@ -59,38 +78,6 @@ class AutocompleteView extends SimpleSelectListView
 
     return false
 
-  # Private: Creates a view for the given item
-  #
-  # Returns a {jQuery} object that represents the item view
-  viewForItem: ({word, label, renderLabelAsHtml, className}) ->
-    item = $$ ->
-      @li =>
-        @span word, class: "word"
-        if label?
-          @span label, class: "label"
-
-    if renderLabelAsHtml
-      item.find(".label").html label
-
-    if className?
-      item.addClass className
-
-    return item
-
-  # Private: Escapes HTML from the given string
-  #
-  # string - The {String} to escape
-  #
-  # Returns the escaped {String}
-  escapeHtml: (string) ->
-    escapedString = string
-      .replace(/&/g, '&amp;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-
-    return escapedString
 
   # Private: Handles editor events
   handleEvents: ->
@@ -101,25 +88,13 @@ class AutocompleteView extends SimpleSelectListView
     # Is this the event for switching tabs? Dunno...
     @compositeDisposable.add @editor.onDidChangeTitle(@cancel)
 
-    # Make sure we don't scroll in the editor view when scrolling
-    # in the list
-    @list.on "mousewheel", (event) -> event.stopPropagation()
-
-    @hiddenInput.on 'compositionstart', =>
-      @compositionInProgress = true
-      null
-
-    @hiddenInput.on 'compositionend', =>
-      @compositionInProgress = false
-      null
-
   # Public: Registers the given provider
   #
   # provider - The {Provider} to register
   registerProvider: (provider) ->
     unless _.findWhere(@providers, provider)?
       @providers.push(provider)
-      @compositeDisposable.add(provider) if provider.dispose?
+      @compositeDisposable.add provider if provider.dispose?
 
   # Public: Unregisters the given provider
   #
@@ -131,15 +106,17 @@ class AutocompleteView extends SimpleSelectListView
   # Private: Gets called when the user successfully confirms a suggestion
   #
   # match - An {Object} representing the confirmed suggestion
-  confirmed: (match) ->
+  confirm: (match) ->
+    return unless @editorHasFocus()
     return unless match?.provider?
     return unless @editor?
+
     replace = match.provider.confirm(match)
-    return unless replace
     @editor.getSelections()?.forEach (selection) -> selection?.clear()
 
     @cancel()
 
+    return unless replace
     @replaceTextWithMatch(match)
     @editor.getCursors()?.forEach (cursor) ->
       position = cursor?.getBufferPosition()
@@ -152,9 +129,8 @@ class AutocompleteView extends SimpleSelectListView
     return unless @active
     @overlayDecoration?.destroy()
     @overlayDecoration = undefined
-    super
-    unless @editorView.hasFocus()
-      @editorView.focus()
+    @editorView.focus()
+    @active = false
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
@@ -184,13 +160,27 @@ class AutocompleteView extends SimpleSelectListView
         suggestions = suggestions.concat(providerSuggestions)
 
     # No suggestions? Cancel autocompletion.
-    return @cancel() unless suggestions?.length
+    return unless suggestions.length
 
-    # Now we're ready - display the suggestions
-    @setItems(suggestions)
     unless @overlayDecoration?
       marker = @editor.getLastCursor()?.getMarker()
       @overlayDecoration = @editor?.decorateMarker(marker, { type: 'overlay', item: this })
+
+    # Now we're ready - display the suggestions
+    @changeItems suggestions
+
+    @setActive()
+
+  changeItems: (items) ->
+    @items = items
+    @emitter.emit 'did-change-items', items
+
+  onDidChangeItems: (cb) ->
+    @emitter.on 'did-change-items', cb
+
+  # Private: Focuses the hidden input, starts listening to keyboard events
+  setActive: ->
+    @active = true
 
   # Private: Gets called when the content has been modified
   contentsModified: =>
@@ -211,10 +201,9 @@ class AutocompleteView extends SimpleSelectListView
     editorView = @editorView
     editorView = editorView[0] if editorView.jquery
     return editorView.hasFocus()
-
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion
-  onSaved: =>
+  editorSaved: =>
     return unless @editorHasFocus()
     @cancel()
 
@@ -222,12 +211,11 @@ class AutocompleteView extends SimpleSelectListView
   # with a single keystroke. (= pasting)
   #
   # e - The change {Event}
-  onChanged: (e) =>
+  editorChanged: (e) =>
     return unless @editorHasFocus()
     if atom.config.get("autocomplete-plus.enableAutoActivation") and ( e.newText.trim().length is 1 or e.oldText.trim().length is 1 )
       @contentsModified()
     else
-      # Don't refocus since we probably still have focus
       @cancel()
 
   # Private: Replaces the current prefix with the given match
@@ -255,41 +243,18 @@ class AutocompleteView extends SimpleSelectListView
     @editor.insertText(match.word)
     @editor.setSelectedBufferRanges(newSelectedBufferRanges)
 
-  # Private: As soon as the list is in the DOM tree, it calculates the maximum width of
-  # all list items and resizes the list so that all items fit
-  #
-  # onDom - {Boolean} is the element in the DOM?
-  afterAttach: (onDom) ->
-    return unless onDom
-
-    widestCompletion = parseInt(@css("min-width")) or 0
-    @list.querySelector("li").each ->
-      wordWidth = $(this).querySelector("span.word").outerWidth()
-      labelWidth = $(this).querySelector("span.label").outerWidth()
-
-      totalWidth = wordWidth + labelWidth + 40
-      widestCompletion = Math.max widestCompletion, totalWidth
-
-    @list.width widestCompletion
-    @width @list.outerWidth()
-
-  # Private: Updates the list's position when populating results
-  populateList: ->
-    super
-
   # Private: Sets the current buffer, starts listening to change events and delegates
   # them to #onChanged()
   #
   # currentBuffer - The current {TextBuffer}
   setCurrentBuffer: (@currentBuffer) ->
-    @compositeDisposable.add @currentBuffer.onDidSave(@onSaved)
-    @compositeDisposable.add @currentBuffer.onDidChange(@onChanged)
-
-  # Private: Why are we doing this again...?
-  # Might be because of autosave:
-  # http://git.io/iF32wA
-  getModel: -> null
+    @compositeDisposable.add @currentBuffer.onDidSave(@editorSaved)
+    @compositeDisposable.add @currentBuffer.onDidChange(@editorChanged)
 
   # Public: Clean up, stop listening to events
   dispose: ->
     @compositeDisposable.dispose()
+    @emitter.emit 'did-dispose'
+
+  onDidDispose: (cb) ->
+    @emitter.on 'did-dispose', cb

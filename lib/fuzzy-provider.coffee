@@ -1,9 +1,7 @@
 _ = require 'underscore-plus'
 Suggestion = require './suggestion'
-Utils = require './utils'
 fuzzaldrin = require 'fuzzaldrin'
 Provider = require './provider'
-Perf = require './perf'
 
 module.exports =
 class FuzzyProvider extends Provider
@@ -15,8 +13,8 @@ class FuzzyProvider extends Provider
 
     @currentBuffer = @editor.getBuffer()
     @disposableEvents = [
-      @currentBuffer.onDidSave @onSaved
-      @currentBuffer.onDidChange @onChanged
+      @currentBuffer.onDidSave(@onSaved)
+      @currentBuffer.onDidChange(@onChanged)
     ]
 
   # Public:  Gets called when the document has been changed. Returns an array
@@ -26,12 +24,12 @@ class FuzzyProvider extends Provider
   # Returns an {Array} of Suggestion instances
   buildSuggestions: ->
     selection = @editor.getLastSelection()
-    prefix = @prefixOfSelection selection
+    prefix = @prefixOfSelection(selection)
 
     # No prefix? Don't autocomplete!
     return unless prefix.length
 
-    suggestions = @findSuggestionsForWord prefix
+    suggestions = @findSuggestionsForWord(prefix)
 
     # No suggestions? Don't autocomplete!
     return unless suggestions.length
@@ -64,13 +62,13 @@ class FuzzyProvider extends Provider
       "abcdefghijklmnopqrstuvwxyz1234567890"
     if wordChars.indexOf(e.newText.toLowerCase()) is -1
       newline = e.newText is "\n"
-      @addLastWordToList e.newRange.start.row, e.newRange.start.column, newline
+      @addLastWordToList(e.newRange.start.row, e.newRange.start.column, newline)
 
   # Private: Adds the last typed word to the wordList
   #
   # newLine - {Boolean} Has a new line been typed?
   addLastWordToList: (row, column, newline) ->
-    lastWord = @lastTypedWord row, column, newline
+    lastWord = @lastTypedWord(row, column, newline)
     return unless lastWord
 
     if @wordList.indexOf(lastWord) < 0
@@ -92,8 +90,7 @@ class FuzzyProvider extends Provider
     lineRange = [[row, 0], [row, column]]
 
     lastWord = null
-    @currentBuffer.scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
-      lastWord = match[0]
+    @currentBuffer.scanInRange(@wordRegex, lineRange, ({match, range, stop}) -> lastWord = match[0])
 
     return lastWord
 
@@ -108,26 +105,19 @@ class FuzzyProvider extends Provider
     else
       buffers = [@editor.getBuffer()]
 
-    # Check how long the word list building took
-    p = new Perf "Building word list", {@debug}
-    p.start()
-
     # Collect words from all buffers using the regular expression
     matches = []
     matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
 
     # Flatten the matches, make it an unique array
-    wordList = _.flatten matches
-    wordList = Utils.unique wordList
+    wordList = _.uniq(_.flatten(matches))
 
     # Filter words by length
     minimumWordLength = atom.config.get("autocomplete-plus.minimumWordLength")
     if minimumWordLength
-      wordList = wordList.filter (word) -> word?.length >= minimumWordLength
+      wordList = wordList.filter((word) -> word?.length >= minimumWordLength)
 
     @wordList = wordList
-
-    p.stop()
 
   # Private: Finds possible matches for the given string / prefix
   #
@@ -135,32 +125,28 @@ class FuzzyProvider extends Provider
   #
   # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (prefix) ->
-    p = new Perf "Finding matches for '#{prefix}'", {@debug}
-    p.start()
-
     # Merge the scope specific words into the default word list
-    wordList = @wordList.concat @getCompletionsForCursorScope()
+    wordList = @wordList.concat(@getCompletionsForCursorScope())
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
-        @wordList.filter (word) -> word.indexOf(prefix) is 0
+        @wordList.filter((word) -> word.indexOf(prefix) is 0)
       else
-        fuzzaldrin.filter wordList, prefix
+        fuzzaldrin.filter(wordList, prefix)
 
     results = for word in words when word isnt prefix
-      new Suggestion this, word: word, prefix: prefix
+      new Suggestion(this, word: word, prefix: prefix)
 
-    p.stop()
     return results
 
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)
   #
   # Returns an {Array} of strings
   getCompletionsForCursorScope: ->
-    cursorScope = @editor.scopeDescriptorForBufferPosition @editor.getCursorBufferPosition()
-    completions = atom.config.settingsForScopeDescriptor cursorScope.getScopesArray(), "editor.completions"
-    completions = completions.map (properties) -> _.valueForKeyPath properties, "editor.completions"
-    return Utils.unique _.flatten(completions)
+    cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
+    completions = atom.config.settingsForScopeDescriptor(cursorScope.getScopesArray(), "editor.completions")
+    completions = completions.map((properties) -> _.valueForKeyPath properties, "editor.completions")
+    return _.uniq(_.flatten(completions))
 
   # Public: Clean up, stop listening to events
   dispose: ->

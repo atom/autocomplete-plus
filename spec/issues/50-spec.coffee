@@ -1,9 +1,7 @@
 require "../spec-helper"
-AutocompleteView = require '../../lib/autocomplete-view'
-Autocomplete = require '../../lib/autocomplete'
 
 describe "Autocomplete", ->
-  [activationPromise, autocomplete, editorView, editor, completionDelay] = []
+  [activationPromise, mainModule, editorView, editor, completionDelay] = []
 
   describe "Issue 50", ->
     beforeEach ->
@@ -23,20 +21,22 @@ describe "Autocomplete", ->
         editor = e
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) -> autocomplete = a.mainModule
+      waitsForPromise ->
+        atom.packages.activatePackage("autocomplete-plus")
+          .then (a) -> mainModule = a.mainModule
 
       runs ->
         editorView = atom.views.getView(editor)
 
     it "works after closing one of the copied tabs", ->
       runs ->
-        expect(autocomplete.autocompleteViews.length).toEqual(1)
+        expect(mainModule.autocompleteManagers.length).toEqual(1)
 
         atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true)
-        expect(autocomplete.autocompleteViews.length).toEqual(2)
+        expect(mainModule.autocompleteManagers.length).toEqual(2)
 
         atom.workspace.getActivePane().destroy()
-        expect(autocomplete.autocompleteViews.length).toEqual(1)
+        expect(mainModule.autocompleteManagers.length).toEqual(1)
 
         editor.moveCursorToEndOfLine
         editor.insertNewline()

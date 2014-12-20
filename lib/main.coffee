@@ -1,5 +1,6 @@
 _ = require 'underscore-plus'
-AutocompleteView = require './autocomplete-view'
+AutocompleteManager = require './autocomplete-manager'
+SelectListElement = require './select-list-element'
 Provider = require './provider'
 Suggestion = require './suggestion'
 {deprecate} = require 'grim'
@@ -18,34 +19,43 @@ module.exports =
     autoActivationDelay:
       type: "integer"
       default: 100
+    maxSuggestions:
+      type: "integer"
+      default: 10
 
-  autocompleteViews: []
+  autocompleteManagers: []
   editorSubscription: null
 
-  # Public: Creates AutocompleteView instances for all active and future editors
+  # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
+
+    atom.views.addViewProvider(AutocompleteManager, (model) =>
+      element = new SelectListElement()
+      element.setModel(model)
+      element
+    )
+
     @editorSubscription = atom.workspace.observeTextEditors (editor) =>
-      autocompleteView = new AutocompleteView(editor)
+      autocompleteManager = new AutocompleteManager(editor)
 
       editor.onDidDestroy =>
-        autocompleteView.remove() unless autocompleteView.hasParent()
-        autocompleteView.dispose()
-        _.remove(@autocompleteViews, autocompleteView)
+        autocompleteManager.dispose()
+        _.remove(@autocompleteManagers, autocompleteManager)
 
-      @autocompleteViews.push(autocompleteView)
+      @autocompleteManagers.push(autocompleteManager)
 
-  # Public: Cleans everything up, removes all AutocompleteView instances
+  # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
     @editorSubscription?.dispose()
     @editorSubscription = null
-    @autocompleteViews.forEach (autocompleteView) -> autocompleteView.remove()
-    @autocompleteViews = []
+    @autocompleteManagers.forEach((autocompleteManager) -> autocompleteManager.dispose())
+    @autocompleteManagers = []
 
   registerProviderForEditorView: (provider, editorView) ->
     deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
-    @registerProviderForEditor(provider, editorView.getModel())
+    @registerProviderForEditor(provider, editorView?.getModel())
 
-  # Public: Finds the autocomplete view for the given TextEditor
+  # Public: Finds the autocomplete for the given TextEditor
   # and registers the given provider
   #
   # provider - The new {Provider}
@@ -53,17 +63,17 @@ module.exports =
   registerProviderForEditor: (provider, editor) ->
     return unless provider?
     return unless editor?
-    autocompleteView = _.findWhere @autocompleteViews, editor: editor
-    unless autocompleteView?
+    autocompleteManager = _.findWhere(@autocompleteManagers, editor: editor)
+    unless autocompleteManager?
       throw new Error("Could not register provider", provider.constructor.name)
 
-    autocompleteView.registerProvider(provider)
+    autocompleteManager.registerProvider(provider)
 
   # Public: unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
-    view.unregisterProvider provider for view in @autocompleteViews
+    autocompleteManager.unregisterProvider provider for autocompleteManager in @autocompleteManagers
 
   Provider: Provider
   Suggestion: Suggestion

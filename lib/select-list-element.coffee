@@ -1,5 +1,5 @@
 React = require 'react-atom-fork'
-{ol, li, span, input} = require 'reactionary-atom-fork'
+{ol, li, span, input, div} = require 'reactionary-atom-fork'
 {CompositeDisposable} = require 'event-kit'
 _ = require 'underscore-plus'
 
@@ -9,12 +9,7 @@ SelectListComponent = React.createClass
     items: @props.items || []
     selectedIndex: 0
 
-  componentDidMount: ->
-    @focusAfterRender()
-
   componentDidUpdate: ->
-    @focusAfterRender()
-
     @refs.selected?.getDOMNode().scrollIntoView(false)
     @updateEventListeners(@refs.input.getDOMNode()) if @refs.input
 
@@ -28,32 +23,34 @@ SelectListComponent = React.createClass
         @props.setComposition false
         null
 
-  focusAfterRender: ->
-    setTimeout =>
-      @refs.input?.getDOMNode().focus()
-    ,0
+  updateItems: (items) ->
+    @setState(items: items, selectedIndex: 0, =>
+      setTimeout =>
+        @refs.input?.getDOMNode().focus()
+      , 0
+    )
 
   render: ->
-    ol
-      className: "list-group",
-      input ref: 'input', key: 'autocomplete-plus-input'
-      @state.items?.map ({word, label, renderLabelAsHtml, className}, index) =>
-        itemClasses = []
-        itemClasses.push className if className
-        itemClasses.push 'selected' if index == @state.selectedIndex
+    div input ref: 'input', key: 'autocomplete-plus-input',
+      ol
+        className: "list-group",
+        @state.items?.map ({word, label, renderLabelAsHtml, className}, index) =>
+          itemClasses = []
+          itemClasses.push className if className
+          itemClasses.push 'selected' if index == @state.selectedIndex
 
-        itemProps =
-          className: itemClasses.join(' '),
-          'data-index': index,
-          key: word
+          itemProps =
+            className: itemClasses.join(' '),
+            'data-index': index,
+            key: word
 
-        itemProps.ref = 'selected' if index == @state.selectedIndex
+          itemProps.ref = 'selected' if index == @state.selectedIndex
 
-        labelAttributes = className: "label"
-        labelAttributes.dangerouslySetInnerHTML = __html: label if renderLabelAsHtml
-        li itemProps,
-          span className: "word", word
-          span labelAttributes, (label unless renderLabelAsHtml) if label?
+          labelAttributes = className: "label"
+          labelAttributes.dangerouslySetInnerHTML = __html: label if renderLabelAsHtml
+          li itemProps,
+            span className: "word", word
+            span labelAttributes, (label unless renderLabelAsHtml) if label?
 
 class SelectListElement extends HTMLElement
   maxItems: 10
@@ -95,16 +92,13 @@ class SelectListElement extends HTMLElement
     @subscriptions.add @model.onDidDispose(@destroyed.bind(this))
 
   itemsChanged: (items) ->
-    @component?.setState
-      items: items?.slice(0, @maxItems),
-      selectedIndex: 0
+    @component?.updateItems(items?.slice(0, @maxItems))
 
   moveSelectionUp: () ->
     unless @component?.state.selectedIndex == 0
       @component?.setState selectedIndex: --@component.state.selectedIndex
     else
       @component?.setState selectedIndex: (@component?.state.items.length - 1)
-
 
   moveSelectionDown: () ->
     unless @component?.state.selectedIndex == (@component?.state.items.length - 1)

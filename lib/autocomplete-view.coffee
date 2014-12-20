@@ -189,7 +189,9 @@ class AutocompleteView extends SimpleSelectListView
     # Now we're ready - display the suggestions
     @setItems(suggestions)
     unless @overlayDecoration?
-      marker = @editor.getLastCursor()?.getMarker()
+      cursor = @editor.getLastCursor()
+      position = cursor?.getBeginningOfCurrentWordBufferPosition()
+      marker = @editor.markBufferPosition(position)
       @overlayDecoration = @editor?.decorateMarker(marker, { type: 'overlay', item: this })
 
   # Private: Gets called when the content has been modified

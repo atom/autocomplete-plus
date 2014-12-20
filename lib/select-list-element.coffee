@@ -31,8 +31,9 @@ SelectListComponent = React.createClass
     )
 
   render: ->
-    div input ref: 'input', key: 'autocomplete-plus-input',
+    div input(ref: 'input', key: 'autocomplete-plus-input'),
       ol
+        key: 'autocomplete-plus-list',
         className: "list-group",
         @state.items?.map ({word, label, renderLabelAsHtml, className}, index) =>
           itemClasses = []

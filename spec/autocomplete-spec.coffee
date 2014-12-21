@@ -85,6 +85,7 @@ describe "Autocomplete", ->
 
         it "inserts the word and moves the cursor to the end of the word on enter", ->
           editorView = editorView
+          atom.config.set('autocomplete-plus.confirmCompletion', 'enter')
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion

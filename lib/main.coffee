@@ -24,7 +24,7 @@ module.exports =
       default: 10
     confirmCompletion:
       type: "string"
-      default: "tab and enter"
+      default: "tab"
       enum: ["tab", "enter", "tab and enter"]
     navigateCompletions:
       type: "string"

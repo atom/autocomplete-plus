@@ -1,10 +1,6 @@
 ".autocomplete-plus":
-  "tab": "autocomplete-plus:confirm"
-  "down": "autocomplete-plus:select-next"
   "ctrl-n": "autocomplete-plus:select-next"
-  "up": "autocomplete-plus:select-previous"
   "ctrl-p": "autocomplete-plus:select-previous"
-  "escape": "autocomplete-plus:cancel"
 
 "atom-text-editor":
   "ctrl-shift-space": "autocomplete-plus:activate"

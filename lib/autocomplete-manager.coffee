@@ -32,15 +32,32 @@ class AutocompleteManager
 
     @compositeDisposable.add atom.commands.add 'atom-text-editor',
       "autocomplete-plus:activate": @runAutocompletion
-
-
-    # Core events for keyboard handling
-
-    @compositeDisposable.add atom.commands.add '.autocomplete-plus',
       "autocomplete-plus:confirm": @confirmSelection,
       "autocomplete-plus:select-next": @selectNext,
       "autocomplete-plus:select-previous": @selectPrevious,
       "autocomplete-plus:cancel": @cancel
+
+  addKeyboardInteraction: ->
+    @removeKeyboardInteraction()
+    keys =
+      "tab": "autocomplete-plus:confirm",
+      "enter": "autocomplete-plus:confirm",
+      "escape": "autocomplete-plus:cancel"
+
+    if @items?.length > 1
+      keys.up =  "autocomplete-plus:select-previous"
+      keys.down = "autocomplete-plus:select-next"
+
+    @keymaps = atom.keymaps.add(
+      'autocomplete-plus-list',
+      'atom-text-editor:not(.mini)': keys
+    )
+
+    @compositeDisposable.add @keymaps
+
+  removeKeyboardInteraction: ->
+    @keymaps?.dispose()
+    @compositeDisposable.remove(@keymaps)
 
   updateCurrentEditor: (currentPaneItem) =>
     @cancel() unless currentPaneItem == @editor
@@ -130,6 +147,7 @@ class AutocompleteManager
     @overlayDecoration?.destroy()
     @overlayDecoration = undefined
     @editorView.focus()
+    @removeKeyboardInteraction()
     @active = false
 
   # Private: Finds suggestions for the current prefix, sets the list items,
@@ -180,6 +198,7 @@ class AutocompleteManager
 
   # Private: Focuses the hidden input, starts listening to keyboard events
   setActive: ->
+    @addKeyboardInteraction()
     @active = true
 
   # Private: Gets called when the content has been modified

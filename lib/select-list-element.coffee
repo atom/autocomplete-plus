@@ -38,7 +38,7 @@ class SelectListElement extends HTMLElement
     @subscriptions.add @model.onDoSelectNext(@moveSelectionDown.bind(this))
     @subscriptions.add @model.onDoSelectPrevious(@moveSelectionUp.bind(this))
     @subscriptions.add @model.onDoConfirmSelection(@confirmSelection.bind(this))
-    @subscriptions.add @model.onDidDispose(@destroyed.bind(this))
+    @subscriptions.add @model.onDidDispose(@dispose.bind(this))
 
   itemsChanged: ->
     @selectedIndex = 0
@@ -83,20 +83,8 @@ class SelectListElement extends HTMLElement
 
   mountComponent: ->
     @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')
-    @renderInput() unless @input
     @renderList() unless @ol
     @itemsChanged()
-
-  renderInput: ->
-    @input = document.createElement('input')
-    @appendChild(@input)
-    @input.addEventListener 'compositionstart', =>
-      @model.compositionInProgress = true
-      null
-
-    @input.addEventListener 'compositionend', =>
-      @model.compositionInProgress = false
-      null
 
   renderList: ->
     @ol = document.createElement('ol')
@@ -146,11 +134,9 @@ class SelectListElement extends HTMLElement
     @selectedLi?.scrollIntoView(false)
 
   unmountComponent: ->
-    return unless @component?.isMounted()
-    React.unmountComponentAtNode(this)
-    @component = null
+    @dispose()
 
-  destroyed: =>
+  dispose: ->
     @subscriptions.dispose()
     @parentNode?.removeChild(this)
 

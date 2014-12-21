@@ -9,6 +9,7 @@ module.exports =
 class AutocompleteManager
   currentBuffer: null
   debug: false
+  currentSuggestionId: 0
 
   # Private: Makes sure we're listening to editor and buffer events, sets
   # the current buffer
@@ -142,23 +143,38 @@ class AutocompleteManager
     return unless @originalCursorPosition?
     buffer = @editor?.getBuffer()
     return unless buffer?
-    options =
-      path: buffer.getPath()
-      text: buffer.getText()
-      pos: @originalCursorPosition
 
     # Iterate over all providers, ask them to build suggestion(s)
+    @currentSuggestionId++;
+    suggestionId = @currentSuggestionId
     suggestions = []
-    for provider in @providers?.slice()?.reverse()
+    exclusiveProviderFound = false
+    @providers?.slice()?.reverse().forEach (provider) =>
+      suggestionsCallback = (providerSuggestions) =>
+        #dont continue if we have already found an exclusive provider or no suggestions sent
+        return unless providerSuggestions?.length || exclusiveProviderFound
+
+        if provider.exclusive
+          suggestions = providerSuggestions
+          exclusiveProviderFound = true
+        else
+          suggestions = suggestions.concat(providerSuggestions)
+
+        #display suggestions unless we have requested new suggestions since we started
+        @displaySuggestions(suggestions) if @currentSuggestionId == suggestionId
+
+      options =
+        path: buffer.getPath()
+        text: buffer.getText()
+        pos: @originalCursorPosition
+        suggestionsCallback: suggestionsCallback
+
       providerSuggestions = provider?.buildSuggestions(options)
-      continue unless providerSuggestions?.length
 
-      if provider.exclusive
-        suggestions = providerSuggestions
-        break
-      else
-        suggestions = suggestions.concat(providerSuggestions)
+      #handle syncronous responses
+      suggestionsCallback(providerSuggestions) if providerSuggestions
 
+  displaySuggestions: (suggestions) ->
     # No suggestions? Cancel autocompletion.
     return unless suggestions.length
 

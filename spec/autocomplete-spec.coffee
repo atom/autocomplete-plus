@@ -59,11 +59,28 @@ describe "Autocomplete", ->
         advanceClock completionDelay
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
+      it "should not update completions when composing characters", ->
+        triggerAutocompletion editor
+        advanceClock completionDelay
+
+        autocompleteView = atom.views.getView(autocompleteManager)
+
+        spyOn(autocompleteManager, 'changeItems').andCallThrough()
+
+        editorView.dispatchEvent(buildIMECompositionEvent('compositionstart', target: editorView))
+        editorView.dispatchEvent(buildIMECompositionEvent('compositionupdate', data: "~", target: editorView))
+        advanceClock completionDelay
+
+        expect(autocompleteManager.changeItems).not.toHaveBeenCalled()
+
+        editorView.dispatchEvent(buildIMECompositionEvent('compositionend', target: editorView))
+        editorView.firstChild.dispatchEvent(buildTextInputEvent(data: 'ã', target: editorView))
+
+        expect(editor.lineTextForBufferRow(13)).toBe 'fã'
 
     describe "accepting suggestions", ->
       describe "while suggestions are visible can confirm suggestions", ->
         it "inserts the word and moves the cursor to the end of the word on tab", ->
-          editorView = editorView
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
@@ -84,7 +101,6 @@ describe "Autocomplete", ->
           expect(bufferPosition.column).toEqual 8
 
         it "inserts the word and moves the cursor to the end of the word on enter", ->
-          editorView = editorView
           atom.config.set('autocomplete-plus.confirmCompletion', 'enter')
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
@@ -106,7 +122,6 @@ describe "Autocomplete", ->
           expect(bufferPosition.column).toEqual 8
 
         it "does not insert the word when enter completion not enabled", ->
-          editorView = editorView
           atom.config.set('autocomplete-plus.confirmCompletion', 'tab')
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
@@ -123,7 +138,6 @@ describe "Autocomplete", ->
           expect(editor.getBuffer().getLastLine()).toEqual ""
 
         it "does not insert the word when tab completion not enabled", ->
-          editorView = editorView
           atom.config.set('autocomplete-plus.confirmCompletion', 'enter')
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
@@ -142,7 +156,6 @@ describe "Autocomplete", ->
 
 
         it "hides the suggestions", ->
-          editorView = editorView
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
@@ -160,7 +173,6 @@ describe "Autocomplete", ->
 
     describe "select-previous event", ->
       it "selects the previous item in the list", ->
-        editorView = editorView
 
         # Trigger an autocompletion
         triggerAutocompletion editor
@@ -184,8 +196,6 @@ describe "Autocomplete", ->
         expect(items[3]).toHaveClass("selected")
 
       it "closes the autocomplete when up arrow pressed when only one item displayed", ->
-        editorView = editorView
-
         # Trigger an autocompletion
         triggerAutocompletion editor, false, 'q'
         advanceClock completionDelay
@@ -198,8 +208,6 @@ describe "Autocomplete", ->
         expect(autocomplete).not.toExist()
 
       it "does not close the autocomplete when down arrow pressed when many items", ->
-        editorView = editorView
-
         # Trigger an autocompletion
         triggerAutocompletion editor
         advanceClock completionDelay
@@ -212,8 +220,6 @@ describe "Autocomplete", ->
         expect(autocomplete).toExist()
 
       it "does close the autocomplete when down arrow while up,down navigation not selected", ->
-        editorView = editorView
-
         atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
         # Trigger an autocompletion
         triggerAutocompletion editor, false
@@ -228,8 +234,6 @@ describe "Autocomplete", ->
 
     describe "select-next event", ->
       it "selects the next item in the list", ->
-        editorView = editorView
-
         # Trigger an autocompletion
         triggerAutocompletion editor
         advanceClock completionDelay
@@ -251,8 +255,6 @@ describe "Autocomplete", ->
         expect(items[3]).not.toHaveClass("selected")
 
       it "closes the autocomplete when up arrow pressed when only one item displayed", ->
-        editorView = editorView
-
         # Trigger an autocompletion
         triggerAutocompletion editor, false, 'q'
         advanceClock completionDelay
@@ -265,8 +267,6 @@ describe "Autocomplete", ->
         expect(autocomplete).not.toExist()
 
       it "does not close the autocomplete when up arrow pressed when many items", ->
-        editorView = editorView
-
         # Trigger an autocompletion
         triggerAutocompletion editor
         advanceClock completionDelay
@@ -279,8 +279,6 @@ describe "Autocomplete", ->
         expect(autocomplete).toExist()
 
       it "does close the autocomplete when up arrow while up,down navigation not selected", ->
-        editorView = editorView
-
         atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
         # Trigger an autocompletion
         triggerAutocompletion editor
@@ -295,8 +293,6 @@ describe "Autocomplete", ->
 
     describe "when a suggestion is clicked", ->
       it "should select the item and confirm the selection", ->
-        editorView = editorView
-
         # Trigger an autocompletion
         triggerAutocompletion editor
         advanceClock completionDelay

@@ -186,7 +186,6 @@ describe "Autocomplete", ->
         expect(items[2]).not.toHaveClass("selected")
         expect(items[3]).not.toHaveClass("selected")
 
-
         autocompleteView = atom.views.getView(autocompleteManager)
         # Select previous item
         atom.commands.dispatch autocompleteView, "autocomplete-plus:select-previous"
@@ -338,7 +337,6 @@ describe "Autocomplete", ->
         mainModule = a.mainModule
         autocompleteManager = mainModule.autocompleteManagers[0]
 
-
     it "sets the width of the view to be wide enough to contain the longest completion without scrolling", ->
       editor.moveToBottom()
       editor.insertNewline()
@@ -367,7 +365,6 @@ describe "Autocomplete", ->
 
       runs ->
         editorView = atom.views.getView(editor)
-
 
     it "includes completions for the scope's completion preferences", ->
       runs ->
@@ -401,7 +398,6 @@ describe "Autocomplete", ->
         autocompleteManager = mainModule.autocompleteManagers[0]
 
       runs ->
-
 
     it "does not show suggestions after a delay", ->
       triggerAutocompletion editor

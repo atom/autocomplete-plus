@@ -151,7 +151,6 @@ class AutocompleteManager
     return unless @active
     @overlayDecoration?.destroy()
     @overlayDecoration = undefined
-    @editorView.focus()
     @removeKeyboardInteraction()
     @active = false
 
@@ -237,6 +236,7 @@ class AutocompleteManager
   # e - The change {Event}
   editorChanged: (e) =>
     return unless @editorHasFocus()
+    return if @editor.getLastCursor().getBufferPosition().isEqual(e.newRange.start)
     if atom.config.get("autocomplete-plus.enableAutoActivation") and ( e.newText.trim().length is 1 or e.oldText.trim().length is 1 )
       @contentsModified()
     else

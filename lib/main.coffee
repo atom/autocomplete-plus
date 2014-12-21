@@ -22,6 +22,14 @@ module.exports =
     maxSuggestions:
       type: "integer"
       default: 10
+    confirmCompletion:
+      type: "string"
+      default: "tab and enter"
+      enum: ["tab", "enter", "tab and enter"]
+    navigateCompletions:
+      type: "string"
+      default: "up,down"
+      enum: ["up,down", "ctrl-p,ctrl-n"]
 
   autocompleteManagers: []
   editorSubscription: null

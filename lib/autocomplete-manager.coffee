@@ -40,11 +40,16 @@ class AutocompleteManager
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
     keys =
-      "tab": "autocomplete-plus:confirm",
-      "enter": "autocomplete-plus:confirm",
       "escape": "autocomplete-plus:cancel"
 
-    if @items?.length > 1
+    completionKey = atom.config.get("autocomplete-plus.confirmCompletion") || ''
+    navigationKey = atom.config.get("autocomplete-plus.navigateCompletions") || ''
+
+
+    keys.tab = "autocomplete-plus:confirm" if completionKey.indexOf('tab') > -1
+    keys.enter = "autocomplete-plus:confirm" if completionKey.indexOf('enter') > -1
+
+    if @items?.length > 1 and navigationKey == "up,down"
       keys.up =  "autocomplete-plus:select-previous"
       keys.down = "autocomplete-plus:select-next"
 

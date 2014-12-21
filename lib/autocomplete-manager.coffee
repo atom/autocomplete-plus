@@ -46,12 +46,15 @@ class AutocompleteManager
     navigationKey = atom.config.get("autocomplete-plus.navigateCompletions") || ''
 
 
-    keys.tab = "autocomplete-plus:confirm" if completionKey.indexOf('tab') > -1
-    keys.enter = "autocomplete-plus:confirm" if completionKey.indexOf('enter') > -1
+    keys['tab'] = "autocomplete-plus:confirm" if completionKey.indexOf('tab') > -1
+    keys['enter'] = "autocomplete-plus:confirm" if completionKey.indexOf('enter') > -1
 
     if @items?.length > 1 and navigationKey == "up,down"
-      keys.up =  "autocomplete-plus:select-previous"
-      keys.down = "autocomplete-plus:select-next"
+      keys['up'] =  "autocomplete-plus:select-previous"
+      keys['down'] = "autocomplete-plus:select-next"
+    else
+      keys["ctrl-n"] = "autocomplete-plus:select-next"
+      keys["ctrl-p"] = "autocomplete-plus:select-previous"
 
     @keymaps = atom.keymaps.add(
       'autocomplete-plus-list',

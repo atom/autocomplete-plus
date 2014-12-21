@@ -1,6 +1,2 @@
-".autocomplete-plus":
-  "ctrl-n": "autocomplete-plus:select-next"
-  "ctrl-p": "autocomplete-plus:select-previous"
-
 "atom-text-editor":
   "ctrl-shift-space": "autocomplete-plus:activate"

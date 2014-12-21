@@ -26,7 +26,7 @@ describe "Autocomplete", ->
       runs ->
         editorView = atom.views.getView(editor)
 
-    it "cancels autocompletion when entering an empty string (e.g. space)", ->
+    it "closes the suggestion list when entering an empty string (e.g. space)", ->
       runs ->
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 

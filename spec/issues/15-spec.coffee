@@ -30,7 +30,7 @@ describe "Autocomplete", ->
       runs ->
         editorView = atom.views.getView(editor)
 
-    it "does dismiss autocompletion when saving", ->
+    it "closes the suggestion list when saving", ->
       runs ->
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 

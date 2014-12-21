@@ -26,7 +26,7 @@ describe "Autocomplete", ->
       runs ->
         editorView = atom.views.getView(editor)
 
-    it "does not trigger autocompletion when pasting", ->
+    it "does not show the suggestion list when pasting", ->
 
       runs ->
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()

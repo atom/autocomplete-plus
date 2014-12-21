@@ -24,7 +24,7 @@ describe "Autocomplete", ->
       runs ->
         editorView = atom.views.getView(editor)
 
-    it "autocomplete should show on only focus editorView", ->
+    it "autocomplete should only show for the editor that currently has focus", ->
       runs ->
         editor2 = atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true).getActiveItem()
         editorView2 = atom.views.getView(editor2)

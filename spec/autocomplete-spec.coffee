@@ -37,7 +37,7 @@ describe "Autocomplete", ->
 
 
     describe "on changed events", ->
-      it "should attach when finding suggestions", ->
+      it "should show the suggestion list when suggestions are found", ->
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
@@ -50,7 +50,7 @@ describe "Autocomplete", ->
         [].forEach.call editorView.querySelectorAll(".autocomplete-plus li span"), (item, index) ->
           expect(item.innerText).toEqual suggestions[index]
 
-      it "should not attach when not finding suggestions", ->
+      it "should not show the suggestion list when no suggestions are found", ->
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
         # Trigger an autocompletion
@@ -59,7 +59,7 @@ describe "Autocomplete", ->
         advanceClock completionDelay
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
-      it "should not update completions when composing characters", ->
+      it "should not update the suggestion list while composition is in progress", ->
         triggerAutocompletion editor
         advanceClock completionDelay
 
@@ -79,8 +79,27 @@ describe "Autocomplete", ->
         expect(editor.lineTextForBufferRow(13)).toBe 'fã'
 
     describe "accepting suggestions", ->
-      describe "while suggestions are visible can confirm suggestions", ->
-        it "inserts the word and moves the cursor to the end of the word on tab", ->
+      it "hides the suggestions list when a suggestion is confirmed", ->
+        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+
+        # Trigger an autocompletion
+        editor.moveToBottom()
+        editor.moveToBeginningOfLine()
+        editor.insertText("f")
+        advanceClock completionDelay
+        expect(editorView.querySelector(".autocomplete-plus")).toExist()
+
+        # Accept suggestion
+        autocompleteView = atom.views.getView(autocompleteManager)
+        atom.commands.dispatch(autocompleteView, "autocomplete-plus:confirm")
+
+        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+
+      describe "when tab is used to accept suggestions", ->
+        beforeEach ->
+          atom.config.set('autocomplete-plus.confirmCompletion', 'tab')
+
+        it "inserts the word and moves the cursor to the end of the word", ->
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
@@ -100,29 +119,7 @@ describe "Autocomplete", ->
           expect(bufferPosition.row).toEqual 13
           expect(bufferPosition.column).toEqual 8
 
-        it "inserts the word and moves the cursor to the end of the word on enter", ->
-          atom.config.set('autocomplete-plus.confirmCompletion', 'enter')
-          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
-
-          # Trigger an autocompletion
-          triggerAutocompletion editor
-          advanceClock completionDelay
-
-          autocompleteView = atom.views.getView(autocompleteManager)
-          # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: editorView)
-          atom.keymaps.handleKeyboardEvent(key);
-
-          # Check for result
-          expect(editor.getBuffer().getLastLine()).toEqual "function"
-
-          # Check for cursor position
-          bufferPosition = editor.getCursorBufferPosition()
-          expect(bufferPosition.row).toEqual 13
-          expect(bufferPosition.column).toEqual 8
-
         it "does not insert the word when enter completion not enabled", ->
-          atom.config.set('autocomplete-plus.confirmCompletion', 'tab')
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
@@ -137,8 +134,31 @@ describe "Autocomplete", ->
           # Check for result
           expect(editor.getBuffer().getLastLine()).toEqual ""
 
-        it "does not insert the word when tab completion not enabled", ->
+      describe "when enter is used to accept suggestions", ->
+        beforeEach ->
           atom.config.set('autocomplete-plus.confirmCompletion', 'enter')
+
+        it "inserts the word and moves the cursor to the end of the word", ->
+          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+
+          # Trigger an autocompletion
+          triggerAutocompletion editor
+          advanceClock completionDelay
+
+          autocompleteView = atom.views.getView(autocompleteManager)
+          # Accept suggestion
+          key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: editorView)
+          atom.keymaps.handleKeyboardEvent(key);
+
+          # Check for result
+          expect(editor.getBuffer().getLastLine()).toEqual "function"
+
+          # Check for cursor position
+          bufferPosition = editor.getCursorBufferPosition()
+          expect(bufferPosition.row).toEqual 13
+          expect(bufferPosition.column).toEqual 8
+
+        it "does not insert the word when tab completion not enabled", ->
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
           # Trigger an autocompletion
@@ -152,24 +172,6 @@ describe "Autocomplete", ->
 
           # Check for result
           expect(editor.getBuffer().getLastLine()).toEqual "f "
-
-
-
-        it "hides the suggestions", ->
-          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
-
-          # Trigger an autocompletion
-          editor.moveToBottom()
-          editor.moveToBeginningOfLine()
-          editor.insertText("f")
-          advanceClock completionDelay
-          expect(editorView.querySelector(".autocomplete-plus")).toExist()
-
-          # Accept suggestion
-          autocompleteView = atom.views.getView(autocompleteManager)
-          atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
-
-          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
     describe "select-previous event", ->
       it "selects the previous item in the list", ->

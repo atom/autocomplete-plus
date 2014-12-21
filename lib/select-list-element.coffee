@@ -43,9 +43,6 @@ class SelectListElement extends HTMLElement
   itemsChanged: ->
     @selectedIndex = 0
     @renderItems()
-    setTimeout =>
-      @input?.focus()
-    , 0
 
   moveSelectionUp: () ->
     unless @selectedIndex <= 0

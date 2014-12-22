@@ -59,6 +59,20 @@ describe "Autocomplete", ->
         advanceClock completionDelay
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
+      it "should show the suggestion list when backspacing", ->
+        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+
+        # Trigger an autocompletion
+        editor.moveToBottom()
+        editor.insertText("fu")
+        advanceClock completionDelay
+        key = atom.keymaps.constructor.keydownEvent('backspace', target: editorView)
+        atom.keymaps.handleKeyboardEvent(key)
+        advanceClock completionDelay
+
+        expect(editorView.querySelector(".autocomplete-plus")).toExist()
+        expect(editor.lineTextForBufferRow(13)).toBe 'f'
+
       it "should not update the suggestion list while composition is in progress", ->
         triggerAutocompletion editor
         advanceClock completionDelay
@@ -108,8 +122,8 @@ describe "Autocomplete", ->
 
           autocompleteView = atom.views.getView(autocompleteManager)
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('tab', keyCode: 9, target: editorView)
-          atom.keymaps.handleKeyboardEvent(key);
+          key = atom.keymaps.constructor.keydownEvent('tab', target: editorView)
+          atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
           expect(editor.getBuffer().getLastLine()).toEqual "function"
@@ -129,7 +143,7 @@ describe "Autocomplete", ->
           autocompleteView = atom.views.getView(autocompleteManager)
           # Accept suggestion
           key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: editorView)
-          atom.keymaps.handleKeyboardEvent(key);
+          atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
           expect(editor.getBuffer().getLastLine()).toEqual ""

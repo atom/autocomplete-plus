@@ -360,44 +360,6 @@ describe "Autocomplete", ->
       autocompleteView = atom.views.getView(autocompleteManager)
       expect(autocompleteView.scrollWidth).toBe(autocompleteView.offsetWidth)
 
-  describe "css", ->
-    [css] = []
-
-    beforeEach ->
-      runs -> atom.config.set('autocomplete-plus.enableAutoActivation', true)
-
-      waitsForPromise -> atom.workspace.open('css.css').then (e) ->
-        editor = e
-
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage('language-css').then (c) -> css = c
-
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
-
-      runs ->
-        editorView = atom.views.getView(editor)
-
-    it "includes completions for the scope's completion preferences", ->
-      runs ->
-        editor.moveToEndOfLine()
-        editor.insertText('o')
-        editor.insertText('u')
-        editor.insertText('t')
-
-        advanceClock(completionDelay)
-
-        autocompleteView = atom.views.getView(autocompleteManager)
-        items = autocompleteView.querySelectorAll('li')
-        expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        expect(items.length).toBe(10)
-        expect(items[0]).toHaveText('outline')
-        expect(items[1]).toHaveText('outline-color')
-        expect(items[2]).toHaveText('outline-width')
-        expect(items[3]).toHaveText('outline-style')
-
   describe "when auto-activation is disabled", ->
     beforeEach ->
       runs ->
@@ -426,32 +388,3 @@ describe "Autocomplete", ->
       expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
       atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
       expect(editorView.querySelector('.autocomplete-plus')).toExist()
-
-  describe "HTML label support", ->
-    beforeEach ->
-      waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
-        editor = e
-
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
-
-      runs ->
-        editorView = atom.workspace.getActiveTextEditor()
-
-    it "should allow HTML in labels", ->
-      runs ->
-        # Register the test provider
-        testProvider = new TestProvider(editor)
-        mainModule.registerProviderForEditor(testProvider, editor)
-
-        editor.moveToBottom()
-        editor.insertText('o')
-
-        advanceClock(completionDelay)
-
-        autocompleteView = atom.views.getView(autocompleteManager)
-
-        expect(autocompleteView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(autocompleteView.querySelector('li')).toHaveClass('ohai')

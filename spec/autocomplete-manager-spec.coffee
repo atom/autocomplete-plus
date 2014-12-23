@@ -3,7 +3,7 @@ _ = require('underscore-plus')
 {KeymapManager} = require('atom')
 TestProvider = require('./lib/test-provider')
 
-describe "Autocomplete", ->
+describe "Autocomplete Manager", ->
   [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
 
   beforeEach ->

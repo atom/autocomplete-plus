@@ -29,7 +29,8 @@ Just type some stuff, autocomplete+ will automatically show you some suggestions
 Press `UP` and `DOWN` to select another suggestion, press `TAB` to confirm your selection.
 Additional confirmation keymapping can be customised in your keymap.cson:
 ```coffeescript
-".autocomplete-plus input.hidden-input":
+".autocomplete-plus":
+  "tab": "unset!"
   "enter": "autocomplete-plus:confirm"
 ```
 

@@ -9,6 +9,7 @@ class SelectListElement extends HTMLElement
     @classList.add "popover-list"
     @classList.add "select-list"
     @classList.add "autocomplete-plus"
+    @classList.add "autocomplete-suggestion-list"
     @registerMouseHandling()
 
   # This should be unnecessary but the events we need to override
@@ -43,6 +44,9 @@ class SelectListElement extends HTMLElement
   itemsChanged: ->
     @selectedIndex = 0
     @renderItems()
+    setTimeout =>
+      @input.focus()
+    , 0
 
   moveSelectionUp: () ->
     unless @selectedIndex <= 0
@@ -80,8 +84,13 @@ class SelectListElement extends HTMLElement
 
   mountComponent: ->
     @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')
+    @renderInput() unless @input
     @renderList() unless @ol
     @itemsChanged()
+
+  renderInput: ->
+    @input = document.createElement('input')
+    @appendChild(@input)
 
   renderList: ->
     @ol = document.createElement('ol')
@@ -137,4 +146,4 @@ class SelectListElement extends HTMLElement
     @subscriptions.dispose()
     @parentNode?.removeChild(this)
 
-module.exports = SelectListElement = document.registerElement 'select-list', prototype: SelectListElement.prototype
+module.exports = SelectListElement = document.registerElement('autocomplete-suggestion-list', prototype: SelectListElement.prototype)

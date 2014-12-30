@@ -32,6 +32,8 @@ class AutocompleteManager
 
     @compositeDisposable.add atom.commands.add 'atom-text-editor',
       "autocomplete-plus:activate": @runAutocompletion
+
+    @compositeDisposable.add atom.commands.add 'autocomplete-suggestion-list',
       "autocomplete-plus:confirm": @confirmSelection,
       "autocomplete-plus:select-next": @selectNext,
       "autocomplete-plus:select-previous": @selectPrevious,
@@ -57,8 +59,8 @@ class AutocompleteManager
       keys["ctrl-p"] = "autocomplete-plus:select-previous"
 
     @keymaps = atom.keymaps.add(
-      'autocomplete-plus-list',
-      'atom-text-editor:not(.mini)': keys
+      'AutocompleteManager',
+      'atom-text-editor:not(.mini) .autocomplete-plus': keys
     )
 
     @compositeDisposable.add @keymaps
@@ -155,6 +157,7 @@ class AutocompleteManager
     @overlayDecoration?.destroy()
     @overlayDecoration = undefined
     @removeKeyboardInteraction()
+    @editorView.focus()
     @active = false
 
   # Private: Finds suggestions for the current prefix, sets the list items,

@@ -25,13 +25,14 @@ Also grab one of these awesome additions for autocomplete+:
 
 ## Usage
 
-Just type some stuff, autocomplete+ will automatically show you some suggestions.
+Just type some stuff, and autocomplete+ will automatically show you some suggestions.
 Press `UP` and `DOWN` to select another suggestion, press `TAB` to confirm your selection.
 Additional confirmation keymapping can be customised in your keymap.cson:
+
 ```coffeescript
-".autocomplete-plus":
-  "tab": "unset!"
-  "enter": "autocomplete-plus:confirm"
+'atom-text-editor:not(mini) .autocomplete-plus.autocomplete-suggestion-list':
+  'tab': 'unset!'
+  'enter': 'autocomplete-plus:confirm'
 ```
 
 ## Features

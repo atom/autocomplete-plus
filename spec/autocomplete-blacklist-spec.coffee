@@ -27,7 +27,7 @@ describe "Autocomplete", ->
 
 
   describe "Autocomplete File Blacklist", ->
-    it "should not show autocompletion for files that match the blacklist", ->
+    it "should not show suggestions when working with files that match the blacklist", ->
       editor.insertText "a"
       advanceClock completionDelay
 

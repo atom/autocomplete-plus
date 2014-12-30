@@ -26,8 +26,8 @@ describe "Autocomplete", ->
       runs ->
         editorView = atom.views.getView(editor)
 
-    describe "when autocompletion triggers", ->
-      it "it hides the autocompletion when user keeps typing", ->
+    describe "when autocomplete is triggered", ->
+      it "it hides the suggestion list when the user keeps typing", ->
         runs ->
           expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 

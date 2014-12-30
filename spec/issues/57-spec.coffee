@@ -30,7 +30,7 @@ describe "Autocomplete", ->
         editorView = atom.views.getView(editor)
 
     describe 'where many cursors are defined', ->
-      it 'autocompleteManagers word when there is only a prefix', ->
+      it 'autocompletes word when there is only a prefix', ->
         editor.getBuffer().insert([10,0] ,"s:extra:s")
         editor.setSelectedBufferRanges([[[10,1],[10,1]], [[10,9],[10,9]]])
 

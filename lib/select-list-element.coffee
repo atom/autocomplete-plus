@@ -9,6 +9,8 @@ class SelectListElement extends HTMLElement
     @classList.add "popover-list"
     @classList.add "select-list"
     @classList.add "autocomplete-plus"
+    @classList.add "autocomplete-suggestion-list"
+    @subscriptions.add(atom.config.observe('autocomplete-plus.maxSuggestions', => @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')))
     @registerMouseHandling()
 
   # This should be unnecessary but the events we need to override
@@ -38,13 +40,13 @@ class SelectListElement extends HTMLElement
     @subscriptions.add @model.onDoSelectNext(@moveSelectionDown.bind(this))
     @subscriptions.add @model.onDoSelectPrevious(@moveSelectionUp.bind(this))
     @subscriptions.add @model.onDoConfirmSelection(@confirmSelection.bind(this))
-    @subscriptions.add @model.onDidDispose(@destroyed.bind(this))
+    @subscriptions.add @model.onDidDispose(@dispose.bind(this))
 
   itemsChanged: ->
     @selectedIndex = 0
     @renderItems()
     setTimeout =>
-      @input?.focus()
+      @input.focus()
     , 0
 
   moveSelectionUp: () ->
@@ -82,7 +84,6 @@ class SelectListElement extends HTMLElement
       @model.cancel()
 
   mountComponent: ->
-    @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')
     @renderInput() unless @input
     @renderList() unless @ol
     @itemsChanged()
@@ -90,6 +91,7 @@ class SelectListElement extends HTMLElement
   renderInput: ->
     @input = document.createElement('input')
     @appendChild(@input)
+
     @input.addEventListener 'compositionstart', =>
       @model.compositionInProgress = true
       null
@@ -146,12 +148,10 @@ class SelectListElement extends HTMLElement
     @selectedLi?.scrollIntoView(false)
 
   unmountComponent: ->
-    return unless @component?.isMounted()
-    React.unmountComponentAtNode(this)
-    @component = null
+    @dispose()
 
-  destroyed: =>
+  dispose: ->
     @subscriptions.dispose()
     @parentNode?.removeChild(this)
 
-module.exports = SelectListElement = document.registerElement 'select-list', prototype: SelectListElement.prototype
+module.exports = SelectListElement = document.registerElement('autocomplete-suggestion-list', prototype: SelectListElement.prototype)

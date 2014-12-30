@@ -28,7 +28,7 @@ describe "Autocomplete", ->
       runs ->
         editorView = atom.views.getView(editor)
 
-    it "does not show suggestions after a word has been completed", ->
+    it "does not show suggestions after a word has been confirmed", ->
       runs ->
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 

@@ -33,14 +33,41 @@ class AutocompleteManager
     @compositeDisposable.add atom.commands.add 'atom-text-editor',
       "autocomplete-plus:activate": @runAutocompletion
 
-
-    # Core events for keyboard handling
-
-    @compositeDisposable.add atom.commands.add '.autocomplete-plus',
+    @compositeDisposable.add atom.commands.add 'autocomplete-suggestion-list',
       "autocomplete-plus:confirm": @confirmSelection,
       "autocomplete-plus:select-next": @selectNext,
       "autocomplete-plus:select-previous": @selectPrevious,
       "autocomplete-plus:cancel": @cancel
+
+  addKeyboardInteraction: ->
+    @removeKeyboardInteraction()
+    keys =
+      "escape": "autocomplete-plus:cancel"
+
+    completionKey = atom.config.get("autocomplete-plus.confirmCompletion") || ''
+    navigationKey = atom.config.get("autocomplete-plus.navigateCompletions") || ''
+
+
+    keys['tab'] = "autocomplete-plus:confirm" if completionKey.indexOf('tab') > -1
+    keys['enter'] = "autocomplete-plus:confirm" if completionKey.indexOf('enter') > -1
+
+    if @items?.length > 1 and navigationKey == "up,down"
+      keys['up'] =  "autocomplete-plus:select-previous"
+      keys['down'] = "autocomplete-plus:select-next"
+    else
+      keys["ctrl-n"] = "autocomplete-plus:select-next"
+      keys["ctrl-p"] = "autocomplete-plus:select-previous"
+
+    @keymaps = atom.keymaps.add(
+      'AutocompleteManager',
+      'atom-text-editor:not(.mini) .autocomplete-plus': keys
+    )
+
+    @compositeDisposable.add @keymaps
+
+  removeKeyboardInteraction: ->
+    @keymaps?.dispose()
+    @compositeDisposable.remove(@keymaps)
 
   updateCurrentEditor: (currentPaneItem) =>
     @cancel() unless currentPaneItem == @editor
@@ -129,13 +156,13 @@ class AutocompleteManager
     return unless @active
     @overlayDecoration?.destroy()
     @overlayDecoration = undefined
+    @removeKeyboardInteraction()
     @editorView.focus()
     @active = false
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   runAutocompletion: =>
-    return if @compositionInProgress
     @cancel()
     @originalSelectionBufferRanges = @editor.getSelections().map (selection) -> selection.getBufferRange()
     @originalCursorPosition = @editor.getCursorScreenPosition()
@@ -180,6 +207,7 @@ class AutocompleteManager
 
   # Private: Focuses the hidden input, starts listening to keyboard events
   setActive: ->
+    @addKeyboardInteraction()
     @active = true
 
   # Private: Gets called when the content has been modified
@@ -212,6 +240,7 @@ class AutocompleteManager
   #
   # e - The change {Event}
   editorChanged: (e) =>
+    return if @compositionInProgress
     return unless @editorHasFocus()
     if atom.config.get("autocomplete-plus.enableAutoActivation") and ( e.newText.trim().length is 1 or e.oldText.trim().length is 1 )
       @contentsModified()

@@ -8,7 +8,8 @@ class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: (@editor) ->
-    if @editor.constructor.name == "TextEditorView"
+    name = @editor.constructor.name
+    if name == "TextEditorView" or name == "atom-text-editor"
       deprecate("Use of EditorView is deprecated, construct with a TextEditor model instead")
       @editorView = @editor
       @editor = @editorView.getModel()

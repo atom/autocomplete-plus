@@ -51,18 +51,17 @@ module.exports =
     @autocompleteManagers.forEach((autocompleteManager) -> autocompleteManager.dispose())
     @autocompleteManagers = []
 
-  registerProviderForEditorView: (provider, editorView) ->
+  registerProviderForEditorView: (provider) ->
     deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
-    @registerProviderForEditor(provider, editorView?.getModel())
+    @registerProviderForEditor(provider)
 
   # Public: Finds the autocomplete for the given TextEditor
   # and registers the given provider
   #
   # provider - The new {Provider}
   # editor - The {TextEditor} we should register the provider with
-  registerProviderForEditor: (provider, editor) ->
-    return unless provider?
-    return unless editor?
+  registerProviderForEditor: (provider) ->
+    editor = provider.editor
     autocompleteManager = _.findWhere(@autocompleteManagers, editor: editor)
     unless autocompleteManager?
       throw new Error("Could not register provider", provider.constructor.name)

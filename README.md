@@ -1,5 +1,7 @@
 # autocomplete+ package [![Build Status](https://travis-ci.org/atom-community/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom-community/autocomplete-plus)
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/atom-community/autocomplete-plus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [View the changelog](https://github.com/atom-community/autocomplete-plus/releases)
 
 View and insert possible completions in the editor while typing
@@ -23,12 +25,14 @@ Also grab one of these awesome additions for autocomplete+:
 
 ## Usage
 
-Just type some stuff, autocomplete+ will automatically show you some suggestions.
+Just type some stuff, and autocomplete+ will automatically show you some suggestions.
 Press `UP` and `DOWN` to select another suggestion, press `TAB` to confirm your selection.
 Additional confirmation keymapping can be customised in your keymap.cson:
+
 ```coffeescript
-".autocomplete-plus input.hidden-input":
-  "enter": "autocomplete-plus:confirm"
+'atom-text-editor:not(mini) .autocomplete-plus.autocomplete-suggestion-list':
+  'tab': 'unset!'
+  'enter': 'autocomplete-plus:confirm'
 ```
 
 ## Features

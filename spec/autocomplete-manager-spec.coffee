@@ -42,7 +42,9 @@ describe "Autocomplete Manager", ->
 
         # Trigger an autocompletion
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
         # Check suggestions
@@ -56,7 +58,9 @@ describe "Autocomplete Manager", ->
         # Trigger an autocompletion
         editor.moveToBottom()
         editor.insertText('x')
+
         advanceClock(completionDelay)
+        advanceClock(0)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
       it "should show the suggestion list when backspacing", ->
@@ -65,30 +69,38 @@ describe "Autocomplete Manager", ->
         # Trigger an autocompletion
         editor.moveToBottom()
         editor.insertText('fu')
+
         advanceClock(completionDelay)
-        key = atom.keymaps.constructor.keydownEvent('backspace', target: editorView)
+        advanceClock(0)
+        key = atom.keymaps.constructor.keydownEvent('backspace', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         expect(editorView.querySelector(".autocomplete-plus")).toExist()
         expect(editor.lineTextForBufferRow(13)).toBe('f')
 
       it "should not update the suggestion list while composition is in progress", ->
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         autocompleteView = atom.views.getView(autocompleteManager)
 
         spyOn(autocompleteManager, 'changeItems').andCallThrough()
 
-        editorView.dispatchEvent(buildIMECompositionEvent('compositionstart', target: editorView))
-        editorView.dispatchEvent(buildIMECompositionEvent('compositionupdate', data: "~", target: editorView))
+        document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', target: document.activeElement))
+        document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionupdate', data: "~", target: document.activeElement))
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         expect(autocompleteManager.changeItems).not.toHaveBeenCalled()
 
-        editorView.dispatchEvent(buildIMECompositionEvent('compositionend', target: editorView))
-        editorView.firstChild.dispatchEvent(buildTextInputEvent(data: 'ã', target: editorView))
+        document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionend', target: document.activeElement))
+        document.activeElement.dispatchEvent(buildTextInputEvent(data: 'ã', target: document.activeElement))
 
         expect(editor.lineTextForBufferRow(13)).toBe('fã')
 
@@ -100,7 +112,9 @@ describe "Autocomplete Manager", ->
         editor.moveToBottom()
         editor.moveToBeginningOfLine()
         editor.insertText('f')
+
         advanceClock(completionDelay)
+        advanceClock(0)
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
         # Accept suggestion
@@ -118,11 +132,14 @@ describe "Autocomplete Manager", ->
 
           # Trigger an autocompletion
           triggerAutocompletion(editor)
+
           advanceClock(completionDelay)
+          advanceClock(0)
 
           autocompleteView = atom.views.getView(autocompleteManager)
+          advanceClock(0)
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('tab', target: editorView)
+          key = atom.keymaps.constructor.keydownEvent('tab', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -138,11 +155,13 @@ describe "Autocomplete Manager", ->
 
           # Trigger an autocompletion
           triggerAutocompletion(editor)
+
           advanceClock(completionDelay)
+          advanceClock(0)
 
           autocompleteView = atom.views.getView(autocompleteManager)
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: editorView)
+          key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -157,11 +176,14 @@ describe "Autocomplete Manager", ->
 
           # Trigger an autocompletion
           triggerAutocompletion(editor)
+
           advanceClock(completionDelay)
+          advanceClock(0)
 
           autocompleteView = atom.views.getView(autocompleteManager)
+          advanceClock(0)
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: editorView)
+          key = atom.keymaps.constructor.keydownEvent('enter', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -177,11 +199,13 @@ describe "Autocomplete Manager", ->
 
           # Trigger an autocompletion
           triggerAutocompletion(editor)
+
           advanceClock(completionDelay)
+          advanceClock(0)
 
           autocompleteView = atom.views.getView(autocompleteManager)
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('tab', keyCode: 9, target: editorView)
+          key = atom.keymaps.constructor.keydownEvent('tab', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -192,7 +216,9 @@ describe "Autocomplete Manager", ->
 
         # Trigger an autocompletion
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         items = editorView.querySelectorAll('.autocomplete-plus li')
         expect(items[0]).toHaveClass('selected')
@@ -213,10 +239,12 @@ describe "Autocomplete Manager", ->
       it "closes the autocomplete when up arrow pressed when only one item displayed", ->
         # Trigger an autocompletion
         triggerAutocompletion(editor, false, 'q')
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('down', target: editorView)
+        key = atom.keymaps.constructor.keydownEvent('down', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -225,10 +253,12 @@ describe "Autocomplete Manager", ->
       it "does not close the autocomplete when down arrow pressed when many items", ->
         # Trigger an autocompletion
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('down', target: editorView)
+        key = atom.keymaps.constructor.keydownEvent('down', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -238,10 +268,12 @@ describe "Autocomplete Manager", ->
         atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
         # Trigger an autocompletion
         triggerAutocompletion(editor, false)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('down', target: editorView)
+        key = atom.keymaps.constructor.keydownEvent('down', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -251,7 +283,9 @@ describe "Autocomplete Manager", ->
       it "selects the next item in the list", ->
         # Trigger an autocompletion
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         items = editorView.querySelectorAll('.autocomplete-plus li')
         expect(items[0]).toHaveClass('selected')
@@ -272,10 +306,12 @@ describe "Autocomplete Manager", ->
       it "closes the autocomplete when up arrow pressed when only one item displayed", ->
         # Trigger an autocompletion
         triggerAutocompletion(editor, false, 'q')
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('up', target: editorView)
+        key = atom.keymaps.constructor.keydownEvent('up', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -284,10 +320,12 @@ describe "Autocomplete Manager", ->
       it "does not close the autocomplete when up arrow pressed when many items", ->
         # Trigger an autocompletion
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('up', target: editorView)
+        key = atom.keymaps.constructor.keydownEvent('up', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -297,10 +335,12 @@ describe "Autocomplete Manager", ->
         atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
         # Trigger an autocompletion
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('up', target: editorView)
+        key = atom.keymaps.constructor.keydownEvent('up', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -310,7 +350,9 @@ describe "Autocomplete Manager", ->
       it "should select the item and confirm the selection", ->
         # Trigger an autocompletion
         triggerAutocompletion(editor)
+
         advanceClock(completionDelay)
+        advanceClock(0)
 
         # Get the second item
         item = editorView.querySelectorAll('.autocomplete-plus li')[1]
@@ -355,7 +397,9 @@ describe "Autocomplete Manager", ->
       editor.moveToBottom()
       editor.insertNewline()
       editor.insertText('t')
+
       advanceClock(completionDelay)
+      advanceClock(0)
 
       autocompleteView = atom.views.getView(autocompleteManager)
       expect(autocompleteView.scrollWidth).toBe(autocompleteView.offsetWidth)
@@ -377,12 +421,16 @@ describe "Autocomplete Manager", ->
 
     it "does not show suggestions after a delay", ->
       triggerAutocompletion(editor)
+
       advanceClock(completionDelay)
+      advanceClock(0)
       expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
     it "shows suggestions when explicitly triggered", =>
       triggerAutocompletion(editor)
+
       advanceClock(completionDelay)
+      advanceClock(0)
 
       editorView = atom.views.getView(editor)
       expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

@@ -240,9 +240,8 @@ class AutocompleteManager
   #
   # e - The change {Event}
   editorChanged: (e) =>
+    return if @compositionInProgress
     return unless @editorHasFocus()
-    # return if we detect the signature of a composition (change in text without moving cursor position forward)
-    return if @editor.getLastCursor().getBufferPosition().isEqual(e.newRange.start) and e.newText.length > 0
     if atom.config.get("autocomplete-plus.enableAutoActivation") and ( e.newText.trim().length is 1 or e.oldText.trim().length is 1 )
       @contentsModified()
     else

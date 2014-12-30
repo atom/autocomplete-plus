@@ -92,6 +92,14 @@ class SelectListElement extends HTMLElement
     @input = document.createElement('input')
     @appendChild(@input)
 
+    @input.addEventListener 'compositionstart', =>
+      @model.compositionInProgress = true
+      null
+
+    @input.addEventListener 'compositionend', =>
+      @model.compositionInProgress = false
+      null
+
   renderList: ->
     @ol = document.createElement('ol')
     @appendChild(@ol)

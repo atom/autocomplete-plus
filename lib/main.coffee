@@ -3,6 +3,8 @@ AutocompleteManager = require './autocomplete-manager'
 SelectListElement = require './select-list-element'
 Provider = require './provider'
 Suggestion = require './suggestion'
+FuzzyProvider = require './fuzzy-provider'
+
 {deprecate} = require 'grim'
 
 module.exports =
@@ -25,6 +27,7 @@ module.exports =
 
   autocompleteManagers: []
   editorSubscription: null
+  providerClasses: [FuzzyProvider]
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
@@ -37,6 +40,8 @@ module.exports =
 
     @editorSubscription = atom.workspace.observeTextEditors (editor) =>
       autocompleteManager = new AutocompleteManager(editor)
+      for ProviderClass in @providerClasses
+        autocompleteManager.registerProvider new ProviderClass(editor)
 
       editor.onDidDestroy =>
         autocompleteManager.dispose()
@@ -68,6 +73,16 @@ module.exports =
 
     autocompleteManager.registerProvider(provider)
 
+  registerProviderClass: (ProviderClass) ->
+    @providerClasses.push(ProviderClass)
+    for autocompleteManager in @autocompleteManagers
+      autocompleteManager.registerProvider(new ProviderClass(autocompleteManager.editor))
+
+  unregisterProviderClass: (ProviderClass) ->
+    _.remove(@providerClasses, ProviderClass)
+    for autocompleteManager in @autocompleteManagers
+      autocompleteManager.unregisterProviderClass(ProviderClass)
+
   # Public: unregisters the given provider
   #
   # provider - The {Provider} to unregister
@@ -76,3 +91,4 @@ module.exports =
 
   Provider: Provider
   Suggestion: Suggestion
+  FuzzyProvider: FuzzyProvider

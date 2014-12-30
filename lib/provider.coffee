@@ -1,5 +1,7 @@
 {deprecate} = require 'grim'
 
+Suggestion = require './suggestion'
+
 # Public: A provider provides an interface to the autocomplete package. Third-party
 # packages can register providers which will then be used to generate the
 # suggestions list.
@@ -22,6 +24,9 @@ class Provider
   # Public: Defines whether the words returned at {::buildWordList} should be added to
   # the default suggestions or should be displayed exclusively
   exclusive: false
+
+  createSuggestion: (args...)->
+    return new Suggestion(args...)
 
   # Public: Gets called when the document has been changed. Returns an array with
   # suggestions. If `exclusive` is set to true and this method returns suggestions,

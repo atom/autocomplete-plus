@@ -3,7 +3,6 @@
 _ = require 'underscore-plus'
 path = require 'path'
 minimatch = require 'minimatch'
-FuzzyProvider = require './fuzzy-provider'
 
 module.exports =
 class AutocompleteManager
@@ -22,8 +21,6 @@ class AutocompleteManager
     @providers = []
 
     return if @currentFileBlacklisted()
-
-    @registerProvider new FuzzyProvider(@editor)
 
     @handleEvents()
     @setCurrentBuffer @editor.getBuffer()
@@ -102,6 +99,10 @@ class AutocompleteManager
   unregisterProvider: (provider) ->
     _.remove(@providers, provider)
     @compositeDisposable.remove(provider)
+
+  unregisterProviderClass: (ProviderClass) ->
+    provider = _.find(@providers, (provider)-> provider instanceof ProviderClass)
+    @unregisterProvider(provider) if provider
 
   # Private: Gets called when the user successfully confirms a suggestion
   #

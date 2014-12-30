@@ -163,7 +163,6 @@ class AutocompleteManager
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   runAutocompletion: =>
-    return if @compositionInProgress
     @cancel()
     @originalSelectionBufferRanges = @editor.getSelections().map (selection) -> selection.getBufferRange()
     @originalCursorPosition = @editor.getCursorScreenPosition()

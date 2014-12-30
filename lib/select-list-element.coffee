@@ -10,6 +10,7 @@ class SelectListElement extends HTMLElement
     @classList.add "select-list"
     @classList.add "autocomplete-plus"
     @classList.add "autocomplete-suggestion-list"
+    @subscriptions.add(atom.config.observe('autocomplete-plus.maxSuggestions', => @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')))
     @registerMouseHandling()
 
   # This should be unnecessary but the events we need to override
@@ -83,7 +84,6 @@ class SelectListElement extends HTMLElement
       @model.cancel()
 
   mountComponent: ->
-    @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')
     @renderInput() unless @input
     @renderList() unless @ol
     @itemsChanged()

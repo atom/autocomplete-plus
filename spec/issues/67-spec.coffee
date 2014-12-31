@@ -1,5 +1,6 @@
 require "../spec-helper"
 AutocompleteManager = require '../../lib/autocomplete-manager'
+FuzzyProvider = require '../../lib/fuzzy-provider'
 
 describe "Autocomplete", ->
   [activationPromise, editorView, editor, completionDelay] = []
@@ -31,7 +32,10 @@ describe "Autocomplete", ->
         editorView.focus()
 
         autocomplete = new AutocompleteManager(editor)
+        autocomplete.registerProvider new FuzzyProvider(editor)
+        
         autocomplete2 = new AutocompleteManager(editor2)
+        autocomplete2.registerProvider new FuzzyProvider(editor2)
 
         autocomplete.name = "autocomplete"
         autocomplete2.name = "autocomplete2"

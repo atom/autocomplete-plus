@@ -3,6 +3,8 @@ AutocompleteManager = require './autocomplete-manager'
 SelectListElement = require './select-list-element'
 Provider = require './provider'
 Suggestion = require './suggestion'
+FuzzyProvider = require './fuzzy-provider'
+
 {deprecate} = require 'grim'
 
 module.exports =
@@ -50,6 +52,7 @@ module.exports =
 
   autocompleteManagers: []
   editorSubscription: null
+  providerClasses: [FuzzyProvider]
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
@@ -62,6 +65,8 @@ module.exports =
 
     @editorSubscription = atom.workspace.observeTextEditors (editor) =>
       autocompleteManager = new AutocompleteManager(editor)
+      for ProviderClass in @providerClasses
+        autocompleteManager.registerProvider new ProviderClass(editor)
 
       editor.onDidDestroy =>
         autocompleteManager.dispose()
@@ -76,23 +81,32 @@ module.exports =
     @autocompleteManagers.forEach((autocompleteManager) -> autocompleteManager.dispose())
     @autocompleteManagers = []
 
-  registerProviderForEditorView: (provider, editorView) ->
+  registerProviderForEditorView: (provider) ->
     deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
-    @registerProviderForEditor(provider, editorView?.getModel())
+    @registerProviderForEditor(provider)
 
   # Public: Finds the autocomplete for the given TextEditor
   # and registers the given provider
   #
   # provider - The new {Provider}
   # editor - The {TextEditor} we should register the provider with
-  registerProviderForEditor: (provider, editor) ->
-    return unless provider?
-    return unless editor?
+  registerProviderForEditor: (provider) ->
+    editor = provider.editor
     autocompleteManager = _.findWhere(@autocompleteManagers, editor: editor)
     unless autocompleteManager?
       throw new Error("Could not register provider", provider.constructor.name)
 
     autocompleteManager.registerProvider(provider)
+
+  registerProviderClass: (ProviderClass) ->
+    @providerClasses.push(ProviderClass)
+    for autocompleteManager in @autocompleteManagers
+      autocompleteManager.registerProvider(new ProviderClass(autocompleteManager.editor))
+
+  unregisterProviderClass: (ProviderClass) ->
+    _.remove(@providerClasses, ProviderClass)
+    for autocompleteManager in @autocompleteManagers
+      autocompleteManager.unregisterProviderClass(ProviderClass)
 
   # Public: unregisters the given provider
   #
@@ -102,3 +116,4 @@ module.exports =
 
   Provider: Provider
   Suggestion: Suggestion
+  FuzzyProvider: FuzzyProvider

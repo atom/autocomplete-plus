@@ -1,6 +1,6 @@
 _ = require 'underscore-plus'
 AutocompleteManager = require './autocomplete-manager'
-SelectListElement = require './select-list-element'
+SuggestionListElement = require './suggestion-list-element'
 Provider = require './provider'
 Suggestion = require './suggestion'
 {deprecate} = require 'grim'
@@ -55,7 +55,7 @@ module.exports =
   activate: ->
 
     atom.views.addViewProvider(AutocompleteManager, (model) =>
-      element = new SelectListElement()
+      element = new SuggestionListElement()
       element.setModel(model)
       element
     )

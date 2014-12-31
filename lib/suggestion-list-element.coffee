@@ -1,7 +1,7 @@
 {CompositeDisposable} = require 'event-kit'
 _ = require 'underscore-plus'
 
-class SelectListElement extends HTMLElement
+class SuggestionListElement extends HTMLElement
   maxItems: 10
 
   createdCallback: ->
@@ -154,4 +154,4 @@ class SelectListElement extends HTMLElement
     @subscriptions.dispose()
     @parentNode?.removeChild(this)
 
-module.exports = SelectListElement = document.registerElement('autocomplete-suggestion-list', prototype: SelectListElement.prototype)
+module.exports = SuggestionListElement = document.registerElement('autocomplete-suggestion-list', prototype: SuggestionListElement.prototype)

@@ -1,6 +1,5 @@
 _ = require 'underscore-plus'
 AutocompleteManager = require './autocomplete-manager'
-SuggestionListElement = require './suggestion-list-element'
 Provider = require './provider'
 Suggestion = require './suggestion'
 {deprecate} = require 'grim'
@@ -48,33 +47,13 @@ module.exports =
       default: false
       order: 100
 
-  autocompleteManagers: []
-  editorSubscription: null
-
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
-
-    atom.views.addViewProvider(AutocompleteManager, (model) =>
-      element = new SuggestionListElement()
-      element.setModel(model)
-      element
-    )
-
-    @editorSubscription = atom.workspace.observeTextEditors (editor) =>
-      autocompleteManager = new AutocompleteManager(editor)
-
-      editor.onDidDestroy =>
-        autocompleteManager.dispose()
-        _.remove(@autocompleteManagers, autocompleteManager)
-
-      @autocompleteManagers.push(autocompleteManager)
+    @autocompleteManager = new AutocompleteManager()
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
-    @editorSubscription?.dispose()
-    @editorSubscription = null
-    @autocompleteManagers.forEach((autocompleteManager) -> autocompleteManager.dispose())
-    @autocompleteManagers = []
+    @autocompleteManager.dispose()
 
   registerProviderForEditorView: (provider, editorView) ->
     deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
@@ -88,17 +67,14 @@ module.exports =
   registerProviderForEditor: (provider, editor) ->
     return unless provider?
     return unless editor?
-    autocompleteManager = _.findWhere(@autocompleteManagers, editor: editor)
-    unless autocompleteManager?
-      throw new Error("Could not register provider", provider.constructor.name)
-
-    autocompleteManager.registerProvider(provider)
+    # TODO: Convert to grammar registration
+    @autocompleteManager.registerProvider(provider, editor)
 
   # Public: unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
-    autocompleteManager.unregisterProvider provider for autocompleteManager in @autocompleteManagers
+    @autocompleteManager.unregisterProvider(provider)
 
   Provider: Provider
   Suggestion: Suggestion

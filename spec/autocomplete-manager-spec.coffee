@@ -3,7 +3,7 @@ _ = require('underscore-plus')
 {KeymapManager} = require('atom')
 TestProvider = require('./lib/test-provider')
 
-describe "Autocomplete Manager", ->
+fdescribe "Autocomplete Manager", ->
   [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
 
   beforeEach ->
@@ -30,7 +30,7 @@ describe "Autocomplete Manager", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
+        autocompleteManager = mainModule.autocompleteManager
 
       runs ->
         editorView = atom.views.getView(editor)

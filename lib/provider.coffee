@@ -8,8 +8,8 @@ class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: (@editor) ->
-    if @editor.constructor.name == "TextEditorView"
-      deprecate("Use of EditorView is deprecated, construct with a TextEditor model instead")
+    if @editor.constructor.name == 'TextEditorView'
+      deprecate('Use of EditorView is deprecated, construct with a TextEditor model instead')
       @editorView = @editor
       @editor = @editorView.getModel()
     @initialize.apply this, arguments
@@ -28,7 +28,7 @@ class Provider
   #
   # Returns An {Array} of suggestions.
   buildSuggestions: ->
-    throw new Error "Subclass must implement a buildWordList(prefix) method"
+    throw new Error 'Subclass must implement a buildWordList(prefix) method'
 
   # Public: Gets called when a suggestion has been confirmed by the user. Return true
   # to replace the word with the suggestion. Return false if you want to handle
@@ -48,7 +48,7 @@ class Provider
   prefixOfSelection: (selection) ->
     selectionRange = selection.getBufferRange()
     lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineTextForBufferRow(selectionRange.end.row).length]]
-    prefix = ""
+    prefix = ''
     @editor.getBuffer().scanInRange @wordRegex, lineRange, ({match, range, stop}) ->
       stop() if range.start.isGreaterThan(selectionRange.end)
 

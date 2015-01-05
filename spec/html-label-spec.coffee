@@ -23,7 +23,7 @@ describe "HTML labels", ->
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
       mainModule = a.mainModule
-      autocompleteManager = mainModule.autocompleteManagers[0]
+      autocompleteManager = mainModule.autocompleteManager
 
   it "should allow HTML in labels for suggestions in the suggestion list", ->
     runs ->
@@ -36,7 +36,7 @@ describe "HTML labels", ->
 
       advanceClock(completionDelay)
 
-      autocompleteView = atom.views.getView(autocompleteManager)
+      suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
 
-      expect(autocompleteView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-      expect(autocompleteView.querySelector('li')).toHaveClass('ohai')
+      expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
+      expect(suggestionListView.querySelector('li')).toHaveClass('ohai')

@@ -2,29 +2,51 @@ _ = require 'underscore-plus'
 Suggestion = require './suggestion'
 fuzzaldrin = require 'fuzzaldrin'
 Provider = require './provider'
+{CompositeDisposable} = require 'event-kit'
 
 module.exports =
 class FuzzyProvider extends Provider
   wordList: null
-  debug: false
+  editor: null
+  buffer: null
 
   initialize: ->
+    @subscriptions = new CompositeDisposable
+    @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @buildWordList()
 
-    @currentBuffer = @editor.getBuffer()
-    @disposableEvents = [
-      @currentBuffer.onDidSave(@onSaved)
-      @currentBuffer.onDidChange(@onChanged)
-    ]
+  updateCurrentEditor: (currentPaneItem) =>
+    return unless currentPaneItem?
+    return if currentPaneItem is @editor
+
+    # Stop listening to buffer events
+    @bufferSavedSubscription?.dispose()
+    @bufferChangedSubscription?.dispose()
+
+    # Disqualify invalid pane items
+    # TODO
+    if false
+      @editor = null
+      @buffer = null
+
+    # Track the new editor, editorView, and buffer
+    @editor = currentPaneItem
+    @buffer = @editor.getBuffer()
+
+    # Subscribe to buffer events:
+    @bufferSavedSubscription = @buffer.onDidSave(@bufferSaved)
+    @bufferChangedSubscription = @buffer.onDidChange(@bufferChanged)
 
   # Public:  Gets called when the document has been changed. Returns an array
   # with suggestions. If `exclusive` is set to true and this method returns
   # suggestions, the suggestions will be the only ones that are displayed.
   #
   # Returns an {Array} of Suggestion instances
-  buildSuggestions: ->
-    selection = @editor.getLastSelection()
-    prefix = @prefixOfSelection(selection)
+  buildSuggestions: (options) ->
+    return unless options?
+    return unless options.editor?
+    selection = options.editor.getLastSelection()
+    prefix = options.prefixOfSelection
 
     # No prefix? Don't autocomplete!
     return unless prefix.length
@@ -50,14 +72,14 @@ class FuzzyProvider extends Provider
 
   # Private: Gets called when the user saves the document. Rebuilds the word
   # list.
-  onSaved: =>
+  bufferSaved: =>
     @buildWordList()
 
   # Private: Gets called when the buffer's text has been changed. Checks if the
   # user has potentially finished a word and adds the new word to the word list.
   #
   # e - The change {Event}
-  onChanged: (e) =>
+  bufferChanged: (e) =>
     wordChars = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź" +
       "abcdefghijklmnopqrstuvwxyz1234567890"
     if wordChars.indexOf(e.newText.toLowerCase()) is -1
@@ -90,17 +112,19 @@ class FuzzyProvider extends Provider
     lineRange = [[row, 0], [row, column]]
 
     lastWord = null
-    @currentBuffer.scanInRange(@wordRegex, lineRange, ({match, range, stop}) -> lastWord = match[0])
+    @buffer.scanInRange(@wordRegex, lineRange, ({match, range, stop}) -> lastWord = match[0])
 
     return lastWord
 
   # Private: Generates the word list from the editor buffer(s)
   buildWordList: ->
+    return unless @editor?
+
     # Abuse the Hash as a Set
     wordList = []
 
     # Do we want autocompletions from all open buffers?
-    if atom.config.get "autocomplete-plus.includeCompletionsFromAllBuffers"
+    if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
       buffers = atom.project.getBuffers()
     else
       buffers = [@editor.getBuffer()]
@@ -113,7 +137,7 @@ class FuzzyProvider extends Provider
     wordList = _.uniq(_.flatten(matches))
 
     # Filter words by length
-    minimumWordLength = atom.config.get("autocomplete-plus.minimumWordLength")
+    minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
     if minimumWordLength
       wordList = wordList.filter((word) -> word?.length >= minimumWordLength)
 
@@ -150,5 +174,6 @@ class FuzzyProvider extends Provider
 
   # Public: Clean up, stop listening to events
   dispose: ->
-    for disposable in @disposableEvents
-      disposable.dispose()
+    @bufferSavedSubscription?.dispose()
+    @bufferChangedSubscription?.dispose()
+    @subscriptions.dispose()

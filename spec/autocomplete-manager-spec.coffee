@@ -3,7 +3,7 @@ _ = require('underscore-plus')
 {KeymapManager} = require('atom')
 TestProvider = require('./lib/test-provider')
 
-fdescribe "Autocomplete Manager", ->
+describe "Autocomplete Manager", ->
   [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
 
   beforeEach ->
@@ -87,9 +87,8 @@ fdescribe "Autocomplete Manager", ->
         advanceClock(completionDelay)
         advanceClock(0)
 
-        autocompleteView = atom.views.getView(autocompleteManager)
-
-        spyOn(autocompleteManager, 'changeItems').andCallThrough()
+        spyOn(autocompleteManager.suggestionList, 'changeItems').andCallThrough()
+        expect(autocompleteManager.suggestionList.changeItems).not.toHaveBeenCalled()
 
         document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', target: document.activeElement))
         document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionupdate', data: "~", target: document.activeElement))
@@ -97,7 +96,7 @@ fdescribe "Autocomplete Manager", ->
         advanceClock(completionDelay)
         advanceClock(0)
 
-        expect(autocompleteManager.changeItems).not.toHaveBeenCalled()
+        expect(autocompleteManager.suggestionList.changeItems).not.toHaveBeenCalled()
 
         document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionend', target: document.activeElement))
         document.activeElement.dispatchEvent(buildTextInputEvent(data: 'ã', target: document.activeElement))
@@ -118,8 +117,8 @@ fdescribe "Autocomplete Manager", ->
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
         # Accept suggestion
-        autocompleteView = atom.views.getView(autocompleteManager)
-        atom.commands.dispatch(autocompleteView, 'autocomplete-plus:confirm')
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -136,8 +135,6 @@ fdescribe "Autocomplete Manager", ->
           advanceClock(completionDelay)
           advanceClock(0)
 
-          autocompleteView = atom.views.getView(autocompleteManager)
-          advanceClock(0)
           # Accept suggestion
           key = atom.keymaps.constructor.keydownEvent('tab', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
@@ -159,7 +156,6 @@ fdescribe "Autocomplete Manager", ->
           advanceClock(completionDelay)
           advanceClock(0)
 
-          autocompleteView = atom.views.getView(autocompleteManager)
           # Accept suggestion
           key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
@@ -180,8 +176,6 @@ fdescribe "Autocomplete Manager", ->
           advanceClock(completionDelay)
           advanceClock(0)
 
-          autocompleteView = atom.views.getView(autocompleteManager)
-          advanceClock(0)
           # Accept suggestion
           key = atom.keymaps.constructor.keydownEvent('enter', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
@@ -203,7 +197,6 @@ fdescribe "Autocomplete Manager", ->
           advanceClock(completionDelay)
           advanceClock(0)
 
-          autocompleteView = atom.views.getView(autocompleteManager)
           # Accept suggestion
           key = atom.keymaps.constructor.keydownEvent('tab', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
@@ -226,9 +219,9 @@ fdescribe "Autocomplete Manager", ->
         expect(items[2]).not.toHaveClass('selected')
         expect(items[3]).not.toHaveClass('selected')
 
-        autocompleteView = atom.views.getView(autocompleteManager)
         # Select previous item
-        atom.commands.dispatch(autocompleteView, 'autocomplete-plus:select-previous')
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-previous')
 
         items = editorView.querySelectorAll('.autocomplete-plus li')
         expect(items[0]).not.toHaveClass('selected')
@@ -294,8 +287,9 @@ fdescribe "Autocomplete Manager", ->
         expect(items[3]).not.toHaveClass('selected')
 
         # Select next item
-        autocompleteView = atom.views.getView(autocompleteManager)
-        atom.commands.dispatch(autocompleteView, 'autocomplete-plus:select-next')
+
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
 
         items = editorView.querySelectorAll('.autocomplete-plus li')
         expect(items[0]).not.toHaveClass('selected')
@@ -372,7 +366,8 @@ fdescribe "Autocomplete Manager", ->
     describe ".cancel()", ->
       it "unbinds autocomplete event handlers for move-up and move-down", ->
         triggerAutocompletion(editor, false)
-        autocompleteManager.cancel()
+
+        autocompleteManager.hideSuggestionList()
         editorView = atom.views.getView(editor)
         atom.commands.dispatch(editorView, 'core:move-down')
         expect(editor.getCursorBufferPosition().row).toBe(1)
@@ -391,7 +386,7 @@ fdescribe "Autocomplete Manager", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
+        autocompleteManager = mainModule.autocompleteManager
 
     it "sets the width of the view to be wide enough to contain the longest completion without scrolling", ->
       editor.moveToBottom()
@@ -401,8 +396,8 @@ fdescribe "Autocomplete Manager", ->
       advanceClock(completionDelay)
       advanceClock(0)
 
-      autocompleteView = atom.views.getView(autocompleteManager)
-      expect(autocompleteView.scrollWidth).toBe(autocompleteView.offsetWidth)
+      suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+      expect(suggestionListView.scrollWidth).toBe(suggestionListView.offsetWidth)
 
   describe "when auto-activation is disabled", ->
     beforeEach ->
@@ -411,11 +406,12 @@ fdescribe "Autocomplete Manager", ->
 
       waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
         editor = e
+        editorView = atom.views.getView(e)
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
+        autocompleteManager = mainModule.autocompleteManager
 
       runs ->
 

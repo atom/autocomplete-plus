@@ -30,13 +30,8 @@ describe "Autocomplete", ->
 
     it "works after closing one of the copied tabs", ->
       runs ->
-        expect(mainModule.autocompleteManagers.length).toEqual(1)
-
         atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true)
-        expect(mainModule.autocompleteManagers.length).toEqual(2)
-
         atom.workspace.getActivePane().destroy()
-        expect(mainModule.autocompleteManagers.length).toEqual(1)
 
         editor.moveCursorToEndOfLine
         editor.insertNewline()

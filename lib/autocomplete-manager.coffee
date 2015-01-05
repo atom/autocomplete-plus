@@ -20,14 +20,14 @@ class AutocompleteManager
   didChangeTabsSubscription: null
 
   constructor: ->
-    @compositeDisposable = new CompositeDisposable
+    @subscriptions = new CompositeDisposable
     @emitter = new Emitter
 
     # TODO: Track provider <-> grammar registrations
     @providers = []
 
     # Register Suggestion List Model and View
-    @compositeDisposable.add(atom.views.addViewProvider(SuggestionList, (model) =>
+    @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) =>
       new SuggestionListElement().initialize(model)
     ))
     @suggestionList = new SuggestionList()
@@ -36,7 +36,7 @@ class AutocompleteManager
     @handleCommands()
 
     # TODO: Use FuzzyProvider only as an option of last resort
-    # @registerProvider(new FuzzyProvider(@editor))
+    @registerProvider(new FuzzyProvider())
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -75,15 +75,15 @@ class AutocompleteManager
   # Private: Handles editor events
   handleEvents: ->
     # Track the current pane item, update current editor
-    @compositeDisposable.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
+    @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
     # Handle events from suggestion list
-    @compositeDisposable.add(@suggestionList.onDidConfirm(@confirm))
-    @compositeDisposable.add(@suggestionList.onDidCancel(@hideSuggestionList))
+    @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
+    @subscriptions.add(@suggestionList.onDidCancel(@hideSuggestionList))
 
   handleCommands: ->
     # Allow autocomplete to be triggered via keymap
-    @compositeDisposable.add(atom.commands.add 'atom-text-editor',
+    @subscriptions.add(atom.commands.add 'atom-text-editor',
       'autocomplete-plus:activate': @runAutocompletion
     )
 
@@ -97,9 +97,10 @@ class AutocompleteManager
     @originalCursorPosition = @editor.getCursorScreenPosition()
     return unless @originalCursorPosition?
     options =
-      path: @buffer.getPath()
-      text: @buffer.getText()
+      editor: @editor
+      buffer: @buffer
       pos: @originalCursorPosition
+      prefixOfSelection: @prefixOfSelection(@editor.getLastSelection())
 
     # Iterate over all providers, ask them to build suggestion(s)
     suggestions = []
@@ -171,6 +172,25 @@ class AutocompleteManager
     @editor.insertText(match.word)
     @editor.setSelectedBufferRanges(newSelectedBufferRanges)
 
+  # Public: Finds and returns the content before the current cursor position
+  #
+  # selection - The {Selection} for the current cursor position
+  #
+  # Returns {String} with the prefix of the {Selection}
+  prefixOfSelection: (selection) ->
+    selectionRange = selection.getBufferRange()
+    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineTextForBufferRow(selectionRange.end.row).length]]
+    prefix = ''
+    wordRegex = /\b\w*[a-zA-Z_-]+\w*\b/g
+    @editor.getBuffer().scanInRange wordRegex, lineRange, ({match, range, stop}) ->
+      stop() if range.start.isGreaterThan(selectionRange.end)
+
+      if range.intersectsWith(selectionRange)
+        prefixOffset = selectionRange.start.column - range.start.column
+        prefix = match[0][0...prefixOffset] if range.start.isLessThan(selectionRange.start)
+
+    return prefix
+
   # Private: Checks whether the current file is blacklisted.
   #
   # Returns {Boolean} that defines whether the current file is blacklisted
@@ -231,15 +251,15 @@ class AutocompleteManager
   registerProvider: (provider) ->
     unless _.findWhere(@providers, provider)?
       @providers.push(provider)
-      @compositeDisposable.add(provider) if provider.dispose?
+      @subscriptions.add(provider) if provider.dispose?
 
   # Public: Unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
-    autocompleteManager.unregisterProvider provider for autocompleteManager in @autocompleteManagers
+    return unless provider?
     _.remove(@providers, provider)
-    @compositeDisposable.remove(provider)
+    @subscriptions.remove(provider)
 
   # ^^^ PROVIDER API ^^^
   # |||              |||
@@ -257,7 +277,7 @@ class AutocompleteManager
     @didChangeTabsSubscription?.dispose()
     @didChangeTabsSubscription = null
     @suggestionList.destroy()
-    @compositeDisposable.dispose()
+    @subscriptions.dispose()
     @emitter.emit('did-dispose')
 
   onDidDispose: (fn) ->

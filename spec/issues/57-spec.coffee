@@ -37,10 +37,10 @@ describe "Autocomplete", ->
         triggerAutocompletion editor, false, 'h'
         advanceClock completionDelay
 
-        autocompleteManager = mainModule.autocompleteManagers[0]
+        autocompleteManager = mainModule.autocompleteManager
 
-        autocompleteView = atom.views.getView(autocompleteManager)
-        atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
         expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
         expect(editor.getCursorBufferPosition()).toEqual [10,12]
@@ -63,10 +63,10 @@ describe "Autocomplete", ->
           triggerAutocompletion editor, false, 'h'
           advanceClock completionDelay
 
-          autocompleteManager = mainModule.autocompleteManagers[0]
+          autocompleteManager = mainModule.autocompleteManager
 
-          autocompleteView = atom.views.getView(autocompleteManager)
-          atom.commands.dispatch autocompleteView, "autocomplete-plus:confirm"
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
           expect(editor.lineTextForBufferRow(10)).toBe "sh:extra:ah"
           expect(editor.getSelections().length).toEqual(2)

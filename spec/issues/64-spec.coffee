@@ -23,7 +23,7 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
+        autocompleteManager = mainModule.autocompleteManager
 
       runs ->
         editorView = atom.views.getView(editor)
@@ -36,5 +36,5 @@ describe "Autocomplete", ->
 
         expect(editorView.querySelector(".autocomplete-plus")).toExist()
 
-        autocompleteView = atom.views.getView(autocompleteManager)
-        expect(autocompleteView.querySelector("li")).toHaveText "bla-foo--bar"
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        expect(suggestionListView.querySelector("li")).toHaveText "bla-foo--bar"

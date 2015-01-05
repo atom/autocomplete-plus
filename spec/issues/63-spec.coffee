@@ -24,7 +24,7 @@ describe "Autocomplete", ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
+        autocompleteManager = mainModule.autocompleteManager
 
       runs ->
         editorView = atom.views.getView(editor)

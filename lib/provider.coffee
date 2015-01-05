@@ -8,11 +8,12 @@ class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: (@editor) ->
-    if @editor.constructor.name == 'TextEditorView'
-      deprecate('Use of EditorView is deprecated, construct with a TextEditor model instead')
-      @editorView = @editor
-      @editor = @editorView.getModel()
-    @initialize.apply this, arguments
+    if @editor?
+      if @editor.constructor.name == 'TextEditorView'
+        deprecate('Use of EditorView is deprecated, construct with a TextEditor model instead')
+        @editorView = @editor
+        @editor = @editorView.getModel()
+    @initialize.apply(this, arguments)
 
   # Public: An initializer for subclasses
   initialize: ->

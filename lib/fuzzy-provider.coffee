@@ -163,12 +163,16 @@ class FuzzyProvider extends Provider
 
     return results
 
+  settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
+    entries = atom.config.getAll(null, scope: scopeDescriptor)
+    value for {value} in entries when _.valueForKeyPath(value, keyPath)?
+
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)
   #
   # Returns an {Array} of strings
   getCompletionsForCursorScope: ->
     cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
-    completions = atom.config.settingsForScopeDescriptor(cursorScope.getScopesArray(), "editor.completions")
+    completions = @settingsForScopeDescriptor(cursorScope.getScopesArray(), "editor.completions")
     completions = completions.map((properties) -> _.valueForKeyPath properties, "editor.completions")
     return _.uniq(_.flatten(completions))
 

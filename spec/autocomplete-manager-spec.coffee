@@ -72,7 +72,7 @@ describe "Autocomplete Manager", ->
 
         advanceClock(completionDelay)
         advanceClock(0)
-        key = atom.keymaps.constructor.keydownEvent('backspace', target: document.activeElement)
+        key = atom.keymaps.constructor.buildKeydownEvent('backspace', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         advanceClock(completionDelay)
@@ -136,7 +136,7 @@ describe "Autocomplete Manager", ->
           advanceClock(0)
 
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('tab', target: document.activeElement)
+          key = atom.keymaps.constructor.buildKeydownEvent('tab', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -157,7 +157,7 @@ describe "Autocomplete Manager", ->
           advanceClock(0)
 
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('enter', keyCode: 13, target: document.activeElement)
+          key = atom.keymaps.constructor.buildKeydownEvent('enter', keyCode: 13, target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -177,7 +177,7 @@ describe "Autocomplete Manager", ->
           advanceClock(0)
 
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('enter', target: document.activeElement)
+          key = atom.keymaps.constructor.buildKeydownEvent('enter', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -198,7 +198,7 @@ describe "Autocomplete Manager", ->
           advanceClock(0)
 
           # Accept suggestion
-          key = atom.keymaps.constructor.keydownEvent('tab', target: document.activeElement)
+          key = atom.keymaps.constructor.buildKeydownEvent('tab', target: document.activeElement)
           atom.keymaps.handleKeyboardEvent(key)
 
           # Check for result
@@ -237,7 +237,7 @@ describe "Autocomplete Manager", ->
         advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('down', target: document.activeElement)
+        key = atom.keymaps.constructor.buildKeydownEvent('down', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -251,7 +251,7 @@ describe "Autocomplete Manager", ->
         advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('down', target: document.activeElement)
+        key = atom.keymaps.constructor.buildKeydownEvent('down', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -266,7 +266,7 @@ describe "Autocomplete Manager", ->
         advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('down', target: document.activeElement)
+        key = atom.keymaps.constructor.buildKeydownEvent('down', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -305,7 +305,7 @@ describe "Autocomplete Manager", ->
         advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('up', target: document.activeElement)
+        key = atom.keymaps.constructor.buildKeydownEvent('up', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -319,7 +319,7 @@ describe "Autocomplete Manager", ->
         advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('up', target: document.activeElement)
+        key = atom.keymaps.constructor.buildKeydownEvent('up', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -334,7 +334,7 @@ describe "Autocomplete Manager", ->
         advanceClock(0)
 
         # Accept suggestion
-        key = atom.keymaps.constructor.keydownEvent('up', target: document.activeElement)
+        key = atom.keymaps.constructor.buildKeydownEvent('up', target: document.activeElement)
         atom.keymaps.handleKeyboardEvent(key)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')

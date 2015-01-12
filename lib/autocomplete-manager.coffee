@@ -124,7 +124,6 @@ class AutocompleteManager
   #
   # match - An {Object} representing the confirmed suggestion
   confirm: (match) =>
-    console.log match
     return unless @editorHasFocus()
     return unless match?.provider?
     return unless @editor?
@@ -235,7 +234,7 @@ class AutocompleteManager
   #
   # e - The change {Event}
   bufferChanged: (e) =>
-    # return if @compositionInProgress
+    return if @suggestionList.compositionInProgress
     return unless @editorHasFocus()
     if atom.config.get('autocomplete-plus.enableAutoActivation') and (e.newText.trim().length is 1 or e.oldText.trim().length is 1)
       @contentsModified()

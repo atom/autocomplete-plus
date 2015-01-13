@@ -107,7 +107,7 @@ class AutocompleteManager
     # Iterate over all providers, ask them to build suggestion(s)
     suggestions = []
     for provider in @providersForScopes(options.scopes)
-      providerSuggestions = provider?.buildSuggestions(options)
+      providerSuggestions = provider?.buildSuggestionsShim(options)
       continue unless providerSuggestions?.length
 
       if provider.exclusive

@@ -7,12 +7,7 @@ module.exports =
 class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
-  constructor: (@editor) ->
-    if @editor?
-      if @editor.constructor.name == 'TextEditorView'
-        deprecate('Use of EditorView is deprecated, construct with a TextEditor model instead')
-        @editorView = @editor
-        @editor = @editorView.getModel()
+  constructor: ->
     @initialize.apply(this, arguments)
 
   # Public: An initializer for subclasses
@@ -22,6 +17,11 @@ class Provider
   # Public: Defines whether the words returned at {::buildWordList} should be added to
   # the default suggestions or should be displayed exclusively
   exclusive: false
+
+  buildSuggestionsShim: (options) ->
+    return unless options?.editor?
+    @editor = options.editor
+    @buildSuggestions.apply(this, arguments)
 
   # Public: Gets called when the document has been changed. Returns an array with
   # suggestions. If `exclusive` is set to true and this method returns suggestions,

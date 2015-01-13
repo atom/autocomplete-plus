@@ -9,43 +9,53 @@ module.exports =
     enableAutoActivation:
       title: 'Show Suggestions On Keystroke'
       description: 'Suggestions will show as you type if this preference is enabled. If it is disabled, you can still see suggestions by using the keybinding for autocomplete-plus:activate (shown below).'
-      type: "boolean"
+      type: 'boolean'
       default: true
       order: 1
     autoActivationDelay:
       title: 'Delay Before Suggestions Are Shown'
       description: 'This prevents suggestions from being shown too frequently. Usually, the default works well. A lower value than the default has performance implications, and is not advised.'
-      type: "integer"
+      type: 'integer'
       default: 100
       order: 2
     maxSuggestions:
       title: 'Maximum Suggestions'
       description: 'The list of suggestions will be limited to this number.'
-      type: "integer"
+      type: 'integer'
       default: 10
       order: 3
     confirmCompletion:
       title: 'Keybinding(s) For Confirming A Suggestion'
       description: 'You should use the key(s) indicated here to confirm a suggestion from the suggestion list and have it inserted into the file.'
-      type: "string"
-      default: "tab"
-      enum: ["tab", "enter", "tab and enter"]
+      type: 'string'
+      default: 'tab'
+      enum: ['tab', 'enter', 'tab and enter']
       order: 4
     navigateCompletions:
       title: 'Keybindings For Navigating The Suggestion List'
       description: 'You should use the keys indicated here to select suggestions in the suggestion list (moving up or down).'
-      type: "string"
-      default: "up,down"
-      enum: ["up,down", "ctrl-p,ctrl-n"]
+      type: 'string'
+      default: 'up,down'
+      enum: ['up,down', 'ctrl-p,ctrl-n']
       order: 5
     fileBlacklist:
-      type: "string"
-      default: ".*, *.md"
-      order: 90
+      title: 'File Blacklist'
+      description: 'Suggestions will not be provided for files matching this list.'
+      type: 'string'
+      default: '.*, *.md'
+      order: 6
+    scopeBlacklist:
+      title: 'Scope Blacklist'
+      description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/advanced/scopes-and-scope-descriptors'
+      type: 'string'
+      default: ''
+      order: 7
     includeCompletionsFromAllBuffers:
-      type: "boolean"
+      title: 'Include Completions From All Buffers'
+      description: 'For grammars with no registered provider(s), FuzzyProvider will include completions from all buffers, instead of just the buffer you are currently editing.'
+      type: 'boolean'
       default: false
-      order: 100
+      order: 8
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
@@ -68,9 +78,10 @@ module.exports =
       registerProviderForEditor and registerProviderForEditorView are no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
         ```
+        # Backward-compatible example:
         disposable = atom.services.consume "autocomplete.provider-api", "1.0.0", (a) ->
           testProvider = new TestProvider(editor)
-          a.registerProviderForEditor(testProvider, editor)
+          a.registerProviderForEditor(testProvider, editor) # Note that this is a deprecated API, you should update to v2.0.0.
         ```
     """
     return @autocompleteManager.registerProviderForEditor(provider, editor)

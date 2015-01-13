@@ -95,7 +95,7 @@ class AutocompleteManager
     @hideSuggestionList()
     return unless @editor?
     return unless @buffer?
-    return if @currentFileBlacklisted()
+    return if @isCurrentFileBlackListed()
     @originalCursorPosition = @editor.getCursorScreenPosition()
     return unless @originalCursorPosition?
     currentScopes = @editor.scopeDescriptorForBufferPosition(@originalCursorPosition)?.scopes
@@ -208,7 +208,7 @@ class AutocompleteManager
   # Private: Checks whether the current file is blacklisted.
   #
   # Returns {Boolean} that defines whether the current file is blacklisted
-  currentFileBlacklisted: ->
+  isCurrentFileBlackListed: ->
     blacklist = (atom.config.get('autocomplete-plus.fileBlacklist') or '')
       .split(',')
       .map((s) -> s.trim())

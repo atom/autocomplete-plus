@@ -6,6 +6,8 @@ minimatch = require 'minimatch'
 path = require 'path'
 SuggestionList = require './suggestion-list'
 SuggestionListElement = require './suggestion-list-element'
+Suggestion = require './suggestion'
+Provider = require './provider'
 
 module.exports =
 class AutocompleteManager
@@ -304,17 +306,27 @@ class AutocompleteManager
         @scopes[scope] = _.filter(@scopes[scope], (p) -> p isnt provider)
         delete @scopes[scope] unless _.size(@scopes[scope]) > 0
 
-  provideApi: =>
-    atom.services.provide 'autocomplete.provider-api', "1.0.0", { @registerProviderForEditor }
-    atom.services.provide 'autocomplete.provider-api', '2.0.0', { @registerProviderForGrammars, @registerProviderForScopes, @unregisterProviderForGrammars, @unregisterProviderForScopes }
+    # @subscriptions.remove(provider) unless @providerIsRegistered(provider)
 
-  # Public: Unregisters the given provider for all scopes
-  #
-  # provider - The {Provider} to unregister
-  unregisterProvider: (provider) ->
+  providerIsRegistered: (provider, scopes) =>
+    # TODO
+    return true
+
+  unregisterProviderForEditor: (provider, editor) =>
     return unless provider?
-    @unregisterProviderForScopes(_.keys(@scopes))
+    return unless editor?
+    grammar = editor?.getGrammar()
+    return unless grammar?
+    return @unregisterProviderForGrammars(provider, [grammar])
+
+  unregisterProvider: (provider) =>
+    return unless provider?
+    return @unregisterProviderForScopes(provider, _.keys(@scopes))
     @subscriptions.remove(provider) if provider.dispose?
+
+  provideApi: =>
+    atom.services.provide 'autocomplete.provider-api', "1.0.0", { @registerProviderForEditor, @unregisterProviderForEditor, @unregisterProvider, Provider, Suggestion }
+    atom.services.provide 'autocomplete.provider-api', '2.0.0', { @registerProviderForGrammars, @registerProviderForScopes, @unregisterProviderForGrammars, @unregisterProviderForScopes, @unregisterProvider }
 
   # ^^^ PROVIDER API ^^^
   # |||              |||

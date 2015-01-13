@@ -1,5 +1,6 @@
 TestProvider = require('./lib/test-provider')
 {ServiceHub}  = require 'atom'
+_ = require 'underscore-plus'
 
 describe "Provider API", ->
   [completionDelay, editor, autocompleteManager, consumer] = []
@@ -90,6 +91,43 @@ describe "Provider API", ->
           testProvider = new TestProvider(editor)
           a.registerProviderForGrammars(testProvider, ['source.js'])
 
+        expect(autocompleteManager.scopes).toEqual({})
+
+    it "should dispose a provider registration correctly using v2.0.0 of the API", ->
+      [testProvider, registration] = []
+
+      runs ->
+        expect(autocompleteManager.scopes).toEqual({})
+
+        # Register the test provider
+        consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+          testProvider = new TestProvider(editor)
+          registration = a.registerProviderForScopes(testProvider, ['source.js'])
+
+        expect(autocompleteManager.scopes).not.toEqual({})
+        expect(_.size(autocompleteManager.scopes['source.js'])).toEqual(1)
+        expect(autocompleteManager.scopes['source.js'][0]).toEqual(testProvider)
+
+        registration.dispose()
+        expect(autocompleteManager.scopes).toEqual({})
+
+    it "should unregister a provider correctly using v2.0.0 of the API", ->
+      [testProvider, registration, autocomplete] = []
+
+      runs ->
+        expect(autocompleteManager.scopes).toEqual({})
+
+        # Register the test provider
+        consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+          autocomplete = a
+          testProvider = new TestProvider(editor)
+          registration = autocomplete.registerProviderForScopes(testProvider, ['source.js'])
+
+        expect(autocompleteManager.scopes).not.toEqual({})
+        expect(_.size(autocompleteManager.scopes['source.js'])).toEqual(1)
+        expect(autocompleteManager.scopes['source.js'][0]).toEqual(testProvider)
+
+        autocomplete.unregisterProviderForScopes(testProvider, ['source.js'])
         expect(autocompleteManager.scopes).toEqual({})
 
   describe "When the Editor has no grammar", ->

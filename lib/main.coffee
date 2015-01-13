@@ -56,7 +56,6 @@ module.exports =
     @autocompleteManager.dispose()
 
   registerProviderForEditorView: (provider, editorView) ->
-    deprecate('Use of editorView is deprecated, use registerProviderForEditor instead')
     @registerProviderForEditor(provider, editorView?.getModel())
 
   # Public: Finds the autocomplete for the given TextEditor
@@ -65,15 +64,29 @@ module.exports =
   # provider - The new {Provider}
   # editor - The {TextEditor} we should register the provider with
   registerProviderForEditor: (provider, editor) ->
-    return unless provider?
-    return unless editor?
-    # TODO: Convert to grammar registration
-    @autocompleteManager.registerProvider(provider, editor)
+    deprecate """
+      registerProviderForEditor and registerProviderForEditorView are no longer supported.
+      Use [service-hub](https://github.com/atom/service-hub) instead:
+        ```
+        disposable = atom.services.consume "autocomplete.provider-api", "1.0.0", (a) ->
+          testProvider = new TestProvider(editor)
+          a.registerProviderForEditor(testProvider, editor)
+        ```
+    """
+    return @autocompleteManager.registerProviderForEditor(provider, editor)
 
   # Public: unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
+    deprecate """
+      unregisterProvider is no longer supported.
+      Use [service-hub](https://github.com/atom/service-hub) instead:
+        ```
+        disposable = atom.services.consume "autocomplete.provider-api", "1.0.0", (a) ->
+          a.unregisterProvider(testProvider)
+        ```
+    """
     @autocompleteManager.unregisterProvider(provider)
 
   Provider: Provider

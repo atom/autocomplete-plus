@@ -34,5 +34,5 @@ describe "Autocomplete", ->
         editor.insertText "somethingNew"
         editor.insertText ")"
 
-        provider = autocompleteManager.providers[0]
+        provider = autocompleteManager.fuzzyProvider
         expect(provider.wordList.indexOf("somethingNew")).not.toEqual(-1)

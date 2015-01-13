@@ -22,14 +22,15 @@ describe "Autocomplete", ->
     waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
       editor = e
 
+    waitsForPromise -> atom.packages.activatePackage('language-javascript')
+
     # Activate the package
     waitsForPromise ->
-      atom.packages.activatePackage("autocomplete-plus")
-        .then (a) -> mainModule = a.mainModule
+      atom.packages.activatePackage("autocomplete-plus").then (a) ->
+        mainModule = a.mainModule
 
     runs ->
       editorView = atom.views.getView(editor)
-
 
   describe "@activate()", ->
     it "activates autocomplete and initializes AutocompleteManager", ->
@@ -39,7 +40,6 @@ describe "Autocomplete", ->
 
   describe "@deactivate()", ->
     it "removes all autocomplete views", ->
-
       runs ->
         buffer = editor.getBuffer()
 
@@ -55,40 +55,46 @@ describe "Autocomplete", ->
         atom.packages.deactivatePackage "autocomplete-plus"
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
 
-  describe "Providers", ->
+  describe "Legacy Provider API", ->
     describe "registerProviderForEditor", ->
-      it "registers the given provider for the given editor view", ->
+      it "registers the given provider for the given editor", ->
         runs ->
           testProvider = new TestProvider(editor)
           mainModule.registerProviderForEditor(testProvider, editor)
 
           autocomplete = mainModule.autocompleteManager
-          expect(autocomplete.providers[1]).toBe testProvider
+          expect(autocomplete.scopes['source.js'][0]).toBe testProvider
 
-    describe "registerMultipleIdenticalProvidersForEditorView", ->
-      it "registers the given provider once when called multiple times for the given editor view", ->
-
+    describe "registerMultipleIdenticalProvidersForEditor", ->
+      it "registers the given provider once when called multiple times for the given editor", ->
         runs ->
-          testProvider = new TestProvider(editorView)
-          mainModule.registerProviderForEditor(testProvider, editor)
-          mainModule.registerProviderForEditor(testProvider, editor)
-          mainModule.registerProviderForEditor(testProvider, editor)
-
+          testProvider = new TestProvider(editor)
           autocompleteManager = mainModule.autocompleteManager
-          expect(autocompleteManager.providers[1]).toBe(testProvider)
-          expect(_.size(autocompleteManager.providers)).toBe(2)
+          expect(autocompleteManager.scopes['source.js']).toBeUndefined()
 
-    describe "unregisterProviderFromEditorView", ->
-      it "unregisters the provider from all editor views", ->
+          mainModule.registerProviderForEditor(testProvider, editor)
+          expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
+          expect(_.size(autocompleteManager.scopes['source.js'])).toBe(1)
+
+          mainModule.registerProviderForEditor(testProvider, editor)
+          expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
+          expect(_.size(autocompleteManager.scopes['source.js'])).toBe(1)
+
+          mainModule.registerProviderForEditor(testProvider, editor)
+          expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
+          expect(_.size(autocompleteManager.scopes['source.js'])).toBe(1)
+
+    describe "unregisterProviderFromEditor", ->
+      it "unregisters the provider from all editors", ->
         runs ->
           testProvider = new TestProvider(editor)
           mainModule.registerProviderForEditor(testProvider, editor)
 
           autocompleteManager = mainModule.autocompleteManager
-          expect(autocompleteManager.providers[1]).toBe(testProvider)
+          expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
 
           mainModule.unregisterProvider(testProvider)
-          expect(autocompleteManager.providers[1]).not.toExist()
+          expect(autocompleteManager.scopes['source.js'][0]).not.toExist()
 
     describe "a registered provider", ->
       it "calls buildSuggestions()", ->

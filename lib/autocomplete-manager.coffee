@@ -48,12 +48,12 @@ class AutocompleteManager
     # Stop listening to editor events
     @editorCursorMovedSubscription?.dispose()
 
-    # Disqualify invalid pane items
-    # TODO
-    if false
-      @editor = null
-      @editorView = null
-      @buffer = null
+    # Stop tracking editor + buffer
+    @editor = null
+    @editorView = null
+    @buffer = null
+
+    return unless @paneItemIsValid(currentPaneItem)
 
     # Track the new editor, editorView, and buffer
     @editor = currentPaneItem
@@ -67,6 +67,12 @@ class AutocompleteManager
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
     @editorCursorMovedSubscription = @editor.onDidChangeCursorPosition(@cursorMoved)
+
+  paneItemIsValid: (paneItem) =>
+    return false unless paneItem?
+    # TODO: Disqualify invalid pane items
+    # ...
+    return true
 
   # Private: Handles editor events
   handleEvents: ->
@@ -302,10 +308,10 @@ class AutocompleteManager
         @scopes[scope] = _.filter(@scopes[scope], (p) -> p isnt provider)
         delete @scopes[scope] unless _.size(@scopes[scope]) > 0
 
-    # @subscriptions.remove(provider) unless @providerIsRegistered(provider)
+    @subscriptions.remove(provider) unless @providerIsRegistered(provider)
 
   providerIsRegistered: (provider, scopes) =>
-    # TODO
+    # TODO: Actually determine if the provider is registered
     return true
 
   unregisterProviderForEditor: (provider, editor) =>

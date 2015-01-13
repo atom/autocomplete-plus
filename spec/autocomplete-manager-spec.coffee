@@ -35,7 +35,6 @@ describe "Autocomplete Manager", ->
       runs ->
         editorView = atom.views.getView(editor)
 
-
     describe "on changed events", ->
       it "should show the suggestion list when suggestions are found", ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

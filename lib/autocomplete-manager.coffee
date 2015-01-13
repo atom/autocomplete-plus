@@ -19,7 +19,6 @@ class AutocompleteManager
   bufferSavedSubscription: null
   bufferChangedSubscription: null
   editorCursorMovedSubscription: null
-  didChangeTabsSubscription: null
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -48,7 +47,6 @@ class AutocompleteManager
 
     # Stop listening to editor events
     @editorCursorMovedSubscription?.dispose()
-    @didChangeTabsSubscription?.dispose()
 
     # Disqualify invalid pane items
     # TODO
@@ -69,8 +67,6 @@ class AutocompleteManager
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
     @editorCursorMovedSubscription = @editor.onDidChangeCursorPosition(@cursorMoved)
-    # TODO: Is this the event for switching tabs?
-    @didChangeTabsSubscription = @editor.onDidChangeTitle(@hideSuggestionList)
 
   # Private: Handles editor events
   handleEvents: ->
@@ -341,8 +337,6 @@ class AutocompleteManager
     @bufferChangedSubscription = null
     @editorCursorMovedSubscription?.dispose()
     @editorCursorMovedSubscription = null
-    @didChangeTabsSubscription?.dispose()
-    @didChangeTabsSubscription = null
     @suggestionList.destroy()
     @subscriptions.dispose()
     @emitter.emit('did-dispose')

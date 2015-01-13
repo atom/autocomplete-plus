@@ -312,8 +312,8 @@ class AutocompleteManager
     @subscriptions.remove(provider) if provider.dispose?
 
   provideApi: =>
-    atom.services.provide 'autocomplete.provider-api', "1.0.0", { @registerProviderForEditor, @unregisterProviderForEditor, @unregisterProvider, Provider, Suggestion }
-    atom.services.provide 'autocomplete.provider-api', '2.0.0', { @registerProviderForGrammars, @registerProviderForScopes, @unregisterProviderForGrammars, @unregisterProviderForScopes, @unregisterProvider }
+    atom.services.provide 'autocomplete.provider-api', "1.0.0", {@registerProviderForEditor, @unregisterProviderForEditor, @unregisterProvider, Provider, Suggestion}
+    atom.services.provide 'autocomplete.provider-api', '2.0.0', {@registerProviderForGrammars, @registerProviderForScopes, @unregisterProviderForGrammars, @unregisterProviderForScopes, @unregisterProvider}
 
   # ^^^ PROVIDER API ^^^
   # |||              |||

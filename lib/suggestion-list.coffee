@@ -81,7 +81,7 @@ class SuggestionList extends Model
 
     marker = editor.getLastCursor()?.getMarker()
     return unless marker?
-    @overlayDecoration = editor.decorateMarker(marker, { type: 'overlay', item: this })
+    @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
     @addKeyboardInteraction()
     @active = true
 

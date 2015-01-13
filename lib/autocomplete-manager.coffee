@@ -15,10 +15,7 @@ class AutocompleteManager
   editorView: null
   buffer: null
   suggestionList: null
-  editorSubscription: null
-  bufferSavedSubscription: null
-  bufferChangedSubscription: null
-  editorCursorMovedSubscription: null
+  editorSubscriptions: null
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -41,12 +38,8 @@ class AutocompleteManager
     return unless currentPaneItem?
     return if currentPaneItem is @editor
 
-    # Stop listening to buffer events
-    @bufferSavedSubscription?.dispose()
-    @bufferChangedSubscription?.dispose()
-
-    # Stop listening to editor events
-    @editorCursorMovedSubscription?.dispose()
+    @editorSubscriptions?.dispose()
+    @editorSubscriptions = null
 
     # Stop tracking editor + buffer
     @editor = null
@@ -60,13 +53,15 @@ class AutocompleteManager
     @editorView = atom.views.getView(@editor)
     @buffer = @editor.getBuffer()
 
+    @editorSubscriptions = new CompositeDisposable
+
     # Subscribe to buffer events:
-    @bufferSavedSubscription = @buffer.onDidSave(@bufferSaved)
-    @bufferChangedSubscription = @buffer.onDidChange(@bufferChanged)
+    @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
+    @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
 
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
-    @editorCursorMovedSubscription = @editor.onDidChangeCursorPosition(@cursorMoved)
+    @editorSubscriptions.add(@editor.onDidChangeCursorPosition(@cursorMoved))
 
   paneItemIsValid: (paneItem) =>
     return false unless paneItem?
@@ -139,7 +134,6 @@ class AutocompleteManager
   #
   # match - An {Object} representing the confirmed suggestion
   confirm: (match) =>
-    return unless @editorHasFocus()
     return unless match?.provider?
     return unless @editor?
 
@@ -232,16 +226,9 @@ class AutocompleteManager
   cursorMoved: (data) =>
     @hideSuggestionList() unless data.textChanged
 
-  editorHasFocus: =>
-    return false unless @editorView?
-    editorView = @editorView
-    editorView = editorView[0] if editorView.jquery
-    return editorView.hasFocus()
-
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.
   bufferSaved: =>
-    return unless @editorHasFocus()
     @hideSuggestionList()
 
   # Private: Cancels the autocompletion if the user entered more than one
@@ -250,7 +237,6 @@ class AutocompleteManager
   # e - The change {Event}
   bufferChanged: (e) =>
     return if @suggestionList.compositionInProgress
-    return unless @editorHasFocus()
     if atom.config.get('autocomplete-plus.enableAutoActivation') and (e.newText.trim().length is 1 or e.oldText.trim().length is 1)
       @contentsModified()
     else
@@ -335,14 +321,8 @@ class AutocompleteManager
 
   # Public: Clean up, stop listening to events
   dispose: ->
-    @editorSubscription?.dispose()
-    @editorSubscription = null
-    @bufferSavedSubscription?.dispose()
-    @bufferSavedSubscription = null
-    @bufferChangedSubscription?.dispose()
-    @bufferChangedSubscription = null
-    @editorCursorMovedSubscription?.dispose()
-    @editorCursorMovedSubscription = null
+    @editorSubscriptions?.dispose()
+    @editorSubscriptions = null
     @suggestionList.destroy()
     @subscriptions.dispose()
     @emitter.emit('did-dispose')

@@ -3,7 +3,7 @@ TestProvider = require('./lib/test-provider')
 _ = require 'underscore-plus'
 
 describe "Provider API", ->
-  [completionDelay, editor, autocompleteManager, consumer] = []
+  [completionDelay, editor, mainModule, autocompleteManager, consumer] = []
 
   beforeEach ->
     runs ->
@@ -24,7 +24,8 @@ describe "Provider API", ->
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-      autocompleteManager = a.mainModule.autocompleteManager
+      mainModule = a.mainModule
+      autocompleteManager = mainModule.autocompleteManager
 
   afterEach ->
     consumer?.dispose()
@@ -33,102 +34,175 @@ describe "Provider API", ->
     beforeEach ->
       waitsForPromise -> atom.packages.activatePackage('language-javascript')
 
-    it "should allow registration of a provider using v1.0.0 of the API", ->
-      runs ->
-        # Register the test provider
-        consumer = atom.services.consume "autocomplete.provider-api", "1.0.0", (a) ->
-          testProvider = new TestProvider(editor)
-          a.registerProviderForEditor(testProvider, editor)
+    describe "Legacy Provider API", ->
+      describe "registerProviderForEditor", ->
+        it "registers the given provider for the given editor", ->
+          runs ->
+            testProvider = new TestProvider(editor)
+            mainModule.registerProviderForEditor(testProvider, editor)
+            expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
 
-        editor.moveToBottom()
-        editor.insertText('o')
+      describe "registerMultipleIdenticalProvidersForEditor", ->
+        it "registers the given provider once when called multiple times for the given editor", ->
+          runs ->
+            testProvider = new TestProvider(editor)
+            expect(autocompleteManager.scopes['source.js']).toBeUndefined()
 
-        advanceClock(completionDelay)
+            mainModule.registerProviderForEditor(testProvider, editor)
+            expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
+            expect(_.size(autocompleteManager.scopes['source.js'])).toBe(1)
 
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+            mainModule.registerProviderForEditor(testProvider, editor)
+            expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
+            expect(_.size(autocompleteManager.scopes['source.js'])).toBe(1)
 
-        expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+            mainModule.registerProviderForEditor(testProvider, editor)
+            expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
+            expect(_.size(autocompleteManager.scopes['source.js'])).toBe(1)
 
-    it "should allow registration of a provider via a grammar using v2.0.0 of the API", ->
-      runs ->
-        # Register the test provider
-        consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
-          testProvider = new TestProvider(editor)
-          a.registerProviderForGrammars(testProvider, [editor.getGrammar()])
+      describe "unregisterProviderFromEditor", ->
+        it "unregisters the provider from all editors", ->
+          runs ->
+            testProvider = new TestProvider(editor)
+            mainModule.registerProviderForEditor(testProvider, editor)
 
-        editor.moveToBottom()
-        editor.insertText('o')
+            expect(autocompleteManager.scopes['source.js'][0]).toBe(testProvider)
 
-        advanceClock(completionDelay)
+            mainModule.unregisterProvider(testProvider)
+            expect(autocompleteManager.scopes['source.js'][0]).not.toExist()
 
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+      describe "a registered provider", ->
+        it "calls buildSuggestions()", ->
+          runs ->
+            testProvider = new TestProvider(editor)
+            mainModule.registerProviderForEditor(testProvider, editor)
 
-        expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+            spyOn(testProvider, "buildSuggestions").andCallThrough()
 
-    it "should allow registration of a provider via a scope using v2.0.0 of the API", ->
-      runs ->
-        # Register the test provider
-        consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
-          testProvider = new TestProvider(editor)
-          a.registerProviderForScopes(testProvider, ['source.js'])
+            # Trigger an autocompletion
+            editor.moveToBottom()
+            editor.moveToBeginningOfLine()
+            editor.insertText('f')
+            advanceClock completionDelay
 
-        editor.moveToBottom()
-        editor.insertText('o')
+            expect(testProvider.buildSuggestions).toHaveBeenCalled()
 
-        advanceClock(completionDelay)
+        it "calls confirm()", ->
+          runs ->
+            testProvider = new TestProvider(editor)
+            mainModule.registerProviderForEditor(testProvider, editor)
 
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+            spyOn(testProvider, 'confirm').andCallThrough()
 
-        expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+            # Trigger an autocompletion
+            editor.moveToBottom()
+            editor.moveToBeginningOfLine()
+            editor.insertText('f')
+            advanceClock(completionDelay)
 
-    it "should not allow registration of a provider via a scope supplied as a grammar using v2.0.0 of the API", ->
-      runs ->
-        # Register the test provider
-        consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
-          testProvider = new TestProvider(editor)
-          a.registerProviderForGrammars(testProvider, ['source.js'])
+            suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
-        expect(autocompleteManager.scopes).toEqual({})
+            expect(testProvider.confirm).toHaveBeenCalled()
 
-    it "should dispose a provider registration correctly using v2.0.0 of the API", ->
-      [testProvider, registration] = []
+    describe "Provider API v1.0.0", ->
+      it "should allow registration of a provider using v1.0.0 of the API", ->
+        runs ->
+          # Register the test provider
+          consumer = atom.services.consume "autocomplete.provider-api", "1.0.0", (a) ->
+            testProvider = new TestProvider(editor)
+            a.registerProviderForEditor(testProvider, editor)
 
-      runs ->
-        expect(autocompleteManager.scopes).toEqual({})
+          editor.moveToBottom()
+          editor.insertText('o')
 
-        # Register the test provider
-        consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
-          testProvider = new TestProvider(editor)
-          registration = a.registerProviderForScopes(testProvider, ['source.js'])
+          advanceClock(completionDelay)
 
-        expect(autocompleteManager.scopes).not.toEqual({})
-        expect(_.size(autocompleteManager.scopes['source.js'])).toEqual(1)
-        expect(autocompleteManager.scopes['source.js'][0]).toEqual(testProvider)
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
 
-        registration.dispose()
-        expect(autocompleteManager.scopes).toEqual({})
+          expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
+          expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
 
-    it "should unregister a provider correctly using v2.0.0 of the API", ->
-      [testProvider, registration, autocomplete] = []
+    describe "Provider API v2.0.0", ->
+      it "should allow registration of a provider via a grammar", ->
+        runs ->
+          # Register the test provider
+          consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+            testProvider = new TestProvider(editor)
+            a.registerProviderForGrammars(testProvider, [editor.getGrammar()])
 
-      runs ->
-        expect(autocompleteManager.scopes).toEqual({})
+          editor.moveToBottom()
+          editor.insertText('o')
 
-        # Register the test provider
-        consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
-          autocomplete = a
-          testProvider = new TestProvider(editor)
-          registration = autocomplete.registerProviderForScopes(testProvider, ['source.js'])
+          advanceClock(completionDelay)
 
-        expect(autocompleteManager.scopes).not.toEqual({})
-        expect(_.size(autocompleteManager.scopes['source.js'])).toEqual(1)
-        expect(autocompleteManager.scopes['source.js'][0]).toEqual(testProvider)
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
 
-        autocomplete.unregisterProviderForScopes(testProvider, ['source.js'])
-        expect(autocompleteManager.scopes).toEqual({})
+          expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
+          expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+
+      it "should allow registration of a provider via a scope", ->
+        runs ->
+          # Register the test provider
+          consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+            testProvider = new TestProvider(editor)
+            a.registerProviderForScopes(testProvider, ['source.js'])
+
+          editor.moveToBottom()
+          editor.insertText('o')
+
+          advanceClock(completionDelay)
+
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+
+          expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
+          expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+
+      it "should not allow registration of a provider via a scope supplied as a grammar", ->
+        runs ->
+          # Register the test provider
+          consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+            testProvider = new TestProvider(editor)
+            a.registerProviderForGrammars(testProvider, ['source.js'])
+
+          expect(autocompleteManager.scopes).toEqual({})
+
+      it "should dispose a provider registration correctly", ->
+        [testProvider, registration] = []
+
+        runs ->
+          expect(autocompleteManager.scopes).toEqual({})
+
+          # Register the test provider
+          consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+            testProvider = new TestProvider(editor)
+            registration = a.registerProviderForScopes(testProvider, ['source.js'])
+
+          expect(autocompleteManager.scopes).not.toEqual({})
+          expect(_.size(autocompleteManager.scopes['source.js'])).toEqual(1)
+          expect(autocompleteManager.scopes['source.js'][0]).toEqual(testProvider)
+
+          registration.dispose()
+          expect(autocompleteManager.scopes).toEqual({})
+
+      it "should unregister a provider correctly", ->
+        [testProvider, registration, autocomplete] = []
+
+        runs ->
+          expect(autocompleteManager.scopes).toEqual({})
+
+          # Register the test provider
+          consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+            autocomplete = a
+            testProvider = new TestProvider(editor)
+            registration = autocomplete.registerProviderForScopes(testProvider, ['source.js'])
+
+          expect(autocompleteManager.scopes).not.toEqual({})
+          expect(_.size(autocompleteManager.scopes['source.js'])).toEqual(1)
+          expect(autocompleteManager.scopes['source.js'][0]).toEqual(testProvider)
+
+          autocomplete.unregisterProviderForScopes(testProvider, ['source.js'])
+          expect(autocompleteManager.scopes).toEqual({})
 
   describe "When the Editor has no grammar", ->
     it "should not allow registration of a provider using v1.0.0 of the API", ->

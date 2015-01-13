@@ -132,8 +132,8 @@ class AutocompleteManager
   #
   # match - An {Object} representing the confirmed suggestion
   confirm: (match) =>
-    return unless match?.provider?
     return unless @editor?
+    return unless match?.provider?
 
     replace = match.provider.confirm(match)
     @editor.getSelections()?.forEach (selection) -> selection?.clear()
@@ -323,7 +323,9 @@ class AutocompleteManager
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
     @suggestionList.destroy()
+    @suggestionList = null
     @subscriptions.dispose()
+    @subscriptions = null
     @emitter.emit('did-dispose')
 
   onDidDispose: (fn) ->

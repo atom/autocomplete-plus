@@ -14,7 +14,7 @@ class Provider
   initialize: ->
     return
 
-  # Public: Defines whether the words returned at {::buildWordList} should be added to
+  # Public: Defines whether the words returned at {::buildSuggestions} should be added to
   # the default suggestions or should be displayed exclusively
   exclusive: false
 
@@ -29,7 +29,7 @@ class Provider
   #
   # Returns An {Array} of suggestions.
   buildSuggestions: ->
-    throw new Error 'Subclass must implement a buildWordList(prefix) method'
+    throw new Error 'Subclass must implement a buildSuggestions(options) method'
 
   # Public: Gets called when a suggestion has been confirmed by the user. Return true
   # to replace the word with the suggestion. Return false if you want to handle

@@ -1,4 +1,4 @@
-{Range}  = require 'atom'
+{Range, TextEditor}  = require 'atom'
 {CompositeDisposable, Disposable, Emitter} = require 'event-kit'
 _ = require 'underscore-plus'
 FuzzyProvider = require './fuzzy-provider'
@@ -65,9 +65,8 @@ class AutocompleteManager
 
   paneItemIsValid: (paneItem) =>
     return false unless paneItem?
-    # TODO: Disqualify invalid pane items
-    # ...
-    return true
+    # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
+    return paneItem instanceof TextEditor
 
   # Private: Handles editor events
   handleEvents: ->
@@ -117,8 +116,7 @@ class AutocompleteManager
 
     # No suggestions? Cancel autocompletion.
     return unless suggestions.length
-    @suggestionList?.changeItems(suggestions)
-    @showSuggestionList()
+    @showSuggestionList(suggestions)
 
   providersForScopes: (scopes) =>
     return [] unless scopes?
@@ -148,8 +146,9 @@ class AutocompleteManager
       position = cursor?.getBufferPosition()
       cursor.setBufferPosition([position.row, position.column]) if position?
 
-  showSuggestionList: ->
-    @suggestionList?.show(@editor)
+  showSuggestionList: (suggestions) ->
+    @suggestionList.changeItems(suggestions)
+    @suggestionList.show(@editor)
 
   hideSuggestionList: ->
     # TODO: Should we *always* focus the editor? Probably not...

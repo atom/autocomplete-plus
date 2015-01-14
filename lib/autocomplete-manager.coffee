@@ -1,28 +1,27 @@
 {Range, TextEditor}  = require 'atom'
 {CompositeDisposable, Disposable, Emitter} = require 'event-kit'
 _ = require 'underscore-plus'
-FuzzyProvider = require './fuzzy-provider'
 minimatch = require 'minimatch'
 path = require 'path'
+ProviderManager = require './provider-manager'
 SuggestionList = require './suggestion-list'
 SuggestionListElement = require './suggestion-list-element'
-Suggestion = require './suggestion'
-Provider = require './provider'
 
 module.exports =
 class AutocompleteManager
   editor: null
   editorView: null
   buffer: null
+  providerManager: null
+  subscriptions: null
   suggestionList: null
   editorSubscriptions: null
 
   constructor: ->
     @subscriptions = new CompositeDisposable
+    @providerManager = new ProviderManager()
+    @subscriptions.add(@providerManager)
     @emitter = new Emitter
-
-    @scopes = {}
-    @provideApi()
 
     # Register Suggestion List Model and View
     @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) =>
@@ -32,7 +31,6 @@ class AutocompleteManager
 
     @handleEvents()
     @handleCommands()
-    @fuzzyProvider = new FuzzyProvider()
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -87,6 +85,7 @@ class AutocompleteManager
   # positions the overlay and shows it
   runAutocompletion: =>
     @hideSuggestionList()
+    return unless @providerManager?
     return unless @editor?
     return unless @buffer?
     return if @isCurrentFileBlackListed()
@@ -104,7 +103,8 @@ class AutocompleteManager
 
     # Iterate over all providers, ask them to build suggestion(s)
     suggestions = []
-    for provider in @providersForScopes(options.scopes)
+    
+    for provider in @providerManager.providersForScopes(options.scopes)
       providerSuggestions = provider?.buildSuggestionsShim(options)
       continue unless providerSuggestions?.length
 
@@ -117,16 +117,6 @@ class AutocompleteManager
     # No suggestions? Cancel autocompletion.
     return unless suggestions.length
     @showSuggestionList(suggestions)
-
-  providersForScopes: (scopes) =>
-    return [] unless scopes?
-    return [] unless @scopes
-    providers = []
-    for scope in scopes
-      if @scopes[scope]?
-        providers = _.union(providers, @scopes[scope])
-    providers.push(@fuzzyProvider) unless _.size(providers) > 0
-    providers
 
   # Private: Gets called when the user successfully confirms a suggestion
   #
@@ -241,92 +231,15 @@ class AutocompleteManager
     else
       @hideSuggestionList()
 
-  #  |||              |||
-  #  vvv PROVIDER API vvv
-
-  registerProviderForGrammars: (provider, grammars) =>
-    return unless provider?
-    return unless grammars? and _.size(grammars) > 0
-    grammars = _.filter(grammars, (grammar) -> grammar?.scopeName?)
-    scopes = _.pluck(grammars, 'scopeName')
-    return @registerProviderForScopes(provider, scopes)
-
-  registerProviderForScopes: (provider, scopes) =>
-    return unless provider?
-    return unless scopes? and _.size(scopes) > 0
-    for scope in scopes
-      existing = _.findWhere(_.keys(@scopes), scope)
-      if existing? and @scopes[scope]?
-        @scopes[scope].push(provider)
-        @scopes[scope] = _.uniq(@scopes[scope])
-      else
-        @scopes[scope] = [provider]
-
-    if provider.dispose?
-      @subscriptions.add(provider) unless _.contains(@subscriptions, provider)
-
-    new Disposable =>
-      @unregisterProviderForScopes(provider, scopes)
-
-  registerProviderForEditor: (provider, editor) =>
-    return unless provider?
-    return unless editor?
-    grammar = editor?.getGrammar()
-    return unless grammar?
-    return if grammar.scopeName is 'text.plain.null-grammar'
-    return @registerProviderForGrammars(provider, [grammar])
-
-  unregisterProviderForGrammars: (provider, grammars) =>
-    return unless provider?
-    return unless grammars? and _.size(grammars) > 0
-    grammars = _.filter(grammars, (grammar) -> grammar?.scopeName?)
-    scopes = _.pluck(grammars, 'scopeName')
-    return @unregisterProviderForScopes(provider, scopes)
-
-  unregisterProviderForScopes: (provider, scopes) =>
-    return unless provider?
-    return unless scopes? and _.size(scopes) > 0
-
-    for scope in scopes
-      existing = _.findWhere(_.keys(@scopes), scope)
-      if existing?
-        @scopes[scope] = _.filter(@scopes[scope], (p) -> p isnt provider)
-        delete @scopes[scope] unless _.size(@scopes[scope]) > 0
-
-    @subscriptions.remove(provider) unless @providerIsRegistered(provider)
-
-  providerIsRegistered: (provider, scopes) =>
-    # TODO: Actually determine if the provider is registered
-    return true
-
-  unregisterProviderForEditor: (provider, editor) =>
-    return unless provider?
-    return unless editor?
-    grammar = editor?.getGrammar()
-    return unless grammar?
-    return @unregisterProviderForGrammars(provider, [grammar])
-
-  unregisterProvider: (provider) =>
-    return unless provider?
-    return @unregisterProviderForScopes(provider, _.keys(@scopes))
-    @subscriptions.remove(provider) if provider.dispose?
-
-  provideApi: =>
-    atom.services.provide 'autocomplete.provider-api', "1.0.0", {@registerProviderForEditor, @unregisterProviderForEditor, @unregisterProvider, Provider, Suggestion}
-    atom.services.provide 'autocomplete.provider-api', '2.0.0', {@registerProviderForGrammars, @registerProviderForScopes, @unregisterProviderForGrammars, @unregisterProviderForScopes, @unregisterProvider}
-
-  # ^^^ PROVIDER API ^^^
-  # |||              |||
-
   # Public: Clean up, stop listening to events
   dispose: ->
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
-    @suggestionList.destroy()
+    @suggestionList?.destroy()
     @suggestionList = null
-    @subscriptions.dispose()
+    @subscriptions?.dispose()
     @subscriptions = null
-    @emitter.emit('did-dispose')
-
-  onDidDispose: (fn) ->
-    @emitter.on('did-dispose', fn)
+    @providerManager = null
+    @emitter?.emit('did-dispose')
+    @emitter?.dispose()
+    @emitter = null

@@ -63,7 +63,8 @@ module.exports =
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
-    @autocompleteManager.dispose()
+    @autocompleteManager?.dispose()
+    @autocompleteManager = null
 
   registerProviderForEditorView: (provider, editorView) ->
     @registerProviderForEditor(provider, editorView?.getModel())
@@ -74,6 +75,7 @@ module.exports =
   # provider - The new {Provider}
   # editor - The {TextEditor} we should register the provider with
   registerProviderForEditor: (provider, editor) ->
+    return unless @autocompleteManager?.providerManager?
     deprecate """
       registerProviderForEditor and registerProviderForEditorView are no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
@@ -84,12 +86,13 @@ module.exports =
           a.registerProviderForEditor(testProvider, editor) # Note that this is a deprecated API, you should update to v2.0.0.
         ```
     """
-    return @autocompleteManager.registerProviderForEditor(provider, editor)
+    return @autocompleteManager.providerManager.registerProviderForEditor(provider, editor)
 
   # Public: unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
+    return unless @autocompleteManager?.providerManager?
     deprecate """
       unregisterProvider is no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
@@ -98,7 +101,7 @@ module.exports =
           a.unregisterProvider(testProvider)
         ```
     """
-    @autocompleteManager.unregisterProvider(provider)
+    @autocompleteManager.providerManager.unregisterProvider(provider)
 
   Provider: Provider
   Suggestion: Suggestion

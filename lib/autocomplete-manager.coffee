@@ -89,22 +89,27 @@ class AutocompleteManager
     return unless @editor?
     return unless @buffer?
     return if @isCurrentFileBlackListed()
-    @originalCursorPosition = @editor.getCursorScreenPosition()
-    return unless @originalCursorPosition?
-    currentScopes = @editor.scopeDescriptorForBufferPosition(@originalCursorPosition)?.scopes
-    return unless currentScopes?
+    cursor = @editor.getLastCursor()
+    return unless cursor?
+    cursorPosition = cursor.getBufferPosition()
+    currentScope = cursor.getScopeDescriptor()
+    return unless currentScope?
+    currentScopeChain = currentScope.getScopeChain()
+    return unless currentScopeChain?
 
     options =
       editor: @editor
       buffer: @buffer
-      position: @originalCursorPosition
-      scopes: currentScopes
+      position: cursorPosition
+      scope: currentScope
+      scopeChain: currentScopeChain
       prefixOfSelection: @prefixOfSelection(@editor.getLastSelection())
 
     # Iterate over all providers, ask them to build suggestion(s)
     suggestions = []
-    
-    for provider in @providerManager.providersForScopes(options.scopes)
+
+    providers = @providerManager.providersForScopeChain(options.scopeChain)
+    for provider in providers
       providerSuggestions = provider?.buildSuggestionsShim(options)
       continue unless providerSuggestions?.length
 

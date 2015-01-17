@@ -10,3 +10,7 @@ class TestProvider extends Provider
       renderLabelAsHtml: true,
       className: 'ohai'
     )]
+
+  dispose: ->
+    foo = "bar"
+    # No-op

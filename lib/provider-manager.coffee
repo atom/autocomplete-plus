@@ -1,4 +1,5 @@
 {CompositeDisposable, Disposable, Emitter} = require 'event-kit'
+ScopedPropertyStore = require 'scoped-property-store'
 _ = require 'underscore-plus'
 FuzzyProvider = require './fuzzy-provider'
 Suggestion = require './suggestion'
@@ -7,30 +8,31 @@ Provider = require './provider'
 module.exports =
 class ProviderManager
   fuzzyProvider: null
-  scopes: null
+  scopedPropertyStore: null
   subscriptions: null
 
   constructor: ->
     @subscriptions = new CompositeDisposable
-    @scopes = {}
+    @store = new ScopedPropertyStore
     @fuzzyProvider = new FuzzyProvider()
     @subscriptions.add(@fuzzyProvider)
+    fuzzyRegistration = @registerProviderForScope(@fuzzyProvider, '*')
+    @subscriptions.add(fuzzyRegistration) if fuzzyRegistration?
     @provideApi()
 
   dispose: ->
     @subscriptions?.dispose()
     @subscriptions = null
+    @store = null
     @fuzzyProvider = null
-    @scopes = null
 
-  providersForScopes: (scopes) =>
-    return [] unless scopes?
-    return [] unless @scopes
+  providersForScopeChain: (scopeChain) =>
+    return [] unless scopeChain?
+    return [] unless @store?
     providers = []
-    for scope in scopes
-      if @scopes[scope]?
-        providers = _.union(providers, @scopes[scope])
-    providers.push(@fuzzyProvider) unless _.size(providers) > 0
+    providers = @store.getAll(scopeChain, 'provider')
+    return [] unless providers? and _.size(providers) > 0
+    providers = _.pluck(providers, 'value')
     providers
 
   #  |||              |||
@@ -40,25 +42,27 @@ class ProviderManager
     return unless provider?
     return unless grammars? and _.size(grammars) > 0
     grammars = _.filter(grammars, (grammar) -> grammar?.scopeName?)
-    scopes = _.pluck(grammars, 'scopeName')
-    return @registerProviderForScopes(provider, scopes)
+    scope = _.pluck(grammars, 'scopeName')
+    scope = scope.join(',.')
+    scope = '.' + scope
+    return @registerProviderForScope(provider, scope)
 
-  registerProviderForScopes: (provider, scopes) =>
+  registerProviderForScope: (provider, scope) =>
     return unless provider?
-    return unless scopes? and _.size(scopes) > 0
-    for scope in scopes
-      existing = _.findWhere(_.keys(@scopes), scope)
-      if existing? and @scopes[scope]?
-        @scopes[scope].push(provider)
-        @scopes[scope] = _.uniq(@scopes[scope])
-      else
-        @scopes[scope] = [provider]
+    return unless scope?
+    properties = {}
+    properties[scope] = {provider}
+    registration = @store.addProperties('autocomplete-provider-registration', properties)
 
     if provider.dispose?
-      @subscriptions.add(provider) unless _.contains(@subscriptions, provider)
+      @subscriptions.add(provider) unless _.contains(@subscriptions?.disposables, provider)
 
     new Disposable =>
-      @unregisterProviderForScopes(provider, scopes)
+      console.log @providerIsRegistered(provider)
+      registration.dispose()
+      if _.contains(@subscriptions?.disposables, provider) and not @providerIsRegistered(provider)
+        @subscriptions.remove(provider)
+      console.log @providerIsRegistered(provider)
 
   registerProviderForEditor: (provider, editor) =>
     return unless provider?
@@ -68,28 +72,11 @@ class ProviderManager
     return if grammar.scopeName is 'text.plain.null-grammar'
     return @registerProviderForGrammars(provider, [grammar])
 
-  unregisterProviderForGrammars: (provider, grammars) =>
-    return unless provider?
-    return unless grammars? and _.size(grammars) > 0
-    grammars = _.filter(grammars, (grammar) -> grammar?.scopeName?)
-    scopes = _.pluck(grammars, 'scopeName')
-    return @unregisterProviderForScopes(provider, scopes)
-
-  unregisterProviderForScopes: (provider, scopes) =>
-    return unless provider?
-    return unless scopes? and _.size(scopes) > 0
-
-    for scope in scopes
-      existing = _.findWhere(_.keys(@scopes), scope)
-      if existing?
-        @scopes[scope] = _.filter(@scopes[scope], (p) -> p isnt provider)
-        delete @scopes[scope] unless _.size(@scopes[scope]) > 0
-
-    @subscriptions.remove(provider) unless @providerIsRegistered(provider)
-
   providerIsRegistered: (provider, scopes) =>
-    # TODO: Actually determine if the provider is registered
-    return true
+    return false unless @store?
+    registrations = @store.propertiesForSource('autocomplete-provider-registration')
+    return false unless _.size(registrations) > 0
+    return _.chain(registrations).pluck('provider').filter((p) -> p is provider).size().value() > 0
 
   unregisterProviderForEditor: (provider, editor) =>
     return unless provider?
@@ -98,14 +85,15 @@ class ProviderManager
     return unless grammar?
     return @unregisterProviderForGrammars(provider, [grammar])
 
+  # Required For Legacy API Compatibility
   unregisterProvider: (provider) =>
     return unless provider?
-    return @unregisterProviderForScopes(provider, _.keys(@scopes))
-    @subscriptions.remove(provider) if provider.dispose?
+    @subscriptions.remove(provider) if provider.dispose? and _.contains(@subscriptions?.disposables, provider)
+    # TODO: Determine how to actually filter all providers from the @store
+    return
 
   provideApi: =>
-    @subscriptions.add atom.services.provide 'autocomplete.provider-api', "1.0.0", {@registerProviderForEditor, @unregisterProviderForEditor, @unregisterProvider, Provider, Suggestion}
-    @subscriptions.add atom.services.provide 'autocomplete.provider-api', '2.0.0', {@registerProviderForGrammars, @registerProviderForScopes, @unregisterProviderForGrammars, @unregisterProviderForScopes, @unregisterProvider}
+    @subscriptions.add atom.services.provide 'autocomplete.provider-api', '0.1.0', {@registerProviderForGrammars, @registerProviderForScope, @unregisterProvider}
 
   # ^^^ PROVIDER API ^^^
   # |||              |||

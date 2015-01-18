@@ -50,6 +50,7 @@ class ProviderManager
   registerProviderForScope: (provider, scope) =>
     return unless provider?
     return unless scope?
+    return if _.contains(@providersForScopeChain(scope), provider)
     properties = {}
     properties[scope] = {provider}
     registration = @store.addProperties('autocomplete-provider-registration', properties)

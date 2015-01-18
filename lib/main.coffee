@@ -86,7 +86,9 @@ module.exports =
           a.registerProviderForEditor(testProvider, editor) # Note that this is a deprecated API, you should update to v2.0.0.
         ```
     """
-    return @autocompleteManager.providerManager.registerProviderForEditor(provider, editor)
+    # No-Op: Determine If We Will Temporarily Provide Legacy API
+    # return @autocompleteManager.providerManager.registerProviderForEditor(provider, editor)
+    return null
 
   # Public: unregisters the given provider
   #
@@ -101,7 +103,9 @@ module.exports =
           a.unregisterProvider(testProvider)
         ```
     """
-    @autocompleteManager.providerManager.unregisterProvider(provider)
+    # No-Op: Determine If We Will Temporarily Provide Legacy API
+    # @autocompleteManager.providerManager.unregisterProvider(provider)
+    return null
 
-  Provider: Provider
-  Suggestion: Suggestion
+  Provider: Provider # TODO: Remove
+  Suggestion: Suggestion # TODO: Remove

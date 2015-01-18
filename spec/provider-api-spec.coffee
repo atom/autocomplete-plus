@@ -47,7 +47,7 @@ describe "Provider API", ->
         consumer?.dispose()
         registration?.dispose()
 
-    describe "Legacy Provider API", ->
+    xdescribe "Legacy Provider API", ->
       it "registers the given provider for the given editor", ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()

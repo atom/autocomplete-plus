@@ -29,10 +29,10 @@ describe "HTML labels", ->
 
   afterEach ->
     consumer?.dispose()
-    
+
   it "should allow HTML in labels for suggestions in the suggestion list", ->
     runs ->
-      consumer = atom.services.consume "autocomplete.provider-api", "2.0.0", (a) ->
+      consumer = atom.services.consume "autocomplete.provider-api", "0.1.0", (a) ->
         testProvider = new TestProvider(editor)
         a.registerProviderForGrammars(testProvider, [editor.getGrammar()])
 
@@ -42,6 +42,5 @@ describe "HTML labels", ->
       advanceClock(completionDelay)
 
       suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-
       expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
       expect(suggestionListView.querySelector('li')).toHaveClass('ohai')

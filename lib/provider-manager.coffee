@@ -58,11 +58,9 @@ class ProviderManager
       @subscriptions.add(provider) unless _.contains(@subscriptions?.disposables, provider)
 
     new Disposable =>
-      console.log @providerIsRegistered(provider)
       registration.dispose()
       if _.contains(@subscriptions?.disposables, provider) and not @providerIsRegistered(provider)
         @subscriptions.remove(provider)
-      console.log @providerIsRegistered(provider)
 
   registerProviderForEditor: (provider, editor) =>
     return unless provider?

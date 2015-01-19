@@ -8,7 +8,7 @@ Provider = require './provider'
 module.exports =
 class ProviderManager
   fuzzyProvider: null
-  scopedPropertyStore: null
+  store: null
   subscriptions: null
 
   constructor: ->

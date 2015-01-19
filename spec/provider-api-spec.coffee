@@ -1,5 +1,4 @@
 TestProvider = require('./lib/test-provider')
-{ServiceHub}  = require 'atom'
 _ = require 'underscore-plus'
 
 describe "Provider API", ->

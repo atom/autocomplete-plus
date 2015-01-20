@@ -38,12 +38,21 @@ class ProviderManager
     providers
 
   addProvider: (provider) =>
-    return unless provider?
+    return unless @isValidProvider(provider)
     @providers.set(provider, Uuid.v4()) unless @providers.has(provider)
     @subscriptions.add(provider) if provider.dispose? and not _.contains(@subscriptions?.disposables, provider)
 
+  addLegacyProvider: (provider) =>
+    # TODO: Shim to anonymous object here, to make legacy Provider work correctly
+
+  isValidProvider: (provider) =>
+    return provider? and provider.requestHandler? and typeof provider.requestHandler is 'function' and provider.selector? and provider.selector isnt '' and provider.selector isnt false
+
+  isLegacyProvider: (provider) =>
+    return provider? and provider instanceof Provider
+
   removeProvider: (provider) =>
-    return unless provider?
+    return unless @isValidProvider(provider)
     @providers.delete(provider) if @providers.has(provider)
     @subscriptions.remove(provider) if provider.dispose? and _.contains(@subscriptions?.disposables, provider)
 
@@ -61,7 +70,7 @@ class ProviderManager
     scope = scope.join(',.')
     scope = '.' + scope
     return @registerProviderForScope(provider, scope)
-    
+
   registerProviderForScope: (provider, scope) =>
     return unless provider?
     return unless scope?

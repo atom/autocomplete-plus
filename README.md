@@ -48,3 +48,5 @@ Additional confirmation keymapping can be customised in your keymap.cson:
 Since version 0.12.0, other packages are able to register suggestion providers to the autocomplete-plus package.
 
 [See the tutorial on how to create and register suggestion providers](https://github.com/atom-community/autocomplete-plus/wiki/Tutorial:-Registering-and-creating-a-suggestion-provider)
+
+## Get Ready For Autocomplete-Plus vNext

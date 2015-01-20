@@ -76,6 +76,7 @@ module.exports =
   # editor - The {TextEditor} we should register the provider with
   registerProviderForEditor: (provider, editor) ->
     return unless @autocompleteManager?.providerManager?
+    return unless editor?.getGrammar()?.scopeName?
     deprecate """
       registerProviderForEditor and registerProviderForEditorView are no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
@@ -86,9 +87,7 @@ module.exports =
           a.registerProviderForEditor(testProvider, editor) # Note that this is a deprecated API, you should update to v2.0.0.
         ```
     """
-    # No-Op: Determine If We Will Temporarily Provide Legacy API
-    # return @autocompleteManager.providerManager.registerProviderForEditor(provider, editor)
-    return null
+    return @autocompleteManager.providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
 
   # Public: unregisters the given provider
   #
@@ -103,9 +102,7 @@ module.exports =
           a.unregisterProvider(testProvider)
         ```
     """
-    # No-Op: Determine If We Will Temporarily Provide Legacy API
-    # @autocompleteManager.providerManager.unregisterProvider(provider)
-    return null
+    @autocompleteManager.providerManager.unregisterLegacyProvider(provider)
 
   Provider: Provider # TODO: Remove
   Suggestion: Suggestion # TODO: Remove

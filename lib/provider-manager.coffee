@@ -41,24 +41,11 @@ class ProviderManager
     @providers.set(provider, Uuid.v4()) unless @providers.has(provider)
     @subscriptions.add(provider) if provider.dispose? and not _.contains(@subscriptions?.disposables, provider)
 
-  addLegacyProvider: (provider) =>
-    # TODO: Shim to anonymous object here, to make legacy Provider work correctly
-
   isValidProvider: (provider) =>
     return provider? and provider.requestHandler? and typeof provider.requestHandler is 'function' and provider.selector? and provider.selector isnt '' and provider.selector isnt false
 
   isLegacyProvider: (provider) =>
     return provider? and provider instanceof Provider
-
-  shimLegacyProvider: (legacyProvider, selector) =>
-    {
-      requestHandler: legacyProvider.buildSuggestionsShim
-      selector: selector
-      dispose: ->
-        legacyProvider.dispose() if legacyProvider.dispose?
-        legacyProvider = null
-        selector = null
-    }
 
   providerUuid: (provider) =>
     return false unless provider?
@@ -76,8 +63,39 @@ class ProviderManager
   provideApi: =>
     @subscriptions.add atom.services.provide 'autocomplete.provider-api', '0.1.0', {@registerProvider, @unregisterProvider}
 
+  # For Legacy use only!!
+  registerLegacyProvider: (provider, selector) =>
+    return unless provider?
+    return unless selector? and selector.trim() isnt ''
+    shim = @shimLegacyProvider(provider, selector)
+    return @registerProvider(shim)
+
+  shimLegacyProvider: (legacyProvider, selector) =>
+    if @providers.has(legacyProvider)
+      existingProvider = @providers.get(legacyProvider)
+      return existingProvider if selector is existingProvider.selector
+      selector = existingProvider.selector + ' ' + selector
+      removeProvider(@providers.get(legacyProvider))
+      existingProvider = null
+
+    shim =
+      requestHandler: legacyProvider.buildSuggestionsShim
+      selector: selector
+      dispose: ->
+        legacyProvider.dispose() if legacyProvider.dispose?
+        legacyProvider = null
+        selector = null
+    @providers.set(legacyProvider, shim)
+    shim
+
+  unregisterLegacyProvider: (provider) =>
+    return unless provider?
+    return unless @providers.has(provider)
+    shim = @providers.get(provider)
+    @providers.delete(provider)
+    @unregisterProvider(shim)
+
   registerProvider: (provider) =>
-    provider = @shimLegacyProvider(provider) if @isLegacyProvider(provider)
     return unless @isValidProvider(provider)
     @addProvider(provider)
     id = @providerUuid(provider)
@@ -103,8 +121,12 @@ class ProviderManager
 
   unregisterProvider: (provider) =>
     return unless provider?
+    return unless @providers.has(provider)
+    id = @providers.get(provider)
+    return unless id?
+    @store.removePropertiesForSource(id)
     @subscriptions.remove(provider) if provider.dispose? and _.contains(@subscriptions?.disposables, provider)
-    # TODO: Determine how to actually filter all providers from the @store
+    @providers.delete(provider)
     return
 
   # ^^^ PROVIDER API ^^^

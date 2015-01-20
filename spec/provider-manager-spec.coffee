@@ -128,3 +128,62 @@ describe "Provider Manager", ->
         selector: false
         dispose: ->
       expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
+
+    it "registers a valid provider", ->
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providers.has(testProvider)).toEqual(false)
+
+      providerManager.registerProvider(testProvider)
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providers.has(testProvider)).toEqual(true)
+
+    fit "does not create duplicate registrations for the same scope", ->
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providers.has(testProvider)).toEqual(false)
+
+      providerManager.registerProvider(testProvider)
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providers.has(testProvider)).toEqual(true)
+
+      providerManager.registerProvider(testProvider)
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providers.has(testProvider)).toEqual(true)
+
+      providerManager.registerProvider(testProvider)
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providers.has(testProvider)).toEqual(true)
+
+    it "does not register an invalid provider", ->
+      bogusProvider =
+        requestHandler: 'yo, this is a bad handler'
+        selector: '.source.js'
+        dispose: ->
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), bogusProvider)).toEqual(false)
+      expect(providerManager.providers.has(bogusProvider)).toEqual(false)
+
+      providerManager.registerProvider(bogusProvider)
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), bogusProvider)).toEqual(false)
+      expect(providerManager.providers.has(bogusProvider)).toEqual(false)
+
+    it "shims a legacy provider during registration", ->
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), providerManager.fuzzyProvider)).toEqual(true)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyTestProvider)).toEqual(false)
+      expect(providerManager.providers.has(legacyTestProvider)).toEqual(false)
+
+      expect(providerManager.isLegacyProvider(legacyTestProvider)).toEqual(true)
+      providerManager.registerLegacyProvider(legacyTestProvider, '.source.js')
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+      expect(providerManager.providers.has(legacyTestProvider)).toEqual(true)
+      shimProvider = providerManager.providers.get(legacyTestProvider)
+      expect(providerManager.providers.has(shimProvider)).toEqual(true)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyTestProvider)).toEqual(false)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)

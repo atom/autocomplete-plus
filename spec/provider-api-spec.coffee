@@ -46,64 +46,81 @@ describe "Provider API", ->
         consumer?.dispose()
         registration?.dispose()
 
-    xdescribe "Legacy Provider API", ->
+    describe "Legacy Provider API", ->
       it "registers the given provider for the given editor", ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
-          testProvider = new TestProvider(editor)
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+
+          testProvider = new TestProvider()
+          expect(autocompleteManager.providerManager.isLegacyProvider(testProvider)).toEqual(true)
           mainModule.registerProviderForEditor(testProvider, editor)
 
-          expect(_.size(autocompleteManager.providerManager.store.propertySets)).toEqual(2)
-          expect(autocompleteManager.providerManager.store.propertySets[0].properties.provider).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.store.propertySets[0].selector.selector[0].classList[0]).toEqual('js')
-          expect(autocompleteManager.providerManager.store.propertySets[0].selector.selector[0].classList[1]).toEqual('source')
-          expect(autocompleteManager.providerManager.store.propertySets[1].properties.provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
+          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
+          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
 
       it "registers the given provider once when called multiple times for the given editor", ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
-          testProvider = new TestProvider(editor)
-          expect(_.size(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration'))).toEqual(1)
-          expect(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['*'].provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+
+          testProvider = new TestProvider()
+          expect(autocompleteManager.providerManager.isLegacyProvider(testProvider)).toEqual(true)
+          mainModule.registerProviderForEditor(testProvider, editor)
+
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
+          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
+          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
 
           mainModule.registerProviderForEditor(testProvider, editor)
-          expect(_.size(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration'))).toEqual(2)
-          expect(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['*'].provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['.js.source'].provider).toEqual(testProvider)
+
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
+          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
+          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
 
           mainModule.registerProviderForEditor(testProvider, editor)
-          expect(_.size(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration'))).toEqual(2)
-          expect(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['*'].provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          console.log _.deepClone autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['.js.source'].provider
-          console.log _.deepClone testProvider
-          expect(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['.js.source'].provider).toEqual(testProvider)
 
-          mainModule.registerProviderForEditor(testProvider, editor)
-          expect(_.size(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration'))).toEqual(2)
-          expect(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['*'].provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.store.propertiesForSource('autocomplete-provider-registration')['.js.source'].provider).toEqual(testProvider)
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
+          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
+          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
 
       it "unregisters the provider from all editors", ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
-          testProvider = new TestProvider(editor)
-          expect(_.size(autocompleteManager.providerManager.store.propertySets)).toEqual(1)
-          expect(autocompleteManager.providerManager.store.propertySets[0].properties.provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
+          testProvider = new TestProvider()
+          testProvider = new TestProvider()
+          expect(autocompleteManager.providerManager.isLegacyProvider(testProvider)).toEqual(true)
           mainModule.registerProviderForEditor(testProvider, editor)
-          expect(_.size(autocompleteManager.providerManager.store.propertySets)).toEqual(2)
-          expect(autocompleteManager.providerManager.store.propertySets[0].properties.provider).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.store.propertySets[0].selector.selector[0].classList[0]).toEqual('js')
-          expect(autocompleteManager.providerManager.store.propertySets[0].selector.selector[0].classList[1]).toEqual('source')
-          expect(autocompleteManager.providerManager.store.propertySets[1].properties.provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
+          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
+          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
 
           mainModule.unregisterProvider(testProvider)
-          expect(_.size(autocompleteManager.providerManager.store.propertySets)).toEqual(1)
-          expect(autocompleteManager.providerManager.store.propertySets[0].properties.provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+          expect(autocompleteManager.providerManager.store).toBeDefined()
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(false)
+          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(false)
 
       it "buildSuggestions is called for a registered provider", ->
         runs ->
-          testProvider = new TestProvider(editor)
+          testProvider = new TestProvider()
           mainModule.registerProviderForEditor(testProvider, editor)
 
           spyOn(testProvider, "buildSuggestions").andCallThrough()
@@ -115,24 +132,6 @@ describe "Provider API", ->
           advanceClock completionDelay
 
           expect(testProvider.buildSuggestions).toHaveBeenCalled()
-
-      it "confirm is called for a registered provider", ->
-        runs ->
-          testProvider = new TestProvider(editor)
-          mainModule.registerProviderForEditor(testProvider, editor)
-
-          spyOn(testProvider, 'confirm').andCallThrough()
-
-          # Trigger an autocompletion
-          editor.moveToBottom()
-          editor.moveToBeginningOfLine()
-          editor.insertText('f')
-          advanceClock(completionDelay)
-
-          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
-
-          expect(testProvider.confirm).toHaveBeenCalled()
 
     describe "Provider API v0.1.0", ->
       [testProvider, autocomplete, registration] = []
@@ -166,6 +165,38 @@ describe "Provider API", ->
           expect(autocompleteManager.providerManager.store.propertySets[1].selector.selector[0].classList[1]).toEqual('source')
           expect(autocompleteManager.providerManager.store.propertySets[2].properties.provider).toEqual(autocompleteManager.providerManager.fuzzyProvider)
 
+          editor.moveToBottom()
+          editor.insertText('o')
+
+          advanceClock(completionDelay)
+
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+
+          expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
+          expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+
+      xit "registers the given provider once when called multiple times", ->
+        runs ->
+          # Register the test provider
+          consumer = atom.services.consume "autocomplete.provider-api", "0.1.0", (a) ->
+            autocomplete = a
+            testProvider =
+              requestHandler: (options) ->
+                [{
+                  provider: testProvider,
+                  word: "ohai",
+                  prefix: "ohai",
+                  label: "<span style=\"color: red\">ohai</span>",
+                  renderLabelAsHtml: true,
+                  className: 'ohai'
+                }]
+              selector: '.source.js,.source.coffee'
+              dispose: ->
+            registration = a.registerProvider(testProvider)
+
+          expect(autocompleteManager.providerManager.store).toBeDefined()
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+          
           editor.moveToBottom()
           editor.insertText('o')
 

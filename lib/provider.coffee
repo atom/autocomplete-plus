@@ -18,7 +18,7 @@ class Provider
   # the default suggestions or should be displayed exclusively
   exclusive: false
 
-  buildSuggestionsShim: (options) ->
+  buildSuggestionsShim: (options) =>
     return unless options?.editor?
     @editor = options.editor
     @buildSuggestions.apply(this, arguments)

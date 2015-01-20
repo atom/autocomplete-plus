@@ -27,7 +27,7 @@ describe "Provider Manager", ->
     runs ->
       # No-op
 
-  fdescribe "when no providers have been registered", ->
+  describe "when no providers have been registered", ->
 
     it "is constructed correctly", ->
       expect(providerManager.subscriptions).toBeDefined()

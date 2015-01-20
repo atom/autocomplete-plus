@@ -110,7 +110,7 @@ class AutocompleteManager
 
     providers = @providerManager.providersForScopeChain(options.scopeChain)
     for provider in providers
-      providerSuggestions = provider?.buildSuggestionsShim(options)
+      providerSuggestions = provider?.requestHandler(options)
       continue unless providerSuggestions?.length
 
       if provider.exclusive
@@ -130,12 +130,9 @@ class AutocompleteManager
     return unless @editor?
     return unless match?.provider?
 
-    replace = match.provider.confirm(match)
     @editor.getSelections()?.forEach (selection) -> selection?.clear()
-
     @hideSuggestionList()
 
-    return unless replace
     @replaceTextWithMatch(match)
     @editor.getCursors()?.forEach (cursor) ->
       position = cursor?.getBufferPosition()

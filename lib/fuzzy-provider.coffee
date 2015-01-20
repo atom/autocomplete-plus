@@ -1,19 +1,20 @@
 _ = require 'underscore-plus'
 Suggestion = require './suggestion'
 fuzzaldrin = require 'fuzzaldrin'
-Provider = require './provider'
 {CompositeDisposable} = require 'event-kit'
 
 module.exports =
-class FuzzyProvider extends Provider
+class FuzzyProvider
+  wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
   wordList: null
   editor: null
   buffer: null
 
-  initialize: ->
+  constructor: ->
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @buildWordList()
+    @selector = '*'
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -42,7 +43,7 @@ class FuzzyProvider extends Provider
   # suggestions, the suggestions will be the only ones that are displayed.
   #
   # Returns an {Array} of Suggestion instances
-  buildSuggestions: (options) ->
+  requestHandler: (options) =>
     return unless options?
     return unless options.editor?
     selection = options.editor.getLastSelection()
@@ -58,17 +59,6 @@ class FuzzyProvider extends Provider
 
     # Now we're ready - display the suggestions
     return suggestions
-
-  # Public: Gets called when a suggestion has been confirmed by the user. Return
-  # true to replace the word with the suggestion. Return false if you want to
-  # handle the behavior yourself.
-  #
-  # item - The confirmed {Suggestion}
-  #
-  # Returns a {Boolean} that specifies whether autocomplete+ should replace
-  # the word with the suggestion.
-  confirm: (item) ->
-    return true
 
   # Private: Gets called when the user saves the document. Rebuilds the word
   # list.
@@ -89,7 +79,7 @@ class FuzzyProvider extends Provider
   # Private: Adds the last typed word to the wordList
   #
   # newLine - {Boolean} Has a new line been typed?
-  addLastWordToList: (row, column, newline) ->
+  addLastWordToList: (row, column, newline) =>
     lastWord = @lastTypedWord(row, column, newline)
     return unless lastWord
 
@@ -102,7 +92,7 @@ class FuzzyProvider extends Provider
   # newLine - {Boolean} Has a new line been typed?
   #
   # Returns {String} the last typed word
-  lastTypedWord: (row, column, newline) ->
+  lastTypedWord: (row, column, newline) =>
     # The user pressed enter, check everything until the end
     if newline
       maxColumn = column - 1 unless column = 0
@@ -117,7 +107,7 @@ class FuzzyProvider extends Provider
     return lastWord
 
   # Private: Generates the word list from the editor buffer(s)
-  buildWordList: ->
+  buildWordList: =>
     return unless @editor?
 
     # Abuse the Hash as a Set
@@ -148,7 +138,7 @@ class FuzzyProvider extends Provider
   # prefix - {String} The prefix
   #
   # Returns an {Array} of Suggestion instances
-  findSuggestionsForWord: (prefix) ->
+  findSuggestionsForWord: (prefix) =>
     # Merge the scope specific words into the default word list
     wordList = @wordList.concat(@getCompletionsForCursorScope())
 
@@ -163,14 +153,14 @@ class FuzzyProvider extends Provider
 
     return results
 
-  settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
+  settingsForScopeDescriptor: (scopeDescriptor, keyPath) =>
     entries = atom.config.getAll(null, scope: scopeDescriptor)
     value for {value} in entries when _.valueForKeyPath(value, keyPath)?
 
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)
   #
   # Returns an {Array} of strings
-  getCompletionsForCursorScope: ->
+  getCompletionsForCursorScope: =>
     cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
     completions = @settingsForScopeDescriptor(cursorScope.getScopesArray(), "editor.completions")
     completions = completions.map((properties) -> _.valueForKeyPath properties, "editor.completions")

@@ -17,8 +17,7 @@ class ProviderManager
     @providers = new Map()
     @store = new ScopedPropertyStore
     @fuzzyProvider = new FuzzyProvider()
-    @subscriptions.add(@fuzzyProvider)
-    fuzzyRegistration = @registerProviderForScope(@fuzzyProvider, '*')
+    fuzzyRegistration = @registerProvider(@fuzzyProvider)
     @subscriptions.add(fuzzyRegistration) if fuzzyRegistration?
     @provideApi()
 
@@ -51,6 +50,21 @@ class ProviderManager
   isLegacyProvider: (provider) =>
     return provider? and provider instanceof Provider
 
+  shimLegacyProvider: (legacyProvider, selector) =>
+    {
+      requestHandler: legacyProvider.buildSuggestionsShim
+      selector: selector
+      dispose: ->
+        legacyProvider.dispose() if legacyProvider.dispose?
+        legacyProvider = null
+        selector = null
+    }
+
+  providerUuid: (provider) =>
+    return false unless provider?
+    return false unless @providers.has(provider)
+    @providers.get(provider)
+
   removeProvider: (provider) =>
     return unless @isValidProvider(provider)
     @providers.delete(provider) if @providers.has(provider)
@@ -60,27 +74,21 @@ class ProviderManager
   #  vvv PROVIDER API vvv
 
   provideApi: =>
-    @subscriptions.add atom.services.provide 'autocomplete.provider-api', '0.1.0', {@registerProviderForGrammars, @registerProviderForScope, @unregisterProvider}
+    @subscriptions.add atom.services.provide 'autocomplete.provider-api', '0.1.0', {@registerProvider, @unregisterProvider}
 
-  registerProviderForGrammars: (provider, grammars) =>
-    return unless provider?
-    return unless grammars? and _.size(grammars) > 0
-    grammars = _.filter(grammars, (grammar) -> grammar?.scopeName?)
-    scope = _.pluck(grammars, 'scopeName')
-    scope = scope.join(',.')
-    scope = '.' + scope
-    return @registerProviderForScope(provider, scope)
+  registerProvider: (provider) =>
+    provider = @shimLegacyProvider(provider) if @isLegacyProvider(provider)
+    return unless @isValidProvider(provider)
+    @addProvider(provider)
+    id = @providerUuid(provider)
+    @removeProvider(provider) unless id?
+    return unless id?
 
-  registerProviderForScope: (provider, scope) =>
-    return unless provider?
-    return unless scope?
-    return if _.contains(@providersForScopeChain(scope), provider)
+    # TODO: De-dupe registration
+    # return if _.contains(@providersForScopeChain(scope), provider)
     properties = {}
-    properties[scope] = {provider}
-    registration = @store.addProperties('autocomplete-provider-registration', properties)
-
-    if provider.dispose?
-      @subscriptions.add(provider) unless _.contains(@subscriptions?.disposables, provider)
+    properties[provider.selector] = {provider}
+    registration = @store.addProperties(id, properties)
 
     new Disposable =>
       registration.dispose()

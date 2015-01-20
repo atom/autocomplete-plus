@@ -33,8 +33,19 @@ describe "HTML labels", ->
   it "should allow HTML in labels for suggestions in the suggestion list", ->
     runs ->
       consumer = atom.services.consume "autocomplete.provider-api", "0.1.0", (a) ->
-        testProvider = new TestProvider(editor)
-        a.registerProviderForGrammars(testProvider, [editor.getGrammar()])
+        testProvider =
+          requestHandler: (options) ->
+            [{
+              provider: testProvider,
+              word: "ohai",
+              prefix: "ohai",
+              label: "<span style=\"color: red\">ohai</span>",
+              renderLabelAsHtml: true,
+              className: 'ohai'
+            }]
+          selector: '.source.js'
+          dispose: ->
+        a.registerProvider(testProvider)
 
       editor.moveToBottom()
       editor.insertText('o')

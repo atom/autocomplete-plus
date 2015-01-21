@@ -101,11 +101,12 @@ class ProviderManager
     id = @providerUuid(provider)
     @removeProvider(provider) unless id?
     return unless id?
-
-    # TODO: De-dupe registration
-    # return if _.contains(@providersForScopeChain(scope), provider)
+    selectors = provider.selector.split(',')
+    selectors = _.reject selectors, (s) =>
+      p = @store.propertiesForSourceAndSelector(id, s)
+      return p? and p.provider?
     properties = {}
-    properties[provider.selector] = {provider}
+    properties[selectors.join(',')] = {provider}
     registration = @store.addProperties(id, properties)
 
     new Disposable =>

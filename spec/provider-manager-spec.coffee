@@ -139,7 +139,7 @@ describe "Provider Manager", ->
       expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
       expect(providerManager.providers.has(testProvider)).toEqual(true)
 
-    fit "does not create duplicate registrations for the same scope", ->
+    it "does not create duplicate registrations for the same scope", ->
       expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
       expect(providerManager.providers.has(testProvider)).toEqual(false)

@@ -1,4 +1,4 @@
-require "../spec-helper"
+{waitForAutocomplete} = require('../spec-helper')
 
 describe "Autocomplete", ->
   [editorView, editor, completionDelay] = []
@@ -35,12 +35,13 @@ describe "Autocomplete", ->
           editor.moveToBottom()
           editor.insertText "s"
 
-          advanceClock completionDelay
+          waitForAutocomplete()
 
-          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+          runs ->
+            expect(editorView.querySelector(".autocomplete-plus")).toExist()
 
-          editor.insertText "b"
+            editor.insertText "b"
+            waitForAutocomplete()
 
-          advanceClock completionDelay
-
-          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+          runs ->
+            expect(editorView.querySelector(".autocomplete-plus")).not.toExist()

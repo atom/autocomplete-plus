@@ -1,4 +1,4 @@
-require "../spec-helper"
+{waitForAutocomplete} = require('../spec-helper')
 
 describe "Autocomplete", ->
   [mainModule, autocompleteManager, editorView, editor, completionDelay] = []
@@ -32,9 +32,11 @@ describe "Autocomplete", ->
       runs ->
         editor.insertText c for c in "bla"
 
-        advanceClock completionDelay
+        waitForAutocomplete()
 
-        expect(editorView.querySelector(".autocomplete-plus")).toExist()
+        runs ->
 
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-        expect(suggestionListView.querySelector("li")).toHaveText "bla-foo--bar"
+          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+          expect(suggestionListView.querySelector("li")).toHaveText "bla-foo--bar"

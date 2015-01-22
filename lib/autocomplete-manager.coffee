@@ -106,23 +106,36 @@ class AutocompleteManager
       scopeChain: currentScopeChain
       prefix: @prefixForCursor(cursor)
 
-    # Iterate over all providers, ask them to build suggestion(s)
-    suggestions = []
-
     providers = @providerManager.providersForScopeChain(options.scopeChain)
-    for provider in providers
+    providers = providers.map (provider) ->
       providerSuggestions = provider?.requestHandler(options)
-      continue unless providerSuggestions?.length
 
+    @currentSuggestionsPromise = suggestionsPromise = Promise.all(providers)
+      .then _.partial(@gatherSuggestions, providers)
+      .then (suggestions) =>
+        # No suggestions? Cancel autocompletion.
+        return unless suggestions.length
+        # Show the suggestion list if we have not already requested more suggestions
+        @showSuggestionList(suggestions) if @currentSuggestionsPromise == suggestionsPromise
+
+  # Private: gather suggestions based on providers
+  #
+  # providers - An array of providers to check against provided suggestions
+  # providerSuggestions - array of arrays of suggestions provided by all called providers
+  gatherSuggestions: (providers, providerSuggestions) ->
+    exclusiveResults = false
+    providerSuggestions.reduce (suggestions, providerSuggestions, index) ->
+      return suggestions if exclusiveResults
+      provider = providers[index]
+
+      return suggestions unless providerSuggestions?.length
       if provider.exclusive
         suggestions = providerSuggestions
-        break
+        exclusiveResults = true
       else
         suggestions = suggestions.concat(providerSuggestions)
-
-    # No suggestions? Cancel autocompletion.
-    return unless suggestions.length
-    @showSuggestionList(suggestions)
+      suggestions
+    ,[]
 
   prefixForCursor: (cursor) =>
     return '' unless @buffer? and cursor?
@@ -146,7 +159,7 @@ class AutocompleteManager
       position = cursor?.getBufferPosition()
       cursor.setBufferPosition([position.row, position.column]) if position?
 
-  showSuggestionList: (suggestions) =>
+  showSuggestionList: (suggestions) ->
     @suggestionList.changeItems(suggestions)
     @suggestionList.show(@editor)
 

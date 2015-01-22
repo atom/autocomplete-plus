@@ -1,3 +1,4 @@
+{waitForAutocomplete} = require('./spec-helper')
 TestProvider = require('./lib/test-provider')
 _ = require 'underscore-plus'
 
@@ -166,12 +167,13 @@ describe "Provider API", ->
           editor.moveToBottom()
           editor.insertText('o')
 
-          advanceClock(completionDelay)
+          waitForAutocomplete()
 
-          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+          runs ->
+            suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
 
-          expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-          expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+            expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
+            expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
 
       xit "registers the given provider once when provided times", ->
         runs ->

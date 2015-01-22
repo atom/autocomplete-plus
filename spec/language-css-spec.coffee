@@ -1,3 +1,5 @@
+{waitForAutocomplete} = require('./spec-helper')
+
 describe "CSS Language Support", ->
   [completionDelay, editorView, editor, autocompleteManager, mainModule, css] = []
 
@@ -35,14 +37,16 @@ describe "CSS Language Support", ->
       editor.insertText('u')
       editor.insertText('t')
 
-      advanceClock(completionDelay)
-      editorView = atom.views.getView(editor)
+      waitForAutocomplete()
 
-      suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-      items = suggestionListView.querySelectorAll('li')
-      expect(editorView.querySelector('.autocomplete-plus')).toExist()
-      expect(items.length).toBe(10)
-      expect(items[0]).toHaveText('outline')
-      expect(items[1]).toHaveText('outline-color')
-      expect(items[2]).toHaveText('outline-width')
-      expect(items[3]).toHaveText('outline-style')
+      runs ->
+        editorView = atom.views.getView(editor)
+
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        items = suggestionListView.querySelectorAll('li')
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        expect(items.length).toBe(10)
+        expect(items[0]).toHaveText('outline')
+        expect(items[1]).toHaveText('outline-color')
+        expect(items[2]).toHaveText('outline-width')
+        expect(items[3]).toHaveText('outline-style')

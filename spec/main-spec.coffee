@@ -1,3 +1,5 @@
+{waitForAutocomplete} = require('./spec-helper')
+
 describe "Autocomplete", ->
   [completionDelay, editorView, editor, autocomplete, mainModule] = []
 
@@ -43,10 +45,12 @@ describe "Autocomplete", ->
         editor.moveToBottom()
         editor.insertText("A")
 
-        advanceClock completionDelay
-        editorView = editorView
-        expect(editorView.querySelector(".autocomplete-plus")).toExist()
+        waitForAutocomplete()
 
-        # Deactivate the package
-        atom.packages.deactivatePackage "autocomplete-plus"
-        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+        runs ->
+          editorView = editorView
+          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+
+          # Deactivate the package
+          atom.packages.deactivatePackage "autocomplete-plus"
+          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()

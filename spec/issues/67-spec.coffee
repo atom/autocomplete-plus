@@ -1,4 +1,5 @@
-require "../spec-helper"
+{waitForAutocomplete} = require('../spec-helper')
+
 AutocompleteManager = require '../../lib/autocomplete-manager'
 
 describe "Autocomplete", ->
@@ -47,19 +48,20 @@ describe "Autocomplete", ->
         expect(editorView).toHaveFocus()
         expect(editorView2).not.toHaveFocus()
 
-        advanceClock completionDelay
+        waitForAutocomplete()
 
-        expect(editorView).toHaveFocus()
-        expect(editorView2).not.toHaveFocus()
+        runs ->
+          expect(editorView).toHaveFocus()
+          expect(editorView2).not.toHaveFocus()
 
-        expect(editorView.querySelector(".autocomplete-plus")).toExist()
-        expect(editorView2.querySelector(".autocomplete-plus")).not.toExist()
+          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+          expect(editorView2.querySelector(".autocomplete-plus")).not.toExist()
 
-        suggestionListView = atom.views.getView(autocomplete.suggestionList)
-        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+          suggestionListView = atom.views.getView(autocomplete.suggestionList)
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
-        expect(editorView).toHaveFocus()
-        expect(editorView2).not.toHaveFocus()
+          expect(editorView).toHaveFocus()
+          expect(editorView2).not.toHaveFocus()
 
-        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
-        expect(editorView2.querySelector(".autocomplete-plus")).not.toExist()
+          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+          expect(editorView2.querySelector(".autocomplete-plus")).not.toExist()

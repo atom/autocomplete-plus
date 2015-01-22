@@ -1,4 +1,4 @@
-{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "../spec-helper"
+{waitForAutocomplete, triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require "../spec-helper"
 TestProvider = require '../lib/test-provider'
 
 describe "Autocomplete", ->
@@ -35,25 +35,25 @@ describe "Autocomplete", ->
         editor.setSelectedBufferRanges([[[10,1],[10,1]], [[10,9],[10,9]]])
 
         triggerAutocompletion editor, false, 'h'
-        advanceClock completionDelay
 
-        autocompleteManager = mainModule.autocompleteManager
+        runs ->
+          autocompleteManager = mainModule.autocompleteManager
 
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
-        expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
-        expect(editor.getCursorBufferPosition()).toEqual [10,12]
-        expect(editor.getLastSelection().getBufferRange()).toEqual({
-          start:
-            row: 10
-            column: 12
-          end:
-            row: 10
-            column: 12
-        })
+          expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
+          expect(editor.getCursorBufferPosition()).toEqual [10,12]
+          expect(editor.getLastSelection().getBufferRange()).toEqual({
+            start:
+              row: 10
+              column: 12
+            end:
+              row: 10
+              column: 12
+          })
 
-        expect(editor.getSelections().length).toEqual(2)
+          expect(editor.getSelections().length).toEqual(2)
 
       describe 'where text differs between cursors', ->
         it 'cancels the autocomplete', ->
@@ -61,16 +61,16 @@ describe "Autocomplete", ->
           editor.setSelectedBufferRanges([[[10,1],[10,1]], [[10,9],[10,9]]])
 
           triggerAutocompletion editor, false, 'h'
-          advanceClock completionDelay
 
-          autocompleteManager = mainModule.autocompleteManager
+          runs ->
+            autocompleteManager = mainModule.autocompleteManager
 
-          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
-          expect(editor.lineTextForBufferRow(10)).toBe "sh:extra:ah"
-          expect(editor.getSelections().length).toEqual(2)
-          expect(editor.getSelections()[0].getBufferRange()).toEqual [[10,2], [10,2]]
-          expect(editor.getSelections()[1].getBufferRange()).toEqual [[10,11], [10,11]]
+            expect(editor.lineTextForBufferRow(10)).toBe "sh:extra:ah"
+            expect(editor.getSelections().length).toEqual(2)
+            expect(editor.getSelections()[0].getBufferRange()).toEqual [[10,2], [10,2]]
+            expect(editor.getSelections()[1].getBufferRange()).toEqual [[10,11], [10,11]]
 
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

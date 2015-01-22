@@ -1,7 +1,7 @@
 TestProvider = require('./lib/test-provider')
 
 describe "HTML labels", ->
-  [completionDelay, editorView, editor, autocompleteManager, mainModule, consumer] = []
+  [completionDelay, editorView, editor, autocompleteManager, registration] = []
 
   beforeEach ->
     runs ->
@@ -24,28 +24,26 @@ describe "HTML labels", ->
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-      mainModule = a.mainModule
-      autocompleteManager = mainModule.autocompleteManager
+      autocompleteManager = a.mainModule.autocompleteManager
 
   afterEach ->
-    consumer?.dispose()
+    registration?.dispose()
 
   it "should allow HTML in labels for suggestions in the suggestion list", ->
     runs ->
-      consumer = atom.services.consume "autocomplete.provider-api", "0.1.0", (a) ->
-        testProvider =
-          requestHandler: (options) ->
-            [{
-              provider: testProvider,
-              word: "ohai",
-              prefix: "ohai",
-              label: "<span style=\"color: red\">ohai</span>",
-              renderLabelAsHtml: true,
-              className: 'ohai'
-            }]
-          selector: '.source.js'
-          dispose: ->
-        a.registerProvider(testProvider)
+      testProvider =
+        requestHandler: (options) ->
+          [{
+            provider: this,
+            word: "ohai",
+            prefix: "ohai",
+            label: "<span style=\"color: red\">ohai</span>",
+            renderLabelAsHtml: true,
+            className: 'ohai'
+          }]
+        selector: '.source.js'
+        dispose: ->
+      registration = atom.services.provide('autocomplete.provider', '0.1.0', {provider: testProvider})
 
       editor.moveToBottom()
       editor.insertText('o')

@@ -81,10 +81,24 @@ module.exports =
       registerProviderForEditor and registerProviderForEditorView are no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
         ```
-        # Backward-compatible example:
-        disposable = atom.services.consume "autocomplete.provider-api", "1.0.0", (a) ->
-          testProvider = new TestProvider(editor)
-          a.registerProviderForEditor(testProvider, editor) # Note that this is a deprecated API, you should update to v2.0.0.
+        # Example:
+        testProvider =
+          requestHandler: (options) =>
+            # Build your suggestions here...
+
+            # Return your suggestions as an array of anonymous objects
+            [{
+              provider: this,
+              word: 'ohai',
+              prefix: 'ohai',
+              label: '<span style="color: red">ohai</span>',
+              renderLabelAsHtml: true,
+              className: 'ohai'
+            }]
+          selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
+          dispose: ->
+            # Your dispose logic here
+        disposable = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
         ```
     """
     return @autocompleteManager.providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
@@ -98,8 +112,25 @@ module.exports =
       unregisterProvider is no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
         ```
-        disposable = atom.services.consume "autocomplete.provider-api", "1.0.0", (a) ->
-          a.unregisterProvider(testProvider)
+        # Example:
+        testProvider =
+          requestHandler: (options) =>
+            # Build your suggestions here...
+
+            # Return your suggestions as an array of anonymous objects
+            [{
+              provider: this,
+              word: 'ohai',
+              prefix: 'ohai',
+              label: '<span style="color: red">ohai</span>',
+              renderLabelAsHtml: true,
+              className: 'ohai'
+            }]
+          selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
+          dispose: ->
+            # Your dispose logic here
+        disposable = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+        disposable.dispose() # << unregisters your provider
         ```
     """
     @autocompleteManager.providerManager.unregisterLegacyProvider(provider)

@@ -19,12 +19,16 @@ class ProviderManager
     @fuzzyProvider = new FuzzyProvider()
     fuzzyRegistration = @registerProvider(@fuzzyProvider)
     @subscriptions.add(fuzzyRegistration) if fuzzyRegistration?
-    @provideApi()
+    @consumeApi()
 
   dispose: ->
     @subscriptions?.dispose()
     @subscriptions = null
+    @store?.cache = {}
+    @store?.propertySets = []
     @store = null
+    @providers?.clear()
+    @providers = null
     @fuzzyProvider = null
 
   providersForScopeChain: (scopeChain) =>
@@ -60,8 +64,10 @@ class ProviderManager
   #  |||              |||
   #  vvv PROVIDER API vvv
 
-  provideApi: =>
-    @subscriptions.add atom.services.provide 'autocomplete.provider-api', '0.1.0', {@registerProvider, @unregisterProvider}
+  consumeApi: =>
+    @subscriptions.add atom.services.consume 'autocomplete.provider', '0.1.0', (provider) =>
+      return unless provider?.provider?
+      return @registerProvider(provider.provider)
 
   # For Legacy use only!!
   registerLegacyProvider: (provider, selector) =>
@@ -111,8 +117,8 @@ class ProviderManager
 
     new Disposable =>
       registration.dispose()
-      if _.contains(@subscriptions?.disposables, provider) and not @providerIsRegistered(provider)
-        @subscriptions.remove(provider)
+      unless @providerIsRegistered(provider)
+        @removeProvider(provider)
 
   providerIsRegistered: (provider) =>
     return false unless @store?

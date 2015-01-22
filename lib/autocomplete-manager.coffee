@@ -67,7 +67,7 @@ class AutocompleteManager
     return paneItem instanceof TextEditor
 
   # Private: Handles editor events
-  handleEvents: ->
+  handleEvents: =>
     # Track the current pane item, update current editor
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
@@ -75,7 +75,7 @@ class AutocompleteManager
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
     @subscriptions.add(@suggestionList.onDidCancel(@hideSuggestionList))
 
-  handleCommands: ->
+  handleCommands: =>
     # Allow autocomplete to be triggered via keymap
     @subscriptions.add(atom.commands.add 'atom-text-editor',
       'autocomplete-plus:activate': @runAutocompletion
@@ -138,18 +138,18 @@ class AutocompleteManager
       position = cursor?.getBufferPosition()
       cursor.setBufferPosition([position.row, position.column]) if position?
 
-  showSuggestionList: (suggestions) ->
+  showSuggestionList: (suggestions) =>
     @suggestionList.changeItems(suggestions)
     @suggestionList.show(@editor)
 
-  hideSuggestionList: ->
+  hideSuggestionList: =>
     # TODO: Should we *always* focus the editor? Probably not...
     @suggestionList?.hideAndFocusOn(@editorView)
 
   # Private: Replaces the current prefix with the given match.
   #
   # match - The match to replace the current prefix with
-  replaceTextWithMatch: (match) ->
+  replaceTextWithMatch: (match) =>
     return unless @editor?
     newSelectedBufferRanges = []
 
@@ -176,7 +176,7 @@ class AutocompleteManager
   # selection - The {Selection} for the current cursor position
   #
   # Returns {String} with the prefix of the {Selection}
-  prefixOfSelection: (selection) ->
+  prefixOfSelection: (selection) =>
     selectionRange = selection.getBufferRange()
     lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineTextForBufferRow(selectionRange.end.row).length]]
     prefix = ''
@@ -193,7 +193,7 @@ class AutocompleteManager
   # Private: Checks whether the current file is blacklisted.
   #
   # Returns {Boolean} that defines whether the current file is blacklisted
-  isCurrentFileBlackListed: ->
+  isCurrentFileBlackListed: =>
     blacklist = (atom.config.get('autocomplete-plus.fileBlacklist') or '')
       .split(',')
       .map((s) -> s.trim())

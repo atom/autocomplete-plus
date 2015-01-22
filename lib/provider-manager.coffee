@@ -32,6 +32,7 @@ class ProviderManager
     @providers = null
     @fuzzyProvider = null
 
+  # TODO: This needs more robust tests
   providersForScopeChain: (scopeChain) =>
     return [] unless scopeChain?
     return [] unless @store?

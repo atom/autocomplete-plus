@@ -114,7 +114,7 @@ class SuggestionListElement extends HTMLElement
         li.dataset.index = index
 
       li.className = ''
-      li.classList.add(className)
+      li.classList.add(className) if className
       li.classList.add('selected') if index == @selectedIndex
       @selectedLi = li if index == @selectedIndex
 

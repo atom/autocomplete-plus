@@ -100,10 +100,11 @@ class AutocompleteManager
     options =
       editor: @editor
       buffer: @buffer
+      cursor: cursor
       position: cursorPosition
       scope: currentScope
       scopeChain: currentScopeChain
-      prefixOfSelection: @prefixOfSelection(@editor.getLastSelection())
+      prefix: @prefixForCursor(cursor)
 
     # Iterate over all providers, ask them to build suggestion(s)
     suggestions = []
@@ -122,6 +123,13 @@ class AutocompleteManager
     # No suggestions? Cancel autocompletion.
     return unless suggestions.length
     @showSuggestionList(suggestions)
+
+  prefixForCursor: (cursor) =>
+    return '' unless @buffer? and cursor?
+    start = cursor.getBeginningOfCurrentWordBufferPosition()
+    end = cursor.getBufferPosition()
+    return '' unless start? and end?
+    @buffer.getTextInRange(new Range(start, end))
 
   # Private: Gets called when the user successfully confirms a suggestion
   #
@@ -170,25 +178,6 @@ class AutocompleteManager
 
     @editor.insertText(match.word)
     @editor.setSelectedBufferRanges(newSelectedBufferRanges)
-
-  # Public: Finds and returns the content before the current cursor position
-  #
-  # selection - The {Selection} for the current cursor position
-  #
-  # Returns {String} with the prefix of the {Selection}
-  prefixOfSelection: (selection) =>
-    selectionRange = selection.getBufferRange()
-    lineRange = [[selectionRange.start.row, 0], [selectionRange.end.row, @editor.lineTextForBufferRow(selectionRange.end.row).length]]
-    prefix = ''
-    wordRegex = /\b\w*[a-zA-Z_-]+\w*\b/g
-    @editor.getBuffer().scanInRange wordRegex, lineRange, ({match, range, stop}) ->
-      stop() if range.start.isGreaterThan(selectionRange.end)
-
-      if range.intersectsWith(selectionRange)
-        prefixOffset = selectionRange.start.column - range.start.column
-        prefix = match[0][0...prefixOffset] if range.start.isLessThan(selectionRange.start)
-
-    return prefix
 
   # Private: Checks whether the current file is blacklisted.
   #

@@ -47,7 +47,7 @@ class FuzzyProvider
     return unless options?
     return unless options.editor?
     selection = options.editor.getLastSelection()
-    prefix = options.prefixOfSelection
+    prefix = options.prefix
 
     # No prefix? Don't autocomplete!
     return unless prefix.length

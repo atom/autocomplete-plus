@@ -27,6 +27,8 @@ describe "Autocomplete Manager", ->
       waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
         editor = e
 
+      waitsForPromise -> atom.packages.activatePackage('language-javascript')
+
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule

@@ -135,5 +135,5 @@ module.exports =
     """
     @autocompleteManager.providerManager.unregisterLegacyProvider(provider)
 
-  Provider: Provider # TODO: Remove
-  Suggestion: Suggestion # TODO: Remove
+  Provider: Provider # TODO: This is deprecated, and will be removed soon
+  Suggestion: Suggestion # TODO: This is deprecated, and will be removed soon

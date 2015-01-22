@@ -2,6 +2,7 @@ _ = require 'underscore-plus'
 Suggestion = require './suggestion'
 fuzzaldrin = require 'fuzzaldrin'
 {CompositeDisposable} = require 'event-kit'
+{TextEditor}  = require 'atom'
 
 module.exports =
 class FuzzyProvider
@@ -24,11 +25,10 @@ class FuzzyProvider
     @bufferSavedSubscription?.dispose()
     @bufferChangedSubscription?.dispose()
 
-    # Disqualify invalid pane items
-    # TODO
-    if false
-      @editor = null
-      @buffer = null
+    @editor = null
+    @buffer = null
+
+    return unless @paneItemIsValid(currentPaneItem)
 
     # Track the new editor, editorView, and buffer
     @editor = currentPaneItem
@@ -37,6 +37,11 @@ class FuzzyProvider
     # Subscribe to buffer events:
     @bufferSavedSubscription = @buffer.onDidSave(@bufferSaved)
     @bufferChangedSubscription = @buffer.onDidChange(@bufferChanged)
+
+  paneItemIsValid: (paneItem) =>
+    return false unless paneItem?
+    # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
+    return paneItem instanceof TextEditor
 
   # Public:  Gets called when the document has been changed. Returns an array
   # with suggestions. If `exclusive` is set to true and this method returns

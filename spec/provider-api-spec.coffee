@@ -49,11 +49,11 @@ describe "Provider API", ->
           registration = mainModule.registerProviderForEditor(testProvider, editor)
 
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
-          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
-          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(autocompleteManager.providerManager.legacyProviderRegistrations.has(testProvider.constructor)).toEqual(true)
+          providerRegistration = autocompleteManager.providerManager.legacyProviderRegistrations.get(testProvider.constructor)
+          expect(providerRegistration.selectors).toEqual(['.source.js'])
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), providerRegistration.shim)).toEqual(true)
 
       it "registers the given provider once when called multiple times for the given editor", ->
         runs ->
@@ -65,29 +65,29 @@ describe "Provider API", ->
           registration = mainModule.registerProviderForEditor(testProvider, editor)
 
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
-          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
-          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(autocompleteManager.providerManager.legacyProviderRegistrations.has(testProvider.constructor)).toEqual(true)
+          providerRegistration = autocompleteManager.providerManager.legacyProviderRegistrations.get(testProvider.constructor)
+          expect(providerRegistration.selectors).toEqual(['.source.js'])
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), providerRegistration.shim)).toEqual(true)
 
           registration = mainModule.registerProviderForEditor(testProvider, editor)
 
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
-          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
-          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(autocompleteManager.providerManager.legacyProviderRegistrations.has(testProvider.constructor)).toEqual(true)
+          providerRegistration = autocompleteManager.providerManager.legacyProviderRegistrations.get(testProvider.constructor)
+          expect(providerRegistration.selectors).toEqual(['.source.js'])
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), providerRegistration.shim)).toEqual(true)
 
           registration = mainModule.registerProviderForEditor(testProvider, editor)
 
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
-          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
-          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(autocompleteManager.providerManager.legacyProviderRegistrations.has(testProvider.constructor)).toEqual(true)
+          providerRegistration = autocompleteManager.providerManager.legacyProviderRegistrations.get(testProvider.constructor)
+          expect(providerRegistration.selectors).toEqual(['.source.js'])
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), providerRegistration.shim)).toEqual(true)
 
       it "unregisters the provider from all editors", ->
         runs ->
@@ -97,17 +97,16 @@ describe "Provider API", ->
           registration = mainModule.registerProviderForEditor(testProvider, editor)
 
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(true)
-          shimProvider = autocompleteManager.providerManager.providers.get(testProvider)
-          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(true)
+          expect(autocompleteManager.providerManager.legacyProviderRegistrations.has(testProvider.constructor)).toEqual(true)
+          providerRegistration = autocompleteManager.providerManager.legacyProviderRegistrations.get(testProvider.constructor)
+          expect(providerRegistration.selectors).toEqual(['.source.js'])
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
+          expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), providerRegistration.shim)).toEqual(true)
 
           mainModule.unregisterProvider(testProvider)
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providers.has(testProvider)).toEqual(false)
-          expect(autocompleteManager.providerManager.providers.has(shimProvider)).toEqual(false)
+          expect(autocompleteManager.providerManager.legacyProviderRegistrations.has(testProvider.constructor)).toEqual(false)
 
       it "buildSuggestions is called for a registered provider", ->
         runs ->

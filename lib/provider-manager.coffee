@@ -14,6 +14,7 @@ class ProviderManager
 
   constructor: ->
     @subscriptions = new CompositeDisposable
+    @legacyProviderRegistrations = new WeakMap()
     @providers = new Map()
     @store = new ScopedPropertyStore
     @fuzzyProvider = new FuzzyProvider()
@@ -69,38 +70,6 @@ class ProviderManager
       return unless provider?.provider?
       return @registerProvider(provider.provider)
 
-  # For Legacy use only!!
-  registerLegacyProvider: (provider, selector) =>
-    return unless provider?
-    return unless selector? and selector.trim() isnt ''
-    shim = @shimLegacyProvider(provider, selector)
-    return @registerProvider(shim)
-
-  shimLegacyProvider: (legacyProvider, selector) =>
-    if @providers.has(legacyProvider)
-      existingProvider = @providers.get(legacyProvider)
-      return existingProvider if selector is existingProvider.selector
-      selector = existingProvider.selector + ' ' + selector
-      removeProvider(@providers.get(legacyProvider))
-      existingProvider = null
-
-    shim =
-      requestHandler: legacyProvider.buildSuggestionsShim
-      selector: selector
-      dispose: ->
-        legacyProvider.dispose() if legacyProvider.dispose?
-        legacyProvider = null
-        selector = null
-    @providers.set(legacyProvider, shim)
-    shim
-
-  unregisterLegacyProvider: (provider) =>
-    return unless provider?
-    return unless @providers.has(provider)
-    shim = @providers.get(provider)
-    @providers.delete(provider)
-    @unregisterProvider(shim)
-
   registerProvider: (provider) =>
     return unless @isValidProvider(provider)
     @addProvider(provider)
@@ -117,24 +86,47 @@ class ProviderManager
 
     new Disposable =>
       registration.dispose()
-      unless @providerIsRegistered(provider)
-        @removeProvider(provider)
-
-  providerIsRegistered: (provider) =>
-    return false unless @store?
-    registrations = @store.propertiesForSource('autocomplete-provider-registration')
-    return false unless _.size(registrations) > 0
-    return _.chain(registrations).pluck('provider').filter((p) -> p is provider).size().value() > 0
-
-  unregisterProvider: (provider) =>
-    return unless provider?
-    return unless @providers.has(provider)
-    id = @providers.get(provider)
-    return unless id?
-    @store.removePropertiesForSource(id)
-    @subscriptions.remove(provider) if provider.dispose? and _.contains(@subscriptions?.disposables, provider)
-    @providers.delete(provider)
-    return
+      @removeProvider(provider)
 
   # ^^^ PROVIDER API ^^^
   # |||              |||
+
+  # For Legacy use only!!
+  registerLegacyProvider: (legacyProvider, selector) =>
+    return unless legacyProvider?
+    return unless selector? and selector.trim() isnt ''
+
+    legacyProviderRegistration = @legacyProviderRegistrations.get(legacyProvider.constructor)
+
+    if legacyProviderRegistration
+      legacyProviderRegistration.service.dispose()
+      legacyProviderRegistration.selectors.push(selector) if legacyProviderRegistration.selectors.indexOf(selector) < 0
+
+    else
+      legacyProviderRegistration = {selectors: [selector]}
+      @legacyProviderRegistrations.set(legacyProvider.constructor, legacyProviderRegistration)
+
+    selector = legacyProviderRegistration.selectors.join(',')
+
+    legacyProviderRegistration.shim = @shimLegacyProvider(legacyProvider, selector)
+    legacyProviderRegistration.service = @registerProvider(legacyProviderRegistration.shim)
+    return legacyProviderRegistration.service
+
+  shimLegacyProvider: (legacyProvider, selector) =>
+    unless legacyProvider.buildSuggestionsShim
+      legacyProvider.buildSuggestionsShim = Provider.prototype.buildSuggestionsShim
+    shim =
+      requestHandler: legacyProvider.buildSuggestionsShim
+      selector: selector
+      dispose: ->
+        legacyProvider.dispose() if legacyProvider.dispose?
+        legacyProvider = null
+        selector = null
+    shim
+
+  unregisterLegacyProvider: (legacyProvider) =>
+    return unless legacyProvider?
+    legacyProviderRegistration = @legacyProviderRegistrations.get(legacyProvider.constructor)
+    if legacyProviderRegistration
+      legacyProviderRegistration.service.dispose()
+      @legacyProviderRegistrations.delete(legacyProvider.constructor)

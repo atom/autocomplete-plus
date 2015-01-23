@@ -207,11 +207,10 @@ describe "Provider Manager", ->
       expect(providerManager.isLegacyProvider(legacyTestProvider)).toEqual(true)
       registration = providerManager.registerLegacyProvider(legacyTestProvider, '.source.js')
       expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(providerManager.providers.has(legacyTestProvider)).toEqual(true)
-      shimProvider = providerManager.providers.get(legacyTestProvider)
-      expect(providerManager.providers.has(shimProvider)).toEqual(true)
+      expect(providerManager.legacyProviderRegistrations.has(legacyTestProvider.constructor)).toEqual(true)
+      legacyProviderRegistration = providerManager.legacyProviderRegistrations.get(legacyTestProvider.constructor)
       expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyTestProvider)).toEqual(false)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), shimProvider)).toEqual(true)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyProviderRegistration.shim)).toEqual(true)
 
     # it "registers a provider with a blacklist", ->
     #   testProvider =

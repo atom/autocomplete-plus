@@ -32,15 +32,15 @@ class ProviderManager
     @providers = null
     @fuzzyProvider = null
 
-  # TODO: This needs more robust tests
   providersForScopeChain: (scopeChain) =>
     return [] unless scopeChain?
     return [] unless @store?
     providers = []
-    providers = @store.getAll(scopeChain, 'provider')
+    providers = @store.getAll(scopeChain)
+    providers = _.sortBy(providers, (p) -> -p.scopeSelector.length)
+    providers = _.map(providers, (p) -> p.value.provider)
     return [] unless providers? and _.size(providers) > 0
-    providers = _.pluck(providers, 'value')
-    providers
+    _.uniq(providers)
 
   addProvider: (provider) =>
     return unless @isValidProvider(provider)
@@ -117,9 +117,11 @@ class ProviderManager
     unless legacyProvider.buildSuggestionsShim
       legacyProvider.buildSuggestionsShim = Provider.prototype.buildSuggestionsShim
     shim =
+      legacyProvider: legacyProvider
       requestHandler: legacyProvider.buildSuggestionsShim
       selector: selector
       dispose: ->
+        requestHandler = null
         legacyProvider.dispose() if legacyProvider.dispose?
         legacyProvider = null
         selector = null

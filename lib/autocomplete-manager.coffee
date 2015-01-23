@@ -149,7 +149,8 @@ class AutocompleteManager
   # match - An {Object} representing the confirmed suggestion
   confirm: (match) =>
     return unless @editor?
-    return unless match?.provider?
+
+    match.onWillConfirm() if match.onWillConfirm?
 
     @editor.getSelections()?.forEach (selection) -> selection?.clear()
     @hideSuggestionList()
@@ -158,6 +159,8 @@ class AutocompleteManager
     @editor.getCursors()?.forEach (cursor) ->
       position = cursor?.getBufferPosition()
       cursor.setBufferPosition([position.row, position.column]) if position?
+
+    match.onDidConfirm() if match.onDidConfirm?
 
   showSuggestionList: (suggestions) ->
     @suggestionList.changeItems(suggestions)

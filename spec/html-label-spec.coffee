@@ -35,7 +35,6 @@ describe "HTML labels", ->
       testProvider =
         requestHandler: (options) ->
           [{
-            provider: this,
             word: "ohai",
             prefix: "ohai",
             label: "<span style=\"color: red\">ohai</span>",

@@ -154,7 +154,10 @@ class FuzzyProvider
         fuzzaldrin.filter(wordList, prefix)
 
     results = for word in words when word isnt prefix
-      new Suggestion(this, word: word, prefix: prefix)
+      {
+        word: word
+        prefix: prefix
+      }
 
     return results
 

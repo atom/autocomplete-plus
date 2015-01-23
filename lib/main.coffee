@@ -88,7 +88,6 @@ module.exports =
 
             # Return your suggestions as an array of anonymous objects
             [{
-              provider: this,
               word: 'ohai',
               prefix: 'ohai',
               label: '<span style="color: red">ohai</span>',
@@ -119,7 +118,6 @@ module.exports =
 
             # Return your suggestions as an array of anonymous objects
             [{
-              provider: this,
               word: 'ohai',
               prefix: 'ohai',
               label: '<span style="color: red">ohai</span>',

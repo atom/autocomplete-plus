@@ -142,7 +142,6 @@ describe "Provider API", ->
           testProvider =
             requestHandler: (options) ->
               [{
-                provider: testProvider,
                 word: "ohai",
                 prefix: "ohai",
                 label: "<span style=\"color: red\">ohai</span>",
@@ -185,7 +184,6 @@ describe "Provider API", ->
           testProvider =
             requestHandler: (options) ->
               [{
-                provider: testProvider,
                 word: "ohai",
                 prefix: "ohai",
                 label: "<span style=\"color: red\">ohai</span>",
@@ -249,7 +247,6 @@ describe "Provider API", ->
           testProvider =
             requestHandler: (options) ->
               [{
-                provider: testProvider,
                 word: "ohai",
                 prefix: "ohai",
                 label: "<span style=\"color: red\">ohai</span>",
@@ -297,7 +294,6 @@ describe "Provider API", ->
           testProvider =
             requestHandler: (options) ->
               [{
-                provider: testProvider,
                 word: "ohai",
                 prefix: "ohai",
                 label: "<span style=\"color: red\">ohai</span>",

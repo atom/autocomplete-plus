@@ -3,7 +3,7 @@
 AutocompleteManager = require '../../lib/autocomplete-manager'
 
 describe "Autocomplete", ->
-  [activationPromise, editorView, editor, completionDelay] = []
+  [activationPromise, editorView, editor, completionDelay, autocompleteManager] = []
 
   describe "Issue 67", ->
     [autocomplete] = []
@@ -24,6 +24,10 @@ describe "Autocomplete", ->
       waitsForPromise -> atom.workspace.open("issues/50.js").then (e) ->
         editor = e
 
+      # Activate the package
+      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+        autocompleteManager = a.mainModule.autocompleteManager
+
       runs ->
         editorView = atom.views.getView(editor)
 
@@ -34,8 +38,6 @@ describe "Autocomplete", ->
         editor2 = atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true).getActiveItem()
         editorView2 = atom.views.getView(editor2)
         editorView.focus()
-
-        autocomplete = new AutocompleteManager()
 
         expect(editorView).toHaveFocus()
         expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
@@ -57,7 +59,7 @@ describe "Autocomplete", ->
           expect(editorView.querySelector(".autocomplete-plus")).toExist()
           expect(editorView2.querySelector(".autocomplete-plus")).not.toExist()
 
-          suggestionListView = atom.views.getView(autocomplete.suggestionList)
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
           expect(editorView).toHaveFocus()

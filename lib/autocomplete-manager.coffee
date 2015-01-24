@@ -106,6 +106,9 @@ class AutocompleteManager
       scopeChain: currentScopeChain
       prefix: @prefixForCursor(cursor)
 
+    @scatterRequest(options)
+
+  scatterRequest: (options, done) =>
     providers = @providerManager.providersForScopeChain(options.scopeChain)
     providers = providers.map (provider) ->
       providerSuggestions = provider?.requestHandler(options)
@@ -113,7 +116,6 @@ class AutocompleteManager
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providers)
       .then _.partial(@gatherSuggestions, providers)
       .then (suggestions) =>
-        # No suggestions? Cancel autocompletion.
         return unless suggestions.length
         # Show the suggestion list if we have not already requested more suggestions
         @showSuggestionList(suggestions) if @currentSuggestionsPromise == suggestionsPromise
@@ -123,17 +125,11 @@ class AutocompleteManager
   # providers - An array of providers to check against provided suggestions
   # providerSuggestions - array of arrays of suggestions provided by all called providers
   gatherSuggestions: (providers, providerSuggestions) ->
-    exclusiveResults = false
     providerSuggestions.reduce (suggestions, providerSuggestions, index) ->
-      return suggestions if exclusiveResults
       provider = providers[index]
 
       return suggestions unless providerSuggestions?.length
-      if provider.exclusive
-        suggestions = providerSuggestions
-        exclusiveResults = true
-      else
-        suggestions = suggestions.concat(providerSuggestions)
+      suggestions = suggestions.concat(providerSuggestions)
       suggestions
     ,[]
 
@@ -163,6 +159,7 @@ class AutocompleteManager
     match.onDidConfirm() if match.onDidConfirm?
 
   showSuggestionList: (suggestions) ->
+    console.log 'showing'
     @suggestionList.changeItems(suggestions)
     @suggestionList.show(@editor)
 

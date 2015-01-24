@@ -8,7 +8,7 @@ module.exports =
   config:
     enableAutoActivation:
       title: 'Show Suggestions On Keystroke'
-      description: 'Suggestions will show as you type if this preference is enabled. If it is disabled, you can still see suggestions by using the keybinding for autocomplete-plus:activate (shown below).'
+      description: 'Suggestions will show as you type if this preference is enabled. If it is disabled, you can still see suggestions by using the keymapping for autocomplete-plus:activate (shown below).'
       type: 'boolean'
       default: true
       order: 1
@@ -25,14 +25,14 @@ module.exports =
       default: 10
       order: 3
     confirmCompletion:
-      title: 'Keybinding(s) For Confirming A Suggestion'
+      title: 'Keymap For Confirming A Suggestion'
       description: 'You should use the key(s) indicated here to confirm a suggestion from the suggestion list and have it inserted into the file.'
       type: 'string'
       default: 'tab'
       enum: ['tab', 'enter', 'tab and enter']
       order: 4
     navigateCompletions:
-      title: 'Keybindings For Navigating The Suggestion List'
+      title: 'Keymap For Navigating The Suggestion List'
       description: 'You should use the keys indicated here to select suggestions in the suggestion list (moving up or down).'
       type: 'string'
       default: 'up,down'

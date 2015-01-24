@@ -60,7 +60,7 @@ class ProviderManager
 
   removeProvider: (provider) =>
     return unless @isValidProvider(provider)
-    @providers.delete(provider) if @providers.has(provider)
+    @providers.delete(provider) if @providers?.has(provider)
     @subscriptions.remove(provider) if provider.dispose? and _.contains(@subscriptions?.disposables, provider)
 
   #  |||              |||

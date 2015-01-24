@@ -119,6 +119,7 @@ class AutocompleteManager
         return unless suggestions.length
         # Show the suggestion list if we have not already requested more suggestions
         @showSuggestionList(suggestions) if @currentSuggestionsPromise == suggestionsPromise
+        @emitter.emit 'did-autocomplete', {options, suggestions}
 
   # Private: gather suggestions based on providers
   #
@@ -231,6 +232,9 @@ class AutocompleteManager
       @contentsModified()
     else
       @hideSuggestionList()
+
+  onDidAutocomplete: (callback) ->
+    @emitter.on 'did-autocomplete', callback
 
   # Public: Clean up, stop listening to events
   dispose: ->

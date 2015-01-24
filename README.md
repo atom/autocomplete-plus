@@ -9,7 +9,7 @@ View and insert possible completions in the editor while typing
 
 **Note:** In the example above, `Show Suggestions On Keystroke` is enabled.
 
-![Enable auto activation setting](https://cloud.githubusercontent.com/assets/119684/3029677/fab41bb0-e037-11e3-85bf-a696996f2478.png)
+![The Show Suggestions On Keystroke Setting](https://cloud.githubusercontent.com/assets/744740/5886909/a7071c2a-a372-11e4-9894-f12db4e8a1ae.png)
 
 ## Installation
 

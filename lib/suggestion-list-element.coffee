@@ -106,7 +106,6 @@ class SuggestionListElement extends HTMLElement
   renderItems: ->
     items = @visibleItems() || []
     items.forEach ({word, label, renderLabelAsHtml, className}, index) =>
-
       li = @ol.childNodes[index]
       unless li
         li = document.createElement('li')
@@ -140,8 +139,7 @@ class SuggestionListElement extends HTMLElement
       else
         labelSpan?.remove()
 
-    itemToRemove = items.length
-    li.remove() while li = @ol.childNodes[itemToRemove++]
+    li.remove() while li = @ol.childNodes[items.length]
 
     @selectedLi?.scrollIntoView(false)
 

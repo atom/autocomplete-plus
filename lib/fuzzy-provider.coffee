@@ -126,6 +126,7 @@ class FuzzyProvider
 
     # Collect words from all buffers using the regular expression
     matches = []
+    # TODO: Update the wordRegex to use the buffer's scopeDescriptor
     matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
 
     # Flatten the matches, make it an unique array

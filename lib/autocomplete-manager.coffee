@@ -159,7 +159,6 @@ class AutocompleteManager
     match.onDidConfirm() if match.onDidConfirm?
 
   showSuggestionList: (suggestions) ->
-    console.log 'showing'
     @suggestionList.changeItems(suggestions)
     @suggestionList.show(@editor)
 

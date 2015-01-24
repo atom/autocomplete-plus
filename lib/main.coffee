@@ -56,6 +56,12 @@ module.exports =
       type: 'boolean'
       default: false
       order: 8
+    strictMatching:
+      title: 'Use Strict Matching For Built-In Provider'
+      description: 'Fuzzy searching is performed if this is disabled; if it is enabled, suggestions must begin with the prefix from the current word.'
+      type: 'boolean'
+      default: false
+      order: 9
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

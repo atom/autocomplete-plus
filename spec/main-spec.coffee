@@ -7,7 +7,7 @@ describe "Autocomplete", ->
     runs ->
       # Set to live completion
       atom.config.set "autocomplete-plus.enableAutoActivation", true
-      atom.config.set "autocomplete-plus.fileBlacklist", ".*, *.md"
+      atom.config.set "autocomplete-plus.fileBlacklist", [".*", "*.md"]
 
       # Set the completion delay
       completionDelay = 100

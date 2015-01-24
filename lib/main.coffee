@@ -41,14 +41,18 @@ module.exports =
     fileBlacklist:
       title: 'File Blacklist'
       description: 'Suggestions will not be provided for files matching this list.'
-      type: 'string'
-      default: '.*, *.md'
+      type: 'array'
+      default: ['.*', '*.md']
+      items:
+        type: 'string'
       order: 6
     scopeBlacklist:
       title: 'Scope Blacklist'
       description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/advanced/scopes-and-scope-descriptors'
-      type: 'string'
-      default: ''
+      type: 'array'
+      default: []
+      items:
+        type: 'string'
       order: 7
     includeCompletionsFromAllBuffers:
       title: 'Include Completions From All Buffers'

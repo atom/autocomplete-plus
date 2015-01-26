@@ -40,6 +40,16 @@ describe "Autocomplete", ->
       editor.insertText(" ")
       expect(provider.wordList.indexOf("somethingNew")).not.toEqual(-1)
 
+    # Fixing This Fixes #76
+    xit "adds words to the wordlist with unicode characters", ->
+      provider = autocompleteManager.providerManager.fuzzyProvider
+
+      expect(provider.wordList.indexOf("somēthingNew")).toEqual(-1)
+      editor.insertText("somēthingNew")
+      editor.insertText(" ")
+      expect(provider.wordList.indexOf("somēthingNew")).not.toEqual(-1)
+
+    # Fixing This Fixes #196
     xit "removes words from the wordlist when they no longer exist in any open buffers", ->
       # Not sure we should fix this; could have a significant performance impacts
       provider = autocompleteManager.providerManager.fuzzyProvider

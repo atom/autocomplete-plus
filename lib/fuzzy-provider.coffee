@@ -121,14 +121,13 @@ class FuzzyProvider
 
     # Do we want autocompletions from all open buffers?
     if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
-      buffers = atom.project.getBuffers()
+      editors = atom.workspace.getEditors()
     else
-      buffers = [@editor.getBuffer()]
+      editors = [@editor]
 
     # Collect words from all buffers using the regular expression
     matches = []
-    # TODO: Update the wordRegex to use the buffer's scopeDescriptor
-    matches.push(buffer.getText().match(@wordRegex)) for buffer in buffers
+    matches.push(editor.getText().match(@wordRegex)) for editor in editors
 
     # Flatten the matches, make it an unique array
     wordList = _.uniq(_.flatten(matches))

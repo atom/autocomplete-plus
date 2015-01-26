@@ -19,14 +19,14 @@ describe "Autocomplete", ->
 
       waitsForPromise -> atom.workspace.open("issues/64.css").then (e) ->
         editor = e
+        editorView = atom.views.getView(editor)
+
+      waitsForPromise -> atom.packages.activatePackage('language-css')
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
         autocompleteManager = mainModule.autocompleteManager
-
-      runs ->
-        editorView = atom.views.getView(editor)
 
     it "it adds words hyphens to the wordlist", ->
       runs ->

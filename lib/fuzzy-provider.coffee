@@ -176,7 +176,7 @@ class FuzzyProvider
     return _.uniq(_.flatten(completions))
 
   # Public: Clean up, stop listening to events
-  dispose: ->
+  dispose: =>
     @bufferSavedSubscription?.dispose()
     @bufferChangedSubscription?.dispose()
     @subscriptions.dispose()

@@ -13,17 +13,23 @@ class ProviderManager
   store: null
   subscriptions: null
   legacyProviderRegistrations: null
+  globalBlacklist: null
 
   constructor: ->
     @subscriptions = new CompositeDisposable
+    @globalBlacklist = new CompositeDisposable
     @legacyProviderRegistrations = new WeakMap()
     @providers = new Map()
     @store = new ScopedPropertyStore
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableBuiltinProvider', (value) => @toggleFuzzyProvider(value)))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.scopeBlacklist', (value) => @setGlobalBlacklist(value)))
     @consumeApi()
 
   dispose: ->
     @toggleFuzzyProvider(false)
+    @globalBlacklist?.dispose()
+    @globalBlacklist = null
+    @blacklist = null
     @subscriptions?.dispose()
     @subscriptions = null
     @store?.cache = {}
@@ -37,7 +43,12 @@ class ProviderManager
     return [] unless scopeChain?
     return [] unless @store?
     providers = []
+    return [] if _.contains(@blacklist, scopeChain)
     providers = @store.getAll(scopeChain)
+    console.log providers
+    blacklist = _.chain(providers).map((p) -> p.value.globalBlacklist).filter((p) -> p? and p is true).value()
+    console.log blacklist
+    return [] if blacklist? and blacklist.length
     providers = _.sortBy(providers, (p) -> -p.scopeSelector.length)
     providers = _.map(providers, (p) -> p.value.provider)
     return [] unless providers? and _.size(providers) > 0
@@ -55,6 +66,16 @@ class ProviderManager
       @fuzzyProvider.dispose() if @fuzzyProvider?
       @fuzzyRegistration = null
       @fuzzyProvider = null
+
+  setGlobalBlacklist: (@blacklist) =>
+    @globalBlacklist.dispose() if @globalBlacklist?
+    @globalBlacklist = new CompositeDisposable
+    @blacklist = [] unless @blacklist?
+    return unless @blacklist.length
+    properties = {}
+    properties[blacklist.join(',')] = {globalBlacklist: true}
+    registration = @store.addProperties('globalblacklist', properties)
+    @globalBlacklist.add(registration)
 
   addProvider: (provider) =>
     return unless @isValidProvider(provider)
@@ -98,6 +119,11 @@ class ProviderManager
     properties = {}
     properties[selectors.join(',')] = {provider}
     registration = @store.addProperties(id, properties)
+    if provider.dispose?
+      provider.dispose = _.wrap provider.dispose, (f) =>
+        f?()
+        registration?.dispose()
+        @removeProvider()
 
     new Disposable =>
       registration.dispose()

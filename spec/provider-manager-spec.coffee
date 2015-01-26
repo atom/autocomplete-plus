@@ -347,3 +347,23 @@ describe "Provider Manager", ->
       expect(providerManager.providersForScopeChain('.source.js .comment')[1]).toEqual(testProvider1)
       expect(providerManager.providersForScopeChain('.source.js .comment')[2]).toEqual(testProvider3)
       expect(providerManager.providersForScopeChain('.source.js .comment')[3]).toEqual(providerManager.fuzzyProvider)
+
+    it "doesn't return providers if the scopeChain exactly matches a blacklist item", =>
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js .comment'])
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(0)
+
+    it "doesn't return providers if the scopeChain matches a blacklist item with a wildcard", =>
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(0)
+
+    it "doesn't return providers if the scopeChain matches a blacklist item with a wildcard one level of depth below the current scope", =>
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment .other'))).toEqual(0)
+
+    it "does return providers if the scopeChain doesn't match a blacklist item with a wildcard", =>
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.coffee *'])
+      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)

@@ -173,70 +173,7 @@ describe "Provider API", ->
             expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
             expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
 
-      xit "registers the given provider once when provided times", ->
-        runs ->
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-          testProvider =
-            requestHandler: (options) ->
-              [{
-                word: "ohai",
-                prefix: "ohai",
-                label: "<span style=\"color: red\">ohai</span>",
-                renderLabelAsHtml: true,
-                className: 'ohai'
-              }]
-            selector: '.source.js,.source.coffee'
-            dispose: ->
-          # Register the test provider
-          registration1 = atom.services.provide('autocomplete.provider', '0.1.0', {provider:testProvider})
-
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.go')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-          editor.moveToBottom()
-          editor.insertText('o')
-
-          advanceClock(completionDelay)
-
-          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-
-          expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-          expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
-
-          registration2 = atom.services.provide('autocomplete.provider', '0.1.0', {provider:testProvider})
-
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.go')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-          registration3 = atom.services.provide('autocomplete.provider', '0.1.0', {provider:testProvider})
-
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.go')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-      xit "should dispose a provider registration correctly", ->
+      it "should dispose a provider registration correctly", ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
@@ -283,7 +220,7 @@ describe "Provider API", ->
           expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
           expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
 
-      xit "should remove a provider's registration if the provider is disposed", ->
+      it "should remove a provider's registration if the provider is disposed", ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)

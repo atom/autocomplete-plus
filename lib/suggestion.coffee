@@ -7,8 +7,8 @@ class Suggestion
       instead of instantiating `Suggestion`. Example
         ```
         # Example:
-        testProvider =
-          requestHandler: (options) =>
+        provider =
+          requestHandler: (options) ->
             # Build your suggestions here...
 
             # Return your suggestions as an array of anonymous objects

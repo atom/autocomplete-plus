@@ -98,8 +98,8 @@ module.exports =
       Use [service-hub](https://github.com/atom/service-hub) instead:
         ```
         # Example:
-        testProvider =
-          requestHandler: (options) =>
+        provider =
+          requestHandler: (options) ->
             # Build your suggestions here...
 
             # Return your suggestions as an array of anonymous objects
@@ -113,7 +113,7 @@ module.exports =
           selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
           dispose: ->
             # Your dispose logic here
-        disposable = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+        registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
         ```
     """
     return @autocompleteManager.providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
@@ -128,8 +128,8 @@ module.exports =
       Use [service-hub](https://github.com/atom/service-hub) instead:
         ```
         # Example:
-        testProvider =
-          requestHandler: (options) =>
+        provider =
+          requestHandler: (options) ->
             # Build your suggestions here...
 
             # Return your suggestions as an array of anonymous objects
@@ -143,8 +143,8 @@ module.exports =
           selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
           dispose: ->
             # Your dispose logic here
-        disposable = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
-        disposable.dispose() # << unregisters your provider
+        registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
+        registration.dispose() # << unregisters your provider
         ```
     """
     @autocompleteManager.providerManager.unregisterLegacyProvider(provider)

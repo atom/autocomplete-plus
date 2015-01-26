@@ -283,7 +283,7 @@ describe "Provider Manager", ->
           selector: '.source.js .variable.js'
           blacklist: '.source.js .variable.js .comment2'
           providerblacklist:
-            fuzzyprovider: '.source.js .variable.js .comment3'
+            'autocomplete-plus-fuzzyprovider': '.source.js .variable.js .comment3'
           dispose: ->
             # No-op
 

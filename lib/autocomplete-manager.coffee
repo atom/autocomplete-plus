@@ -117,6 +117,7 @@ class AutocompleteManager
       .then _.partial(@gatherSuggestions, providers)
       .then (suggestions) =>
         return unless suggestions.length
+        suggestions = _.uniq(suggestions, (s) -> s.word)
         # Show the suggestion list if we have not already requested more suggestions
         @showSuggestionList(suggestions) if @currentSuggestionsPromise == suggestionsPromise
         @emitter.emit 'did-autocomplete', {options, suggestions}

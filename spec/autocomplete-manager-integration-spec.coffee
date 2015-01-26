@@ -37,6 +37,17 @@ describe "Autocomplete Manager", ->
       runs ->
         editorView = atom.views.getView(editor)
 
+    describe "when fuzzyprovider is disabled", ->
+      it "should not show the suggestion list", ->
+        atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        # Trigger an autocompletion
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
     describe "on changed events", ->
       it "should show the suggestion list when suggestions are found", ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

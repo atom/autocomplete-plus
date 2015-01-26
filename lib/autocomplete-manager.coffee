@@ -110,13 +110,16 @@ class AutocompleteManager
 
   scatterRequest: (options, done) =>
     providers = @providerManager.providersForScopeChain(options.scopeChain)
+    return unless providers? and providers.length
     providers = providers.map (provider) ->
       providerSuggestions = provider?.requestHandler(options)
-
+    return unless providers? and providers.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providers)
       .then _.partial(@gatherSuggestions, providers)
       .then (suggestions) =>
-        return unless suggestions.length
+        unless suggestions.length
+          @emitter.emit 'did-autocomplete', {options, suggestions}
+          return
         suggestions = _.uniq(suggestions, (s) -> s.word)
         # Show the suggestion list if we have not already requested more suggestions
         @showSuggestionList(suggestions) if @currentSuggestionsPromise == suggestionsPromise

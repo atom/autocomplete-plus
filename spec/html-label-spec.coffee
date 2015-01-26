@@ -43,7 +43,7 @@ describe "HTML labels", ->
           }]
         selector: '.source.js'
         dispose: ->
-      registration = atom.services.provide('autocomplete.provider', '0.1.0', {provider: testProvider})
+      registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       editor.moveToBottom()
       editor.insertText('o')

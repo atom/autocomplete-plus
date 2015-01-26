@@ -105,7 +105,7 @@ class ProviderManager
   #  vvv PROVIDER API vvv
 
   consumeApi: =>
-    @subscriptions.add atom.services.consume 'autocomplete.provider', '0.1.0', (provider) =>
+    @subscriptions.add atom.services.consume 'autocomplete.provider', '1.0.0', (provider) =>
       return unless provider?.provider?
       return @registerProvider(provider.provider)
 

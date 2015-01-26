@@ -44,7 +44,7 @@ describe "Async providers", ->
             , 10
         selector: '.source.js'
         dispose: ->
-      registration = atom.services.provide('autocomplete.provider', '0.1.0', {provider: testAsyncProvider})
+      registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
 
       editor.moveToBottom()
       editor.insertText('o')

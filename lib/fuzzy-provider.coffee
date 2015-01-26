@@ -12,6 +12,7 @@ class FuzzyProvider
   buffer: null
 
   constructor: ->
+    @id = 'fuzzyprovider'
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @buildWordList()

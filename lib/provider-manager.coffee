@@ -43,16 +43,19 @@ class ProviderManager
     return [] unless scopeChain?
     return [] unless @store?
     providers = []
-    return [] if _.contains(@blacklist, scopeChain)
+    return [] if _.contains(@blacklist, scopeChain) # Check Blacklist For Exact Match
     providers = @store.getAll(scopeChain)
-    console.log providers
+
+    # Check Global Blacklist For Match With Selector
     blacklist = _.chain(providers).map((p) -> p.value.globalBlacklist).filter((p) -> p? and p is true).value()
-    console.log blacklist
     return [] if blacklist? and blacklist.length
-    providers = _.sortBy(providers, (p) -> -p.scopeSelector.length)
-    providers = _.map(providers, (p) -> p.value.provider)
-    return [] unless providers? and _.size(providers) > 0
-    _.uniq(providers)
+
+    # Determine Blacklisted Providers
+    blacklistedProviders = _.chain(providers).filter((p) -> p.value.blacklisted? and p.value.blacklisted is true).map((p) -> p.value.provider).value()
+
+    # Exclude Blacklisted Providers
+    providers = _.chain(providers).filter((p) -> not p.value.blacklisted?).sortBy((p) -> -p.scopeSelector.length).map((p) -> p.value.provider).uniq().difference(blacklistedProviders).value()
+    providers
 
   toggleFuzzyProvider: (enabled) =>
     return unless enabled?
@@ -107,26 +110,49 @@ class ProviderManager
       return @registerProvider(provider.provider)
 
   registerProvider: (provider) =>
+    # Check Validity Of Provider
     return unless @isValidProvider(provider)
     @addProvider(provider)
     id = @providerUuid(provider)
     @removeProvider(provider) unless id?
     return unless id?
+
+    # Register Provider
     selectors = provider.selector.split(',')
     selectors = _.reject selectors, (s) =>
       p = @store.propertiesForSourceAndSelector(id, s)
       return p? and p.provider?
+
+    return unless selectors.length
+
     properties = {}
     properties[selectors.join(',')] = {provider}
     registration = @store.addProperties(id, properties)
+    blacklistRegistration = null
+
+    # Register Provider's Blacklist (If Present)
+    if provider.blacklist? and provider.blacklist.length
+      blacklistid = id + '-blacklist'
+      blacklist = provider.blacklist.split(',')
+      blacklist = _.reject blacklist, (s) =>
+        p = @store.propertiesForSourceAndSelector(blacklistid, s)
+        return p? and p.provider?
+
+      if blacklist.length
+        blacklistproperties = {}
+        blacklistproperties[blacklist.join(',')] = {provider, blacklisted: true}
+        blacklistRegistration = @store.addProperties(blacklistid, blacklistproperties)
+
     if provider.dispose?
       provider.dispose = _.wrap provider.dispose, (f) =>
         f?()
         registration?.dispose()
-        @removeProvider()
+        blacklistRegistration?.dispose()
+        @removeProvider(provider)
 
     new Disposable =>
-      registration.dispose()
+      registration?.dispose()
+      blacklistRegistration?.dispose()
       @removeProvider(provider)
 
   # ^^^ PROVIDER API ^^^

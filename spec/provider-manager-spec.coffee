@@ -215,22 +215,31 @@ describe "Provider Manager", ->
       expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyTestProvider)).toEqual(false)
       expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyProviderRegistration.shim)).toEqual(true)
 
-    # it "registers a provider with a blacklist", ->
-    #   testProvider =
-    #     requestHandler: (options) ->
-    #       [new Suggestion(this,
-    #         word: "ohai",
-    #         prefix: "ohai",
-    #         label: "<span style=\"color: red\">ohai</span>",
-    #         renderLabelAsHtml: true,
-    #         className: 'ohai'
-    #       )]
-    #     selector: '.source.js'
-    #     blacklist: '.source.js '
-    #     dispose: ->
-    #       # No-op
-    #
-    #   expect(true).toEqual(false)
+    it "registers a provider with a blacklist", ->
+      testProvider =
+        requestHandler: (options) ->
+          [new Suggestion(this,
+            word: "ohai",
+            prefix: "ohai",
+            label: "<span style=\"color: red\">ohai</span>",
+            renderLabelAsHtml: true,
+            className: 'ohai'
+          )]
+        selector: '.source.js'
+        blacklist: '.source.js .comment'
+        dispose: ->
+          # No-op
+
+      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providers.has(testProvider)).toEqual(false)
+
+      registration = providerManager.registerProvider(testProvider)
+      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providers.has(testProvider)).toEqual(true)
 
   describe "when no providers have been registered, and enableBuiltinProvider is false", ->
 
@@ -272,6 +281,7 @@ describe "Provider Manager", ->
               className: 'ohai2'
             )]
           selector: '.source.js .variable.js'
+          blacklist: '.source.js .variable.js .comment2'
           dispose: ->
             # No-op
 
@@ -348,22 +358,34 @@ describe "Provider Manager", ->
       expect(providerManager.providersForScopeChain('.source.js .comment')[2]).toEqual(testProvider3)
       expect(providerManager.providersForScopeChain('.source.js .comment')[3]).toEqual(providerManager.fuzzyProvider)
 
-    it "doesn't return providers if the scopeChain exactly matches a blacklist item", =>
+    it "doesn't return providers if the scopeChain exactly matches a global blacklist item", =>
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js .comment'])
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(0)
 
-    it "doesn't return providers if the scopeChain matches a blacklist item with a wildcard", =>
+    it "doesn't return providers if the scopeChain matches a global blacklist item with a wildcard", =>
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(0)
 
-    it "doesn't return providers if the scopeChain matches a blacklist item with a wildcard one level of depth below the current scope", =>
+    it "doesn't return providers if the scopeChain matches a global blacklist item with a wildcard one level of depth below the current scope", =>
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment .other'))).toEqual(0)
 
-    it "does return providers if the scopeChain doesn't match a blacklist item with a wildcard", =>
+    it "does return providers if the scopeChain doesn't match a global blacklist item with a wildcard", =>
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.coffee *'])
       expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+
+    it "doesn't return providers if the scopeChain matches a provider blacklist item", =>
+      expect(_.size(providerManager.providersForScopeChain('.source.js .variable.js .other.js'))).toEqual(4)
+      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[0]).toEqual(testProvider2)
+      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[1]).toEqual(testProvider1)
+      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[2]).toEqual(testProvider3)
+      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[3]).toEqual(providerManager.fuzzyProvider)
+
+      expect(_.size(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js'))).toEqual(3)
+      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js')[0]).toEqual(testProvider1)
+      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js')[1]).toEqual(testProvider3)
+      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js')[2]).toEqual(providerManager.fuzzyProvider)

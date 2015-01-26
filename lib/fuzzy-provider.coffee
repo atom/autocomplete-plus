@@ -37,6 +37,7 @@ class FuzzyProvider
     # Subscribe to buffer events:
     @bufferSavedSubscription = @buffer.onDidSave(@bufferSaved)
     @bufferChangedSubscription = @buffer.onDidChange(@bufferChanged)
+    @buildWordList()
 
   paneItemIsValid: (paneItem) =>
     return false unless paneItem?
@@ -145,20 +146,18 @@ class FuzzyProvider
   #
   # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (prefix) =>
+    return unless @wordList?
     # Merge the scope specific words into the default word list
     wordList = @wordList.concat(@getCompletionsForCursorScope())
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
-        @wordList.filter((word) -> word.indexOf(prefix) is 0)
+        wordList.filter((word) -> word.indexOf(prefix) is 0)
       else
         fuzzaldrin.filter(wordList, prefix)
 
     results = for word in words when word isnt prefix
-      {
-        word: word
-        prefix: prefix
-      }
+      {word: word, prefix: prefix}
 
     return results
 

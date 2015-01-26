@@ -11,13 +11,13 @@ describe "Provider Manager", ->
       providerManager = new ProviderManager()
       testProvider =
         requestHandler: (options) ->
-          [new Suggestion(this,
+          [{
             word: "ohai",
             prefix: "ohai",
             label: "<span style=\"color: red\">ohai</span>",
             renderLabelAsHtml: true,
             className: 'ohai'
-          )]
+          }]
         selector: '.source.js'
         dispose: ->
           # No-op
@@ -218,13 +218,13 @@ describe "Provider Manager", ->
     it "registers a provider with a blacklist", ->
       testProvider =
         requestHandler: (options) ->
-          [new Suggestion(this,
+          [{
             word: "ohai",
             prefix: "ohai",
             label: "<span style=\"color: red\">ohai</span>",
             renderLabelAsHtml: true,
             className: 'ohai'
-          )]
+          }]
         selector: '.source.js'
         blacklist: '.source.js .comment'
         dispose: ->
@@ -260,26 +260,26 @@ describe "Provider Manager", ->
         providerManager = new ProviderManager()
         testProvider1 =
           requestHandler: (options) ->
-            [new Suggestion(this,
+            [{
               word: "ohai2",
               prefix: "ohai2",
               label: "<span style=\"color: red\">ohai2</span>",
               renderLabelAsHtml: true,
               className: 'ohai2'
-            )]
+            }]
           selector: '.source.js'
           dispose: ->
             # No-op
 
         testProvider2 =
           requestHandler: (options) ->
-            [new Suggestion(this,
+            [{
               word: "ohai2",
               prefix: "ohai2",
               label: "<span style=\"color: red\">ohai2</span>",
               renderLabelAsHtml: true,
               className: 'ohai2'
-            )]
+            }]
           selector: '.source.js .variable.js'
           blacklist: '.source.js .variable.js .comment2'
           providerblacklist:
@@ -289,26 +289,26 @@ describe "Provider Manager", ->
 
         testProvider3 =
           requestHandler: (options) ->
-            [new Suggestion(this,
+            [{
               word: "ohai3",
               prefix: "ohai3",
               label: "<span style=\"color: red\">ohai3</span>",
               renderLabelAsHtml: true,
               className: 'ohai3'
-            )]
+            }]
           selector: '*'
           dispose: ->
             # No-op
 
         testProvider4 =
           requestHandler: (options) ->
-            [new Suggestion(this,
+            [{
               word: "ohai4",
               prefix: "ohai4",
               label: "<span style=\"color: red\">ohai4</span>",
               renderLabelAsHtml: true,
               className: 'ohai4'
-            )]
+            }]
           selector: '.source.js .comment'
           dispose: ->
             # No-op

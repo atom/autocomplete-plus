@@ -9,20 +9,21 @@ Provider = require './provider'
 module.exports =
 class ProviderManager
   fuzzyProvider: null
+  fuzzyRegistration: null
   store: null
   subscriptions: null
+  legacyProviderRegistrations: null
 
   constructor: ->
     @subscriptions = new CompositeDisposable
     @legacyProviderRegistrations = new WeakMap()
     @providers = new Map()
     @store = new ScopedPropertyStore
-    @fuzzyProvider = new FuzzyProvider()
-    fuzzyRegistration = @registerProvider(@fuzzyProvider)
-    @subscriptions.add(fuzzyRegistration) if fuzzyRegistration?
+    @subscriptions.add(atom.config.observe('autocomplete-plus.enableBuiltinProvider', (value) => @toggleFuzzyProvider(value)))
     @consumeApi()
 
   dispose: ->
+    @toggleFuzzyProvider(false)
     @subscriptions?.dispose()
     @subscriptions = null
     @store?.cache = {}
@@ -30,7 +31,7 @@ class ProviderManager
     @store = null
     @providers?.clear()
     @providers = null
-    @fuzzyProvider = null
+    @legacyProviderRegistrations = null
 
   providersForScopeChain: (scopeChain) =>
     return [] unless scopeChain?
@@ -41,6 +42,19 @@ class ProviderManager
     providers = _.map(providers, (p) -> p.value.provider)
     return [] unless providers? and _.size(providers) > 0
     _.uniq(providers)
+
+  toggleFuzzyProvider: (enabled) =>
+    return unless enabled?
+
+    if enabled
+      return if @fuzzyProvider? or @fuzzyRegistration?
+      @fuzzyProvider = new FuzzyProvider()
+      @fuzzyRegistration = @registerProvider(@fuzzyProvider)
+    else
+      @fuzzyRegistration.dispose() if @fuzzyRegistration?
+      @fuzzyProvider.dispose() if @fuzzyProvider?
+      @fuzzyRegistration = null
+      @fuzzyProvider = null
 
   addProvider: (provider) =>
     return unless @isValidProvider(provider)

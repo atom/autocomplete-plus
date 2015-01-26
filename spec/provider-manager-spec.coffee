@@ -7,6 +7,7 @@ describe "Provider Manager", ->
 
   beforeEach ->
     runs ->
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
       testProvider =
         requestHandler: (options) ->
@@ -34,7 +35,9 @@ describe "Provider Manager", ->
       providerManager?.dispose()
       providerManager = null
 
-  describe "when no providers have been registered", ->
+  describe "when no providers have been registered, and enableBuiltinProvider is true", ->
+    beforeEach ->
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
 
     it "is constructed correctly", ->
       expect(providerManager.providers).toBeDefined()
@@ -229,11 +232,22 @@ describe "Provider Manager", ->
     #
     #   expect(true).toEqual(false)
 
+  describe "when no providers have been registered, and enableBuiltinProvider is false", ->
+
+    beforeEach ->
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
+
+    it "doesn't register FuzzyProvider for all scopes", ->
+      expect(_.size(providerManager.providersForScopeChain('*'))).toBe(0)
+      expect(providerManager.fuzzyProvider).toEqual(null)
+      expect(providerManager.fuzzyRegistration).toEqual(null)
+
   describe "when providers have been registered", ->
     [testProvider1, testProvider2, testProvider3, testProvider4, registration1, registration2, registration3, registration4] = []
 
     beforeEach ->
       runs ->
+        atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
         providerManager = new ProviderManager()
         testProvider1 =
           requestHandler: (options) ->

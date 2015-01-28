@@ -1,5 +1,5 @@
 {Model} = require 'theorist'
-{Emitter, CompositeDisposable} = require 'event-kit'
+{Emitter, CompositeDisposable} = require 'atom'
 
 module.exports =
 class SuggestionList extends Model
@@ -22,7 +22,6 @@ class SuggestionList extends Model
 
     completionKey = atom.config.get('autocomplete-plus.confirmCompletion') || ''
     navigationKey = atom.config.get('autocomplete-plus.navigateCompletions') || ''
-
 
     keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     keys['enter'] = 'autocomplete-plus:confirm' if completionKey.indexOf('enter') > -1

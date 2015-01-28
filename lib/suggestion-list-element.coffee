@@ -1,4 +1,4 @@
-{CompositeDisposable} = require 'event-kit'
+{CompositeDisposable} = require 'atom'
 _ = require 'underscore-plus'
 
 class SuggestionListElement extends HTMLElement

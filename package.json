@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "async": ">=0.9.0",
-    "event-kit": ">=0.8.1",
     "fuzzaldrin": ">=1.0.0",
     "grim": ">=0.12.0",
     "minimatch": ">=0.2.14",

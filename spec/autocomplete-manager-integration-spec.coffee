@@ -1,7 +1,6 @@
 {triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require('./spec-helper')
 _ = require('underscore-plus')
 {KeymapManager} = require('atom')
-TestProvider = require('./lib/test-provider')
 
 describe "Autocomplete Manager", ->
   [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
@@ -448,10 +447,65 @@ describe "Autocomplete Manager", ->
       triggerAutocompletion(editor)
 
       runs ->
-        editorView = atom.views.getView(editor)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
         waitForAutocomplete()
 
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+  describe "when prefix length is 0", ->
+    [registration] = []
+    runs ->
+      atom.config.set('autocomplete-plus.enableAutoActivation', false)
+    beforeEach ->
+      testProvider =
+        requestHandler: (options) ->
+          [{
+            word: "ohai",
+            prefix: ""
+          }]
+        selector: '.source.js'
+      registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+
+      waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
+        editor = e
+        editorView = atom.views.getView(e)
+
+      # Activate the package
+      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+        mainModule = a.mainModule
+        autocompleteManager = mainModule.autocompleteManager
+
+      runs ->
+
+    afterEach -> registration.dispose()
+
+
+    it "inserts suggestion correctly", =>
+      # Trigger an autocompletion
+      editor.moveToBottom()
+      editor.moveUp()
+      editor.moveToEndOfLine()
+      atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        expect(editor.getBuffer().getLastLine()).toEqual('f')
+        expect(editor.getBuffer()
+          .lineForRow(
+            editor.getLineCount() - 2
+          )
+        ).toEqual('};')
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        expect(suggestionListView).not.toExist()
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+        expect(editor.getBuffer()
+          .lineForRow(
+            editor.getLineCount() - 2
+          )
+        ).toEqual('}function')
+
+        expect(editor.getBuffer().getLastLine()).toEqual('f')

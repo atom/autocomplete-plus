@@ -188,8 +188,10 @@ class AutocompleteManager
     selections = @editor.getSelections()
     return unless selections?
     @editor.transact =>
-      @editor.selectLeft(match.prefix.length)
-      @editor.delete()
+      if match.prefix.length > 0
+        @editor.selectLeft(match.prefix.length)
+        @editor.delete()
+
       @editor.insertText(match.word)
 
   # Private: Checks whether the current file is blacklisted.

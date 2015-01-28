@@ -3,7 +3,7 @@ _ = require "underscore-plus"
 TestProvider = require "./lib/test-provider"
 
 describe "Autocomplete", ->
-  [completionDelay, editorView, editor, autocomplete, mainModule] = []
+  [completionDelay, editorView, editor, autocompleteManager] = []
 
   beforeEach ->
     runs ->
@@ -27,16 +27,40 @@ describe "Autocomplete", ->
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
-        mainModule = a.mainModule
-        autocomplete = mainModule.autocompleteManagers[0]
+        autocompleteManager = a.mainModule.autocompleteManager
 
       runs ->
         editorView = atom.views.getView(editor)
 
-    # TODO: Move this to a separate fuzzyprovider spec
     it "adds words to the wordlist after they have been written", ->
-      editor.insertText "somethingNew"
-      editor.insertText " "
+      provider = autocompleteManager.providerManager.fuzzyProvider
 
-      provider = autocomplete.providers[0];
+      expect(provider.wordList.indexOf("somethingNew")).toEqual(-1)
+      editor.insertText("somethingNew")
+      editor.insertText(" ")
       expect(provider.wordList.indexOf("somethingNew")).not.toEqual(-1)
+
+    # Fixing This Fixes #76
+    xit "adds words to the wordlist with unicode characters", ->
+      provider = autocompleteManager.providerManager.fuzzyProvider
+
+      expect(provider.wordList.indexOf("somēthingNew")).toEqual(-1)
+      editor.insertText("somēthingNew")
+      editor.insertText(" ")
+      expect(provider.wordList.indexOf("somēthingNew")).not.toEqual(-1)
+
+    # Fixing This Fixes #196
+    xit "removes words from the wordlist when they no longer exist in any open buffers", ->
+      # Not sure we should fix this; could have a significant performance impacts
+      provider = autocompleteManager.providerManager.fuzzyProvider
+
+      expect(provider.wordList.indexOf("bogos")).toEqual(-1)
+      editor.insertText("bogos = 1")
+      editor.insertText(" ")
+      expect(provider.wordList.indexOf("bogos")).not.toEqual(-1)
+      expect(provider.wordList.indexOf("bogus")).toEqual(-1)
+      editor.backspace() for [1..7]
+      editor.insertText("us = 1")
+      editor.insertText(" ")
+      expect(provider.wordList.indexOf("bogus")).not.toEqual(-1)
+      expect(provider.wordList.indexOf("bogos")).toEqual(-1)

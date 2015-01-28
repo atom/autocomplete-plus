@@ -1,7 +1,5 @@
 {waitForAutocomplete} = require('./spec-helper')
-TestProvider = require('./lib/test-provider')
-
-describe "HTML labels", ->
+describe "Async providers", ->
   [completionDelay, editorView, editor, autocompleteManager, registration] = []
 
   beforeEach ->
@@ -30,20 +28,23 @@ describe "HTML labels", ->
   afterEach ->
     registration?.dispose()
 
-  it "should allow HTML in labels for suggestions in the suggestion list", ->
+  it "should provide completions when a provider returns a promise that results in an array of suggestions", ->
     runs ->
-      testProvider =
+      testAsyncProvider =
         requestHandler: (options) ->
-          [{
-            word: "ohai",
-            prefix: "ohai",
-            label: "<span style=\"color: red\">ohai</span>",
-            renderLabelAsHtml: true,
-            className: 'ohai'
-          }]
+          return new Promise (resolve) ->
+            setTimeout ->
+              resolve(
+                [{
+                  word: "asyncProvided",
+                  prefix: "asyncProvided",
+                  label: "asyncProvided"
+                }]
+              )
+            , 10
         selector: '.source.js'
         dispose: ->
-      registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+      registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
 
       editor.moveToBottom()
       editor.insertText('o')
@@ -52,5 +53,4 @@ describe "HTML labels", ->
 
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-        expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+        expect(suggestionListView.querySelector('li .label')).toHaveText('asyncProvided')

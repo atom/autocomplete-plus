@@ -1,4 +1,4 @@
-require "../spec-helper"
+{waitForAutocomplete} = require('../spec-helper')
 
 describe "Autocomplete", ->
   [mainModule, autocompleteManager, editorView, editor, completionDelay] = []
@@ -19,22 +19,24 @@ describe "Autocomplete", ->
 
       waitsForPromise -> atom.workspace.open("issues/64.css").then (e) ->
         editor = e
+        editorView = atom.views.getView(editor)
+
+      waitsForPromise -> atom.packages.activatePackage('language-css')
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
         mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManagers[0]
-
-      runs ->
-        editorView = atom.views.getView(editor)
+        autocompleteManager = mainModule.autocompleteManager
 
     it "it adds words hyphens to the wordlist", ->
       runs ->
         editor.insertText c for c in "bla"
 
-        advanceClock completionDelay
+        waitForAutocomplete()
 
-        expect(editorView.querySelector(".autocomplete-plus")).toExist()
+        runs ->
 
-        autocompleteView = atom.views.getView(autocompleteManager)
-        expect(autocompleteView.querySelector("li")).toHaveText "bla-foo--bar"
+          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+          expect(suggestionListView.querySelector("li")).toHaveText "bla-foo--bar"

@@ -1,4 +1,4 @@
-require "../spec-helper"
+{waitForAutocomplete} = require('../spec-helper')
 
 describe "Autocomplete", ->
   [activationPromise, mainModule, editorView, editor, completionDelay] = []
@@ -30,17 +30,14 @@ describe "Autocomplete", ->
 
     it "works after closing one of the copied tabs", ->
       runs ->
-        expect(mainModule.autocompleteManagers.length).toEqual(1)
-
         atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true)
-        expect(mainModule.autocompleteManagers.length).toEqual(2)
-
         atom.workspace.getActivePane().destroy()
-        expect(mainModule.autocompleteManagers.length).toEqual(1)
 
         editor.moveCursorToEndOfLine
         editor.insertNewline()
         editor.insertText "f"
 
-        advanceClock completionDelay
-        expect(editorView.querySelector(".autocomplete-plus")).toExist()
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector(".autocomplete-plus")).toExist()

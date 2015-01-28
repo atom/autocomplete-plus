@@ -1,256 +1,184 @@
-{Range}  = require 'atom'
-{Emitter, CompositeDisposable} = require 'event-kit'
+{Range, TextEditor}  = require 'atom'
+{CompositeDisposable, Disposable, Emitter} = require 'event-kit'
 _ = require 'underscore-plus'
-path = require 'path'
 minimatch = require 'minimatch'
-FuzzyProvider = require './fuzzy-provider'
+path = require 'path'
+ProviderManager = require './provider-manager'
+SuggestionList = require './suggestion-list'
+SuggestionListElement = require './suggestion-list-element'
 
 module.exports =
 class AutocompleteManager
-  currentBuffer: null
-  debug: false
+  editor: null
+  editorView: null
+  buffer: null
+  providerManager: null
+  subscriptions: null
+  suggestionList: null
+  editorSubscriptions: null
 
-  # Private: Makes sure we're listening to editor and buffer events, sets
-  # the current buffer
-  #
-  # editor - {TextEditor}
-  constructor: (@editor) ->
-    @editorView = atom.views.getView(@editor)
-    @compositeDisposable = new CompositeDisposable
+  constructor: ->
+    @subscriptions = new CompositeDisposable
+    @providerManager = new ProviderManager()
+    @subscriptions.add(@providerManager)
     @emitter = new Emitter
 
-    @providers = []
-
-    return if @currentFileBlacklisted()
-
-    @registerProvider new FuzzyProvider(@editor)
+    # Register Suggestion List Model and View
+    @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) =>
+      new SuggestionListElement().initialize(model)
+    ))
+    @suggestionList = new SuggestionList()
 
     @handleEvents()
-    @setCurrentBuffer @editor.getBuffer()
-
-    @compositeDisposable.add atom.workspace.observeActivePaneItem(@updateCurrentEditor)
-
-    @compositeDisposable.add atom.commands.add 'atom-text-editor',
-      "autocomplete-plus:activate": @runAutocompletion
-
-    @compositeDisposable.add atom.commands.add 'autocomplete-suggestion-list',
-      "autocomplete-plus:confirm": @confirmSelection,
-      "autocomplete-plus:select-next": @selectNext,
-      "autocomplete-plus:select-previous": @selectPrevious,
-      "autocomplete-plus:cancel": @cancel
-
-  addKeyboardInteraction: ->
-    @removeKeyboardInteraction()
-    keys =
-      "escape": "autocomplete-plus:cancel"
-
-    completionKey = atom.config.get("autocomplete-plus.confirmCompletion") || ''
-    navigationKey = atom.config.get("autocomplete-plus.navigateCompletions") || ''
-
-
-    keys['tab'] = "autocomplete-plus:confirm" if completionKey.indexOf('tab') > -1
-    keys['enter'] = "autocomplete-plus:confirm" if completionKey.indexOf('enter') > -1
-
-    if @items?.length > 1 and navigationKey == "up,down"
-      keys['up'] =  "autocomplete-plus:select-previous"
-      keys['down'] = "autocomplete-plus:select-next"
-    else
-      keys["ctrl-n"] = "autocomplete-plus:select-next"
-      keys["ctrl-p"] = "autocomplete-plus:select-previous"
-
-    @keymaps = atom.keymaps.add(
-      'AutocompleteManager',
-      'atom-text-editor:not(.mini) .autocomplete-plus': keys
-    )
-
-    @compositeDisposable.add @keymaps
-
-  removeKeyboardInteraction: ->
-    @keymaps?.dispose()
-    @compositeDisposable.remove(@keymaps)
+    @handleCommands()
 
   updateCurrentEditor: (currentPaneItem) =>
-    @cancel() unless currentPaneItem == @editor
+    return unless currentPaneItem?
+    return if currentPaneItem is @editor
 
-  confirmSelection: =>
-    @emitter.emit 'do-confirm-selection'
+    @editorSubscriptions?.dispose()
+    @editorSubscriptions = null
 
-  onDoConfirmSelection: (cb) ->
-    @emitter.on 'do-confirm-selection', cb
+    # Stop tracking editor + buffer
+    @editor = null
+    @editorView = null
+    @buffer = null
 
-  selectNext: =>
-    @emitter.emit 'do-select-next'
+    return unless @paneItemIsValid(currentPaneItem)
 
-  onDoSelectNext: (cb) ->
-    @emitter.on 'do-select-next', cb
+    # Track the new editor, editorView, and buffer
+    @editor = currentPaneItem
+    @editorView = atom.views.getView(@editor)
+    @buffer = @editor.getBuffer()
 
-  selectPrevious: =>
-    @emitter.emit 'do-select-previous'
+    @editorSubscriptions = new CompositeDisposable
 
-  onDoSelectPrevious: (cb) ->
-    @emitter.on 'do-select-previous', cb
+    # Subscribe to buffer events:
+    @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
+    @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
 
-  # Private: Checks whether the current file is blacklisted
-  #
-  # Returns {Boolean} that defines whether the current file is blacklisted
-  currentFileBlacklisted: ->
-    blacklist = (atom.config.get("autocomplete-plus.fileBlacklist") or "")
-      .split ","
-      .map (s) -> s.trim()
+    # Subscribe to editor events:
+    # Close the overlay when the cursor moved without changing any text
+    @editorSubscriptions.add(@editor.onDidChangeCursorPosition(@cursorMoved))
 
-    fileName = path.basename @editor.getBuffer().getPath()
-    for blacklistGlob in blacklist
-      if minimatch fileName, blacklistGlob
-        return true
-
-    return false
-
+  paneItemIsValid: (paneItem) =>
+    return false unless paneItem?
+    # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
+    return paneItem instanceof TextEditor
 
   # Private: Handles editor events
-  handleEvents: ->
-    # Close the overlay when the cursor moved without
-    # changing any text
-    @compositeDisposable.add @editor.onDidChangeCursorPosition(@cursorMoved)
+  handleEvents: =>
+    # Track the current pane item, update current editor
+    @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
-    # Is this the event for switching tabs? Dunno...
-    @compositeDisposable.add @editor.onDidChangeTitle(@cancel)
+    # Handle events from suggestion list
+    @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
+    @subscriptions.add(@suggestionList.onDidCancel(@hideSuggestionList))
 
-  # Public: Registers the given provider
-  #
-  # provider - The {Provider} to register
-  registerProvider: (provider) ->
-    unless _.findWhere(@providers, provider)?
-      @providers.push(provider)
-      @compositeDisposable.add provider if provider.dispose?
-
-  # Public: Unregisters the given provider
-  #
-  # provider - The {Provider} to unregister
-  unregisterProvider: (provider) ->
-    _.remove(@providers, provider)
-    @compositeDisposable.remove(provider)
-
-  # Private: Gets called when the user successfully confirms a suggestion
-  #
-  # match - An {Object} representing the confirmed suggestion
-  confirm: (match) ->
-    return unless @editorHasFocus()
-    return unless match?.provider?
-    return unless @editor?
-
-    replace = match.provider.confirm(match)
-    @editor.getSelections()?.forEach (selection) -> selection?.clear()
-
-    @cancel()
-
-    return unless replace
-    @replaceTextWithMatch(match)
-    @editor.getCursors()?.forEach (cursor) ->
-      position = cursor?.getBufferPosition()
-      cursor.setBufferPosition([position.row, position.column]) if position?
-
-  # Private: Focuses the editor view again
-  #
-  # focus - {Boolean} should focus
-  cancel: =>
-    return unless @active
-    @overlayDecoration?.destroy()
-    @overlayDecoration = undefined
-    @removeKeyboardInteraction()
-    @editorView.focus()
-    @active = false
+  handleCommands: =>
+    # Allow autocomplete to be triggered via keymap
+    @subscriptions.add(atom.commands.add 'atom-text-editor',
+      'autocomplete-plus:activate': @runAutocompletion
+    )
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   runAutocompletion: =>
-    @cancel()
-    @originalSelectionBufferRanges = @editor.getSelections().map (selection) -> selection.getBufferRange()
-    @originalCursorPosition = @editor.getCursorScreenPosition()
-    return unless @originalCursorPosition?
-    buffer = @editor?.getBuffer()
-    return unless buffer?
+    @hideSuggestionList()
+    return unless @providerManager?
+    return unless @editor?
+    return unless @buffer?
+    return if @isCurrentFileBlackListed()
+    cursor = @editor.getLastCursor()
+    return unless cursor?
+    cursorPosition = cursor.getBufferPosition()
+    currentScope = cursor.getScopeDescriptor()
+    return unless currentScope?
+    currentScopeChain = currentScope.getScopeChain()
+    return unless currentScopeChain?
+
     options =
-      path: buffer.getPath()
-      text: buffer.getText()
-      pos: @originalCursorPosition
+      editor: @editor
+      buffer: @buffer
+      cursor: cursor
+      position: cursorPosition
+      scope: currentScope
+      scopeChain: currentScopeChain
+      prefix: @prefixForCursor(cursor)
 
-    # Iterate over all providers, ask them to build suggestion(s)
-    suggestions = []
-    for provider in @providers?.slice()?.reverse()
-      providerSuggestions = provider?.buildSuggestions(options)
-      continue unless providerSuggestions?.length
+    @scatterRequest(options)
 
-      if provider.exclusive
-        suggestions = providerSuggestions
-        break
-      else
-        suggestions = suggestions.concat(providerSuggestions)
+  scatterRequest: (options) =>
+    providers = @providerManager.providersForScopeChain(options.scopeChain)
+    return unless providers? and providers.length
+    providers = providers.map (provider) ->
+      providerSuggestions = provider?.requestHandler(options)
+    return unless providers? and providers.length
+    @currentSuggestionsPromise = suggestionsPromise = Promise.all(providers)
+      .then _.partial(@gatherSuggestions, providers)
+      .then (suggestions) => @showSuggestions(suggestions, suggestionsPromise, options)
 
-    # No suggestions? Cancel autocompletion.
-    return unless suggestions.length
+  showSuggestions: (suggestions, suggestionsPromise, options) =>
+    unless suggestions.length
+      @emitter.emit 'did-autocomplete', {options, suggestions}
+      return
+    suggestions = _.uniq(suggestions, (s) -> s.word)
+    # Show the suggestion list if we have not already requested more suggestions
+    @showSuggestionList(suggestions) if @currentSuggestionsPromise == suggestionsPromise
+    @emitter.emit 'did-autocomplete', {options, suggestions}
 
-    unless @overlayDecoration?
-      marker = @editor.getLastCursor()?.getMarker()
-      @overlayDecoration = @editor?.decorateMarker(marker, { type: 'overlay', item: this })
-
-    # Now we're ready - display the suggestions
-    @changeItems suggestions
-
-    @setActive()
-
-  changeItems: (items) ->
-    @items = items
-    @emitter.emit 'did-change-items', items
-
-  onDidChangeItems: (cb) ->
-    @emitter.on 'did-change-items', cb
-
-  # Private: Focuses the hidden input, starts listening to keyboard events
-  setActive: ->
-    @addKeyboardInteraction()
-    @active = true
-
-  # Private: Gets called when the content has been modified
-  contentsModified: =>
-    delay = parseInt(atom.config.get "autocomplete-plus.autoActivationDelay")
-    if @delayTimeout
-      clearTimeout @delayTimeout
-
-    @delayTimeout = setTimeout @runAutocompletion, delay
-
-  # Private: Gets called when the cursor has moved. Cancels the autocompletion if
-  # the text has not been changed and the autocompletion is
+  # Private: gather suggestions based on providers
   #
-  # data - An {Object} containing information on why the cursor has been moved
-  cursorMoved: (data) =>
-    @cancel() unless data.textChanged
+  # providers - An array of providers to check against provided suggestions
+  # providerSuggestions - array of arrays of suggestions provided by all called providers
+  gatherSuggestions: (providers, providerSuggestions) ->
+    providerSuggestions.reduce (suggestions, providerSuggestions, index) ->
+      provider = providers[index]
 
-  editorHasFocus: =>
-    editorView = @editorView
-    editorView = editorView[0] if editorView.jquery
-    return editorView.hasFocus()
-  # Private: Gets called when the user saves the document. Cancels the
-  # autocompletion
-  editorSaved: =>
-    return unless @editorHasFocus()
-    @cancel()
+      return suggestions unless providerSuggestions?.length
+      suggestions = suggestions.concat(providerSuggestions)
+      suggestions
+    ,[]
 
-  # Private: Cancels the autocompletion if the user entered more than one character
-  # with a single keystroke. (= pasting)
+  prefixForCursor: (cursor) =>
+    return '' unless @buffer? and cursor?
+    start = cursor.getBeginningOfCurrentWordBufferPosition()
+    end = cursor.getBufferPosition()
+    return '' unless start? and end?
+    @buffer.getTextInRange(new Range(start, end))
+
+  # Private: Gets called when the user successfully confirms a suggestion
   #
-  # e - The change {Event}
-  editorChanged: (e) =>
-    return if @compositionInProgress
-    return unless @editorHasFocus()
-    if atom.config.get("autocomplete-plus.enableAutoActivation") and ( e.newText.trim().length is 1 or e.oldText.trim().length is 1 )
-      @contentsModified()
-    else
-      @cancel()
+  # match - An {Object} representing the confirmed suggestion
+  confirm: (match) =>
+    return unless @editor?
 
-  # Private: Replaces the current prefix with the given match
+    match.onWillConfirm() if match.onWillConfirm?
+
+    @editor.getSelections()?.forEach (selection) -> selection?.clear()
+    @hideSuggestionList()
+
+    @replaceTextWithMatch(match)
+
+    if match.isSnippet? and match.isSnippet
+      setTimeout(=>
+          atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
+        , 1)
+
+    match.onDidConfirm() if match.onDidConfirm?
+
+  showSuggestionList: (suggestions) ->
+    @suggestionList.changeItems(suggestions)
+    @suggestionList.show(@editor)
+
+  hideSuggestionList: =>
+    # TODO: Should we *always* focus the editor? Probably not...
+    @suggestionList?.hideAndFocusOn(@editorView)
+
+  # Private: Replaces the current prefix with the given match.
   #
   # match - The match to replace the current prefix with
-  replaceTextWithMatch: (match) ->
+  replaceTextWithMatch: (match) =>
     return unless @editor?
     newSelectedBufferRanges = []
 
@@ -259,31 +187,64 @@ class AutocompleteManager
 
     selections = @editor.getSelections()
     return unless selections?
+    @editor.transact =>
+      @editor.selectLeft(match.prefix.length)
+      @editor.delete()
+      @editor.insertText(match.word)
 
-    selections.forEach (selection, i) =>
-      if selection?
-        startPosition = selection.getBufferRange()?.start
-        selection.deleteSelectedText()
-        cursorPosition = @editor.getCursors()?[i]?.getBufferPosition()
-        buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, -match.prefix.length))
-        infixLength = match.word.length - match.prefix.length
-        newSelectedBufferRanges.push([startPosition, [startPosition.row, startPosition.column + infixLength]])
-
-    @editor.insertText(match.word)
-    @editor.setSelectedBufferRanges(newSelectedBufferRanges)
-
-  # Private: Sets the current buffer, starts listening to change events and delegates
-  # them to #onChanged()
+  # Private: Checks whether the current file is blacklisted.
   #
-  # currentBuffer - The current {TextBuffer}
-  setCurrentBuffer: (@currentBuffer) ->
-    @compositeDisposable.add @currentBuffer.onDidSave(@editorSaved)
-    @compositeDisposable.add @currentBuffer.onDidChange(@editorChanged)
+  # Returns {Boolean} that defines whether the current file is blacklisted
+  isCurrentFileBlackListed: =>
+    blacklist = atom.config.get('autocomplete-plus.fileBlacklist')?.map((s) -> s.trim())
+    return false unless blacklist? and blacklist.length
+    fileName = path.basename(@editor.getBuffer().getPath())
+    for blacklistGlob in blacklist
+      return true if minimatch(fileName, blacklistGlob)
+
+    return false
+
+  # Private: Gets called when the content has been modified
+  contentsModified: =>
+    delay = parseInt(atom.config.get('autocomplete-plus.autoActivationDelay'))
+    clearTimeout(@delayTimeout) if @delayTimeout
+    @delayTimeout = setTimeout(@runAutocompletion, delay)
+
+  # Private: Gets called when the cursor has moved. Cancels the autocompletion if
+  # the text has not been changed.
+  #
+  # data - An {Object} containing information on why the cursor has been moved
+  cursorMoved: (data) =>
+    @hideSuggestionList() unless data.textChanged
+
+  # Private: Gets called when the user saves the document. Cancels the
+  # autocompletion.
+  bufferSaved: =>
+    @hideSuggestionList()
+
+  # Private: Cancels the autocompletion if the user entered more than one
+  # character with a single keystroke. (= pasting)
+  #
+  # e - The change {Event}
+  bufferChanged: (e) =>
+    return if @suggestionList.compositionInProgress
+    if atom.config.get('autocomplete-plus.enableAutoActivation') and (e.newText.trim().length is 1 or e.oldText.trim().length is 1)
+      @contentsModified()
+    else
+      @hideSuggestionList()
+
+  onDidAutocomplete: (callback) ->
+    @emitter.on 'did-autocomplete', callback
 
   # Public: Clean up, stop listening to events
   dispose: ->
-    @compositeDisposable.dispose()
-    @emitter.emit 'did-dispose'
-
-  onDidDispose: (cb) ->
-    @emitter.on 'did-dispose', cb
+    @editorSubscriptions?.dispose()
+    @editorSubscriptions = null
+    @suggestionList?.destroy()
+    @suggestionList = null
+    @subscriptions?.dispose()
+    @subscriptions = null
+    @providerManager = null
+    @emitter?.emit('did-dispose')
+    @emitter?.dispose()
+    @emitter = null

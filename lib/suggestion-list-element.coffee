@@ -1,17 +1,34 @@
 {CompositeDisposable} = require 'event-kit'
 _ = require 'underscore-plus'
 
-class SelectListElement extends HTMLElement
+class SuggestionListElement extends HTMLElement
   maxItems: 10
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
-    @classList.add "popover-list"
-    @classList.add "select-list"
-    @classList.add "autocomplete-plus"
-    @classList.add "autocomplete-suggestion-list"
+    @classList.add('popover-list')
+    @classList.add('select-list')
+    @classList.add('autocomplete-plus')
+    @classList.add('autocomplete-suggestion-list')
     @subscriptions.add(atom.config.observe('autocomplete-plus.maxSuggestions', => @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')))
     @registerMouseHandling()
+
+  attachedCallback: ->
+    @renderInput() unless @input
+    @renderList() unless @ol
+    @itemsChanged()
+
+  detachedCallback: ->
+    # Do stuff here...
+
+  initialize: (@model) ->
+    return unless model?
+    @subscriptions.add(@model.onDidChangeItems(@itemsChanged.bind(this)))
+    @subscriptions.add(@model.onDidSelectNext(@moveSelectionDown.bind(this)))
+    @subscriptions.add(@model.onDidSelectPrevious(@moveSelectionUp.bind(this)))
+    @subscriptions.add(@model.onDidConfirmSelection(@confirmSelection.bind(this)))
+    @subscriptions.add(@model.onDidDestroy(@dispose.bind(this)))
+    this
 
   # This should be unnecessary but the events we need to override
   # are handled at a level that can't be blocked by react synthetic
@@ -22,25 +39,11 @@ class SelectListElement extends HTMLElement
       item = event.target
       item = item.parentNode while !(item.dataset?.index) && item != this
       @selectedIndex = item.dataset?.index
-
       event.stopPropagation()
 
     @onmouseup = (event) ->
       event.stopPropagation()
       @confirmSelection()
-
-  attachedCallback: ->
-    @mountComponent() unless @component?.isMounted()
-
-  getModel: -> @model
-
-  setModel: (model) ->
-    @model = model
-    @subscriptions.add @model.onDidChangeItems(@itemsChanged.bind(this))
-    @subscriptions.add @model.onDoSelectNext(@moveSelectionDown.bind(this))
-    @subscriptions.add @model.onDoSelectPrevious(@moveSelectionUp.bind(this))
-    @subscriptions.add @model.onDoConfirmSelection(@confirmSelection.bind(this))
-    @subscriptions.add @model.onDidDispose(@dispose.bind(this))
 
   itemsChanged: ->
     @selectedIndex = 0
@@ -83,11 +86,6 @@ class SelectListElement extends HTMLElement
     else
       @model.cancel()
 
-  mountComponent: ->
-    @renderInput() unless @input
-    @renderList() unless @ol
-    @itemsChanged()
-
   renderInput: ->
     @input = document.createElement('input')
     @appendChild(@input)
@@ -103,12 +101,11 @@ class SelectListElement extends HTMLElement
   renderList: ->
     @ol = document.createElement('ol')
     @appendChild(@ol)
-    @ol.className = "list-group"
+    @ol.className = 'list-group'
 
   renderItems: ->
     items = @visibleItems() || []
     items.forEach ({word, label, renderLabelAsHtml, className}, index) =>
-
       li = @ol.childNodes[index]
       unless li
         li = document.createElement('li')
@@ -116,7 +113,7 @@ class SelectListElement extends HTMLElement
         li.dataset.index = index
 
       li.className = ''
-      li.classList.add(className)
+      li.classList.add(className) if className
       li.classList.add('selected') if index == @selectedIndex
       @selectedLi = li if index == @selectedIndex
 
@@ -124,7 +121,7 @@ class SelectListElement extends HTMLElement
       unless wordSpan
         wordSpan = document.createElement('span')
         li.appendChild(wordSpan)
-        wordSpan.className = "word"
+        wordSpan.className = 'word'
 
       wordSpan.textContent = word
 
@@ -133,7 +130,7 @@ class SelectListElement extends HTMLElement
         unless labelSpan
           labelSpan = document.createElement('span')
           li.appendChild(labelSpan) if label
-          labelSpan.className = "label"
+          labelSpan.className = 'label'
 
         if renderLabelAsHtml
           labelSpan.innerHTML = label
@@ -142,16 +139,12 @@ class SelectListElement extends HTMLElement
       else
         labelSpan?.remove()
 
-    itemToRemove = items.length
-    li.remove() while li = @ol.childNodes[itemToRemove++]
+    li.remove() while li = @ol.childNodes[items.length]
 
     @selectedLi?.scrollIntoView(false)
-
-  unmountComponent: ->
-    @dispose()
 
   dispose: ->
     @subscriptions.dispose()
     @parentNode?.removeChild(this)
 
-module.exports = SelectListElement = document.registerElement('autocomplete-suggestion-list', prototype: SelectListElement.prototype)
+module.exports = SuggestionListElement = document.registerElement('autocomplete-suggestion-list', prototype: SuggestionListElement.prototype)

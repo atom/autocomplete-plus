@@ -43,14 +43,14 @@ describe "Autocomplete", ->
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
           expect(editor.lineTextForBufferRow(10)).toBe "shift:extra:shift"
-          expect(editor.getCursorBufferPosition()).toEqual [10,12]
+          expect(editor.getCursorBufferPosition()).toEqual [10,17]
           expect(editor.getLastSelection().getBufferRange()).toEqual({
             start:
               row: 10
-              column: 12
+              column: 17
             end:
               row: 10
-              column: 12
+              column: 17
           })
 
           expect(editor.getSelections().length).toEqual(2)

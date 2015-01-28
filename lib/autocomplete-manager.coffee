@@ -157,9 +157,6 @@ class AutocompleteManager
     @hideSuggestionList()
 
     @replaceTextWithMatch(match)
-    @editor.getCursors()?.forEach (cursor) ->
-      position = cursor?.getBufferPosition()
-      cursor.setBufferPosition([position.row, position.column]) if position?
 
     match.onDidConfirm() if match.onDidConfirm?
 
@@ -183,18 +180,10 @@ class AutocompleteManager
 
     selections = @editor.getSelections()
     return unless selections?
-
-    selections.forEach (selection, i) =>
-      if selection?
-        startPosition = selection.getBufferRange()?.start
-        selection.deleteSelectedText()
-        cursorPosition = @editor.getCursors()?[i]?.getBufferPosition()
-        buffer.delete(Range.fromPointWithDelta(cursorPosition, 0, -match.prefix.length))
-        infixLength = match.word.length - match.prefix.length
-        newSelectedBufferRanges.push([startPosition, [startPosition.row, startPosition.column + infixLength]])
-
-    @editor.insertText(match.word)
-    @editor.setSelectedBufferRanges(newSelectedBufferRanges)
+    @editor.transact =>
+      @editor.selectLeft(match.prefix.length)
+      @editor.delete()
+      @editor.insertText(match.word)
 
   # Private: Checks whether the current file is blacklisted.
   #

@@ -158,6 +158,11 @@ class AutocompleteManager
 
     @replaceTextWithMatch(match)
 
+    if match.isSnippet? and match.isSnippet
+      setTimeout(=>
+          atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
+        , 1)
+
     match.onDidConfirm() if match.onDidConfirm?
 
   showSuggestionList: (suggestions) ->

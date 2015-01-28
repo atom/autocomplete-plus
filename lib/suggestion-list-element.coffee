@@ -18,9 +18,6 @@ class SuggestionListElement extends HTMLElement
     @renderList() unless @ol
     @itemsChanged()
 
-  detachedCallback: ->
-    # Do stuff here...
-
   initialize: (@model) ->
     return unless model?
     @subscriptions.add(@model.onDidChangeItems(@itemsChanged.bind(this)))

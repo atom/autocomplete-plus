@@ -20,12 +20,51 @@ describe "Autocomplete Manager", ->
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
 
-  describe "when auto-activation is enabled", ->
+  describe "when opening a file without a path and using strict matching", ->
+    beforeEach ->
+      runs ->
+        atom.config.set('autocomplete-plus.strictMatching', true)
+
+      waitsForPromise ->
+        atom.workspace.open('').then (e) ->
+          editor = e
+          editorView = atom.views.getView(editor)
+
+      waitsForPromise -> atom.packages.activatePackage('language-text')
+
+      runs ->
+        workspaceElement = atom.views.getView(atom.workspace)
+        jasmine.attachToDOM(workspaceElement)
+
+      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+        autocompleteManager = a.mainModule.autocompleteManager
+        spyOn(autocompleteManager, 'runAutocompletion').andCallThrough();
+        spyOn(autocompleteManager, 'showSuggestions').andCallThrough();
+
+    afterEach ->
+      jasmine.unspy(autocompleteManager, 'runAutocompletion')
+      jasmine.unspy(autocompleteManager, 'showSuggestions')
+
+    it "doesn't cause issues when typing", ->
+      runs ->
+        editor.moveToBottom()
+        editor.insertText('h')
+        editor.insertText('e')
+        editor.insertText('l')
+        editor.insertText('l')
+        editor.insertText('o')
+        advanceClock(completionDelay + 1000)
+
+      waitsFor ->
+        autocompleteManager.runAutocompletion.calls.length is 1
+
+  describe "when opening a javascript file", ->
     beforeEach ->
       runs -> atom.config.set('autocomplete-plus.enableAutoActivation', true)
 
       waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
         editor = e
+        editorView = atom.views.getView(editor)
 
       waitsForPromise -> atom.packages.activatePackage('language-javascript')
 
@@ -33,9 +72,6 @@ describe "Autocomplete Manager", ->
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
         autocompleteManager = mainModule.autocompleteManager
-
-      runs ->
-        editorView = atom.views.getView(editor)
 
     describe "when fuzzyprovider is disabled", ->
       it "should not show the suggestion list", ->

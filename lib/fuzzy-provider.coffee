@@ -152,7 +152,7 @@ class FuzzyProvider
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
-        wordList.filter((word) -> word.indexOf(prefix) is 0)
+        wordList.filter((word) -> word?.indexOf(prefix) is 0)
       else
         fuzzaldrin.filter(wordList, prefix)
 

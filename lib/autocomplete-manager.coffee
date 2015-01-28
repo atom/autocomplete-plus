@@ -151,7 +151,7 @@ class AutocompleteManager
   #
   # match - An {Object} representing the confirmed suggestion
   confirm: (match) =>
-    return unless @editor?
+    return unless @editor? and match?
 
     match.onWillConfirm() if match.onWillConfirm?
 
@@ -188,7 +188,7 @@ class AutocompleteManager
     selections = @editor.getSelections()
     return unless selections?
     @editor.transact =>
-      if match.prefix.length > 0
+      if match.prefix? and match.prefix.length > 0
         @editor.selectLeft(match.prefix.length)
         @editor.delete()
 

@@ -160,6 +160,10 @@ class AutocompleteManager
     @editor.getCursors()?.forEach (cursor) ->
       position = cursor?.getBufferPosition()
       cursor.setBufferPosition([position.row, position.column]) if position?
+    if match.isSnippet? and match.isSnippet
+      setTimeout(=>
+          atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
+        , 1)
 
     match.onDidConfirm() if match.onDidConfirm?
 

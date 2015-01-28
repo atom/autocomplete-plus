@@ -19,7 +19,7 @@ class AutocompleteManager
 
   constructor: ->
     @subscriptions = new CompositeDisposable
-    @providerManager = new ProviderManager()
+    @providerManager = new ProviderManager
     @subscriptions.add(@providerManager)
     @emitter = new Emitter
 
@@ -27,7 +27,7 @@ class AutocompleteManager
     @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) =>
       new SuggestionListElement().initialize(model)
     ))
-    @suggestionList = new SuggestionList()
+    @suggestionList = new SuggestionList
 
     @handleEvents()
     @handleCommands()

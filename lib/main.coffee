@@ -72,6 +72,13 @@ module.exports =
       type: 'boolean'
       default: true
       order: 10
+    selectionsListFollows:
+      title: 'Selection List Follows'
+      description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appers at the beginning of the word that\'s being completed'
+      type: 'string'
+      default: 'Cursor'
+      enum: ['Cursor', 'Word']
+      order: 11
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

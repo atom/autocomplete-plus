@@ -70,6 +70,7 @@ class SuggestionList extends Model
     @emitter.on('did-select-previous', fn)
 
   cancel: =>
+    @subscriptions.remove @marker
     @emitter.emit('did-cancel')
 
   onDidCancel: (fn) ->
@@ -80,9 +81,17 @@ class SuggestionList extends Model
     return unless editor?
     @destroyOverlay()
 
-    marker = editor.getLastCursor()?.getMarker()
-    return unless marker?
-    @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
+    if atom.config.get('autocomplete-plus.selectionsListFollows') == 'Cursor'
+      @marker = editor.getLastCursor()?.getMarker()
+      return unless @marker?
+    else
+      cursor = editor.getLastCursor()
+      return unless cursor?
+      position = cursor.getBeginningOfCurrentWordBufferPosition()
+      @marker = editor.markBufferPosition position
+      @subscriptions.add @marker
+
+    @overlayDecoration = editor.decorateMarker(@marker, {type: 'overlay', item: this})
     @addKeyboardInteraction()
     @active = true
 

@@ -162,6 +162,7 @@ class FuzzyProvider
     return results
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) =>
+    return [] unless atom?.config? and scopeDescriptor? and keyPath?
     entries = atom.config.getAll(null, scope: scopeDescriptor)
     value for {value} in entries when _.valueForKeyPath(value, keyPath)?
 
@@ -170,7 +171,7 @@ class FuzzyProvider
   # Returns an {Array} of strings
   getCompletionsForCursorScope: =>
     cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
-    completions = @settingsForScopeDescriptor(cursorScope.getScopesArray(), "editor.completions")
+    completions = @settingsForScopeDescriptor(cursorScope?.getScopesArray(), "editor.completions")
     completions = completions.map((properties) -> _.valueForKeyPath properties, "editor.completions")
     return _.uniq(_.flatten(completions))
 

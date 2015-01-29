@@ -214,8 +214,8 @@ class AutocompleteManager
   # the text has not been changed.
   #
   # data - An {Object} containing information on why the cursor has been moved
-  cursorMoved: (data) =>
-    @hideSuggestionList() unless data.textChanged
+  cursorMoved: ({textChanged}) =>
+    @hideSuggestionList() unless textChanged
 
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.
@@ -225,10 +225,10 @@ class AutocompleteManager
   # Private: Cancels the autocompletion if the user entered more than one
   # character with a single keystroke. (= pasting)
   #
-  # e - The change {Event}
-  bufferChanged: (e) =>
+  # event - The change {Event}
+  bufferChanged: ({newText, oldText}) =>
     return if @suggestionList.compositionInProgress
-    if atom.config.get('autocomplete-plus.enableAutoActivation') and (e.newText.trim().length is 1 or e.oldText.trim().length is 1)
+    if atom.config.get('autocomplete-plus.enableAutoActivation') and (newText.trim().length is 1 or oldText.trim().length is 1)
       @contentsModified()
     else
       @hideSuggestionList()

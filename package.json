@@ -15,7 +15,6 @@
     "node-uuid": ">=1.4.1",
     "scoped-property-store": ">=0.16.2",
     "temp": ">=0.7.0",
-    "theorist": ">=1.0.2",
     "underscore-plus": ">=1.0.0"
   }
 }

@@ -1,8 +1,7 @@
-{Model} = require 'theorist'
 {Emitter, CompositeDisposable} = require 'atom'
 
 module.exports =
-class SuggestionList extends Model
+class SuggestionList
   constructor: ->
     @compositionInProgress = false
     @emitter = new Emitter
@@ -103,7 +102,7 @@ class SuggestionList extends Model
     @emitter.on('did-change-items', fn)
 
   # Public: Clean up, stop listening to events
-  destroyed: ->
+  destroy: ->
     @subscriptions.dispose()
     @emitter.emit('did-destroy')
     @emitter.dispose()

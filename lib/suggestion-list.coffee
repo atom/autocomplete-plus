@@ -81,7 +81,7 @@ class SuggestionList extends Model
     return unless editor?
     @destroyOverlay()
 
-    if atom.config.get('autocomplete-plus.selectionsListFollows') == 'Cursor'
+    if atom.config.get('autocomplete-plus.suggestionListFollows') == 'Cursor'
       @marker = editor.getLastCursor()?.getMarker()
       return unless @marker?
     else

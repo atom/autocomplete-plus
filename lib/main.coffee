@@ -72,8 +72,8 @@ module.exports =
       type: 'boolean'
       default: true
       order: 10
-    selectionsListFollows:
-      title: 'Selection List Follows'
+    suggestionListFollows:
+      title: 'Suggestions List Follows'
       description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appers at the beginning of the word that\'s being completed'
       type: 'string'
       default: 'Cursor'

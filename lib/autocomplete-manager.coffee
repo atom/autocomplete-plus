@@ -65,7 +65,6 @@ class AutocompleteManager
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
 
-  # Private: Handles editor events
   handleEvents: =>
     # Track the current pane item, update current editor
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))

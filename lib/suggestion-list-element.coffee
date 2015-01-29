@@ -1,4 +1,4 @@
-{CompositeDisposable} = require 'event-kit'
+{CompositeDisposable} = require 'atom'
 _ = require 'underscore-plus'
 
 class SuggestionListElement extends HTMLElement
@@ -6,10 +6,7 @@ class SuggestionListElement extends HTMLElement
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
-    @classList.add('popover-list')
-    @classList.add('select-list')
-    @classList.add('autocomplete-plus')
-    @classList.add('autocomplete-suggestion-list')
+    @classList.add('popover-list', 'select-list', 'autocomplete-plus', 'autocomplete-suggestion-list')
     @subscriptions.add(atom.config.observe('autocomplete-plus.maxSuggestions', => @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')))
     @registerMouseHandling()
 
@@ -17,9 +14,6 @@ class SuggestionListElement extends HTMLElement
     @renderInput() unless @input
     @renderList() unless @ol
     @itemsChanged()
-
-  detachedCallback: ->
-    # Do stuff here...
 
   initialize: (@model) ->
     return unless model?

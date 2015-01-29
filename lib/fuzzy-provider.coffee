@@ -1,8 +1,7 @@
 _ = require 'underscore-plus'
 Suggestion = require './suggestion'
 fuzzaldrin = require 'fuzzaldrin'
-{CompositeDisposable} = require 'event-kit'
-{TextEditor}  = require 'atom'
+{TextEditor, CompositeDisposable}  = require 'atom'
 
 module.exports =
 class FuzzyProvider

@@ -1,5 +1,4 @@
-{Range, TextEditor}  = require 'atom'
-{CompositeDisposable, Disposable, Emitter} = require 'event-kit'
+{Range, TextEditor, CompositeDisposable, Disposable, Emitter}  = require 'atom'
 _ = require 'underscore-plus'
 minimatch = require 'minimatch'
 path = require 'path'
@@ -19,7 +18,7 @@ class AutocompleteManager
 
   constructor: ->
     @subscriptions = new CompositeDisposable
-    @providerManager = new ProviderManager()
+    @providerManager = new ProviderManager
     @subscriptions.add(@providerManager)
     @emitter = new Emitter
 
@@ -27,7 +26,7 @@ class AutocompleteManager
     @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) =>
       new SuggestionListElement().initialize(model)
     ))
-    @suggestionList = new SuggestionList()
+    @suggestionList = new SuggestionList
 
     @handleEvents()
     @handleCommands()
@@ -66,7 +65,6 @@ class AutocompleteManager
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
 
-  # Private: Handles editor events
   handleEvents: =>
     # Track the current pane item, update current editor
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
@@ -208,16 +206,16 @@ class AutocompleteManager
 
   # Private: Gets called when the content has been modified
   contentsModified: =>
-    delay = parseInt(atom.config.get('autocomplete-plus.autoActivationDelay'))
-    clearTimeout(@delayTimeout) if @delayTimeout
+    delay = atom.config.get('autocomplete-plus.autoActivationDelay')
+    clearTimeout(@delayTimeout)
     @delayTimeout = setTimeout(@runAutocompletion, delay)
 
   # Private: Gets called when the cursor has moved. Cancels the autocompletion if
   # the text has not been changed.
   #
   # data - An {Object} containing information on why the cursor has been moved
-  cursorMoved: (data) =>
-    @hideSuggestionList() unless data.textChanged
+  cursorMoved: ({textChanged}) =>
+    @hideSuggestionList() unless textChanged
 
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.
@@ -227,10 +225,10 @@ class AutocompleteManager
   # Private: Cancels the autocompletion if the user entered more than one
   # character with a single keystroke. (= pasting)
   #
-  # e - The change {Event}
-  bufferChanged: (e) =>
+  # event - The change {Event}
+  bufferChanged: ({newText, oldText}) =>
     return if @suggestionList.compositionInProgress
-    if atom.config.get('autocomplete-plus.enableAutoActivation') and (e.newText.trim().length is 1 or e.oldText.trim().length is 1)
+    if atom.config.get('autocomplete-plus.enableAutoActivation') and (newText.trim().length is 1 or oldText.trim().length is 1)
       @contentsModified()
     else
       @hideSuggestionList()

@@ -1,4 +1,4 @@
-{Range, TextEditorm CompositeDisposable, Disposable, Emitter}  = require 'atom'
+{Range, TextEditor, CompositeDisposable, Disposable, Emitter}  = require 'atom'
 _ = require 'underscore-plus'
 minimatch = require 'minimatch'
 path = require 'path'

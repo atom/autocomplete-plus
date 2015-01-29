@@ -18,8 +18,8 @@ class ProviderManager
   constructor: ->
     @subscriptions = new CompositeDisposable
     @globalBlacklist = new CompositeDisposable
-    @legacyProviderRegistrations = new WeakMap()
-    @providers = new Map()
+    @legacyProviderRegistrations = new WeakMap
+    @providers = new Map
     @store = new ScopedPropertyStore
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableBuiltinProvider', (value) => @toggleFuzzyProvider(value)))
     @subscriptions.add(atom.config.observe('autocomplete-plus.scopeBlacklist', (value) => @setGlobalBlacklist(value)))

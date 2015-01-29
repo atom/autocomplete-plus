@@ -206,8 +206,8 @@ class AutocompleteManager
 
   # Private: Gets called when the content has been modified
   contentsModified: =>
-    clearTimeout(@delayTimeout) if @delayTimeout
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
+    clearTimeout(@delayTimeout)
     @delayTimeout = setTimeout(@runAutocompletion, delay)
 
   # Private: Gets called when the cursor has moved. Cancels the autocompletion if

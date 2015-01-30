@@ -1,7 +1,7 @@
 {waitForAutocomplete} = require('./spec-helper')
 TestProvider = require('./lib/test-provider')
 
-describe "HTML labels", ->
+describe 'HTML labels', ->
   [completionDelay, editorView, editor, autocompleteManager, registration] = []
 
   beforeEach ->
@@ -21,7 +21,8 @@ describe "HTML labels", ->
     waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
       editor = e
 
-    waitsForPromise -> atom.packages.activatePackage('language-javascript')
+    waitsForPromise ->
+      atom.packages.activatePackage('language-javascript')
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
@@ -30,19 +31,18 @@ describe "HTML labels", ->
   afterEach ->
     registration?.dispose()
 
-  it "should allow HTML in labels for suggestions in the suggestion list", ->
+  it 'should allow HTML in labels for suggestions in the suggestion list', ->
     runs ->
       testProvider =
         requestHandler: (options) ->
           [{
-            word: "ohai",
-            prefix: "ohai",
-            label: "<span style=\"color: red\">ohai</span>",
+            word: 'ohai',
+            prefix: 'ohai',
+            label: '<span style="color: red">ohai</span>',
             renderLabelAsHtml: true,
             className: 'ohai'
           }]
         selector: '.source.js'
-        dispose: ->
       registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       editor.moveToBottom()

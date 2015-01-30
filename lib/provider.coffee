@@ -8,7 +8,7 @@ class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: ->
-    deprecate """
+    deprecate '''
       `Provider` is no longer supported. Please define your own object (a class or anonymous object)
       instead of extending `Provider`. Example
         ```
@@ -21,7 +21,7 @@ class Provider
             [{
               word: 'ohai',
               prefix: 'ohai',
-              label: '<span style="color: red">ohai</span>',
+              label: '<span style='color: red'>ohai</span>',
               renderLabelAsHtml: true,
               className: 'ohai'
             }]
@@ -29,7 +29,7 @@ class Provider
           dispose: ->
             # Your dispose logic here
         ```
-    """
+    '''
     @initialize.apply(this, arguments)
 
   # Public: An initializer for subclasses

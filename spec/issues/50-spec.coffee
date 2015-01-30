@@ -1,43 +1,42 @@
 {waitForAutocomplete} = require('../spec-helper')
 
-describe "Autocomplete", ->
-  [activationPromise, mainModule, editorView, editor, completionDelay] = []
+describe 'Autocomplete', ->
+  [activationPromise, editorView, editor, completionDelay] = []
 
-  describe "Issue 50", ->
+  describe 'Issue 50', ->
     beforeEach ->
       runs ->
         # Set to live completion
-        atom.config.set "autocomplete-plus.enableAutoActivation", true
+        atom.config.set('autocomplete-plus.enableAutoActivation', true)
 
         # Set the completion delay
         completionDelay = 100
-        atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
+        atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
         completionDelay += 100 # Rendering delay
 
         workspaceElement = atom.views.getView(atom.workspace)
         jasmine.attachToDOM(workspaceElement)
 
-      waitsForPromise -> atom.workspace.open("issues/50.js").then (e) ->
+      waitsForPromise -> atom.workspace.open('issues/50.js').then (e) ->
         editor = e
 
       # Activate the package
       waitsForPromise ->
-        atom.packages.activatePackage("autocomplete-plus")
-          .then (a) -> mainModule = a.mainModule
+        atom.packages.activatePackage('autocomplete-plus')
 
       runs ->
         editorView = atom.views.getView(editor)
 
-    it "works after closing one of the copied tabs", ->
+    it 'works after closing one of the copied tabs', ->
       runs ->
-        atom.workspace.paneForItem(editor).splitRight(copyActiveItem: true)
+        atom.workspace.paneForItem(editor).splitRight({copyActiveItem: true})
         atom.workspace.getActivePane().destroy()
 
         editor.moveCursorToEndOfLine
         editor.insertNewline()
-        editor.insertText "f"
+        editor.insertText('f')
 
         waitForAutocomplete()
 
         runs ->
-          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()

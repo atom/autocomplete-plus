@@ -2,7 +2,7 @@
 module.exports =
 class Suggestion
   constructor: (@provider, options) ->
-    deprecate """
+    deprecate '''
       `Suggestion` is no longer supported. Please define your own object (a class or anonymous object)
       instead of instantiating `Suggestion`. Example
         ```
@@ -15,7 +15,7 @@ class Suggestion
             [{
               word: 'ohai',
               prefix: 'ohai',
-              label: '<span style="color: red">ohai</span>',
+              label: '<span style='color: red'>ohai</span>',
               renderLabelAsHtml: true,
               className: 'ohai'
             }]
@@ -23,7 +23,7 @@ class Suggestion
           dispose: ->
             # Your dispose logic here
         ```
-    """
+    '''
     @word = options.word if options.word?
     @prefix = options.prefix if options.prefix?
     @label = options.label if options.label?

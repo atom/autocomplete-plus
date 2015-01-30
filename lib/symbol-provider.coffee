@@ -200,8 +200,13 @@ class SymbolProvider
     matchedSymbols = []
 
     # Handle the case where a symbol is a variable in some cases and, say, a
-    # class in others. We want all symbols in the file to have the same type.
-    # e.g. `class` types are higher priority than `variables`
+    # class in others. We want all symbols of the same name to have the same type. e.g.
+    #
+    # ```coffee
+    # SomeModule = require 'some-module' # This line parses SomeModule as a var
+    # class MyClass extends SomeModule # This line parses SomeModule as a class
+    # ```
+    # `class` types are higher priority than `variables`
     cacheSymbolType = (word, currentType) =>
       word = getWordKey(word)
       return symbolTypes[word] = currentType unless symbolTypes[word]?

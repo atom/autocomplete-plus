@@ -99,13 +99,10 @@ class SymbolProvider
     # No prefix? Don't autocomplete!
     return unless prefix.trim().length
 
-    suggestions = @findSuggestionsForWord(prefix)
-
-    # No suggestions? Don't autocomplete!
-    return unless suggestions.length
-
-    # Now we're ready - display the suggestions
-    return suggestions
+    new Promise (resolve) =>
+      _.defer =>
+        suggestions = @findSuggestionsForWord(options)
+        resolve(suggestions)
 
   # Private: Finds possible matches for the given string / prefix
   #

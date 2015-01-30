@@ -1,21 +1,8 @@
-.clearfix() {
-  &:before,
-  &:after {
-    content: ' '; // 1
-    display: table; // 2
-  }
-  &:after {
-    clear: both;
-  }
-}
-
-.autocomplete-plus.popover-list {
-
+autocomplete-suggestion-list.select-list.popover-list {
   width: auto;
   display: inline-block;
   min-width: 200px;
-  margin-left: 0;
-  position: relative;
+
   input {
     position: absolute;
     opacity: 0.00;
@@ -25,15 +12,23 @@
     max-height: 50vh;
     overflow-y: auto;
     margin-top: 0;
+
     li {
-      .clearfix();
+      &:after {
+        clear: both;
+        display: block;
+        content: ' ';
+      }
       .word {
         float: left;
       }
-      .label {
+      &.selected .completion-label {
+        color: @text-color;
+      }
+      .completion-label {
         float: right;
-        opacity: 0.3;
-        padding-top: 8px;
+        padding-right: 6px;
+        padding-left: 6px;
       }
     }
   }

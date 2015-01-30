@@ -15,6 +15,7 @@
     "node-uuid": ">=1.4.1",
     "scoped-property-store": ">=0.16.2",
     "temp": ">=0.7.0",
+    "selector-kit": "^0.1",
     "underscore-plus": ">=1.0.0"
   },
   "devDependencies": {

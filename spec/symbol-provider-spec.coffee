@@ -7,6 +7,11 @@ indexOfWord = (suggestionList, word) ->
     return i if suggestion.word is word
   -1
 
+suggestionForWord = (suggestionList, word) ->
+  for suggestion in suggestionList
+    return suggestion if suggestion.word is word
+  null
+
 describe 'Autocomplete', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
@@ -23,7 +28,32 @@ describe 'Autocomplete', ->
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
 
-  describe 'when auto-activation is enabled', ->
+  describe "when completing coffeescript with the default configuration", ->
+    beforeEach ->
+      runs -> atom.config.set "autocomplete-plus.enableAutoActivation", true
+
+      waitsForPromise -> atom.workspace.open("sample.coffee").then (e) ->
+        editor = e
+
+      # Activate the package
+      waitsForPromise ->
+        atom.packages.activatePackage("language-coffee-script").then ->
+          atom.packages.activatePackage("autocomplete-plus").then (a) ->
+            autocompleteManager = a.mainModule.autocompleteManager
+
+      runs ->
+        advanceClock 1
+        editorView = atom.views.getView(editor)
+
+    fit "properly swaps a lower priority type for a higher priority type", ->
+      # SomeModule is parsed as a variable in the
+      # `SomeModule = require 'some-module'` line and as a class in the
+      # `extends SomeModule` line
+      provider = autocompleteManager.providerManager.fuzzyProvider
+      suggestion = suggestionForWord(provider.wordList, 'SomeModule')
+      expect(suggestion.type).toEqual 'class'
+
+  describe "when auto-activation is enabled", ->
     beforeEach ->
       runs ->
         atom.config.set('autocomplete-plus.enableAutoActivation', true)

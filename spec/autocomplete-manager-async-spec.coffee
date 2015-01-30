@@ -1,5 +1,5 @@
 {waitForAutocomplete} = require('./spec-helper')
-describe "Async providers", ->
+describe 'Async providers', ->
   [completionDelay, editorView, editor, autocompleteManager, registration] = []
 
   beforeEach ->
@@ -19,7 +19,8 @@ describe "Async providers", ->
     waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
       editor = e
 
-    waitsForPromise -> atom.packages.activatePackage('language-javascript')
+    waitsForPromise ->
+      atom.packages.activatePackage('language-javascript')
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
@@ -28,22 +29,22 @@ describe "Async providers", ->
   afterEach ->
     registration?.dispose()
 
-  it "should provide completions when a provider returns a promise that results in an array of suggestions", ->
+  it 'should provide completions when a provider returns a promise that results in an array of suggestions', ->
     runs ->
       testAsyncProvider =
         requestHandler: (options) ->
-          return new Promise (resolve) ->
+          return new Promise((resolve) ->
             setTimeout ->
               resolve(
                 [{
-                  word: "asyncProvided",
-                  prefix: "asyncProvided",
-                  label: "asyncProvided"
+                  word: 'asyncProvided',
+                  prefix: 'asyncProvided',
+                  label: 'asyncProvided'
                 }]
               )
             , 10
+            )
         selector: '.source.js'
-        dispose: ->
       registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
 
       editor.moveToBottom()

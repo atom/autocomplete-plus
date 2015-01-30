@@ -1,8 +1,8 @@
 {waitForAutocomplete} = require('./spec-helper')
 TestProvider = require('./lib/test-provider')
-_ = require 'underscore-plus'
+_ = require('underscore-plus')
 
-describe "Provider API", ->
+describe 'Provider API', ->
   [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
 
   beforeEach ->
@@ -33,13 +33,14 @@ describe "Provider API", ->
     testProvider?.dispose() if testProvider?.dispose?
     testProvider = null
 
-  describe "When the Editor has a grammar", ->
+  describe 'When the Editor has a grammar', ->
 
     beforeEach ->
-      waitsForPromise -> atom.packages.activatePackage('language-javascript')
+      waitsForPromise ->
+        atom.packages.activatePackage('language-javascript')
 
-    describe "Legacy Provider API", ->
-      it "registers the given provider for the given editor", ->
+    describe 'Legacy Provider API', ->
+      it 'registers the given provider for the given editor', ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
@@ -55,7 +56,7 @@ describe "Provider API", ->
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), providerRegistration.shim)).toEqual(true)
 
-      it "registers the given provider once when called multiple times for the given editor", ->
+      it 'registers the given provider once when called multiple times for the given editor', ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
@@ -89,7 +90,7 @@ describe "Provider API", ->
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
           expect(_.contains(autocompleteManager.providerManager.providersForScopeChain('.source.js'), providerRegistration.shim)).toEqual(true)
 
-      it "unregisters the provider from all editors", ->
+      it 'unregisters the provider from all editors', ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           testProvider = new TestProvider()
@@ -108,22 +109,22 @@ describe "Provider API", ->
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
           expect(autocompleteManager.providerManager.legacyProviderRegistrations.has(testProvider.constructor)).toEqual(false)
 
-      it "buildSuggestions is called for a registered provider", ->
+      it 'buildSuggestions is called for a registered provider', ->
         runs ->
           testProvider = new TestProvider()
           mainModule.registerProviderForEditor(testProvider, editor)
 
-          spyOn(testProvider, "buildSuggestions").andCallThrough()
+          spyOn(testProvider, 'buildSuggestions').andCallThrough()
 
           # Trigger an autocompletion
           editor.moveToBottom()
           editor.moveToBeginningOfLine()
           editor.insertText('f')
-          advanceClock completionDelay
+          advanceClock(completionDelay)
 
           expect(testProvider.buildSuggestions).toHaveBeenCalled()
 
-    describe "Provider API v1.0.0", ->
+    describe 'Provider API v1.0.0', ->
       [registration1, registration2, registration3] = []
 
       afterEach ->
@@ -131,7 +132,7 @@ describe "Provider API", ->
         registration2?.dispose()
         registration3?.dispose()
 
-      it "should allow registration of a provider", ->
+      it 'should allow registration of a provider', ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
@@ -142,16 +143,15 @@ describe "Provider API", ->
           testProvider =
             requestHandler: (options) ->
               [{
-                word: "ohai",
-                prefix: "ohai",
-                label: "<span style=\"color: red\">ohai</span>",
+                word: 'ohai',
+                prefix: 'ohai',
+                label: '<span style="color: red">ohai</span>',
                 renderLabelAsHtml: true,
                 className: 'ohai'
               }]
             selector: '.source.js,.source.coffee'
-            dispose: ->
           # Register the test provider
-          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider:testProvider})
+          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
@@ -173,7 +173,7 @@ describe "Provider API", ->
             expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
             expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
 
-      it "should dispose a provider registration correctly", ->
+      it 'should dispose a provider registration correctly', ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
@@ -184,16 +184,12 @@ describe "Provider API", ->
           testProvider =
             requestHandler: (options) ->
               [{
-                word: "ohai",
-                prefix: "ohai",
-                label: "<span style=\"color: red\">ohai</span>",
-                renderLabelAsHtml: true,
-                className: 'ohai'
+                word: 'ohai',
+                prefix: 'ohai'
               }]
             selector: '.source.js,.source.coffee'
-            dispose: ->
           # Register the test provider
-          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider:testProvider})
+          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
@@ -220,7 +216,7 @@ describe "Provider API", ->
           expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
           expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
 
-      it "should remove a provider's registration if the provider is disposed", ->
+      it 'should remove a providers registration if the provider is disposed', ->
         runs ->
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
@@ -231,16 +227,14 @@ describe "Provider API", ->
           testProvider =
             requestHandler: (options) ->
               [{
-                word: "ohai",
-                prefix: "ohai",
-                label: "<span style=\"color: red\">ohai</span>",
-                renderLabelAsHtml: true,
-                className: 'ohai'
+                word: 'ohai',
+                prefix: 'ohai'
               }]
             selector: '.source.js,.source.coffee'
             dispose: ->
+              return
           # Register the test provider
-          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider:testProvider})
+          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)

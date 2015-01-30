@@ -93,7 +93,7 @@ module.exports =
   registerProviderForEditor: (provider, editor) ->
     return unless @autocompleteManager?.providerManager?
     return unless editor?.getGrammar()?.scopeName?
-    deprecate """
+    deprecate '''
       registerProviderForEditor and registerProviderForEditorView are no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
         ```
@@ -106,7 +106,7 @@ module.exports =
             [{
               word: 'ohai',
               prefix: 'ohai',
-              label: '<span style="color: red">ohai</span>',
+              label: '<span style='color: red'>ohai</span>',
               renderLabelAsHtml: true,
               className: 'ohai'
             }]
@@ -115,7 +115,7 @@ module.exports =
             # Your dispose logic here
         registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
         ```
-    """
+    '''
     return @autocompleteManager.providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
 
   # Public: unregisters the given provider
@@ -123,7 +123,7 @@ module.exports =
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
     return unless @autocompleteManager?.providerManager?
-    deprecate """
+    deprecate '''
       unregisterProvider is no longer supported.
       Use [service-hub](https://github.com/atom/service-hub) instead:
         ```
@@ -136,7 +136,7 @@ module.exports =
             [{
               word: 'ohai',
               prefix: 'ohai',
-              label: '<span style="color: red">ohai</span>',
+              label: '<span style='color: red'>ohai</span>',
               renderLabelAsHtml: true,
               className: 'ohai'
             }]
@@ -146,7 +146,7 @@ module.exports =
         registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
         registration.dispose() # << unregisters your provider
         ```
-    """
+    '''
     @autocompleteManager.providerManager.unregisterLegacyProvider(provider)
 
   Provider: Provider # TODO: This is deprecated, and will be removed soon

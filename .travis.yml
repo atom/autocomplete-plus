@@ -11,7 +11,11 @@ notifications:
     on_failure: always
     on_start: false
 
-script: 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
+before_script:
+  - npm install
+script:
+  - './node_modules/.bin/coffeelint lib spec'
+  - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
 
 git:
   depth: 10

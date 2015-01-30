@@ -1,5 +1,5 @@
 function Redraw() { }
 
 Redraw.prototype.redraw = function() {
-  console.log("foo");
+  console.log('foo');
 }

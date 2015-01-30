@@ -1,42 +1,43 @@
 {waitForAutocomplete} = require('../spec-helper')
 
-describe "Autocomplete", ->
+describe 'Autocomplete', ->
   [mainModule, autocompleteManager, editorView, editor, completionDelay] = []
 
-  describe "Issue 64", ->
+  describe 'Issue 64', ->
     beforeEach ->
       runs ->
         # Set to live completion
-        atom.config.set "autocomplete-plus.enableAutoActivation", true
+        atom.config.set('autocomplete-plus.enableAutoActivation', true)
 
         # Set the completion delay
         completionDelay = 100
-        atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
+        atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
         completionDelay += 100 # Rendering delay
 
         workspaceElement = atom.views.getView(atom.workspace)
         jasmine.attachToDOM(workspaceElement)
 
-      waitsForPromise -> atom.workspace.open("issues/64.css").then (e) ->
+      waitsForPromise -> atom.workspace.open('issues/64.css').then (e) ->
         editor = e
         editorView = atom.views.getView(editor)
 
-      waitsForPromise -> atom.packages.activatePackage('language-css')
+      waitsForPromise ->
+        atom.packages.activatePackage('language-css')
 
       # Activate the package
-      waitsForPromise -> atom.packages.activatePackage("autocomplete-plus").then (a) ->
+      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
         autocompleteManager = mainModule.autocompleteManager
 
-    it "it adds words hyphens to the wordlist", ->
+    it 'it adds words hyphens to the wordlist', ->
       runs ->
-        editor.insertText c for c in "bla"
+        editor.insertText(c) for c in 'bla'
 
         waitForAutocomplete()
 
         runs ->
 
-          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
           suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-          expect(suggestionListView.querySelector("li")).toHaveText "bla-foo--bar"
+          expect(suggestionListView.querySelector('li')).toHaveText('bla-foo--bar')

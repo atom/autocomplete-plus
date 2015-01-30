@@ -1,56 +1,57 @@
 {waitForAutocomplete} = require('./spec-helper')
 
-describe "Autocomplete", ->
+describe 'Autocomplete', ->
   [completionDelay, editorView, editor, autocomplete, mainModule] = []
 
   beforeEach ->
     runs ->
       # Set to live completion
-      atom.config.set "autocomplete-plus.enableAutoActivation", true
-      atom.config.set "autocomplete-plus.fileBlacklist", [".*", "*.md"]
+      atom.config.set('autocomplete-plus.enableAutoActivation', true)
+      atom.config.set('autocomplete-plus.fileBlacklist', ['.*', '*.md'])
 
       # Set the completion delay
       completionDelay = 100
-      atom.config.set "autocomplete-plus.autoActivationDelay", completionDelay
+      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
       completionDelay += 100 # Rendering delay
 
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise -> atom.workspace.open("sample.js").then (e) ->
+    waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
       editor = e
 
-    waitsForPromise -> atom.packages.activatePackage('language-javascript')
+    waitsForPromise ->
+      atom.packages.activatePackage('language-javascript')
 
     # Activate the package
     waitsForPromise ->
-      atom.packages.activatePackage("autocomplete-plus").then (a) ->
+      atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
 
     runs ->
       editorView = atom.views.getView(editor)
 
-  describe "@activate()", ->
-    it "activates autocomplete and initializes AutocompleteManager", ->
+  describe '@activate()', ->
+    it 'activates autocomplete and initializes AutocompleteManager', ->
       runs ->
         expect(mainModule.autocompleteManager).toBeDefined()
-        expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-  describe "@deactivate()", ->
-    it "removes all autocomplete views", ->
+  describe '@deactivate()', ->
+    it 'removes all autocomplete views', ->
       runs ->
         buffer = editor.getBuffer()
 
         # Trigger an autocompletion
         editor.moveToBottom()
-        editor.insertText("A")
+        editor.insertText('A')
 
         waitForAutocomplete()
 
         runs ->
           editorView = editorView
-          expect(editorView.querySelector(".autocomplete-plus")).toExist()
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
           # Deactivate the package
-          atom.packages.deactivatePackage "autocomplete-plus"
-          expect(editorView.querySelector(".autocomplete-plus")).not.toExist()
+          atom.packages.deactivatePackage('autocomplete-plus')
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

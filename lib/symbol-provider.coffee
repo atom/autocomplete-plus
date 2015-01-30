@@ -16,10 +16,10 @@ class SymbolProvider
   config: null
   defaultConfig:
     class:
-      selector: '.class.name'
+      selector: '.class.name, .inherited-class'
       priority: 3
     function:
-      selector: '.function'
+      selector: '.function.name'
       priority: 2
     variable:
       selector: '.variable'
@@ -67,7 +67,10 @@ class SymbolProvider
     for config in allConfig
       for type, options of config
         @config[type] = _.clone(options)
-        [@config[type].selector] = Selector.create(options.selector) if options.selector?
+        @config[type].selectors = Selector.create(options.selector) if options.selector?
+        @config[type].selectors ?= []
+        @config[type].priority ?= 1
+        @config[type].wordRegex ?= @wordRegex
 
     return
 
@@ -168,17 +171,48 @@ class SymbolProvider
     @wordList = wordList
 
   getSymbolsFromEditor: (editor, minimumWordLength) ->
+    # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not
+    # copy into your own package. If you do, be prepared to have it break
+    # without warning.
     tokenizedLines = editor.displayBuffer.tokenizedBuffer.tokenizedLines
-    matchedTokens = []
+
+    symbolTypes = {}
+    matchedSymbols = []
+
+    # Handle the case where a symbol is a variable in some cases and, say, a
+    # class in others. We want all symbols in the file to have the same type.
+    # e.g. `class` types are higher priority than `variables`
+    cacheSymbolType = (word, currentType) =>
+      word = getWordKey(word)
+      return symbolTypes[word] = currentType unless symbolTypes[word]?
+      currentTypePriority = @config[currentType].priority
+      cachedTypePriority = @config[symbolTypes[word]].priority
+      symbolTypes[word] = currentType if currentTypePriority > cachedTypePriority
+
+    getWordKey = (word) ->
+       # some words are reserved, like 'constructor' :/
+      word + '$$'
+
+    normalizeTypesForAllSymbols = ->
+      for symbol in matchedSymbols
+        wordKey = getWordKey(symbol.word)
+        symbol.type = symbolTypes[wordKey] if symbolTypes[wordKey]?
+      return
+
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
         scopes = @cssSelectorFromScopes(token.scopes)
         for type, options of @config
-          if options.selector?.matches(scopes) and matches = token.value.match(@wordRegex)
-            for word in matches
-              matchedTokens.push {type, word, bufferRow} if word.length >= minimumWordLength
+          for selector in options.selectors
+            if selector.matches(scopes) and matches = token.value.match(options.wordRegex)
+              for word in matches
+                if word.length >= minimumWordLength
+                  matchedSymbols.push {type, word, bufferRow, scopes}
+                  cacheSymbolType(word, type)
+              break
 
-    matchedTokens
+    normalizeTypesForAllSymbols()
+    matchedSymbols
 
   cssSelectorFromScopes: (scopes) ->
     selector = ''

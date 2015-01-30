@@ -30,7 +30,6 @@ class SymbolProvider
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
-  # Public: Clean up, stop listening to events
   dispose: =>
     @editorSubscriptions?.dispose()
     @subscriptions.dispose()

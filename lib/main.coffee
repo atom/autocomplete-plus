@@ -65,6 +65,11 @@ module.exports =
       type: 'boolean'
       default: false
       order: 9
+    minimumWordLength:
+      description: "Only autocomplete when you've typed at least this many characters."
+      type: 'integer'
+      default: 1
+      order: 10
     enableBuiltinProvider:
       title: 'Enable Built-In Provider'
       description: 'The package comes with a built-in provider that will provide suggestions using the words in your current buffer or all open buffers. You will get better suggestions by installing additional autocomplete+ providers. To stop using the built-in provider, disable this option.'

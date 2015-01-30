@@ -1,8 +1,8 @@
-_ = require 'underscore-plus'
-AutocompleteManager = require './autocomplete-manager'
-Provider = require './provider'
-Suggestion = require './suggestion'
-{deprecate} = require 'grim'
+_ = require('underscore-plus')
+AutocompleteManager = require('./autocomplete-manager')
+Provider = require('./provider')
+Suggestion = require('./suggestion')
+{deprecate} = require('grim')
 
 module.exports =
   config:

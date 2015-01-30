@@ -1,10 +1,10 @@
-{CompositeDisposable, Disposable, Emitter} = require 'atom'
-ScopedPropertyStore = require 'scoped-property-store'
-_ = require 'underscore-plus'
-Uuid = require 'node-uuid'
-FuzzyProvider = require './fuzzy-provider'
-Suggestion = require './suggestion'
-Provider = require './provider'
+{CompositeDisposable, Disposable, Emitter} = require('atom')
+ScopedPropertyStore = require('scoped-property-store')
+_ = require('underscore-plus')
+Uuid = require('node-uuid')
+FuzzyProvider = require('./fuzzy-provider')
+Suggestion = require('./suggestion')
+Provider = require('./provider')
 
 module.exports =
 class ProviderManager
@@ -87,10 +87,10 @@ class ProviderManager
     @providers.set(provider, Uuid.v4()) unless @providers.has(provider)
     @subscriptions.add(provider) if provider.dispose? and not _.contains(@subscriptions?.disposables, provider)
 
-  isValidProvider: (provider) =>
+  isValidProvider: (provider) ->
     return provider? and provider.requestHandler? and typeof provider.requestHandler is 'function' and provider.selector? and provider.selector isnt '' and provider.selector isnt false
 
-  isLegacyProvider: (provider) =>
+  isLegacyProvider: (provider) ->
     return provider? and provider instanceof Provider
 
   providerUuid: (provider) =>
@@ -167,11 +167,12 @@ class ProviderManager
         providerblacklistRegistation?.dispose()
         @removeProvider(provider)
 
-    new Disposable =>
+    new Disposable(=>
       registration?.dispose()
       blacklistRegistration?.dispose()
       providerblacklistRegistation?.dispose()
       @removeProvider(provider)
+    )
 
   # ^^^ PROVIDER API ^^^
   # |||              |||
@@ -197,7 +198,7 @@ class ProviderManager
     legacyProviderRegistration.service = @registerProvider(legacyProviderRegistration.shim)
     return legacyProviderRegistration.service
 
-  shimLegacyProvider: (legacyProvider, selector) =>
+  shimLegacyProvider: (legacyProvider, selector) ->
     unless legacyProvider.buildSuggestionsShim
       legacyProvider.buildSuggestionsShim = Provider.prototype.buildSuggestionsShim
     shim =

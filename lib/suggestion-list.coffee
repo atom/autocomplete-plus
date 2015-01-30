@@ -1,4 +1,4 @@
-{Emitter, CompositeDisposable} = require 'atom'
+{Emitter, CompositeDisposable} = require('atom')
 
 module.exports =
 class SuggestionList
@@ -19,23 +19,20 @@ class SuggestionList
     keys =
       'escape': 'autocomplete-plus:cancel'
 
-    completionKey = atom.config.get('autocomplete-plus.confirmCompletion') || ''
-    navigationKey = atom.config.get('autocomplete-plus.navigateCompletions') || ''
+    completionKey = atom.config.get('autocomplete-plus.confirmCompletion') or ''
+    navigationKey = atom.config.get('autocomplete-plus.navigateCompletions') or ''
 
     keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     keys['enter'] = 'autocomplete-plus:confirm' if completionKey.indexOf('enter') > -1
 
-    if @items?.length > 1 and navigationKey == 'up,down'
+    if @items?.length > 1 and navigationKey is 'up,down'
       keys['up'] =  'autocomplete-plus:select-previous'
       keys['down'] = 'autocomplete-plus:select-next'
     else
       keys['ctrl-n'] = 'autocomplete-plus:select-next'
       keys['ctrl-p'] = 'autocomplete-plus:select-previous'
 
-    @keymaps = atom.keymaps.add(
-      'autocomplete-suggestion-list',
-      'atom-text-editor:not(.mini) .autocomplete-plus': keys
-    )
+    @keymaps = atom.keymaps.add('autocomplete-suggestion-list', {'atom-text-editor:not(.mini) .autocomplete-plus': keys})
 
     @subscriptions.add(@keymaps)
 

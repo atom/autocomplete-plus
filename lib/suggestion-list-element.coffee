@@ -1,5 +1,5 @@
-{CompositeDisposable} = require 'atom'
-_ = require 'underscore-plus'
+{CompositeDisposable} = require('atom')
+_ = require('underscore-plus')
 
 class SuggestionListElement extends HTMLElement
   maxItems: 10
@@ -31,7 +31,7 @@ class SuggestionListElement extends HTMLElement
     @onmousewheel = (event) -> event.stopPropagation()
     @onmousedown = (event) ->
       item = event.target
-      item = item.parentNode while !(item.dataset?.index) && item != this
+      item = item.parentNode while not (item.dataset?.index) and item isnt this
       @selectedIndex = item.dataset?.index
       event.stopPropagation()
 
@@ -46,13 +46,13 @@ class SuggestionListElement extends HTMLElement
       @input.focus()
     , 0
 
-  moveSelectionUp: () ->
+  moveSelectionUp: ->
     unless @selectedIndex <= 0
       @setSelectedIndex(@selectedIndex - 1)
     else
       @setSelectedIndex(@visibleItems().length - 1)
 
-  moveSelectionDown: () ->
+  moveSelectionDown: ->
     unless @selectedIndex >= (@visibleItems().length - 1)
       @setSelectedIndex(@selectedIndex + 1)
     else
@@ -62,7 +62,7 @@ class SuggestionListElement extends HTMLElement
     @selectedIndex = index
     @renderItems()
 
-  visibleItems: () ->
+  visibleItems: ->
     @model?.items?.slice(0, @maxItems)
 
   # Private: Get the currently selected item
@@ -98,7 +98,7 @@ class SuggestionListElement extends HTMLElement
     @ol.className = 'list-group'
 
   renderItems: ->
-    items = @visibleItems() || []
+    items = @visibleItems() or []
     items.forEach ({word, label, renderLabelAsHtml, className}, index) =>
       li = @ol.childNodes[index]
       unless li
@@ -108,8 +108,8 @@ class SuggestionListElement extends HTMLElement
 
       li.className = ''
       li.classList.add(className) if className
-      li.classList.add('selected') if index == @selectedIndex
-      @selectedLi = li if index == @selectedIndex
+      li.classList.add('selected') if index is @selectedIndex
+      @selectedLi = li if index is @selectedIndex
 
       wordSpan = li.childNodes[0]
       unless wordSpan
@@ -141,4 +141,4 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.dispose()
     @parentNode?.removeChild(this)
 
-module.exports = SuggestionListElement = document.registerElement('autocomplete-suggestion-list', prototype: SuggestionListElement.prototype)
+module.exports = SuggestionListElement = document.registerElement('autocomplete-suggestion-list', {prototype: SuggestionListElement.prototype})

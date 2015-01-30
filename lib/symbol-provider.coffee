@@ -46,7 +46,6 @@ class SymbolProvider
 
     return unless @paneItemIsValid(currentPaneItem)
 
-
     @editor = currentPaneItem
     @buffer = @editor.getBuffer()
 
@@ -109,22 +108,47 @@ class SymbolProvider
   # prefix - {String} The prefix
   #
   # Returns an {Array} of Suggestion instances
-  findSuggestionsForWord: (prefix) =>
+  findSuggestionsForWord: (options) =>
     return unless @wordList?
     # Merge the scope specific words into the default word list
     wordList = @wordList.concat(@getCompletionsForCursorScope())
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
-        wordList.filter((match) -> match.word?.indexOf(prefix) is 0)
+        wordList.filter((match) -> match.word?.indexOf(options.prefix) is 0)
       else
-        fuzzaldrin.filter(wordList, prefix, key: 'word')
+        @fuzzyFilter(wordList, options)
 
     for word in words
-      word.prefix = prefix
+      word.prefix = options.prefix
       word.label = word.type
 
     return words
+
+  fuzzyFilter: (symbolList, {position, prefix}) ->
+    # Probably inefficient to do a linear search
+    candidates = []
+    for symbol in symbolList
+      score = fuzzaldrin.score(symbol.word, prefix)
+      if symbol.bufferRow?
+        rowDifference = symbol.bufferRow - position.row
+        locality = @computeLocalityModifier(rowDifference)
+        score *= locality
+      candidates.push({symbol, score, locality, rowDifference}) if score > 0
+
+    candidates.sort(@sortReverse)
+
+    for {symbol, score, locality, rowDifference}, i in candidates
+      break if i >= 20
+      # console.log 'match', symbol.word, score, locality, rowDifference
+      symbol
+
+  sortReverse: (a, b) -> b.score - a.score
+
+  computeLocalityModifier: (rowDifference) ->
+    rowDifference = Math.abs(rowDifference)
+    # Will be between 1 and ~2.75
+    1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) =>
     atom.config.getAll(keyPath, scope: scopeDescriptor)

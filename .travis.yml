@@ -14,7 +14,7 @@ notifications:
 before_script:
   - npm install
 script:
-  - 'coffeelint .'
+  - './node_modules/.bin/coffeelint .'
   - 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
 
 git:

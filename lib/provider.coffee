@@ -1,4 +1,4 @@
-{deprecate} = require 'grim'
+{deprecate} = require('grim')
 
 # Public: A provider provides an interface to the autocomplete package. Third-party
 # packages can register providers which will then be used to generate the
@@ -51,7 +51,7 @@ class Provider
   #
   # Returns An {Array} of suggestions.
   buildSuggestions: ->
-    throw new Error 'Subclass must implement a buildSuggestions(options) method'
+    throw new Error('Subclass must implement a buildSuggestions(options) method')
 
   # Public: Gets called when a suggestion has been confirmed by the user. Return true
   # to replace the word with the suggestion. Return false if you want to handle

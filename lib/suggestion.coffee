@@ -1,4 +1,4 @@
-{deprecate} = require 'grim'
+{deprecate} = require('grim')
 module.exports =
 class Suggestion
   constructor: (@provider, options) ->

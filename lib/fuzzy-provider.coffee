@@ -1,7 +1,7 @@
-_ = require 'underscore-plus'
-Suggestion = require './suggestion'
-fuzzaldrin = require 'fuzzaldrin'
-{TextEditor, CompositeDisposable}  = require 'atom'
+_ = require('underscore-plus')
+Suggestion = require('./suggestion')
+fuzzaldrin = require('fuzzaldrin')
+{TextEditor, CompositeDisposable}  = require('atom')
 
 module.exports =
 class FuzzyProvider
@@ -39,7 +39,7 @@ class FuzzyProvider
     @bufferChangedSubscription = @buffer.onDidChange(@bufferChanged)
     @buildWordList()
 
-  paneItemIsValid: (paneItem) =>
+  paneItemIsValid: (paneItem) ->
     return false unless paneItem?
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
@@ -76,10 +76,10 @@ class FuzzyProvider
   #
   # e - The change {Event}
   bufferChanged: (e) =>
-    wordChars = "ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź" +
-      "abcdefghijklmnopqrstuvwxyz1234567890"
+    wordChars = 'ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź' +
+      'abcdefghijklmnopqrstuvwxyz1234567890'
     if wordChars.indexOf(e.newText.toLowerCase()) is -1
-      newline = e.newText is "\n"
+      newline = e.newText is '\n'
       @addLastWordToList(e.newRange.start.row, e.newRange.start.column, newline)
 
   # Private: Adds the last typed word to the wordList
@@ -90,7 +90,7 @@ class FuzzyProvider
     return unless lastWord
 
     if @wordList.indexOf(lastWord) < 0
-      @wordList.push lastWord
+      @wordList.push(lastWord)
 
   # Private: Finds the last typed word. If newLine is set to true, it looks
   # for the last word in the previous line.
@@ -150,7 +150,7 @@ class FuzzyProvider
     wordList = @wordList.concat(@getCompletionsForCursorScope())
 
     words =
-      if atom.config.get("autocomplete-plus.strictMatching")
+      if atom.config.get('autocomplete-plus.strictMatching')
         wordList.filter((word) -> word?.indexOf(prefix) is 0)
       else
         fuzzaldrin.filter(wordList, prefix)
@@ -160,9 +160,9 @@ class FuzzyProvider
 
     return results
 
-  settingsForScopeDescriptor: (scopeDescriptor, keyPath) =>
+  settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     return [] unless atom?.config? and scopeDescriptor? and keyPath?
-    entries = atom.config.getAll(null, scope: scopeDescriptor)
+    entries = atom.config.getAll(null, {scope: scopeDescriptor})
     value for {value} in entries when _.valueForKeyPath(value, keyPath)?
 
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)
@@ -170,8 +170,8 @@ class FuzzyProvider
   # Returns an {Array} of strings
   getCompletionsForCursorScope: =>
     cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
-    completions = @settingsForScopeDescriptor(cursorScope?.getScopesArray(), "editor.completions")
-    completions = completions.map((properties) -> _.valueForKeyPath properties, "editor.completions")
+    completions = @settingsForScopeDescriptor(cursorScope?.getScopesArray(), 'editor.completions')
+    completions = completions.map((properties) -> _.valueForKeyPath(properties, 'editor.completions'))
     return _.uniq(_.flatten(completions))
 
   # Public: Clean up, stop listening to events

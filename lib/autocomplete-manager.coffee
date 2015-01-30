@@ -1,10 +1,10 @@
-{Range, TextEditor, CompositeDisposable, Disposable, Emitter}  = require 'atom'
-_ = require 'underscore-plus'
-minimatch = require 'minimatch'
-path = require 'path'
-ProviderManager = require './provider-manager'
-SuggestionList = require './suggestion-list'
-SuggestionListElement = require './suggestion-list-element'
+{Range, TextEditor, CompositeDisposable, Disposable, Emitter}  = require('atom')
+_ = require('underscore-plus')
+minimatch = require('minimatch')
+path = require('path')
+ProviderManager = require('./provider-manager')
+SuggestionList = require('./suggestion-list')
+SuggestionListElement = require('./suggestion-list-element')
 
 module.exports =
 class AutocompleteManager
@@ -23,7 +23,7 @@ class AutocompleteManager
     @emitter = new Emitter
 
     # Register Suggestion List Model and View
-    @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) =>
+    @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) ->
       new SuggestionListElement().initialize(model)
     ))
     @suggestionList = new SuggestionList
@@ -60,7 +60,7 @@ class AutocompleteManager
     # Close the overlay when the cursor moved without changing any text
     @editorSubscriptions.add(@editor.onDidChangeCursorPosition(@cursorMoved))
 
-  paneItemIsValid: (paneItem) =>
+  paneItemIsValid: (paneItem) ->
     return false unless paneItem?
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
@@ -75,9 +75,9 @@ class AutocompleteManager
 
   handleCommands: =>
     # Allow autocomplete to be triggered via keymap
-    @subscriptions.add(atom.commands.add 'atom-text-editor',
+    @subscriptions.add(atom.commands.add('atom-text-editor',
       'autocomplete-plus:activate': @runAutocompletion
-    )
+    ))
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
@@ -113,17 +113,17 @@ class AutocompleteManager
       providerSuggestions = provider?.requestHandler(options)
     return unless providers? and providers.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providers)
-      .then _.partial(@gatherSuggestions, providers)
-      .then (suggestions) => @showSuggestions(suggestions, suggestionsPromise, options)
+      .then(_.partial(@gatherSuggestions, providers))
+      .then((suggestions) => @showSuggestions(suggestions, suggestionsPromise, options))
 
   showSuggestions: (suggestions, suggestionsPromise, options) =>
     unless suggestions.length
-      @emitter.emit 'did-autocomplete', {options, suggestions}
+      @emitter.emit('did-autocomplete', {options, suggestions})
       return
     suggestions = _.uniq(suggestions, (s) -> s.word)
     # Show the suggestion list if we have not already requested more suggestions
-    @showSuggestionList(suggestions) if @currentSuggestionsPromise == suggestionsPromise
-    @emitter.emit 'did-autocomplete', {options, suggestions}
+    @showSuggestionList(suggestions) if @currentSuggestionsPromise is suggestionsPromise
+    @emitter.emit('did-autocomplete', {options, suggestions})
 
   # Private: gather suggestions based on providers
   #
@@ -136,7 +136,7 @@ class AutocompleteManager
       return suggestions unless providerSuggestions?.length
       suggestions = suggestions.concat(providerSuggestions)
       suggestions
-    ,[]
+    , []
 
   prefixForCursor: (cursor) =>
     return '' unless @buffer? and cursor?
@@ -153,15 +153,15 @@ class AutocompleteManager
 
     match.onWillConfirm() if match.onWillConfirm?
 
-    @editor.getSelections()?.forEach (selection) -> selection?.clear()
+    @editor.getSelections()?.forEach((selection) -> selection?.clear())
     @hideSuggestionList()
 
     @replaceTextWithMatch(match)
 
     if match.isSnippet? and match.isSnippet
       setTimeout(=>
-          atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
-        , 1)
+        atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
+      , 1)
 
     match.onDidConfirm() if match.onDidConfirm?
 
@@ -234,7 +234,7 @@ class AutocompleteManager
       @hideSuggestionList()
 
   onDidAutocomplete: (callback) ->
-    @emitter.on 'did-autocomplete', callback
+    @emitter.on('did-autocomplete', callback)
 
   # Public: Clean up, stop listening to events
   dispose: ->

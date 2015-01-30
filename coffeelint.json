@@ -52,7 +52,7 @@
         "level": "error"
     },
     "no_debugger": {
-        "level": "warn"
+        "level": "error"
     },
     "no_empty_functions": {
         "level": "error"
@@ -61,11 +61,11 @@
         "level": "error"
     },
     "no_implicit_braces": {
-        "level": "error",
-        "strict": true
+        "level": "warn",
+        "strict": false
     },
     "no_implicit_parens": {
-        "strict": true,
+        "strict": false,
         "level": "error"
     },
     "no_interpolation_in_single_quotes": {

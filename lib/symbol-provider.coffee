@@ -13,34 +13,27 @@ class SymbolProvider
 
   selector: '*'
 
-  completionSymbolSelectors: null
-  defaultCompletionSymbolSelectors:
-    class: '.class.name'
-    function: '.function'
-    variable: '.variable'
+  config: null
+  defaultConfig:
+    class:
+      selector: '.class.name'
+      priority: 3
+    function:
+      selector: '.function'
+      priority: 2
+    variable:
+      selector: '.variable'
+      priority: 1
 
   constructor: ->
     @id = 'autocomplete-plus-symbolprovider'
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
-    @buildSelectors()
-    @buildWordListOnNextTick()
 
   # Public: Clean up, stop listening to events
   dispose: =>
     @editorSubscriptions?.dispose()
     @subscriptions.dispose()
-
-  buildSelectors: ->
-    @completionSymbolSelectors = {}
-
-    # TODO: read from atom.config and default to ... the defaults
-    completionSelectors = @defaultCompletionSymbolSelectors
-
-    for type, selector of completionSelectors
-      [@completionSymbolSelectors[type]] = Selector.create(selector)
-
-    return
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -54,13 +47,29 @@ class SymbolProvider
 
     return unless @paneItemIsValid(currentPaneItem)
 
+
     @editor = currentPaneItem
     @buffer = @editor.getBuffer()
 
     @editorSubscriptions.add @editor.displayBuffer.onDidTokenize(@buildWordListOnNextTick)
     @editorSubscriptions.add @buffer.onDidSave(@buildWordListOnNextTick)
     @editorSubscriptions.add @buffer.onDidChange(@bufferChanged)
+
+    @buildConfig()
     @buildWordListOnNextTick()
+
+  buildConfig: ->
+    @config = {}
+
+    allConfig = @settingsForScopeDescriptor(@editor.getRootScopeDescriptor(), 'editor.completionSymbols')
+    allConfig.push @defaultConfig unless allConfig.length
+
+    for config in allConfig
+      for type, options of config
+        @config[type] = _.clone(options)
+        [@config[type].selector] = Selector.create(options.selector) if options.selector?
+
+    return
 
   paneItemIsValid: (paneItem) =>
     return false unless paneItem?
@@ -119,15 +128,14 @@ class SymbolProvider
     return words
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) =>
-    entries = atom.config.getAll(null, scope: scopeDescriptor)
-    value for {value} in entries when _.valueForKeyPath(value, keyPath)?
+    atom.config.getAll(keyPath, scope: scopeDescriptor)
 
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)
   #
   # Returns an {Array} of strings
   getCompletionsForCursorScope: =>
     cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
-    completions = @settingsForScopeDescriptor(cursorScope.getScopesArray(), "editor.completions")
+    completions = @settingsForScopeDescriptor(cursorScope, "editor.completions")
     scopedCompletions = []
     for properties in completions
       if suggestions = _.valueForKeyPath(properties, "editor.completions")
@@ -165,10 +173,10 @@ class SymbolProvider
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
         scopes = @cssSelectorFromScopes(token.scopes)
-        for type, selector of @completionSymbolSelectors
-          if selector.matches(scopes) and matches = token.value.match(@wordRegex)
+        for type, options of @config
+          if options.selector?.matches(scopes) and matches = token.value.match(@wordRegex)
             for word in matches
-              matchedTokens.push {type, word, bufferRow} if word >= minimumWordLength
+              matchedTokens.push {type, word, bufferRow} if word.length >= minimumWordLength
 
     matchedTokens
 

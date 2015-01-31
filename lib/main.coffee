@@ -1,5 +1,3 @@
-_ = require('underscore-plus')
-AutocompleteManager = require('./autocomplete-manager')
 Provider = require('./provider')
 Suggestion = require('./suggestion')
 {deprecate} = require('grim')
@@ -75,6 +73,7 @@ module.exports =
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
+    AutocompleteManager = require('./autocomplete-manager')
     @autocompleteManager = new AutocompleteManager()
 
   # Public: Cleans everything up, removes all AutocompleteManager instances

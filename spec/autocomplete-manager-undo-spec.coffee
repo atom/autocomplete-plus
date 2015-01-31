@@ -32,7 +32,7 @@ describe 'Autocomplete Manager', ->
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         autocompleteManager = a.mainModule.autocompleteManager
 
-    it 'restors the previous state', ->
+    it 'restores the previous state', ->
 
       # Trigger an autocompletion
       editor.moveToBottom()

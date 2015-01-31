@@ -8,6 +8,7 @@ SuggestionListElement = require('./suggestion-list-element')
 
 module.exports =
 class AutocompleteManager
+  autosaveEnabled = false
   editor: null
   editorView: null
   buffer: null
@@ -68,6 +69,9 @@ class AutocompleteManager
   handleEvents: =>
     # Track the current pane item, update current editor
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
+
+    # Watch autosave.enabled
+    @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
@@ -220,7 +224,7 @@ class AutocompleteManager
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.
   bufferSaved: =>
-    @hideSuggestionList()
+    @hideSuggestionList() unless @autosaveEnabled
 
   # Private: Cancels the autocompletion if the user entered more than one
   # character with a single keystroke. (= pasting)

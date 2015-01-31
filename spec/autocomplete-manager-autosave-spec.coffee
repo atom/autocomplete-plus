@@ -1,10 +1,32 @@
-{waitForAutocomplete} = require('./spec-helper')
+temp = require('temp').track()
+path = require('path')
+fs = require('fs-plus')
 
 describe 'Autocomplete Manager', ->
-  [completionDelay, editorView, editor, autocompleteManager, didAutocomplete] = []
+  [directory, filePath, completionDelay, editorView, editor, autocompleteManager, didAutocomplete] = []
 
   beforeEach ->
     runs ->
+      directory = temp.mkdirSync()
+      sample = '''
+var quicksort = function () {
+  var sort = function(items) {
+    if (items.length <= 1) return items;
+    var pivot = items.shift(), current, left = [], right = [];
+    while(items.length > 0) {
+      current = items.shift();
+      current < pivot ? left.push(current) : right.push(current);
+    }
+    return sort(left).concat(pivot).concat(sort(right));
+  };
+
+  return sort(Array.apply(this, arguments));
+};
+
+      '''
+      filePath = path.join(directory, 'sample.js')
+      fs.writeFileSync(filePath, sample)
+
       # Enable autosave
       atom.config.set('autosave.enabled', true)
 
@@ -23,7 +45,7 @@ describe 'Autocomplete Manager', ->
     waitsForPromise ->
       atom.packages.activatePackage('autosave')
 
-    waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
+    waitsForPromise -> atom.workspace.open(filePath).then (e) ->
       editor = e
       editorView = atom.views.getView(editor)
 
@@ -61,6 +83,7 @@ describe 'Autocomplete Manager', ->
         didAutocomplete is true
 
       runs ->
+        editor.save()
         didAutocomplete = false
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         editor.insertText('u')
@@ -70,6 +93,8 @@ describe 'Autocomplete Manager', ->
         didAutocomplete is true
 
       runs ->
+        editor.save()
+        didAutocomplete = false
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         # Accept suggestion
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)

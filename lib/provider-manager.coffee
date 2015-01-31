@@ -179,7 +179,7 @@ class ProviderManager
 
   # For Legacy use only!!
   registerLegacyProvider: (legacyProvider, selector) =>
-    return unless legacyProvider?
+    return unless legacyProvider? and legacyProvider.buildSuggestionsShim?
     return unless selector? and selector.trim() isnt ''
 
     legacyProviderRegistration = @legacyProviderRegistrations.get(legacyProvider.constructor)
@@ -199,8 +199,6 @@ class ProviderManager
     return legacyProviderRegistration.service
 
   shimLegacyProvider: (legacyProvider, selector) ->
-    unless legacyProvider.buildSuggestionsShim
-      legacyProvider.buildSuggestionsShim = Provider.prototype.buildSuggestionsShim
     shim =
       legacyProvider: legacyProvider
       requestHandler: legacyProvider.buildSuggestionsShim

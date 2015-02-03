@@ -170,7 +170,7 @@ describe 'Provider API', ->
           runs ->
             suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
 
-            expect(suggestionListView.querySelector('li .label')).toHaveHtml('<span style="color: red">ohai</span>')
+            expect(suggestionListView.querySelector('li .completion-label')).toHaveHtml('<span style="color: red">ohai</span>')
             expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
 
       it 'should dispose a provider registration correctly', ->

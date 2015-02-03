@@ -54,4 +54,4 @@ describe 'Async providers', ->
 
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-        expect(suggestionListView.querySelector('li .label')).toHaveText('asyncProvided')
+        expect(suggestionListView.querySelector('li .completion-label')).toHaveText('asyncProvided')

@@ -86,7 +86,7 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-    describe 'on changed events', ->
+    describe 'when the buffer changes', ->
       it 'should show the suggestion list when suggestions are found', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -239,6 +239,17 @@ describe 'Autocomplete Manager', ->
           document.activeElement.dispatchEvent(buildTextInputEvent({data: 'ã', target: document.activeElement}))
 
           expect(editor.lineTextForBufferRow(13)).toBe('fã')
+
+      it 'does not show the suggestion list when it is triggered then no longer needed', ->
+        editor.moveToBottom()
+        editor.insertText('f')
+        editor.insertText('u')
+        editor.insertText(' ')
+
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
     describe 'accepting suggestions', ->
       it 'hides the suggestions list when a suggestion is confirmed', ->

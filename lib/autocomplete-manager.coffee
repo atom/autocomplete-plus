@@ -217,10 +217,14 @@ class AutocompleteManager
     return false
 
   # Private: Gets called when the content has been modified
-  contentsModified: =>
+  requestNewSuggestions: =>
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
+    delay = 0 if @suggestionList.active
     @delayTimeout = setTimeout(@runAutocompletion, delay)
+
+  cancelNewSuggestionsRequest: ->
+    clearTimeout(@delayTimeout)
 
   # Private: Gets called when the cursor has moved. Cancels the autocompletion if
   # the text has not been changed.
@@ -254,7 +258,7 @@ class AutocompleteManager
     console.log wouldAutoActivate
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()
-      @contentsModified()
+      @requestNewSuggestions()
     else
       @hideSuggestionList()
 

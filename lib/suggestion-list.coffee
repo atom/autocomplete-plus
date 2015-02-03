@@ -70,6 +70,9 @@ class SuggestionList
   onDidCancel: (fn) ->
     @emitter.on('did-cancel', fn)
 
+  isActive: ->
+    @active
+
   show: (editor) =>
     return if @active
     return unless editor?

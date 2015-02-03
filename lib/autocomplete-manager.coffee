@@ -214,7 +214,7 @@ class AutocompleteManager
     clearTimeout(@delayTimeout)
     @delayTimeout = setTimeout(@runAutocompletion, delay)
 
-  clearNewSuggestionsRequest: ->
+  cancelNewSuggestionsRequest: ->
     clearTimeout(@delayTimeout)
 
   # Private: Gets called when the cursor has moved. Cancels the autocompletion if
@@ -235,7 +235,7 @@ class AutocompleteManager
   # event - The change {Event}
   bufferChanged: ({newText, oldText}) =>
     return if @suggestionList.compositionInProgress
-    @clearNewSuggestionsRequest()
+    @cancelNewSuggestionsRequest()
     if atom.config.get('autocomplete-plus.enableAutoActivation') and (newText.trim().length is 1 or oldText.trim().length is 1)
       @requestNewSuggestions()
     else

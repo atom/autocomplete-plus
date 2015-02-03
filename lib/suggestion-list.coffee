@@ -4,7 +4,6 @@ module.exports =
 class SuggestionList
   constructor: ->
     @active = false
-    @compositionInProgress = false
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     # Allow keyboard navigation of the suggestion list

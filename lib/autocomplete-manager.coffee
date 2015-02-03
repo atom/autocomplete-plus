@@ -177,6 +177,12 @@ class AutocompleteManager
     # TODO: Should we *always* focus the editor? Probably not...
     @suggestionList?.hideAndFocusOn(@editorView)
 
+  requestHideSuggestionList: (command) ->
+    @hideTimeout = setTimeout(@hideSuggestionList, 0)
+
+  cancelHideSuggestionListRequest: ->
+    clearTimeout(@hideTimeout)
+
   # Private: Replaces the current prefix with the given match.
   #
   # match - The match to replace the current prefix with
@@ -219,7 +225,13 @@ class AutocompleteManager
   #
   # data - An {Object} containing information on why the cursor has been moved
   cursorMoved: ({textChanged}) =>
-    @hideSuggestionList() unless textChanged
+    # The delay is a workaround for the backspace case. The way atom implements
+    # backspace is to select left 1 char, then delete. This results in a
+    # cursorMoved event with textChanged == false. So we delay, and if the
+    # bufferChanged handler decides to show suggestions, it will cancel the
+    # hideSuggestionList request. If there is no bufferChanged event,
+    # suggestionList will be hidden.
+    @requestHideSuggestionList() unless textChanged
 
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.
@@ -232,7 +244,12 @@ class AutocompleteManager
   # event - The change {Event}
   bufferChanged: ({newText, oldText}) =>
     return if @suggestionList.compositionInProgress
-    if atom.config.get('autocomplete-plus.enableAutoActivation') and (newText.trim().length is 1 or oldText.trim().length is 1)
+
+    autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
+    wouldAutoActivate = newText.trim().length is 1 or (@suggestionList.isActive() and oldText.trim().length is 1)
+
+    if autoActivationEnabled and wouldAutoActivate
+      @cancelHideSuggestionListRequest()
       @contentsModified()
     else
       @hideSuggestionList()

@@ -241,12 +241,13 @@ describe 'Autocomplete Manager', ->
           expect(editor.lineTextForBufferRow(13)).toBe('fã')
 
       it 'does not show the suggestion list when it is triggered then no longer needed', ->
-        editor.moveToBottom()
-        editor.insertText('f')
-        editor.insertText('u')
-        editor.insertText(' ')
+        runs ->
+          editor.moveToBottom()
+          editor.insertText('f')
+          editor.insertText('u')
+          editor.insertText(' ')
 
-        waitForAutocomplete()
+          waitForAutocomplete()
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

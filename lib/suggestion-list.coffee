@@ -3,6 +3,7 @@
 module.exports =
 class SuggestionList
   constructor: ->
+    @active = false
     @compositionInProgress = false
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
@@ -65,7 +66,7 @@ class SuggestionList
     @emitter.on('did-select-previous', fn)
 
   cancel: =>
-    @subscriptions.remove @marker
+    @subscriptions.remove(@marker)
     @emitter.emit('did-cancel')
 
   onDidCancel: (fn) ->
@@ -79,15 +80,15 @@ class SuggestionList
     return unless editor?
     @destroyOverlay()
 
-    if atom.config.get('autocomplete-plus.suggestionListFollows') == 'Cursor'
+    if atom.config.get('autocomplete-plus.suggestionListFollows') is 'Cursor'
       @marker = editor.getLastCursor()?.getMarker()
       return unless @marker?
     else
       cursor = editor.getLastCursor()
       return unless cursor?
       position = cursor.getBeginningOfCurrentWordBufferPosition()
-      @marker = editor.markBufferPosition position
-      @subscriptions.add @marker
+      @marker = editor.markBufferPosition(position)
+      @subscriptions.add(@marker)
 
     @overlayDecoration = editor.decorateMarker(@marker, {type: 'overlay', item: this})
     @addKeyboardInteraction()

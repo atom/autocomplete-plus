@@ -220,7 +220,7 @@ class AutocompleteManager
   requestNewSuggestions: =>
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
-    delay = 0 if @suggestionList.active
+    delay = 0 if @suggestionList.isActive()
     @delayTimeout = setTimeout(@runAutocompletion, delay)
 
   cancelNewSuggestionsRequest: ->
@@ -253,13 +253,12 @@ class AutocompleteManager
 
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
     wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
-    console.log oldText.trim().length is 1
-    console.log @backspaceTriggersAutocomplete
-    console.log wouldAutoActivate
+
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()
       @requestNewSuggestions()
     else
+      clearTimeout(@delayTimeout)
       @hideSuggestionList()
 
   onDidAutocomplete: (callback) =>

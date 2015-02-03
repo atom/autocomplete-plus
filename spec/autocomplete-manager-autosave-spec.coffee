@@ -3,7 +3,7 @@ path = require('path')
 fs = require('fs-plus')
 
 describe 'Autocomplete Manager', ->
-  [directory, filePath, completionDelay, editorView, editor, autocompleteManager, didAutocomplete] = []
+  [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager, didAutocomplete] = []
 
   beforeEach ->
     runs ->
@@ -54,7 +54,13 @@ var quicksort = function () {
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-      autocompleteManager = a.mainModule.autocompleteManager
+      mainModule = a.mainModule
+
+    waitsFor ->
+      mainModule.autocompleteManager?.ready
+
+    runs ->
+      autocompleteManager = mainModule.autocompleteManager
       spyOn(autocompleteManager, 'runAutocompletion').andCallThrough()
       spyOn(autocompleteManager, 'showSuggestions').andCallThrough()
       spyOn(autocompleteManager, 'showSuggestionList').andCallThrough()

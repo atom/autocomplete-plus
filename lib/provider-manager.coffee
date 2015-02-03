@@ -23,7 +23,6 @@ class ProviderManager
     @store = new ScopedPropertyStore
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableBuiltinProvider', (value) => @toggleFuzzyProvider(value)))
     @subscriptions.add(atom.config.observe('autocomplete-plus.scopeBlacklist', (value) => @setGlobalBlacklist(value)))
-    @consumeApi()
 
   dispose: ->
     @toggleFuzzyProvider(false)
@@ -105,11 +104,6 @@ class ProviderManager
 
   #  |||              |||
   #  vvv PROVIDER API vvv
-
-  consumeApi: =>
-    @subscriptions.add atom.services.consume 'autocomplete.provider', '1.0.0', (provider) =>
-      return unless provider?.provider?
-      return @registerProvider(provider.provider)
 
   registerProvider: (provider) =>
     # Check Validity Of Provider

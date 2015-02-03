@@ -2,7 +2,7 @@
 AutocompleteManager = require('../../lib/autocomplete-manager')
 
 describe 'Autocomplete', ->
-  [activationPromise, editorView, editor, completionDelay, autocompleteManager] = []
+  [mainModule, autocompleteManager, editorView, editor, completionDelay, autocompleteManager] = []
 
   describe 'Issue 67', ->
     [autocomplete] = []
@@ -23,9 +23,15 @@ describe 'Autocomplete', ->
       waitsForPromise -> atom.workspace.open('issues/50.js').then (e) ->
         editor = e
 
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        autocompleteManager = a.mainModule.autocompleteManager
+    # Activate the package
+    waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+      mainModule = a.mainModule
+
+    waitsFor ->
+      mainModule.autocompleteManager?.ready
+
+    runs ->
+      autocompleteManager = mainModule.autocompleteManager
 
       runs ->
         editorView = atom.views.getView(editor)

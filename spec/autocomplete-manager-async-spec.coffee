@@ -1,6 +1,6 @@
 {waitForAutocomplete} = require('./spec-helper')
 describe 'Async providers', ->
-  [completionDelay, editorView, editor, autocompleteManager, registration] = []
+  [completionDelay, editorView, editor, mainModule, autocompleteManager, registration] = []
 
   beforeEach ->
     runs ->
@@ -24,7 +24,13 @@ describe 'Async providers', ->
 
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-      autocompleteManager = a.mainModule.autocompleteManager
+      mainModule = a.mainModule
+
+    waitsFor ->
+      mainModule.autocompleteManager?.ready
+
+    runs ->
+      autocompleteManager = mainModule.autocompleteManager
 
   afterEach ->
     registration?.dispose()

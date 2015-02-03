@@ -1,7 +1,7 @@
 {waitForAutocomplete} = require('./spec-helper')
 
 describe 'Autocomplete', ->
-  [completionDelay, editorView, editor, autocomplete, mainModule] = []
+  [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
 
   beforeEach ->
     runs ->
@@ -24,9 +24,14 @@ describe 'Autocomplete', ->
       atom.packages.activatePackage('language-javascript')
 
     # Activate the package
-    waitsForPromise ->
-      atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        mainModule = a.mainModule
+    waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+      mainModule = a.mainModule
+
+    waitsFor ->
+      mainModule.autocompleteManager?.ready
+
+    runs ->
+      autocompleteManager = mainModule.autocompleteManager
 
     runs ->
       editorView = atom.views.getView(editor)
@@ -34,7 +39,7 @@ describe 'Autocomplete', ->
   describe '@activate()', ->
     it 'activates autocomplete and initializes AutocompleteManager', ->
       runs ->
-        expect(mainModule.autocompleteManager).toBeDefined()
+        expect(autocompleteManager).toBeDefined()
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
   describe '@deactivate()', ->

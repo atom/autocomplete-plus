@@ -1,7 +1,7 @@
 {waitForAutocomplete} = require('../spec-helper')
 
 describe 'Autocomplete', ->
-  [mainModule, activationPromise, autocompleteManager, editorView, editor, completionDelay] = []
+  [mainModule, autocompleteManager, editorView, editor, completionDelay] = []
 
   describe 'Issue 23 and 25', ->
     beforeEach ->
@@ -23,6 +23,11 @@ describe 'Autocomplete', ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      runs ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->

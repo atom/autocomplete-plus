@@ -20,5 +20,12 @@
   "devDependencies": {
     "coffeelint": ">=1.8.1",
     "fs-plus": ">=2.4.0"
+  },
+  "consumedServices": {
+    "autocomplete.provider": {
+      "versions": {
+        "1.0.0": "consumeProvider"
+      }
+    }
   }
 }

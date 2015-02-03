@@ -3,7 +3,7 @@ path = require('path')
 temp = require('temp').track()
 
 describe 'Autocomplete', ->
-  [directory, editorView, editor, completionDelay] = []
+  [mainModule, autocompleteManager, directory, editorView, editor, completionDelay] = []
 
   describe 'Issue 15', ->
     beforeEach ->
@@ -25,8 +25,14 @@ describe 'Autocomplete', ->
         editor = e
 
       # Activate the package
-      waitsForPromise ->
-        atom.packages.activatePackage('autocomplete-plus')
+      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+        mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      runs ->
+        autocompleteManager = mainModule.autocompleteManager
 
       runs ->
         editorView = atom.views.getView(editor)

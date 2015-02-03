@@ -24,6 +24,11 @@ describe 'Autocomplete', ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      runs ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->

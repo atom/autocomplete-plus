@@ -3,7 +3,7 @@ _ = require('underscore-plus')
 TestProvider = require('./lib/test-provider')
 
 describe 'Autocomplete', ->
-  [completionDelay, editorView, editor, mainModule] = []
+  [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
     runs ->
@@ -20,8 +20,14 @@ describe 'Autocomplete', ->
       editor = e
 
     # Activate the package
-    waitsForPromise ->
-      atom.packages.activatePackage('autocomplete-plus')
+    waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+      mainModule = a.mainModule
+
+    waitsFor ->
+      mainModule.autocompleteManager?.ready
+
+    runs ->
+      autocompleteManager = mainModule.autocompleteManager
 
     runs ->
       editorView = atom.views.getView(editor)

@@ -17,6 +17,7 @@ class AutocompleteManager
   subscriptions: null
   suggestionList: null
   editorSubscriptions: null
+  suggestionDelay: 50
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -220,7 +221,7 @@ class AutocompleteManager
   requestNewSuggestions: =>
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
-    delay = 0 if @suggestionList.isActive()
+    delay = @suggestionDelay if @suggestionList.isActive()
     @delayTimeout = setTimeout(@runAutocompletion, delay)
 
   cancelNewSuggestionsRequest: ->

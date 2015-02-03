@@ -16,7 +16,8 @@ class FuzzyProvider
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @buildWordList()
     @selector = '*'
-    @blacklist = '.source.gfm'
+    builtinProviderBlacklist = atom.config.get('autocomplete-plus.builtinProviderBlacklist')
+    @blacklist = builtinProviderBlacklist if builtinProviderBlacklist? and builtinProviderBlacklist.length
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?

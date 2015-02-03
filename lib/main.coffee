@@ -70,19 +70,25 @@ module.exports =
       type: 'boolean'
       default: true
       order: 10
+    builtinProviderBlacklist:
+      title: 'Built-In Provider Blacklist'
+      description: 'Don\'t use the built-in provider for these selector(s).'
+      type: 'string'
+      default: '.source.gfm'
+      order: 11
     backspaceTriggersAutocomplete:
       title: 'Allow Backspace To Trigger Autocomplete'
       description: 'If enabled, typing `backspace` will show the suggestion list if suggestions are available. If disabled, suggestions will not be shown while backspacing.'
       type: 'boolean'
       default: true
-      order: 11
+      order: 12
     suggestionListFollows:
       title: 'Suggestions List Follows'
-      description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appers at the beginning of the word that\'s being completed'
+      description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appers at the beginning of the word that\'s being completed.'
       type: 'string'
       default: 'Cursor'
       enum: ['Cursor', 'Word']
-      order: 12
+      order: 13
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

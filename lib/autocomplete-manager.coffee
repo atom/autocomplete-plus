@@ -212,6 +212,7 @@ class AutocompleteManager
   contentsModified: =>
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
+    delay = 0 if @suggestionList.active
     @delayTimeout = setTimeout(@runAutocompletion, delay)
 
   # Private: Gets called when the cursor has moved. Cancels the autocompletion if

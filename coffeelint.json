@@ -66,10 +66,10 @@
     },
     "no_implicit_parens": {
         "strict": false,
-        "level": "error"
+        "level": "warn"
     },
     "no_interpolation_in_single_quotes": {
-        "level": "error"
+        "level": "warn"
     },
     "no_plusplus": {
         "level": "error"

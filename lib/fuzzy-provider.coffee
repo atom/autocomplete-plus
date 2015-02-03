@@ -16,6 +16,7 @@ class FuzzyProvider
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @buildWordList()
     @selector = '*'
+    @blacklist = '.source.gfm'
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?

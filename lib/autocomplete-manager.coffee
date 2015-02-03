@@ -8,7 +8,8 @@ SuggestionListElement = require('./suggestion-list-element')
 
 module.exports =
 class AutocompleteManager
-  autosaveEnabled = false
+  autosaveEnabled: false
+  backspaceTriggersAutocomplete: true
   editor: null
   editorView: null
   buffer: null
@@ -70,8 +71,9 @@ class AutocompleteManager
     # Track the current pane item, update current editor
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
-    # Watch autosave.enabled
+    # Watch config values
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
@@ -246,19 +248,21 @@ class AutocompleteManager
     return if @suggestionList.compositionInProgress
 
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = newText.trim().length is 1 or (@suggestionList.isActive() and oldText.trim().length is 1)
-
+    wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
+    console.log oldText.trim().length is 1
+    console.log @backspaceTriggersAutocomplete
+    console.log wouldAutoActivate
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()
       @contentsModified()
     else
       @hideSuggestionList()
 
-  onDidAutocomplete: (callback) ->
+  onDidAutocomplete: (callback) =>
     @emitter.on('did-autocomplete', callback)
 
   # Public: Clean up, stop listening to events
-  dispose: ->
+  dispose: =>
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
     @suggestionList?.destroy()

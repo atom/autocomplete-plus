@@ -113,6 +113,75 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+      it 'shows the suggestion list on backspace if allowed', ->
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+          # Trigger an autocompletion
+          editor.moveToBottom()
+          editor.insertText('f')
+          editor.insertText('u')
+
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          editor.insertText(' ')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          key = atom.keymaps.constructor.buildKeydownEvent('backspace', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          key = atom.keymaps.constructor.buildKeydownEvent('backspace', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(editor.lineTextForBufferRow(13)).toBe('f')
+
+      it 'does not shows the suggestion list on backspace if disallowed', ->
+        runs ->
+          atom.config.set('autocomplete-plus.backspaceTriggersAutocomplete', false)
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+          # Trigger an autocompletion
+          editor.moveToBottom()
+          editor.insertText('f')
+          editor.insertText('u')
+
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          editor.insertText(' ')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          key = atom.keymaps.constructor.buildKeydownEvent('backspace', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          key = atom.keymaps.constructor.buildKeydownEvent('backspace', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          expect(editor.lineTextForBufferRow(13)).toBe('f')
+
       it "keeps the suggestion list open when it's already open on backspace", ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -136,6 +205,7 @@ describe 'Autocomplete Manager', ->
           expect(editor.lineTextForBufferRow(13)).toBe('f')
 
       it "does not open the suggestion on backspace when it's closed", ->
+        atom.config.set('autocomplete-plus.backspaceTriggersAutocomplete', false)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         # Trigger an autocompletion

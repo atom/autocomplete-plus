@@ -70,6 +70,12 @@ module.exports =
       type: 'boolean'
       default: true
       order: 10
+    backspaceTriggersAutocomplete:
+      title: 'Allow Backspace To Trigger Autocomplete'
+      description: 'If enabled, typing `backspace` will show the suggestion list if suggestions are available. If disabled, suggestions will not be shown while backspacing.'
+      type: 'boolean'
+      default: true
+      order: 11
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

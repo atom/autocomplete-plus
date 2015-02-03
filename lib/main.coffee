@@ -40,7 +40,7 @@ module.exports =
       title: 'File Blacklist'
       description: 'Suggestions will not be provided for files matching this list.'
       type: 'array'
-      default: ['.*', '*.md']
+      default: ['.*']
       items:
         type: 'string'
       order: 6

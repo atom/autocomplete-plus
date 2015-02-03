@@ -212,6 +212,7 @@ class AutocompleteManager
   requestNewSuggestions: =>
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
+    delay = 0 if @suggestionList.active
     @delayTimeout = setTimeout(@runAutocompletion, delay)
 
   cancelNewSuggestionsRequest: ->

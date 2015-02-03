@@ -296,6 +296,7 @@ describe 'Autocomplete Manager', ->
           # Accept suggestion
           key = atom.keymaps.constructor.buildKeydownEvent('down', {target: document.activeElement})
           atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).not.toExist()
@@ -321,6 +322,7 @@ describe 'Autocomplete Manager', ->
           # Accept suggestion
           key = atom.keymaps.constructor.buildKeydownEvent('down', {target: document.activeElement})
           atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).not.toExist()
@@ -356,6 +358,7 @@ describe 'Autocomplete Manager', ->
           # Accept suggestion
           key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
           atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).not.toExist()
@@ -381,6 +384,7 @@ describe 'Autocomplete Manager', ->
           # Accept suggestion
           key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
           atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).not.toExist()

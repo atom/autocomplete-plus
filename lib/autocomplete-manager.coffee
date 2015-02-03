@@ -249,8 +249,6 @@ class AutocompleteManager
   #
   # event - The change {Event}
   bufferChanged: ({newText, oldText}) =>
-    return if @suggestionList.compositionInProgress
-
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
     wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
 

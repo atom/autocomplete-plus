@@ -223,20 +223,23 @@ describe 'Autocomplete Manager', ->
       it 'should not update the suggestion list while composition is in progress', ->
         triggerAutocompletion(editor)
 
+        # unfortunately, we need to fire IME events from the editor's input node so the editor picks them up
+        activeElement = editorView.rootElement.querySelector('input')
+
         runs ->
           spyOn(autocompleteManager.suggestionList, 'changeItems').andCallThrough()
           expect(autocompleteManager.suggestionList.changeItems).not.toHaveBeenCalled()
 
-          document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', {target: document.activeElement}))
-          document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionupdate', {data: '~', target: document.activeElement}))
+          activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', {target: activeElement}))
+          activeElement.dispatchEvent(buildIMECompositionEvent('compositionupdate', {data: '~', target: activeElement}))
 
           waitForAutocomplete()
 
         runs ->
           expect(autocompleteManager.suggestionList.changeItems).not.toHaveBeenCalled()
 
-          document.activeElement.dispatchEvent(buildIMECompositionEvent('compositionend', {target: document.activeElement}))
-          document.activeElement.dispatchEvent(buildTextInputEvent({data: 'ã', target: document.activeElement}))
+          activeElement.dispatchEvent(buildIMECompositionEvent('compositionend', {target: activeElement}))
+          activeElement.dispatchEvent(buildTextInputEvent({data: 'ã', target: activeElement}))
 
           expect(editor.lineTextForBufferRow(13)).toBe('fã')
 

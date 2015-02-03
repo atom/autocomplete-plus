@@ -11,9 +11,12 @@ class SuggestionListElement extends HTMLElement
     @registerMouseHandling()
 
   attachedCallback: ->
-    @renderInput() unless @input
+    @addActiveClassToEditor()
     @renderList() unless @ol
     @itemsChanged()
+
+  detachedCallback: ->
+    @removeActiveClassFromEditor()
 
   initialize: (@model) ->
     return unless model?
@@ -42,9 +45,14 @@ class SuggestionListElement extends HTMLElement
   itemsChanged: ->
     @selectedIndex = 0
     @renderItems()
-    setTimeout =>
-      @input.focus()
-    , 0
+
+  addActiveClassToEditor: ->
+    editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
+    editorElement.classList.add 'autocomplete-active'
+
+  removeActiveClassFromEditor: ->
+    editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
+    editorElement.classList.add 'autocomplete-active'
 
   moveSelectionUp: ->
     unless @selectedIndex <= 0
@@ -79,18 +87,6 @@ class SuggestionListElement extends HTMLElement
       @model.confirm(item)
     else
       @model.cancel()
-
-  renderInput: ->
-    @input = document.createElement('input')
-    @appendChild(@input)
-
-    @input.addEventListener 'compositionstart', =>
-      @model.compositionInProgress = true
-      null
-
-    @input.addEventListener 'compositionend', =>
-      @model.compositionInProgress = false
-      null
 
   renderList: ->
     @ol = document.createElement('ol')

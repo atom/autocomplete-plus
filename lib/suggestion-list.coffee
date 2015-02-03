@@ -8,7 +8,7 @@ class SuggestionList
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     # Allow keyboard navigation of the suggestion list
-    @subscriptions.add(atom.commands.add 'autocomplete-suggestion-list',
+    @subscriptions.add(atom.commands.add 'atom-text-editor.autocomplete-active',
       'autocomplete-plus:confirm': @confirmSelection,
       'autocomplete-plus:select-next': @selectNext,
       'autocomplete-plus:select-previous': @selectPrevious,
@@ -33,7 +33,7 @@ class SuggestionList
       keys['ctrl-n'] = 'autocomplete-plus:select-next'
       keys['ctrl-p'] = 'autocomplete-plus:select-previous'
 
-    @keymaps = atom.keymaps.add('autocomplete-suggestion-list', {'atom-text-editor:not(.mini) .autocomplete-plus': keys})
+    @keymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
 
     @subscriptions.add(@keymaps)
 

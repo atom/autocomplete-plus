@@ -124,7 +124,7 @@ class SuggestionListElement extends HTMLElement
         unless labelSpan
           labelSpan = document.createElement('span')
           li.appendChild(labelSpan) if label
-          labelSpan.className = 'label'
+          labelSpan.className = 'completion-label text-smaller text-subtle'
 
         if renderLabelAsHtml
           labelSpan.innerHTML = label

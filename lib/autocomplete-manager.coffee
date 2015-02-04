@@ -118,12 +118,10 @@ class AutocompleteManager
 
   getSuggestionsFromProviders: (options) =>
     providers = @providerManager.providersForScopeChain(options.scopeChain)
-    return unless providers? and providers.length
-    providers = providers.map (provider) ->
-      providerSuggestions = provider?.requestHandler(options)
-    return unless providers? and providers.length
-    @currentSuggestionsPromise = suggestionsPromise = Promise.all(providers)
-      .then(_.partial(@mergeSuggestionsFromProviders, providers))
+    providerPromises = providers?.map (provider) -> provider?.requestHandler(options)
+    return unless providerPromises?.length
+    @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
+      .then(@mergeSuggestionsFromProviders)
       .then((suggestions) => @displaySuggestions(suggestions, suggestionsPromise, options))
 
   # providerSuggestions - array of arrays of suggestions provided by all called providers

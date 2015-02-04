@@ -12,7 +12,7 @@ suggestionForWord = (suggestionList, word) ->
     return suggestion if suggestion.word is word
   null
 
-describe 'Autocomplete', ->
+fdescribe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
@@ -39,13 +39,19 @@ describe 'Autocomplete', ->
       waitsForPromise ->
         atom.packages.activatePackage("language-coffee-script").then ->
           atom.packages.activatePackage("autocomplete-plus").then (a) ->
-            autocompleteManager = a.mainModule.autocompleteManager
+            mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      runs ->
+        autocompleteManager = mainModule.autocompleteManager
 
       runs ->
         advanceClock 1
         editorView = atom.views.getView(editor)
 
-    fit "properly swaps a lower priority type for a higher priority type", ->
+    it "properly swaps a lower priority type for a higher priority type", ->
       # SomeModule is parsed as a variable in the
       # `SomeModule = require 'some-module'` line and as a class in the
       # `extends SomeModule` line
@@ -81,7 +87,7 @@ describe 'Autocomplete', ->
       provider = autocompleteManager.providerManager.fuzzyProvider
       expect(indexOfWord(provider.wordList, 'quicksort')).not.toEqual(-1)
 
-    it "adds words to the wordlist after they have been written", ->
+    xit "adds words to the wordlist after they have been written", ->
       provider = autocompleteManager.providerManager.fuzzyProvider
 
       expect(provider.wordList.indexOf('somethingNew')).toEqual(-1)

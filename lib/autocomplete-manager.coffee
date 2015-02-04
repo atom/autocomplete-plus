@@ -93,7 +93,6 @@ class AutocompleteManager
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   findSuggestions: =>
-    @hideSuggestionList() unless @shouldDisplaySuggestions
     return unless @providerManager?
     return unless @editor?
     return unless @buffer?

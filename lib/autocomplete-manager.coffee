@@ -19,6 +19,7 @@ class AutocompleteManager
   subscriptions: null
   suggestionDelay: 50
   suggestionList: null
+  shouldDisplaySuggestions: false
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -83,15 +84,14 @@ class AutocompleteManager
     @subscriptions.add(@suggestionList.onDidCancel(@hideSuggestionList))
 
   handleCommands: =>
-    # Allow autocomplete to be triggered via keymap
-    @subscriptions.add(atom.commands.add('atom-text-editor',
-      'autocomplete-plus:activate': @runAutocompletion
-    ))
+    @subscriptions.add atom.commands.add 'atom-text-editor',
+      'autocomplete-plus:activate': =>
+        @shouldDisplaySuggestions = true
+        @findSuggestions()
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
-  runAutocompletion: =>
-    @hideSuggestionList()
+  findSuggestions: =>
     return unless @providerManager?
     return unless @editor?
     return unless @buffer?
@@ -113,39 +113,33 @@ class AutocompleteManager
       scopeChain: currentScopeChain
       prefix: @prefixForCursor(cursor)
 
-    @scatterRequest(options)
+    @getSuggestionsFromProviders(options)
 
-  scatterRequest: (options) =>
+  getSuggestionsFromProviders: (options) =>
     providers = @providerManager.providersForScopeChain(options.scopeChain)
-    return unless providers? and providers.length
-    providers = providers.map (provider) ->
-      providerSuggestions = provider?.requestHandler(options)
-    return unless providers? and providers.length
-    @currentSuggestionsPromise = suggestionsPromise = Promise.all(providers)
-      .then(_.partial(@gatherSuggestions, providers))
-      .then((suggestions) => @showSuggestions(suggestions, suggestionsPromise, options))
+    providerPromises = providers?.map (provider) -> provider?.requestHandler(options)
+    return unless providerPromises?.length
+    @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
+      .then(@mergeSuggestionsFromProviders)
+      .then (suggestions) =>
+        if @currentSuggestionsPromise is suggestionsPromise
+          @displaySuggestions(suggestions, options)
 
-  showSuggestions: (suggestions, suggestionsPromise, options) =>
-    unless suggestions.length
-      @emitter.emit('did-autocomplete', {options, suggestions})
-      return
-    suggestions = _.uniq(suggestions, (s) -> s.word)
-    # Show the suggestion list if we have not already requested more suggestions
-    @showSuggestionList(suggestions) if @currentSuggestionsPromise is suggestionsPromise
-    @emitter.emit('did-autocomplete', {options, suggestions})
-
-  # Private: gather suggestions based on providers
-  #
-  # providers - An array of providers to check against provided suggestions
   # providerSuggestions - array of arrays of suggestions provided by all called providers
-  gatherSuggestions: (providers, providerSuggestions) ->
-    providerSuggestions.reduce (suggestions, providerSuggestions, index) ->
-      provider = providers[index]
-
-      return suggestions unless providerSuggestions?.length
-      suggestions = suggestions.concat(providerSuggestions)
+  mergeSuggestionsFromProviders: (providerSuggestions) ->
+    providerSuggestions.reduce (suggestions, providerSuggestions) ->
+      suggestions = suggestions.concat(providerSuggestions) if providerSuggestions?.length
       suggestions
     , []
+
+  displaySuggestions: (suggestions, options) =>
+    suggestions = _.uniq(suggestions, (s) -> s.word)
+    if @shouldDisplaySuggestions and suggestions.length
+      @showSuggestionList(suggestions)
+    else
+      @hideSuggestionList()
+
+    @emitter.emit('did-autocomplete', {options, suggestions})
 
   prefixForCursor: (cursor) =>
     return '' unless @buffer? and cursor?
@@ -181,9 +175,11 @@ class AutocompleteManager
   hideSuggestionList: =>
     # TODO: Should we *always* focus the editor? Probably not...
     @suggestionList?.hideAndFocusOn(@editorView)
+    @shouldDisplaySuggestions = false
 
   requestHideSuggestionList: (command) ->
     @hideTimeout = setTimeout(@hideSuggestionList, 0)
+    @shouldDisplaySuggestions = false
 
   cancelHideSuggestionListRequest: ->
     clearTimeout(@hideTimeout)
@@ -224,10 +220,12 @@ class AutocompleteManager
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
     delay = @suggestionDelay if @suggestionList.isActive()
-    @delayTimeout = setTimeout(@runAutocompletion, delay)
+    @delayTimeout = setTimeout(@findSuggestions, delay)
+    @shouldDisplaySuggestions = true
 
   cancelNewSuggestionsRequest: ->
     clearTimeout(@delayTimeout)
+    @shouldDisplaySuggestions = false
 
   # Private: Gets called when the cursor has moved. Cancels the autocompletion if
   # the text has not been changed.
@@ -259,7 +257,7 @@ class AutocompleteManager
       @cancelHideSuggestionListRequest()
       @requestNewSuggestions()
     else
-      clearTimeout(@delayTimeout)
+      @cancelNewSuggestionsRequest()
       @hideSuggestionList()
 
   onDidAutocomplete: (callback) =>

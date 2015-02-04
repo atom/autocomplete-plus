@@ -45,12 +45,12 @@ describe 'Autocomplete Manager', ->
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager
-        spyOn(autocompleteManager, 'runAutocompletion').andCallThrough()
-        spyOn(autocompleteManager, 'showSuggestions').andCallThrough()
+        spyOn(autocompleteManager, 'findSuggestions').andCallThrough()
+        spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
 
     afterEach ->
-      jasmine.unspy(autocompleteManager, 'runAutocompletion')
-      jasmine.unspy(autocompleteManager, 'showSuggestions')
+      jasmine.unspy(autocompleteManager, 'findSuggestions')
+      jasmine.unspy(autocompleteManager, 'displaySuggestions')
 
     it 'does not cause issues when typing', ->
       runs ->
@@ -63,7 +63,7 @@ describe 'Autocomplete Manager', ->
         advanceClock(completionDelay + 1000)
 
       waitsFor ->
-        autocompleteManager.runAutocompletion.calls.length is 1
+        autocompleteManager.findSuggestions.calls.length is 1
 
   describe 'when opening a javascript file', ->
     beforeEach ->

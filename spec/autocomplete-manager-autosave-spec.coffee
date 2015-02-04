@@ -61,8 +61,8 @@ var quicksort = function () {
 
     runs ->
       autocompleteManager = mainModule.autocompleteManager
-      spyOn(autocompleteManager, 'runAutocompletion').andCallThrough()
-      spyOn(autocompleteManager, 'showSuggestions').andCallThrough()
+      spyOn(autocompleteManager, 'findSuggestions').andCallThrough()
+      spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
       spyOn(autocompleteManager, 'showSuggestionList').andCallThrough()
       spyOn(autocompleteManager, 'hideSuggestionList').andCallThrough()
       autocompleteManager.onDidAutocomplete ->
@@ -70,8 +70,8 @@ var quicksort = function () {
 
   afterEach ->
     didAutocomplete = false
-    jasmine.unspy(autocompleteManager, 'runAutocompletion')
-    jasmine.unspy(autocompleteManager, 'showSuggestions')
+    jasmine.unspy(autocompleteManager, 'findSuggestions')
+    jasmine.unspy(autocompleteManager, 'displaySuggestions')
     jasmine.unspy(autocompleteManager, 'showSuggestionList')
     jasmine.unspy(autocompleteManager, 'hideSuggestionList')
 

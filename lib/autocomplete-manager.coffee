@@ -131,9 +131,8 @@ class AutocompleteManager
   mergeSuggestionsFromProviders: (providers, providerSuggestions) ->
     providerSuggestions.reduce (suggestions, providerSuggestions, index) ->
       provider = providers[index]
-
-      return suggestions unless providerSuggestions?.length
-      suggestions.concat(providerSuggestions)
+      suggestions = suggestions.concat(providerSuggestions) if providerSuggestions?.length
+      suggestions
     , []
 
   displaySuggestions: (suggestions, suggestionsPromise, options) =>

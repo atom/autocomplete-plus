@@ -137,16 +137,14 @@ class AutocompleteManager
     , []
 
   displaySuggestions: (suggestions, suggestionsPromise, options) =>
-    unless suggestions.length
-      @hideSuggestionList()
-      @emitter.emit('did-autocomplete', {options, suggestions})
-      return
     suggestions = _.uniq(suggestions, (s) -> s.word)
-
-    # Show the suggestion list if we have not already requested more suggestions
-    if @shouldDisplaySuggestions and @currentSuggestionsPromise is suggestionsPromise
+    suggestionsAreLatest = @currentSuggestionsPromise is suggestionsPromise
+    if @shouldDisplaySuggestions and suggestions.length and suggestionsAreLatest
       @showSuggestionList(suggestions)
-      @emitter.emit('did-autocomplete', {options, suggestions})
+    else
+      @hideSuggestionList()
+
+    @emitter.emit('did-autocomplete', {options, suggestions})
 
   prefixForCursor: (cursor) =>
     return '' unless @buffer? and cursor?

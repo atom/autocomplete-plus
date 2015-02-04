@@ -56,7 +56,7 @@ fdescribe 'SymbolProvider', ->
       # `SomeModule = require 'some-module'` line and as a class in the
       # `extends SomeModule` line
       provider = autocompleteManager.providerManager.fuzzyProvider
-      suggestion = suggestionForWord(provider.wordList, 'SomeModule')
+      suggestion = suggestionForWord(provider.symbolList, 'SomeModule')
       expect(suggestion.type).toEqual 'class'
 
   describe "when auto-activation is enabled", ->
@@ -85,37 +85,37 @@ fdescribe 'SymbolProvider', ->
 
     it "runs a completion ", ->
       provider = autocompleteManager.providerManager.fuzzyProvider
-      expect(indexOfWord(provider.wordList, 'quicksort')).not.toEqual(-1)
+      expect(indexOfWord(provider.symbolList, 'quicksort')).not.toEqual(-1)
 
     xit "adds words to the wordlist after they have been written", ->
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.indexOf('somethingNew')).toEqual(-1)
-      editor.insertText('somethingNew')
+      expect(provider.symbolList.indexOf('somethingNew')).toEqual(-1)
+      editor.insertText('function aNewFunction()')
       editor.insertText(' ')
-      expect(provider.wordList.indexOf('somethingNew')).not.toEqual(-1)
+      expect(provider.symbolList.indexOf('somethingNew')).not.toEqual(-1)
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.indexOf('somēthingNew')).toEqual(-1)
+      expect(provider.symbolList.indexOf('somēthingNew')).toEqual(-1)
       editor.insertText('somēthingNew')
       editor.insertText(' ')
-      expect(provider.wordList.indexOf('somēthingNew')).not.toEqual(-1)
+      expect(provider.symbolList.indexOf('somēthingNew')).not.toEqual(-1)
 
     # Fixing This Fixes #196
     xit 'removes words from the wordlist when they no longer exist in any open buffers', ->
       # Not sure we should fix this; could have a significant performance impacts
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.indexOf('bogos')).toEqual(-1)
+      expect(provider.symbolList.indexOf('bogos')).toEqual(-1)
       editor.insertText('bogos = 1')
       editor.insertText(' ')
-      expect(provider.wordList.indexOf('bogos')).not.toEqual(-1)
-      expect(provider.wordList.indexOf('bogus')).toEqual(-1)
+      expect(provider.symbolList.indexOf('bogos')).not.toEqual(-1)
+      expect(provider.symbolList.indexOf('bogus')).toEqual(-1)
       editor.backspace() for [1..7]
       editor.insertText('us = 1')
       editor.insertText(' ')
-      expect(provider.wordList.indexOf('bogus')).not.toEqual(-1)
-      expect(provider.wordList.indexOf('bogos')).toEqual(-1)
+      expect(provider.symbolList.indexOf('bogus')).not.toEqual(-1)
+      expect(provider.symbolList.indexOf('bogos')).toEqual(-1)

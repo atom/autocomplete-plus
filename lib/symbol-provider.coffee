@@ -7,7 +7,7 @@ fuzzaldrin = require 'fuzzaldrin'
 module.exports =
 class SymbolProvider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
-  wordList: null
+  symbolList: null
   editor: null
   buffer: null
 
@@ -109,15 +109,15 @@ class SymbolProvider
   #
   # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (options) =>
-    return unless @wordList?
+    return unless @symbolList?
     # Merge the scope specific words into the default word list
-    wordList = @wordList.concat(@getCompletionsForCursorScope())
+    symbolList = @symbolList.concat(@getCompletionsForCursorScope())
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
-        wordList.filter((match) -> match.word?.indexOf(options.prefix) is 0)
+        symbolList.filter((match) -> match.word?.indexOf(options.prefix) is 0)
       else
-        @fuzzyFilter(wordList, options)
+        @fuzzyFilter(symbolList, options)
 
     for word in words
       word.prefix = options.prefix
@@ -175,21 +175,21 @@ class SymbolProvider
   ###
 
   buildWordListOnNextTick: =>
-    _.defer => @buildWordList()
+    _.defer => @buildSymbolList()
 
-  buildWordList: =>
+  buildSymbolList: =>
     return unless @editor?
 
     minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
-    wordList = @getSymbolsFromEditor(@editor, minimumWordLength)
+    symbolList = @getSymbolsFromEditor(@editor, minimumWordLength)
 
     # Do we want autocompletions from all open buffers?
     if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
       for editor in atom.workspace.getEditors()
         # FIXME: downside is that some of these editors will not be tokenized :/
-        wordList = wordList.concat @getSymbolsFromEditor(editor, minimumWordLength)
+        symbolList = symbolList.concat @getSymbolsFromEditor(editor, minimumWordLength)
 
-    @wordList = wordList
+    @symbolList = symbolList
 
   getSymbolsFromEditor: (editor, minimumWordLength) ->
     # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not

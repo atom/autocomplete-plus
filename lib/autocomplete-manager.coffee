@@ -1,4 +1,4 @@
-{Range, TextEditor, CompositeDisposable, Disposable, Emitter}  = require('atom')
+{Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
 _ = require('underscore-plus')
 minimatch = require('minimatch')
 path = require('path')
@@ -25,7 +25,6 @@ class AutocompleteManager
     @subscriptions = new CompositeDisposable
     @providerManager = new ProviderManager
     @subscriptions.add(@providerManager)
-    @emitter = new Emitter
 
     # Register Suggestion List Model and View
     @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) ->
@@ -138,8 +137,6 @@ class AutocompleteManager
       @showSuggestionList(suggestions)
     else
       @hideSuggestionList()
-
-    @emitter.emit('did-autocomplete', {options, suggestions})
 
   prefixForCursor: (cursor) =>
     return '' unless @buffer? and cursor?
@@ -259,9 +256,6 @@ class AutocompleteManager
       @cancelNewSuggestionsRequest()
       @hideSuggestionList()
 
-  onDidAutocomplete: (callback) =>
-    @emitter.on('did-autocomplete', callback)
-
   # Public: Clean up, stop listening to events
   dispose: =>
     @ready = false
@@ -272,6 +266,3 @@ class AutocompleteManager
     @subscriptions?.dispose()
     @subscriptions = null
     @providerManager = null
-    @emitter?.emit('did-dispose')
-    @emitter?.dispose()
-    @emitter = null

@@ -184,9 +184,6 @@ class AutocompleteManager
     return unless @editor?
     newSelectedBufferRanges = []
 
-    buffer = @editor.getBuffer()
-    return unless buffer?
-
     selections = @editor.getSelections()
     return unless selections?
     @editor.transact =>

@@ -1,9 +1,10 @@
 #!/bin/sh
 
-echo "Downloading node v0.10.36..."
-curl -s -O http://nodejs.org/dist/v0.10.36/node-v0.10.36-darwin-x64.tar.gz
-tar -zxf node-v0.10.36-darwin-x64.tar.gz
-export PATH=$PATH:$PWD/node-v0.10.36-darwin-x64/bin
+echo "Downloading io.js..."
+curl -s -o iojs.tar.gz https://iojs.org/dist/v1.1.0/iojs-v1.1.0-darwin-x64.tar.gz
+tar -zxf iojs.tar.gz
+export PATH=$PWD/iojs/bin:$PATH
+node -v
 
 echo "Downloading latest Atom release..."
 curl -s -L "https://atom.io/download/mac" \
@@ -20,10 +21,13 @@ echo "Installing required packages..."
 atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install autocomplete-plus
 
 echo "Downloading package dependencies..."
+atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm clean
 atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install
 
-echo "Linting package..."
-./node_modules/.bin/coffeelint lib spec
+if [ -f ./node_modules/.bin/coffeelint ]; then
+  echo "Linting package..."
+  ./node_modules/.bin/coffeelint lib spec
+fi
 
 echo "Running specs..."
 ATOM_PATH=./atom atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm test --path atom/Atom.app/Contents/Resources/app/atom.sh

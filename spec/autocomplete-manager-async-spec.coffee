@@ -35,7 +35,7 @@ describe 'Async providers', ->
   afterEach ->
     registration?.dispose()
 
-  describe "when an async provider is registered", ->
+  describe 'when an async provider is registered', ->
     beforeEach ->
       testAsyncProvider =
         requestHandler: (options) ->
@@ -63,7 +63,7 @@ describe 'Async providers', ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.querySelector('li .completion-label')).toHaveText('asyncProvided')
 
-  describe "when a provider takes a long time to provide suggestions", ->
+  describe 'when a provider takes a long time to provide suggestions', ->
     beforeEach ->
       testAsyncProvider =
         selector: '.source.js'
@@ -91,7 +91,7 @@ describe 'Async providers', ->
         # Waiting will kick off the suggestion request
         advanceClock(autocompleteManager.suggestionDelay * 2)
 
-      waits 0
+      waits(0)
 
       runs ->
         # Waiting will kick off the suggestion request
@@ -104,7 +104,7 @@ describe 'Async providers', ->
         # Wait til the longass provider comes back
         advanceClock(1000)
 
-      waits 0
+      waits(0)
 
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

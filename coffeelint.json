@@ -61,12 +61,12 @@
         "level": "error"
     },
     "no_implicit_braces": {
-        "level": "warn",
+        "level": "ignore",
         "strict": false
     },
     "no_implicit_parens": {
         "strict": false,
-        "level": "warn"
+        "level": "ignore"
     },
     "no_interpolation_in_single_quotes": {
         "level": "warn"
@@ -92,7 +92,7 @@
         "allowed_in_empty_lines": true
     },
     "no_unnecessary_double_quotes": {
-        "level": "error"
+        "level": "ignore"
     },
     "no_unnecessary_fat_arrows": {
         "level": "warn"

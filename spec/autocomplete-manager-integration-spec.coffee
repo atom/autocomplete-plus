@@ -3,7 +3,7 @@ _ = require('underscore-plus')
 {KeymapManager} = require('atom')
 
 describe 'Autocomplete Manager', ->
-  [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
+  [completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule] = []
 
   beforeEach ->
     runs ->
@@ -36,8 +36,15 @@ describe 'Autocomplete Manager', ->
         workspaceElement = atom.views.getView(atom.workspace)
         jasmine.attachToDOM(workspaceElement)
 
+      # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        autocompleteManager = a.mainModule.autocompleteManager
+        mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      runs ->
+        autocompleteManager = mainModule.autocompleteManager
         spyOn(autocompleteManager, 'runAutocompletion').andCallThrough()
         spyOn(autocompleteManager, 'showSuggestions').andCallThrough()
 
@@ -574,7 +581,7 @@ describe 'Autocomplete Manager', ->
   #           prefix: ''
   #         }]
   #       selector: '.source.js'
-  #     registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+  #     registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
   #
   #     waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
   #       editor = e

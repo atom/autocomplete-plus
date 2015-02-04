@@ -10,14 +10,15 @@ module.exports =
 class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
-  editor: null
-  editorView: null
   buffer: null
-  providerManager: null
-  subscriptions: null
-  suggestionList: null
+  editor: null
   editorSubscriptions: null
+  editorView: null
+  providerManager: null
+  ready: false
+  subscriptions: null
   suggestionDelay: 50
+  suggestionList: null
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -33,6 +34,7 @@ class AutocompleteManager
 
     @handleEvents()
     @handleCommands()
+    @ready = true
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -265,6 +267,7 @@ class AutocompleteManager
 
   # Public: Clean up, stop listening to events
   dispose: =>
+    @ready = false
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
     @suggestionList?.destroy()

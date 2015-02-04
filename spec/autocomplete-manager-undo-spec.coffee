@@ -1,7 +1,7 @@
 {waitForAutocomplete} = require('./spec-helper')
 
 describe 'Autocomplete Manager', ->
-  [completionDelay, editorView, editor, autocompleteManager] = []
+  [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
     runs ->
@@ -30,7 +30,13 @@ describe 'Autocomplete Manager', ->
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        autocompleteManager = a.mainModule.autocompleteManager
+        mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      runs ->
+        autocompleteManager = mainModule.autocompleteManager
 
     it 'restores the previous state', ->
 

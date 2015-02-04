@@ -2,7 +2,7 @@
 TestProvider = require('../lib/test-provider')
 
 describe 'Autocomplete', ->
-  [editorView, editor, completionDelay, mainModule] = []
+  [mainModule, autocompleteManager, editorView, editor, completionDelay, mainModule] = []
 
   describe 'Issue 57 - Multiple selection completion', ->
     beforeEach ->
@@ -22,10 +22,14 @@ describe 'Autocomplete', ->
         editor = e
 
       # Activate the package
-      waitsForPromise ->
-        atom.packages.activatePackage('autocomplete-plus')
-          .then (a) ->
-            mainModule = a.mainModule
+      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+        mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      runs ->
+        autocompleteManager = mainModule.autocompleteManager
 
       runs ->
         editorView = atom.views.getView(editor)

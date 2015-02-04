@@ -25,6 +25,11 @@ describe 'Provider API', ->
     # Activate the package
     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
       mainModule = a.mainModule
+
+    waitsFor ->
+      mainModule.autocompleteManager?.ready
+
+    runs ->
       autocompleteManager = mainModule.autocompleteManager
 
   afterEach ->
@@ -151,7 +156,7 @@ describe 'Provider API', ->
               }]
             selector: '.source.js,.source.coffee'
           # Register the test provider
-          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+          registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
@@ -189,7 +194,7 @@ describe 'Provider API', ->
               }]
             selector: '.source.js,.source.coffee'
           # Register the test provider
-          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+          registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
@@ -234,7 +239,7 @@ describe 'Provider API', ->
             dispose: ->
               return
           # Register the test provider
-          registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+          registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
           expect(autocompleteManager.providerManager.store).toBeDefined()
           expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)

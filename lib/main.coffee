@@ -92,8 +92,8 @@ module.exports =
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
-    AutocompleteManager = require('./autocomplete-manager')
-    @autocompleteManager = new AutocompleteManager()
+    @getAutocompleteManager()
+    # @activateTimeout = setTimeout(@getAutocompleteManager, 0)
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
@@ -103,7 +103,7 @@ module.exports =
   registerProviderForEditorView: (provider, editorView) ->
     @registerProviderForEditor(provider, editorView?.getModel())
 
-  # Public: Finds the autocomplete for the given TextEditor
+  # Private: Finds the autocomplete for the given TextEditor
   # and registers the given provider
   #
   # provider - The new {Provider}
@@ -111,61 +111,36 @@ module.exports =
   registerProviderForEditor: (provider, editor) ->
     return unless @autocompleteManager?.providerManager?
     return unless editor?.getGrammar()?.scopeName?
-    deprecate '''
-      registerProviderForEditor and registerProviderForEditorView are no longer supported.
-      Use [service-hub](https://github.com/atom/service-hub) instead:
-        ```
-        # Example:
-        provider =
-          requestHandler: (options) ->
-            # Build your suggestions here...
+    deprecate('registerProviderForEditor and registerProviderForEditorView are no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
+    return @getAutocompleteManager().providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
 
-            # Return your suggestions as an array of anonymous objects
-            [{
-              word: 'ohai',
-              prefix: 'ohai',
-              label: '<span style='color: red'>ohai</span>',
-              renderLabelAsHtml: true,
-              className: 'ohai'
-            }]
-          selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
-          dispose: ->
-            # Your dispose logic here
-        registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
-        ```
-    '''
-    return @autocompleteManager.providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
-
-  # Public: unregisters the given provider
+  # Private: unregisters the given provider
   #
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
-    return unless @autocompleteManager?.providerManager?
-    deprecate '''
-      unregisterProvider is no longer supported.
-      Use [service-hub](https://github.com/atom/service-hub) instead:
-        ```
-        # Example:
-        provider =
-          requestHandler: (options) ->
-            # Build your suggestions here...
+    return unless @getAutocompleteManager()?.providerManager?
+    deprecate('unregisterProvider is no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
+    @getAutocompleteManager().providerManager.unregisterLegacyProvider(provider)
 
-            # Return your suggestions as an array of anonymous objects
-            [{
-              word: 'ohai',
-              prefix: 'ohai',
-              label: '<span style='color: red'>ohai</span>',
-              renderLabelAsHtml: true,
-              className: 'ohai'
-            }]
-          selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
-          dispose: ->
-            # Your dispose logic here
-        registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
-        registration.dispose() # << unregisters your provider
-        ```
-    '''
-    @autocompleteManager.providerManager.unregisterLegacyProvider(provider)
+  getAutocompleteManager: ->
+    if @activateTimeout?
+      clearTimeout(@activateTimeout)
+      @activateTimeout = null
+    return @autocompleteManager if @autocompleteManager?
+    AutocompleteManager = require('./autocomplete-manager')
+    @autocompleteManager = new AutocompleteManager()
+    return @autocompleteManager
 
   Provider: Provider # TODO: This is deprecated, and will be removed soon
   Suggestion: Suggestion # TODO: This is deprecated, and will be removed soon
+
+  #  |||              |||
+  #  vvv PROVIDER API vvv
+
+  # Private: Consumes the given provider, from package.json configuration.
+  # Do not use this directly or depend on `autocomplete-plus` directly.
+  #
+  # provider - The provider to consume
+  consumeProvider: (provider) ->
+    return unless provider?.provider?
+    return @getAutocompleteManager().providerManager.registerProvider(provider.provider)

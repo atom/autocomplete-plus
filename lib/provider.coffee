@@ -8,28 +8,7 @@ class Provider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
 
   constructor: ->
-    deprecate '''
-      `Provider` is no longer supported. Please define your own object (a class or anonymous object)
-      instead of extending `Provider`. Example
-        ```
-        # Example:
-        provider =
-          requestHandler: (options) ->
-            # Build your suggestions here...
-
-            # Return your suggestions as an array of anonymous objects
-            [{
-              word: 'ohai',
-              prefix: 'ohai',
-              label: '<span style='color: red'>ohai</span>',
-              renderLabelAsHtml: true,
-              className: 'ohai'
-            }]
-          selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
-          dispose: ->
-            # Your dispose logic here
-        ```
-    '''
+    deprecate('`Provider` is no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
     @initialize.apply(this, arguments)
 
   # Public: An initializer for subclasses

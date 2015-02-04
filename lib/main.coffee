@@ -111,29 +111,7 @@ module.exports =
   registerProviderForEditor: (provider, editor) ->
     return unless @autocompleteManager?.providerManager?
     return unless editor?.getGrammar()?.scopeName?
-    deprecate '''
-      registerProviderForEditor and registerProviderForEditorView are no longer supported.
-      Use [service-hub](https://github.com/atom/service-hub) instead:
-        ```
-        # Example:
-        provider =
-          requestHandler: (options) ->
-            # Build your suggestions here...
-
-            # Return your suggestions as an array of anonymous objects
-            [{
-              word: 'ohai',
-              prefix: 'ohai',
-              label: '<span style='color: red'>ohai</span>',
-              renderLabelAsHtml: true,
-              className: 'ohai'
-            }]
-          selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
-          dispose: ->
-            # Your dispose logic here
-        registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
-        ```
-    '''
+    deprecate('registerProviderForEditor and registerProviderForEditorView are no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
     return @getAutocompleteManager().providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
 
   # Private: unregisters the given provider
@@ -141,30 +119,7 @@ module.exports =
   # provider - The {Provider} to unregister
   unregisterProvider: (provider) ->
     return unless @getAutocompleteManager()?.providerManager?
-    deprecate '''
-      unregisterProvider is no longer supported.
-      Use [service-hub](https://github.com/atom/service-hub) instead:
-        ```
-        # Example:
-        provider =
-          requestHandler: (options) ->
-            # Build your suggestions here...
-
-            # Return your suggestions as an array of anonymous objects
-            [{
-              word: 'ohai',
-              prefix: 'ohai',
-              label: '<span style='color: red'>ohai</span>',
-              renderLabelAsHtml: true,
-              className: 'ohai'
-            }]
-          selector: '.source.js,.source.coffee' # This provider will be run on JavaScript and Coffee files
-          dispose: ->
-            # Your dispose logic here
-        registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: provider})
-        registration.dispose() # << unregisters your provider
-        ```
-    '''
+    deprecate('unregisterProvider is no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
     @getAutocompleteManager().providerManager.unregisterLegacyProvider(provider)
 
   getAutocompleteManager: ->

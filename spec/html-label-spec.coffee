@@ -49,7 +49,7 @@ describe 'HTML labels', ->
             className: 'ohai'
           }]
         selector: '.source.js'
-      registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       editor.moveToBottom()
       editor.insertText('o')

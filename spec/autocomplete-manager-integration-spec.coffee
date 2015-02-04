@@ -581,7 +581,7 @@ describe 'Autocomplete Manager', ->
   #           prefix: ''
   #         }]
   #       selector: '.source.js'
-  #     registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+  #     registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
   #
   #     waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
   #       editor = e

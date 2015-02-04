@@ -35,7 +35,7 @@ class AutocompleteManager
     @ready = true
 
   updateCurrentEditor: (currentPaneItem) =>
-    return if !currentPaneItem? or currentPaneItem is @editor
+    return if not currentPaneItem? or currentPaneItem is @editor
 
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
@@ -113,7 +113,7 @@ class AutocompleteManager
 
   getSuggestionsFromProviders: (options) =>
     providers = @providerManager.providersForScopeChain(options.scopeChain)
-    providerPromises = providers?.map (provider) -> provider?.requestHandler(options)
+    providerPromises = providers?.map((provider) -> provider?.requestHandler(options))
     return unless providerPromises?.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
       .then(@mergeSuggestionsFromProviders)

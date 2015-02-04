@@ -35,8 +35,7 @@ class AutocompleteManager
     @ready = true
 
   updateCurrentEditor: (currentPaneItem) =>
-    return unless currentPaneItem?
-    return if currentPaneItem is @editor
+    return if !currentPaneItem? or currentPaneItem is @editor
 
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null

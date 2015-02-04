@@ -121,7 +121,9 @@ class AutocompleteManager
     return unless providerPromises?.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
       .then(@mergeSuggestionsFromProviders)
-      .then((suggestions) => @displaySuggestions(suggestions, suggestionsPromise, options))
+      .then (suggestions) =>
+        if @currentSuggestionsPromise is suggestionsPromise
+          @displaySuggestions(suggestions, options)
 
   # providerSuggestions - array of arrays of suggestions provided by all called providers
   mergeSuggestionsFromProviders: (providerSuggestions) ->
@@ -130,10 +132,9 @@ class AutocompleteManager
       suggestions
     , []
 
-  displaySuggestions: (suggestions, suggestionsPromise, options) =>
+  displaySuggestions: (suggestions, options) =>
     suggestions = _.uniq(suggestions, (s) -> s.word)
-    suggestionsAreLatest = @currentSuggestionsPromise is suggestionsPromise
-    if @shouldDisplaySuggestions and suggestions.length and suggestionsAreLatest
+    if @shouldDisplaySuggestions and suggestions.length
       @showSuggestionList(suggestions)
     else
       @hideSuggestionList()

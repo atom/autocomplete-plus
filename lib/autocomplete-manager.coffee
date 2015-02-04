@@ -199,7 +199,7 @@ class AutocompleteManager
   isCurrentFileBlackListed: =>
     blacklist = atom.config.get('autocomplete-plus.fileBlacklist')?.map((s) -> s.trim())
     return false unless blacklist? and blacklist.length
-    fileName = path.basename(@editor.getBuffer().getPath())
+    fileName = path.basename(@buffer.getPath())
     for blacklistGlob in blacklist
       return true if minimatch(fileName, blacklistGlob)
 

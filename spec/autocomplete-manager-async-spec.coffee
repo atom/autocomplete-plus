@@ -79,7 +79,7 @@ describe 'Async providers', ->
               )
             , 1000
             )
-      registration = atom.services.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
 
     it 'does not show the suggestion list when it is triggered then no longer needed', ->
       runs ->

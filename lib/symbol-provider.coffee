@@ -130,21 +130,32 @@ class SymbolProvider
     candidates = []
     for symbol in symbolList
       score = fuzzaldrin.score(symbol.word, prefix)
-      if symbol.bufferRows?
-        rowDifference = Number.MAX_VALUE
-        rowDifference = Math.min(rowDifference, bufferRow - position.row) for bufferRow in symbol.bufferRows
-        locality = @computeLocalityModifier(rowDifference)
-        score *= locality
+      score *= @getLocalityScore(symbol, position) if symbol.path is @editor.getPath()
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
-    candidates.sort(@sortReverse)
+    candidates.sort(@sortSymbolsReverseIterator)
 
+    # Just get the first unique 20
+    wordsSeen = {}
+    results = []
     for {symbol, score, locality, rowDifference}, i in candidates
-      break if i >= 20
+      break if results.length is 20
       # console.log 'match', symbol.word, score, locality, rowDifference
-      symbol
+      key = @getSymbolKey(symbol.word)
+      results.push(symbol) unless wordsSeen[key]
+      wordsSeen[key] = true
+    results
 
-  sortReverse: (a, b) -> b.score - a.score
+  sortSymbolsReverseIterator: (a, b) -> b.score - a.score
+
+  getLocalityScore: (symbol, position) ->
+    if symbol.bufferRows?
+      rowDifference = Number.MAX_VALUE
+      rowDifference = Math.min(rowDifference, bufferRow - position.row) for bufferRow in symbol.bufferRows
+      locality = @computeLocalityModifier(rowDifference)
+      locality
+    else
+      1
 
   computeLocalityModifier: (rowDifference) ->
     rowDifference = Math.abs(rowDifference)
@@ -217,7 +228,7 @@ class SymbolProvider
         cachedSymbol.bufferRows.push(bufferRow)
         cachedSymbol.scopes.push(scopes)
       else
-        symbols[key] = {word, type, bufferRows: [bufferRow], scopes: [scopes]}
+        symbols[key] = {word, type, bufferRows: [bufferRow], scopes: [scopes], path: editor.getPath()}
 
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens

@@ -126,11 +126,9 @@ class AutocompleteManager
       .then(_.partial(@mergeSuggestionsFromProviders, providers))
       .then((suggestions) => @displaySuggestions(suggestions, suggestionsPromise, options))
 
-  # providers - An array of providers to check against provided suggestions
   # providerSuggestions - array of arrays of suggestions provided by all called providers
-  mergeSuggestionsFromProviders: (providers, providerSuggestions) ->
-    providerSuggestions.reduce (suggestions, providerSuggestions, index) ->
-      provider = providers[index]
+  mergeSuggestionsFromProviders: (providerSuggestions) ->
+    providerSuggestions.reduce (suggestions, providerSuggestions) ->
       suggestions = suggestions.concat(providerSuggestions) if providerSuggestions?.length
       suggestions
     , []

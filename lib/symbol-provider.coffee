@@ -72,12 +72,12 @@ class SymbolProvider
 
     return
 
-  paneItemIsValid: (paneItem) =>
+  paneItemIsValid: (paneItem) ->
     return false unless paneItem?
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
 
-  bufferChanged: (e) =>
+  # bufferChanged: (e) ->
     # console.log 'changed'
 
   ###

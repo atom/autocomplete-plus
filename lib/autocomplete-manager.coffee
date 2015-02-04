@@ -84,7 +84,6 @@ class AutocompleteManager
     @subscriptions.add(@suggestionList.onDidCancel(@hideSuggestionList))
 
   handleCommands: =>
-    # Allow autocomplete to be triggered via keymap
     @subscriptions.add atom.commands.add 'atom-text-editor',
       'autocomplete-plus:activate': =>
         @shouldDisplaySuggestions = true

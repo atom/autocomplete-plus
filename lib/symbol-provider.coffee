@@ -130,8 +130,9 @@ class SymbolProvider
     candidates = []
     for symbol in symbolList
       score = fuzzaldrin.score(symbol.word, prefix)
-      if symbol.bufferRow?
-        rowDifference = symbol.bufferRow - position.row
+      if symbol.bufferRows?
+        rowDifference = Number.MAX_VALUE
+        rowDifference = Math.min(rowDifference, bufferRow - position.row) for bufferRow in symbol.bufferRows
         locality = @computeLocalityModifier(rowDifference)
         score *= locality
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
@@ -196,8 +197,7 @@ class SymbolProvider
     # without warning.
     tokenizedLines = editor.displayBuffer.tokenizedBuffer.tokenizedLines
 
-    symbolTypes = {}
-    matchedSymbols = []
+    symbols = {}
 
     # Handle the case where a symbol is a variable in some cases and, say, a
     # class in others. We want all symbols of the same name to have the same type. e.g.
@@ -207,22 +207,21 @@ class SymbolProvider
     # class MyClass extends SomeModule # This line parses SomeModule as a class
     # ```
     # `class` types are higher priority than `variables`
-    cacheSymbolType = (word, currentType) =>
-      word = getWordKey(word)
-      return symbolTypes[word] = currentType unless symbolTypes[word]?
-      currentTypePriority = @config[currentType].priority
-      cachedTypePriority = @config[symbolTypes[word]].priority
-      symbolTypes[word] = currentType if currentTypePriority > cachedTypePriority
+    cacheSymbol = (word, type, bufferRow, scopes) =>
+      wordKey = getWordKey(word)
+      cachedSymbol = symbols[wordKey]
+      if cachedSymbol?
+        currentTypePriority = @config[type].priority
+        cachedTypePriority = @config[cachedSymbol.type].priority
+        cachedSymbol.type = type if currentTypePriority > cachedTypePriority
+        console.log cachedSymbol
+        cachedSymbol.bufferRows.push(bufferRow)
+        cachedSymbol.scopes.push(scopes)
+      else
+        symbols[wordKey] = {word, type, bufferRows: [bufferRow], scopes: [scopes]}
 
-    getWordKey = (word) ->
-       # some words are reserved, like 'constructor' :/
-      word + '$$'
-
-    normalizeTypesForAllSymbols = ->
-      for symbol in matchedSymbols
-        wordKey = getWordKey(symbol.word)
-        symbol.type = symbolTypes[wordKey] if symbolTypes[wordKey]?
-      return
+     # some words are reserved, like 'constructor' :/
+    getWordKey = (word) -> word + '$$'
 
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
@@ -232,12 +231,10 @@ class SymbolProvider
             if selector.matches(scopes) and matches = token.value.match(options.wordRegex)
               for word in matches
                 if word.length >= minimumWordLength
-                  matchedSymbols.push {type, word, bufferRow, scopes}
-                  cacheSymbolType(word, type)
+                  cacheSymbol(word, type, bufferRow, scopes)
               break
 
-    normalizeTypesForAllSymbols()
-    matchedSymbols
+    (symbol for wordKey, symbol of symbols)
 
   cssSelectorFromScopes: (scopes) ->
     selector = ''

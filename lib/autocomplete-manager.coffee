@@ -173,8 +173,7 @@ class AutocompleteManager
     @suggestionList.show(@editor)
 
   hideSuggestionList: =>
-    # TODO: Should we *always* focus the editor? Probably not...
-    @suggestionList?.hideAndFocusOn(@editorView)
+    @suggestionList?.hide()
     @shouldDisplaySuggestions = false
 
   requestHideSuggestionList: (command) ->

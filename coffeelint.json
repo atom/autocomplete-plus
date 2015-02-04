@@ -98,7 +98,7 @@
         "level": "warn"
     },
     "non_empty_constructor_needs_parens": {
-        "level": "error"
+        "level": "ignore"
     },
     "prefer_english_operator": {
         "level": "error",

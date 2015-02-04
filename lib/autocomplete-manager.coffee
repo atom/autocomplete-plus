@@ -154,19 +154,19 @@ class AutocompleteManager
   confirm: (match) =>
     return unless @editor? and match?
 
-    match.onWillConfirm() if match.onWillConfirm?
+    match.onWillConfirm?()
 
     @editor.getSelections()?.forEach((selection) -> selection?.clear())
     @hideSuggestionList()
 
     @replaceTextWithMatch(match)
 
-    if match.isSnippet? and match.isSnippet
-      setTimeout(=>
+    if match.isSnippet
+      setTimeout =>
         atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
-      , 1)
+      , 1
 
-    match.onDidConfirm() if match.onDidConfirm?
+    match.onDidConfirm?()
 
   showSuggestionList: (suggestions) ->
     @suggestionList.changeItems(suggestions)

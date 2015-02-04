@@ -111,7 +111,7 @@ class SymbolProvider
   findSuggestionsForWord: (options) =>
     return unless @symbolList?
     # Merge the scope specific words into the default word list
-    symbolList = @symbolList.concat(@getCompletionsForCursorScope())
+    symbolList = @symbolList.concat(@builtinCompletionsForCursorScope())
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
@@ -157,7 +157,7 @@ class SymbolProvider
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)
   #
   # Returns an {Array} of strings
-  getCompletionsForCursorScope: =>
+  builtinCompletionsForCursorScope: =>
     cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
     completions = @settingsForScopeDescriptor(cursorScope, "editor.completions")
     scopedCompletions = []

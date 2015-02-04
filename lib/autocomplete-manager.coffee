@@ -1,4 +1,4 @@
-{Range, TextEditor, CompositeDisposable, Disposable, Emitter}  = require('atom')
+{Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
 _ = require('underscore-plus')
 minimatch = require('minimatch')
 path = require('path')
@@ -24,22 +24,18 @@ class AutocompleteManager
   constructor: ->
     @subscriptions = new CompositeDisposable
     @providerManager = new ProviderManager
-    @subscriptions.add(@providerManager)
-    @emitter = new Emitter
-
-    # Register Suggestion List Model and View
-    @subscriptions.add(atom.views.addViewProvider(SuggestionList, (model) ->
-      new SuggestionListElement().initialize(model)
-    ))
     @suggestionList = new SuggestionList
+
+    @subscriptions.add(@providerManager)
+    @subscriptions.add atom.views.addViewProvider SuggestionList, (model) ->
+      new SuggestionListElement().initialize(model)
 
     @handleEvents()
     @handleCommands()
     @ready = true
 
   updateCurrentEditor: (currentPaneItem) =>
-    return unless currentPaneItem?
-    return if currentPaneItem is @editor
+    return if not currentPaneItem? or currentPaneItem is @editor
 
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
@@ -117,7 +113,7 @@ class AutocompleteManager
 
   getSuggestionsFromProviders: (options) =>
     providers = @providerManager.providersForScopeChain(options.scopeChain)
-    providerPromises = providers?.map (provider) -> provider?.requestHandler(options)
+    providerPromises = providers?.map((provider) -> provider?.requestHandler(options))
     return unless providerPromises?.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
       .then(@mergeSuggestionsFromProviders)
@@ -139,8 +135,6 @@ class AutocompleteManager
     else
       @hideSuggestionList()
 
-    @emitter.emit('did-autocomplete', {options, suggestions})
-
   prefixForCursor: (cursor) =>
     return '' unless @buffer? and cursor?
     start = cursor.getBeginningOfCurrentWordBufferPosition()
@@ -154,27 +148,26 @@ class AutocompleteManager
   confirm: (match) =>
     return unless @editor? and match?
 
-    match.onWillConfirm() if match.onWillConfirm?
+    match.onWillConfirm?()
 
     @editor.getSelections()?.forEach((selection) -> selection?.clear())
     @hideSuggestionList()
 
     @replaceTextWithMatch(match)
 
-    if match.isSnippet? and match.isSnippet
-      setTimeout(=>
+    if match.isSnippet
+      setTimeout =>
         atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
-      , 1)
+      , 1
 
-    match.onDidConfirm() if match.onDidConfirm?
+    match.onDidConfirm?()
 
   showSuggestionList: (suggestions) ->
     @suggestionList.changeItems(suggestions)
     @suggestionList.show(@editor)
 
   hideSuggestionList: =>
-    # TODO: Should we *always* focus the editor? Probably not...
-    @suggestionList?.hideAndFocusOn(@editorView)
+    @suggestionList?.hide()
     @shouldDisplaySuggestions = false
 
   requestHideSuggestionList: (command) ->
@@ -191,13 +184,10 @@ class AutocompleteManager
     return unless @editor?
     newSelectedBufferRanges = []
 
-    buffer = @editor.getBuffer()
-    return unless buffer?
-
     selections = @editor.getSelections()
     return unless selections?
     @editor.transact =>
-      if match.prefix? and match.prefix.length > 0
+      if match.prefix?.length > 0
         @editor.selectLeft(match.prefix.length)
         @editor.delete()
 
@@ -209,7 +199,7 @@ class AutocompleteManager
   isCurrentFileBlackListed: =>
     blacklist = atom.config.get('autocomplete-plus.fileBlacklist')?.map((s) -> s.trim())
     return false unless blacklist? and blacklist.length
-    fileName = path.basename(@editor.getBuffer().getPath())
+    fileName = path.basename(@buffer.getPath())
     for blacklistGlob in blacklist
       return true if minimatch(fileName, blacklistGlob)
 
@@ -260,9 +250,6 @@ class AutocompleteManager
       @cancelNewSuggestionsRequest()
       @hideSuggestionList()
 
-  onDidAutocomplete: (callback) =>
-    @emitter.on('did-autocomplete', callback)
-
   # Public: Clean up, stop listening to events
   dispose: =>
     @ready = false
@@ -273,6 +260,3 @@ class AutocompleteManager
     @subscriptions?.dispose()
     @subscriptions = null
     @providerManager = null
-    @emitter?.emit('did-dispose')
-    @emitter?.dispose()
-    @emitter = null

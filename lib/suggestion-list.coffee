@@ -93,11 +93,10 @@ class SuggestionList
     @addKeyboardInteraction()
     @active = true
 
-  hideAndFocusOn: (refocusTarget) =>
+  hide: =>
     return unless @active
     @destroyOverlay()
     @removeKeyboardInteraction()
-    refocusTarget?.focus?()
     @active = false
 
   destroyOverlay: =>

@@ -61,19 +61,13 @@ var quicksort = function () {
 
     runs ->
       autocompleteManager = mainModule.autocompleteManager
-      spyOn(autocompleteManager, 'findSuggestions').andCallThrough()
-      spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
-      spyOn(autocompleteManager, 'showSuggestionList').andCallThrough()
-      spyOn(autocompleteManager, 'hideSuggestionList').andCallThrough()
-      autocompleteManager.onDidAutocomplete ->
+      displaySuggestions = autocompleteManager.displaySuggestions
+      spyOn(autocompleteManager, 'displaySuggestions').andCallFake (suggestions, options) ->
+        displaySuggestions(suggestions, options)
         didAutocomplete = true
 
   afterEach ->
     didAutocomplete = false
-    jasmine.unspy(autocompleteManager, 'findSuggestions')
-    jasmine.unspy(autocompleteManager, 'displaySuggestions')
-    jasmine.unspy(autocompleteManager, 'showSuggestionList')
-    jasmine.unspy(autocompleteManager, 'hideSuggestionList')
 
   describe 'autosave compatibility', ->
     it 'keeps the suggestion list open while saving', ->

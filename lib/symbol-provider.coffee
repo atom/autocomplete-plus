@@ -208,20 +208,16 @@ class SymbolProvider
     # ```
     # `class` types are higher priority than `variables`
     cacheSymbol = (word, type, bufferRow, scopes) =>
-      wordKey = getWordKey(word)
-      cachedSymbol = symbols[wordKey]
+      key = @getSymbolKey(word)
+      cachedSymbol = symbols[key]
       if cachedSymbol?
         currentTypePriority = @config[type].priority
         cachedTypePriority = @config[cachedSymbol.type].priority
         cachedSymbol.type = type if currentTypePriority > cachedTypePriority
-        console.log cachedSymbol
         cachedSymbol.bufferRows.push(bufferRow)
         cachedSymbol.scopes.push(scopes)
       else
-        symbols[wordKey] = {word, type, bufferRows: [bufferRow], scopes: [scopes]}
-
-     # some words are reserved, like 'constructor' :/
-    getWordKey = (word) -> word + '$$'
+        symbols[key] = {word, type, bufferRows: [bufferRow], scopes: [scopes]}
 
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
@@ -234,7 +230,10 @@ class SymbolProvider
                   cacheSymbol(word, type, bufferRow, scopes)
               break
 
-    (symbol for wordKey, symbol of symbols)
+    (symbol for key, symbol of symbols)
+
+  # some words are reserved, like 'constructor' :/
+  getSymbolKey: (word) -> word + '$$'
 
   cssSelectorFromScopes: (scopes) ->
     selector = ''

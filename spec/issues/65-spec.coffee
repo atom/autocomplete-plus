@@ -3,7 +3,7 @@
 describe 'Autocomplete', ->
   [mainModule, autocompleteManager, editorView, editor, completionDelay] = []
 
-  describe 'Issue 65', ->
+  describe 'Issue 65 - Stop autocomplete after you pass the autocomplete suggestion', ->
     beforeEach ->
       runs ->
         # Set to live completion
@@ -41,7 +41,6 @@ describe 'Autocomplete', ->
           # Trigger an autocompletion
           editor.moveToBottom()
           editor.insertText('s')
-
           waitForAutocomplete()
 
           runs ->

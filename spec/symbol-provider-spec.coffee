@@ -149,19 +149,3 @@ fdescribe 'SymbolProvider', ->
       editor.insertText('somēthingNew')
       editor.insertText(' ')
       expect(provider.symbolList.indexOf('somēthingNew')).not.toEqual(-1)
-
-    # Fixing This Fixes #196
-    xit 'removes words from the wordlist when they no longer exist in any open buffers', ->
-      # Not sure we should fix this; could have a significant performance impacts
-      provider = autocompleteManager.providerManager.fuzzyProvider
-
-      expect(provider.symbolList.indexOf('bogos')).toEqual(-1)
-      editor.insertText('bogos = 1')
-      editor.insertText(' ')
-      expect(provider.symbolList.indexOf('bogos')).not.toEqual(-1)
-      expect(provider.symbolList.indexOf('bogus')).toEqual(-1)
-      editor.backspace() for [1..7]
-      editor.insertText('us = 1')
-      editor.insertText(' ')
-      expect(provider.symbolList.indexOf('bogus')).not.toEqual(-1)
-      expect(provider.symbolList.indexOf('bogos')).toEqual(-1)

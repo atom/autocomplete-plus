@@ -99,13 +99,14 @@ fdescribe 'SymbolProvider', ->
       provider = autocompleteManager.providerManager.fuzzyProvider
       expect(indexOfWord(provider.symbolList, 'quicksort')).not.toEqual(-1)
 
-    xit "adds words to the wordlist after they have been written", ->
+    it "adds words to the symbol list after they have been written", ->
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.symbolList.indexOf('aNewFunction')).toEqual(-1)
+      expect(indexOfWord(provider.symbolList, 'aNewFunction')).toEqual(-1)
       editor.insertText('function aNewFunction(){};')
       editor.insertText(' ')
-      expect(provider.symbolList.indexOf('aNewFunction')).not.toEqual(-1)
+      advanceClock provider.changeUpdateDelay
+      expect(indexOfWord(provider.symbolList, 'aNewFunction')).not.toEqual(-1)
 
     describe "when includeCompletionsFromAllBuffers is enabled", ->
       beforeEach ->

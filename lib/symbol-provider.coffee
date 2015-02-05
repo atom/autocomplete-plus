@@ -10,6 +10,7 @@ class SymbolProvider
   symbolList: null
   editor: null
   buffer: null
+  changeUpdateDelay: 300
 
   selector: '*'
 
@@ -77,8 +78,19 @@ class SymbolProvider
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
 
-  # bufferChanged: (e) ->
-    # console.log 'changed'
+  bufferChanged: ({newRange}) =>
+    @changeUpdateRange ?=
+      start: newRange.start.row
+      end: newRange.end.row
+
+    @changeUpdateRange.start = Math.min(@changeUpdateRange.start, newRange.start.row)
+    @changeUpdateRange.end = Math.max(@changeUpdateRange.end, newRange.end.row)
+
+    clearTimeout(@changeUpdateTimeout)
+    @changeUpdateTimeout = setTimeout =>
+      @updateSymbolListForRange(@editor, @changeUpdateRange.start, @changeUpdateRange.end)
+      @changeUpdateRange = null
+    , @changeUpdateDelay
 
   ###
   Section: Suggesting Completions
@@ -202,12 +214,14 @@ class SymbolProvider
 
     @symbolList = symbolList
 
-  getSymbolsFromEditor: (editor, minimumWordLength) ->
-    # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not
-    # copy into your own package. If you do, be prepared to have it break
-    # without warning.
-    tokenizedLines = editor.displayBuffer.tokenizedBuffer.tokenizedLines
+  updateSymbolListForRange: (editor, startBufferRow, endBufferRow) ->
+    tokenizedLines = @getTokenizedLines(editor)[startBufferRow..endBufferRow]
+    minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
+    symbolList = @getSymbolsFromEditor(editor, minimumWordLength, tokenizedLines)
+    @symbolList = @symbolList.concat(symbolList)
 
+  getSymbolsFromEditor: (editor, minimumWordLength, tokenizedLines) ->
+    tokenizedLines ?= @getTokenizedLines(editor)
     symbols = {}
 
     # Handle the case where a symbol is a variable in some cases and, say, a
@@ -245,6 +259,12 @@ class SymbolProvider
 
   # some words are reserved, like 'constructor' :/
   getSymbolKey: (word) -> word + '$$'
+
+  getTokenizedLines: (editor) ->
+    # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not
+    # copy into your own package. If you do, be prepared to have it break
+    # without warning.
+    editor.displayBuffer.tokenizedBuffer.tokenizedLines
 
   cssSelectorFromScopes: (scopes) ->
     selector = ''

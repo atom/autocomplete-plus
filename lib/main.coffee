@@ -151,3 +151,6 @@ module.exports =
         for registration in registrations
           registration?.dispose?()
       )
+
+  consumeSnippets: (snippets) ->
+    @getAutocompleteManager().snippets = snippets

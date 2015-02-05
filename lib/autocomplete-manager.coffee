@@ -42,11 +42,11 @@ class AutocompleteManager
     @shouldAbortSuggestions = false
 
     # This's a workaroung, we should ask Atom to emit events like `onCompositionDidStart`
-    editor = $('atom-text-editor')[0]
-    editor.addEventListener 'compositionstart', =>
+    editor = $('atom-text-editor')
+    editor.on 'compositionstart', ->
       self.shouldAbortSuggestions = true
 
-    editor.addEventListener 'compositionend', =>
+    editor.on 'compositionend', ->
       self.shouldAbortSuggestions = false
 
   updateCurrentEditor: (currentPaneItem) =>

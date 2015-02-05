@@ -105,7 +105,7 @@ describe 'Autocomplete Manager', ->
 
           # Check suggestions
           suggestions = ['function', 'if', 'left', 'shift']
-          [].forEach.call editorView.querySelectorAll('.autocomplete-plus li span'), (item, index) ->
+          [].forEach.call editorView.querySelectorAll('.autocomplete-plus li span.word'), (item, index) ->
             expect(item.innerText).toEqual(suggestions[index])
 
       it 'should not show the suggestion list when no suggestions are found', ->

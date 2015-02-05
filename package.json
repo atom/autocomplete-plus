@@ -24,7 +24,8 @@
   "consumedServices": {
     "autocomplete.provider": {
       "versions": {
-        "1.0.0": "consumeProvider"
+        "1.0.0": "consumeProvider",
+        "1.1.0": "consumeProviders"
       }
     }
   }

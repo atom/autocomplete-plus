@@ -1,3 +1,4 @@
+{Disposable} = require('atom')
 Provider = require('./provider')
 Suggestion = require('./suggestion')
 {deprecate} = require('grim')
@@ -140,7 +141,22 @@ module.exports =
   # Private: Consumes the given provider, from package.json configuration.
   # Do not use this directly or depend on `autocomplete-plus` directly.
   #
-  # provider - The provider to consume
-  consumeProvider: (provider) ->
-    return unless provider?.provider?
-    return @getAutocompleteManager().providerManager.registerProvider(provider.provider)
+  # service - The service to consume
+  consumeProvider: (service) ->
+    return unless service?.provider?
+    service.providers = [service.provider]
+    return @consumeProviders(service)
+
+  # Private: Consumes the given provider, from package.json configuration.
+  # Do not use this directly or depend on `autocomplete-plus` directly.
+  #
+  # service - The service to consume
+  consumeProviders: (service) ->
+    return unless service?.providers?.length > 0
+    registrations = for provider in service.providers
+      @getAutocompleteManager().providerManager.registerProvider(provider)
+    if registrations?.length > 0
+      return new Disposable(->
+        for registration in registrations
+          registration?.dispose?()
+      )

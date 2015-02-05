@@ -145,7 +145,7 @@ class SymbolProvider
       score *= @getLocalityScore(symbol, position) if symbol.path is @editor.getPath()
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
-    candidates.sort(@sortSymbolsReverseIterator)
+    candidates.sort(@symbolSortReverseIterator)
 
     # Just get the first unique 20
     wordsSeen = {}
@@ -158,7 +158,7 @@ class SymbolProvider
       wordsSeen[key] = true
     results
 
-  sortSymbolsReverseIterator: (a, b) -> b.score - a.score
+  symbolSortReverseIterator: (a, b) -> b.score - a.score
 
   getLocalityScore: (symbol, position) ->
     if symbol.bufferRows?

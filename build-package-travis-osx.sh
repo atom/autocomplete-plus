@@ -1,32 +1,40 @@
 #!/bin/sh
 
-echo "Downloading io.js..."
-curl -s -o iojs.tar.gz https://iojs.org/dist/v1.1.0/iojs-v1.1.0-darwin-x64.tar.gz
-tar -zxf iojs.tar.gz
-export PATH=$PWD/iojs/bin:$PATH
-node -v
-
 echo "Downloading latest Atom release..."
 curl -s -L "https://atom.io/download/mac" \
--H 'Accept: application/octet-stream' \
--o atom.zip
+  -H 'Accept: application/octet-stream' \
+  -o atom.zip
 
 mkdir atom
 unzip -q atom.zip -d atom
+export PATH=$PWD/atom/Atom.app/Contents/Resources/app/apm/bin:$PATH
 
 echo "Using Atom version:"
 ATOM_PATH=./atom ./atom/Atom.app/Contents/Resources/app/atom.sh -v
-
-echo "Installing required packages..."
-atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install autocomplete-plus
 
 echo "Downloading package dependencies..."
 atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm clean
 atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install
 
+TEST_PACKAGES="${APM_TEST_PACKAGES:=none}"
+
+if [ "$TEST_PACKAGES" != "none" ]; then
+  echo "Installing atom package dependencies..."
+  for pack in $TEST_PACKAGES ; do
+    echo "Installing $pack..."
+    atom/Atom.app/Contents/Resources/app/apm/node_modules/.bin/apm install $pack
+  done
+fi
+
 if [ -f ./node_modules/.bin/coffeelint ]; then
-  echo "Linting package..."
-  ./node_modules/.bin/coffeelint lib spec
+  if [ -d ./lib ]; then
+    echo "Linting package..."
+    ./node_modules/.bin/coffeelint lib
+  fi
+  if [ -d ./spec ]; then
+    echo "Linting package specs..."
+    ./node_modules/.bin/coffeelint spec
+  fi
 fi
 
 echo "Running specs..."

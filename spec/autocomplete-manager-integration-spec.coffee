@@ -105,7 +105,7 @@ describe 'Autocomplete Manager', ->
 
           # Check suggestions
           suggestions = ['function', 'if', 'left', 'shift']
-          [].forEach.call editorView.querySelectorAll('.autocomplete-plus li span'), (item, index) ->
+          [].forEach.call editorView.querySelectorAll('.autocomplete-plus li span.word'), (item, index) ->
             expect(item.innerText).toEqual(suggestions[index])
 
       it 'should not show the suggestion list when no suggestions are found', ->
@@ -261,6 +261,49 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+    describe "when the matched prefix is highlighted", ->
+      it 'highlights the prefix of the word in the suggestion list', ->
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        editor.moveToBottom()
+        editor.insertText('i')
+        editor.insertText('e')
+        editor.insertText('m')
+
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          word = editorView.querySelector('.autocomplete-plus li span.word')
+          expect(word.childNodes).toHaveLength 5
+          expect(word.childNodes[0]).toHaveClass 'character-match'
+          expect(word.childNodes[1]).not.toHaveClass 'character-match'
+          expect(word.childNodes[2]).toHaveClass 'character-match'
+          expect(word.childNodes[3]).toHaveClass 'character-match'
+          expect(word.childNodes[4]).not.toHaveClass 'character-match'
+
+      it 'highlights repeated characters in the prefix', ->
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        editor.moveToBottom()
+        editor.insertText('a')
+        editor.insertText('p')
+        editor.insertText('p')
+
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          word = editorView.querySelector('.autocomplete-plus li span.word')
+          expect(word.childNodes).toHaveLength 5
+          expect(word.childNodes[0]).toHaveClass 'character-match'
+          expect(word.childNodes[1]).toHaveClass 'character-match'
+          expect(word.childNodes[2]).toHaveClass 'character-match'
+          expect(word.childNodes[3]).not.toHaveClass 'character-match'
+          expect(word.childNodes[4]).not.toHaveClass 'character-match'
 
     describe 'accepting suggestions', ->
       it 'hides the suggestions list when a suggestion is confirmed', ->

@@ -95,7 +95,7 @@ class SuggestionListElement extends HTMLElement
 
   renderItems: ->
     items = @visibleItems() or []
-    items.forEach ({word, label, renderLabelAsHtml, className}, index) =>
+    items.forEach ({word, label, renderLabelAsHtml, className, prefix}, index) =>
       li = @ol.childNodes[index]
       unless li
         li = document.createElement('li')
@@ -113,7 +113,15 @@ class SuggestionListElement extends HTMLElement
         li.appendChild(wordSpan)
         wordSpan.className = 'word'
 
-      wordSpan.textContent = word
+      wordSpan.innerHTML = ("<span>#{ch}</span>" for ch in word).join('')
+
+      # highlight the prefix
+      wordIndex = 0
+      for ch, i in prefix
+        while wordIndex < word.length and word[wordIndex].toLowerCase() isnt ch.toLowerCase()
+          wordIndex += 1
+        wordSpan.childNodes[wordIndex]?.classList.add('character-match')
+        wordIndex += 1
 
       labelSpan = li.childNodes[1]
       if label

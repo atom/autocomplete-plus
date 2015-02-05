@@ -1,3 +1,5 @@
+@import "ui-variables";
+
 autocomplete-suggestion-list.select-list.popover-list {
   width: auto;
   display: inline-block;
@@ -14,6 +16,7 @@ autocomplete-suggestion-list.select-list.popover-list {
     margin-top: 0;
 
     li {
+      color: fadeout(@text-color, 10%);
       &:after {
         clear: both;
         display: block;
@@ -21,6 +24,10 @@ autocomplete-suggestion-list.select-list.popover-list {
       }
       .word {
         float: left;
+      }
+      .character-match {
+        font-weight: bold;
+        color: @text-color-highlight;
       }
       &.selected .completion-label {
         color: @text-color;

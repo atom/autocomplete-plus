@@ -196,7 +196,7 @@ class SymbolProvider
 
     # Do we want autocompletions from all open buffers?
     if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
-      for editor in atom.workspace.getEditors()
+      for editor in atom.workspace.getTextEditors()
         # FIXME: downside is that some of these editors will not be tokenized :/
         symbolList = symbolList.concat @getSymbolsFromEditor(editor, minimumWordLength)
 

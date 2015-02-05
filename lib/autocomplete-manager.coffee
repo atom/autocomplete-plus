@@ -1,4 +1,4 @@
-{Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
+{Range, TextEditor, CompositeDisposable, Disposable, $}  = require('atom')
 _ = require('underscore-plus')
 minimatch = require('minimatch')
 path = require('path')
@@ -33,6 +33,21 @@ class AutocompleteManager
     @handleEvents()
     @handleCommands()
     @ready = true
+
+    # Issue 210
+    # Because of Atom doesn't emit composition events for now (v0.177.0)
+    # So we listen to the DOM directly to fix IME issue
+    self = this
+    # If composition window showed, abort suggestions, do not popup suggestion list
+    @shouldAbortSuggestions = false
+
+    # This's a workaroung, we should ask Atom to emit events like `onCompositionDidStart`
+    editor = $('atom-text-editor')[0]
+    editor.addEventListener 'compositionstart', =>
+      self.shouldAbortSuggestions = true
+
+    editor.addEventListener 'compositionend', =>
+      self.shouldAbortSuggestions = false
 
   updateCurrentEditor: (currentPaneItem) =>
     return if not currentPaneItem? or currentPaneItem is @editor
@@ -240,6 +255,10 @@ class AutocompleteManager
   #
   # event - The change {Event}
   bufferChanged: ({newText, oldText}) =>
+    # Issue 210
+    # If composition window showed, abort suggestions, do not popup suggestion list
+    return if @shouldAbortSuggestions
+
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
     wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
 

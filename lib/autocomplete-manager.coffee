@@ -1,4 +1,5 @@
 {Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
+$ = require 'jquery'
 _ = require('underscore-plus')
 minimatch = require('minimatch')
 path = require('path')
@@ -59,14 +60,21 @@ class AutocompleteManager
     @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
     @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
 
+    # This's a workaround, we should ask Atom to emit events like `onCompositionDidStart`
+    editorelement = $('atom-text-editor')
     # Watch IME Events To Allow IME To Function Without The Suggestion List Showing
-    @editorSubscriptions.add @editor.on 'compositionstart', =>
+    startsub = editorelement.on 'compositionstart', =>
       @compositionInProgress = true
       null
 
-    @editorSubscriptions.add @editor.on 'compositionend', =>
+    endsub = editorelement.on 'compositionend', =>
       @compositionInProgress = false
       null
+
+    @editorSubscriptions.add(new Disposable(->
+      startsub.off()
+      endsub.off()
+    ))
 
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text

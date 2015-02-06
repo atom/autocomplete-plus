@@ -24,7 +24,7 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.add(@model.onDidSelectNext(@moveSelectionDown.bind(this)))
     @subscriptions.add(@model.onDidSelectPrevious(@moveSelectionUp.bind(this)))
     @subscriptions.add(@model.onDidConfirmSelection(@confirmSelection.bind(this)))
-    @subscriptions.add(@model.onDidDestroy(@dispose.bind(this)))
+    @subscriptions.add(@model.onDidDispose(@dispose.bind(this)))
     this
 
   # This should be unnecessary but the events we need to override

@@ -1,5 +1,4 @@
 {Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
-$ = require 'jquery'
 _ = require('underscore-plus')
 minimatch = require('minimatch')
 path = require('path')
@@ -13,6 +12,7 @@ class AutocompleteManager
   backspaceTriggersAutocomplete: true
   buffer: null
   compositionInProgress: false
+  disposed: false
   editor: null
   editorSubscriptions: null
   editorView: null
@@ -34,6 +34,7 @@ class AutocompleteManager
 
     @handleEvents()
     @handleCommands()
+    @subscriptions.add(@suggestionList) # We're adding this last so it is disposed after events
     @ready = true
 
   updateCurrentEditor: (currentPaneItem) =>
@@ -60,21 +61,15 @@ class AutocompleteManager
     @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
     @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
 
-    # This's a workaround, we should ask Atom to emit events like `onCompositionDidStart`
-    editorelement = $('atom-text-editor')
     # Watch IME Events To Allow IME To Function Without The Suggestion List Showing
-    startsub = editorelement.on 'compositionstart', =>
-      @compositionInProgress = true
-      null
+    compositionStart = => @compositionInProgress = true
+    compositionEnd = => @compositionInProgress = false
 
-    endsub = editorelement.on 'compositionend', =>
-      @compositionInProgress = false
-      null
-
-    @editorSubscriptions.add(new Disposable(->
-      startsub.off()
-      endsub.off()
-    ))
+    @editorView.addEventListener('compositionstart', compositionStart)
+    @editorView.addEventListener('compositionend', compositionEnd)
+    @editorSubscriptions.add new Disposable ->
+      @editorView?.removeEventListener('compositionstart', compositionStart)
+      @editorView?.removeEventListener('compositionend', compositionEnd)
 
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
@@ -106,9 +101,8 @@ class AutocompleteManager
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   findSuggestions: =>
-    return unless @providerManager?
-    return unless @editor?
-    return unless @buffer?
+    return if @disposed
+    return unless @providerManager? and @editor? and @buffer?
     return if @isCurrentFileBlackListed()
     cursor = @editor.getLastCursor()
     return unless cursor?
@@ -164,7 +158,7 @@ class AutocompleteManager
   #
   # match - An {Object} representing the confirmed suggestion
   confirm: (match) =>
-    return unless @editor? and match?
+    return unless @editor? and match? and not @disposed
 
     match.onWillConfirm?()
 
@@ -181,12 +175,13 @@ class AutocompleteManager
     match.onDidConfirm?()
 
   showSuggestionList: (suggestions) ->
-    return unless @suggestionList?
+    return if @disposed
     @suggestionList.changeItems(suggestions)
     @suggestionList.show(@editor)
 
   hideSuggestionList: =>
-    @suggestionList?.hide()
+    return if @disposed
+    @suggestionList.hide()
     @shouldDisplaySuggestions = false
 
   requestHideSuggestionList: (command) ->
@@ -228,7 +223,7 @@ class AutocompleteManager
   requestNewSuggestions: =>
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
-    delay = @suggestionDelay if @suggestionList?.isActive()
+    delay = @suggestionDelay if @suggestionList.isActive()
     @delayTimeout = setTimeout(@findSuggestions, delay)
     @shouldDisplaySuggestions = true
 
@@ -259,9 +254,10 @@ class AutocompleteManager
   #
   # event - The change {Event}
   bufferChanged: ({newText, oldText}) =>
-    return if @compositionInProgress
+    return if @disposed
+    return @hideSuggestionList() if @compositionInProgress
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList?.isActive()) and oldText.trim().length is 1)
+    wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
 
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()
@@ -272,11 +268,12 @@ class AutocompleteManager
 
   # Public: Clean up, stop listening to events
   dispose: =>
+    @hideSuggestionList()
+    @disposed = true
     @ready = false
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
-    @suggestionList?.destroy()
-    @suggestionList = null
     @subscriptions?.dispose()
     @subscriptions = null
+    @suggestionList = null
     @providerManager = null

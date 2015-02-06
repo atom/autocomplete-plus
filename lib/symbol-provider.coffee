@@ -111,9 +111,8 @@ class SymbolProvider
     return unless prefix.trim().length
 
     new Promise (resolve) =>
-      _.defer =>
-        suggestions = @findSuggestionsForWord(options)
-        resolve(suggestions)
+      suggestions = @findSuggestionsForWord(options)
+      resolve(suggestions)
 
   # Private: Finds possible matches for the given string / prefix
   #

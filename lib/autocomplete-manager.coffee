@@ -11,6 +11,7 @@ class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
   buffer: null
+  compositionInProgress: false
   editor: null
   editorSubscriptions: null
   editorView: null
@@ -57,6 +58,15 @@ class AutocompleteManager
     # Subscribe to buffer events:
     @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
     @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
+
+    # Watch IME Events To Allow IME To Function Without The Suggestion List Showing
+    @editorSubscriptions.add @editor.on 'compositionstart', =>
+      @compositionInProgress = true
+      null
+
+    @editorSubscriptions.add @editor.on 'compositionend', =>
+      @compositionInProgress = false
+      null
 
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
@@ -163,6 +173,7 @@ class AutocompleteManager
     match.onDidConfirm?()
 
   showSuggestionList: (suggestions) ->
+    return unless @suggestionList?
     @suggestionList.changeItems(suggestions)
     @suggestionList.show(@editor)
 
@@ -209,7 +220,7 @@ class AutocompleteManager
   requestNewSuggestions: =>
     delay = atom.config.get('autocomplete-plus.autoActivationDelay')
     clearTimeout(@delayTimeout)
-    delay = @suggestionDelay if @suggestionList.isActive()
+    delay = @suggestionDelay if @suggestionList?.isActive()
     @delayTimeout = setTimeout(@findSuggestions, delay)
     @shouldDisplaySuggestions = true
 
@@ -240,8 +251,9 @@ class AutocompleteManager
   #
   # event - The change {Event}
   bufferChanged: ({newText, oldText}) =>
+    return if @compositionInProgress
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
+    wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList?.isActive()) and oldText.trim().length is 1)
 
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()

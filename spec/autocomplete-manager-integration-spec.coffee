@@ -227,6 +227,7 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+      # TODO: Pretty Sure This Test Will Not Catch A Regression In Behavior Due To The Way It Is Written
       it 'should not update the suggestion list while composition is in progress', ->
         triggerAutocompletion(editor)
 

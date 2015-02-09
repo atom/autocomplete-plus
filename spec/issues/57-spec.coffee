@@ -1,5 +1,4 @@
 {waitForAutocomplete, triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require('../spec-helper')
-TestProvider = require('../lib/test-provider')
 
 describe 'Autocomplete', ->
   [mainModule, autocompleteManager, editorView, editor, completionDelay, mainModule] = []
@@ -7,6 +6,9 @@ describe 'Autocomplete', ->
   describe 'Issue 57 - Multiple selection completion', ->
     beforeEach ->
       runs ->
+        jasmine.unspy(window, 'setTimeout')
+        jasmine.unspy(window, 'clearTimeout')
+
         # Set to live completion
         atom.config.set('autocomplete-plus.enableAutoActivation', true)
 
@@ -27,6 +29,9 @@ describe 'Autocomplete', ->
 
       waitsFor ->
         mainModule.autocompleteManager?.ready
+
+      waitsFor ->
+        mainModule.autocompleteManager.providerManager?
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager

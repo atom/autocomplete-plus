@@ -1,7 +1,4 @@
 {Disposable} = require('atom')
-Provider = require('./provider')
-Suggestion = require('./suggestion')
-{deprecate} = require('grim')
 
 module.exports =
   config:
@@ -93,35 +90,15 @@ module.exports =
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
-    @getAutocompleteManager()
-    # @activateTimeout = setTimeout(@getAutocompleteManager, 0)
+    run = =>
+      @getAutocompleteManager()
+    setTimeout(run.bind(this), 0)
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
     @autocompleteManager?.dispose()
     @autocompleteManager = null
-
-  registerProviderForEditorView: (provider, editorView) ->
-    @registerProviderForEditor(provider, editorView?.getModel())
-
-  # Private: Finds the autocomplete for the given TextEditor
-  # and registers the given provider
-  #
-  # provider - The new {Provider}
-  # editor - The {TextEditor} we should register the provider with
-  registerProviderForEditor: (provider, editor) ->
-    return unless @autocompleteManager?.providerManager?
-    return unless editor?.getGrammar()?.scopeName?
-    deprecate('registerProviderForEditor and registerProviderForEditorView are no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
-    return @getAutocompleteManager().providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
-
-  # Private: unregisters the given provider
-  #
-  # provider - The {Provider} to unregister
-  unregisterProvider: (provider) ->
-    return unless @getAutocompleteManager()?.providerManager?
-    deprecate('unregisterProvider is no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
-    @getAutocompleteManager().providerManager.unregisterLegacyProvider(provider)
+    @providerManager = null
 
   getAutocompleteManager: ->
     if @activateTimeout?
@@ -130,10 +107,15 @@ module.exports =
     return @autocompleteManager if @autocompleteManager?
     AutocompleteManager = require('./autocomplete-manager')
     @autocompleteManager = new AutocompleteManager()
+    @getProviderManager()
+    @autocompleteManager.setProviderManager(@providerManager)
     return @autocompleteManager
 
-  Provider: Provider # TODO: This is deprecated, and will be removed soon
-  Suggestion: Suggestion # TODO: This is deprecated, and will be removed soon
+  getProviderManager: ->
+    return @providerManager if @providerManager?
+    ProviderManager = require('./provider-manager')
+    @providerManager = new ProviderManager()
+    return @providerManager
 
   #  |||              |||
   #  vvv PROVIDER API vvv
@@ -154,7 +136,7 @@ module.exports =
   consumeProviders: (service) ->
     return unless service?.providers?.length > 0
     registrations = for provider in service.providers
-      @getAutocompleteManager().providerManager.registerProvider(provider)
+      @getProviderManager().registerProvider(provider)
     if registrations?.length > 0
       return new Disposable(->
         for registration in registrations

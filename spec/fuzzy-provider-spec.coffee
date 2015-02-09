@@ -1,12 +1,14 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require('./spec-helper')
 _ = require('underscore-plus')
-TestProvider = require('./lib/test-provider')
 
 describe 'Autocomplete', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
     runs ->
+      jasmine.unspy(window, 'setTimeout')
+      jasmine.unspy(window, 'clearTimeout')
+
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
 
@@ -32,6 +34,9 @@ describe 'Autocomplete', ->
 
       waitsFor ->
         mainModule.autocompleteManager?.ready
+
+      waitsFor ->
+        mainModule.autocompleteManager.providerManager?
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager

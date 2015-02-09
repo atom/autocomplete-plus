@@ -2,7 +2,6 @@
 _ = require('underscore-plus')
 minimatch = require('minimatch')
 path = require('path')
-ProviderManager = require('./provider-manager')
 SuggestionList = require('./suggestion-list')
 SuggestionListElement = require('./suggestion-list-element')
 
@@ -25,10 +24,8 @@ class AutocompleteManager
 
   constructor: ->
     @subscriptions = new CompositeDisposable
-    @providerManager = new ProviderManager
     @suggestionList = new SuggestionList
 
-    @subscriptions.add(@providerManager)
     @subscriptions.add atom.views.addViewProvider SuggestionList, (model) ->
       new SuggestionListElement().initialize(model)
 
@@ -36,6 +33,11 @@ class AutocompleteManager
     @handleCommands()
     @subscriptions.add(@suggestionList) # We're adding this last so it is disposed after events
     @ready = true
+
+  setProviderManager: (providerManager) =>
+    return unless providerManager? and not @providerManager?
+    @providerManager = providerManager
+    @subscriptions.add(@providerManager)
 
   updateCurrentEditor: (currentPaneItem) =>
     return if not currentPaneItem? or currentPaneItem is @editor

@@ -6,11 +6,13 @@ class SuggestionListElement extends HTMLElement
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
-    @classList.add('popover-list', 'select-list', 'autocomplete-plus', 'autocomplete-suggestion-list')
+    @classList.add('popover-list', 'select-list', 'autocomplete-suggestion-list')
     @subscriptions.add(atom.config.observe('autocomplete-plus.maxSuggestions', => @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')))
     @registerMouseHandling()
 
   attachedCallback: ->
+    # TODO: Fix overlay decorator to in atom to apply class attribute correctly, then move this to overlay creation point.
+    @parentElement.classList.add('autocomplete-plus')
     @addActiveClassToEditor()
     @renderList() unless @ol
     @itemsChanged()

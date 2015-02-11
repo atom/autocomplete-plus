@@ -33,7 +33,7 @@ Press `UP` and `DOWN` to select another suggestion, press `TAB` to confirm your 
 Additionally, the keymap can be customized in your keymap.cson:
 
 ```coffeescript
-'atom-text-editor:not(mini) .autocomplete-plus.autocomplete-suggestion-list':
+'atom-text-editor:not(mini).autocomplete-active':
   'tab': 'unset!'
   'enter': 'autocomplete-plus:confirm'
   'up': 'unset!'

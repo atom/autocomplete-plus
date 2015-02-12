@@ -50,11 +50,11 @@ class SuggestionListElement extends HTMLElement
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
-    editorElement.classList.add 'autocomplete-active'
+    editorElement?.classList?.add 'autocomplete-active'
 
   removeActiveClassFromEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
-    editorElement.classList.remove 'autocomplete-active'
+    editorElement?.classList?.remove 'autocomplete-active'
 
   moveSelectionUp: ->
     unless @selectedIndex <= 0

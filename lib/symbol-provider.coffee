@@ -18,12 +18,15 @@ class SymbolProvider
   defaultConfig:
     class:
       selector: '.class.name, .inherited-class'
-      priority: 3
+      priority: 4
     function:
       selector: '.function.name'
-      priority: 2
+      priority: 3
     variable:
       selector: '.variable'
+      priority: 2
+    '':
+      selector: '.comment, .string'
       priority: 1
 
   constructor: ->

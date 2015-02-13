@@ -140,6 +140,7 @@ class SymbolProvider
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
+      continue unless prefix[0].toLowerCase() is symbol.word[0].toLowerCase() # must match the first char!
       score = fuzzaldrin.score(symbol.word, prefix)
       score *= @getLocalityScore(symbol, position) if symbol.path is @editor.getPath()
       candidates.push({symbol, score, locality, rowDifference}) if score > 0

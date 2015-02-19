@@ -13,13 +13,14 @@ suggestionForWord = (suggestionList, word) ->
     return suggestion if suggestion.word is word
   null
 
-fdescribe 'SymbolProvider', ->
+describe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
     runs ->
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
+      atom.config.set('autocomplete-plus.defaultProvider', 'Symbol')
 
       # Set the completion delay
       completionDelay = 100
@@ -28,6 +29,10 @@ fdescribe 'SymbolProvider', ->
 
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
+
+
+  afterEach ->
+    atom.config.set('autocomplete-plus.defaultProvider', 'Fuzzy')
 
   describe "when completing with the default configuration", ->
     beforeEach ->
@@ -53,9 +58,6 @@ fdescribe 'SymbolProvider', ->
         editorView = atom.views.getView(editor)
 
     it "properly swaps a lower priority type for a higher priority type", ->
-      # SomeModule is parsed as a variable in the
-      # `SomeModule = require 'some-module'` line and as a class in the
-      # `extends SomeModule` line
       provider = autocompleteManager.providerManager.fuzzyProvider
       suggestion = suggestionForWord(provider.symbolList, 'SomeModule')
       expect(suggestion.type).toEqual 'class'

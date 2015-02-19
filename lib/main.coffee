@@ -95,6 +95,12 @@ module.exports =
       default: 'Cursor'
       enum: ['Cursor', 'Word']
       order: 13
+    defaultProvider:
+      description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
+      type: 'string'
+      default: 'Fuzzy'
+      enum: ['Fuzzy', 'Symbol']
+      order: 14
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

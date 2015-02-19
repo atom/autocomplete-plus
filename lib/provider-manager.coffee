@@ -3,6 +3,7 @@ ScopedPropertyStore = require('scoped-property-store')
 _ = require('underscore-plus')
 Uuid = require('node-uuid')
 SymbolProvider = require('./symbol-provider')
+FuzzyProvider = require('./fuzzy-provider')
 Suggestion = require('./suggestion')
 Provider = require('./provider')
 
@@ -63,7 +64,10 @@ class ProviderManager
 
     if enabled
       return if @fuzzyProvider? or @fuzzyRegistration?
-      @fuzzyProvider = new SymbolProvider()
+      if atom.config.get('autocomplete-plus.defaultProvider') is 'Symbol'
+        @fuzzyProvider = new SymbolProvider()
+      else
+        @fuzzyProvider = new FuzzyProvider()
       @fuzzyRegistration = @registerProvider(@fuzzyProvider)
     else
       @fuzzyRegistration.dispose() if @fuzzyRegistration?

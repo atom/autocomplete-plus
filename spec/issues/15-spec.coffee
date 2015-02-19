@@ -8,6 +8,9 @@ describe 'Autocomplete', ->
   describe 'Issue 15', ->
     beforeEach ->
       runs ->
+        jasmine.unspy(window, 'setTimeout')
+        jasmine.unspy(window, 'clearTimeout')
+
         directory = temp.mkdirSync()
 
         # Set to live completion
@@ -30,6 +33,9 @@ describe 'Autocomplete', ->
 
       waitsFor ->
         mainModule.autocompleteManager?.ready
+
+      waitsFor ->
+        mainModule.autocompleteManager.providerManager?
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager

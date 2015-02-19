@@ -5,6 +5,9 @@ describe 'Autocomplete Manager', ->
 
   beforeEach ->
     runs ->
+      jasmine.unspy(window, 'setTimeout')
+      jasmine.unspy(window, 'clearTimeout')
+
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('editor.fontSize', '16')
@@ -34,6 +37,9 @@ describe 'Autocomplete Manager', ->
 
       waitsFor ->
         mainModule.autocompleteManager?.ready
+
+      waitsFor ->
+        mainModule.autocompleteManager.providerManager?
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager

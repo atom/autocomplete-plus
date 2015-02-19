@@ -7,6 +7,9 @@ describe 'Autocomplete Manager', ->
 
   beforeEach ->
     runs ->
+      jasmine.unspy(window, 'setTimeout')
+      jasmine.unspy(window, 'clearTimeout')
+
       directory = temp.mkdirSync()
       sample = '''
 var quicksort = function () {
@@ -58,6 +61,9 @@ var quicksort = function () {
 
     waitsFor ->
       mainModule.autocompleteManager?.ready
+
+    waitsFor ->
+      mainModule.autocompleteManager.providerManager?
 
     runs ->
       autocompleteManager = mainModule.autocompleteManager

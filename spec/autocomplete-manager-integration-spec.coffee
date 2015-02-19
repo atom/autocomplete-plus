@@ -7,6 +7,9 @@ describe 'Autocomplete Manager', ->
 
   beforeEach ->
     runs ->
+      jasmine.unspy(window, 'setTimeout')
+      jasmine.unspy(window, 'clearTimeout')
+
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('editor.fontSize', '16')
@@ -43,6 +46,9 @@ describe 'Autocomplete Manager', ->
       waitsFor ->
         mainModule.autocompleteManager?.ready
 
+      waitsFor ->
+        mainModule.autocompleteManager.providerManager?
+
       runs ->
         autocompleteManager = mainModule.autocompleteManager
         spyOn(autocompleteManager, 'findSuggestions').andCallThrough()
@@ -65,7 +71,7 @@ describe 'Autocomplete Manager', ->
       waitsFor ->
         autocompleteManager.findSuggestions.calls.length is 1
 
-  describe 'when opening a javascript file', ->
+  fdescribe 'when opening a javascript file', ->
     beforeEach ->
       runs ->
         atom.config.set('autocomplete-plus.enableAutoActivation', true)
@@ -80,7 +86,21 @@ describe 'Autocomplete Manager', ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
+
+      waitsFor ->
+        mainModule.autocompleteManager?.ready
+
+      waitsFor ->
+        mainModule.autocompleteManager.providerManager?
+
+      runs ->
         autocompleteManager = mainModule.autocompleteManager
+        spyOn(autocompleteManager, 'findSuggestions').andCallThrough()
+        spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
+
+    afterEach ->
+      jasmine.unspy(autocompleteManager, 'findSuggestions')
+      jasmine.unspy(autocompleteManager, 'displaySuggestions')
 
     describe 'when fuzzyprovider is disabled', ->
       it 'should not show the suggestion list', ->

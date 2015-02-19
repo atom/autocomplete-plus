@@ -1,12 +1,14 @@
 ProviderManager = require('../lib/provider-manager')
-TestProvider = require('./lib/test-provider')
 _ = require('underscore-plus')
 
 describe 'Provider Manager', ->
-  [providerManager, testProvider, legacyTestProvider, registration] = []
+  [providerManager, testProvider, registration] = []
 
   beforeEach ->
     runs ->
+      jasmine.unspy(window, 'setTimeout')
+      jasmine.unspy(window, 'clearTimeout')
+
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
       testProvider =
@@ -19,14 +21,10 @@ describe 'Provider Manager', ->
         dispose: ->
           return
 
-      legacyTestProvider = new TestProvider()
-
   afterEach ->
     runs ->
       registration?.dispose() if registration?.dispose?
       registration = null
-      legacyTestProvider?.dispose() if legacyTestProvider?.dispose?
-      legacyTestProvider = null
       testProvider?.dispose() if testProvider?.dispose?
       testProvider = null
       providerManager?.dispose()
@@ -86,10 +84,6 @@ describe 'Provider Manager', ->
       providerManager.removeProvider(testProvider)
       expect(providerManager.providers.has(testProvider)).toEqual(false)
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
-
-    it 'can identify a legacy provider', ->
-      expect(providerManager.isLegacyProvider(testProvider)).toEqual(false)
-      expect(providerManager.isLegacyProvider(legacyTestProvider)).toEqual(true)
 
     it 'can identify a provider with a missing requestHandler', ->
       bogusProvider =
@@ -201,20 +195,6 @@ describe 'Provider Manager', ->
       expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeChain('.source.js'), bogusProvider)).toEqual(false)
       expect(providerManager.providers.has(bogusProvider)).toEqual(false)
-
-    it 'shims a legacy provider during registration', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), providerManager.fuzzyProvider)).toEqual(true)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyTestProvider)).toEqual(false)
-      expect(providerManager.providers.has(legacyTestProvider)).toEqual(false)
-
-      expect(providerManager.isLegacyProvider(legacyTestProvider)).toEqual(true)
-      registration = providerManager.registerLegacyProvider(legacyTestProvider, '.source.js')
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(providerManager.legacyProviderRegistrations.has(legacyTestProvider.constructor)).toEqual(true)
-      legacyProviderRegistration = providerManager.legacyProviderRegistrations.get(legacyTestProvider.constructor)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyTestProvider)).toEqual(false)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), legacyProviderRegistration.shim)).toEqual(true)
 
     it 'registers a provider with a blacklist', ->
       testProvider =

@@ -3,7 +3,7 @@ _ = require('underscore-plus')
 {KeymapManager} = require('atom')
 
 describe 'Autocomplete Manager', ->
-  [completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule] = []
+  [workspaceElement, completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule] = []
 
   beforeEach ->
     runs ->
@@ -19,11 +19,45 @@ describe 'Autocomplete Manager', ->
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
 
-  describe 'when opening a file without a path and using strict matching', ->
-    beforeEach ->
-      runs ->
-        atom.config.set('autocomplete-plus.strictMatching', true)
+      atom.config.set('autocomplete-plus.maxSuggestions', 10)
+      atom.config.set('autocomplete-plus.maxVisibleSuggestions', 10)
 
+  describe "when an external provider is registered", ->
+    class SpecialProvider
+      id: 'my-some-provider'
+      selector: '*'
+      requestHandler: ({prefix}) ->
+        list = ['a', 'ab', 'abc', 'abcd', 'abcde']
+        ({word, prefix} for word in list)
+
+    beforeEach ->
+      waitsForPromise ->
+        atom.workspace.open('').then (e) ->
+          editor = e
+          editorView = atom.views.getView(editor)
+
+      waitsForPromise ->
+        atom.packages.activatePackage('autocomplete-plus').then (a) ->
+          mainModule = a.mainModule
+
+      runs ->
+        mainModule.consumeProvider(provider: new SpecialProvider)
+
+    describe "when maxSuggestions > maxVisibleSuggestions", ->
+      beforeEach ->
+        atom.config.set('autocomplete-plus.maxSuggestions', 100)
+        atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
+
+      it "only shows the maxVisibleSuggestions in the suggestion popup", ->
+        triggerAutocompletion(editor, true, 'a')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 5
+          expect(editorView.querySelector('.autocomplete-plus .list-group').style['max-height']).toBe("#{2 * 25}px")
+
+  describe 'when opening a file without a path', ->
+    beforeEach ->
       waitsForPromise ->
         atom.workspace.open('').then (e) ->
           editor = e
@@ -31,10 +65,6 @@ describe 'Autocomplete Manager', ->
 
       waitsForPromise ->
         atom.packages.activatePackage('language-text')
-
-      runs ->
-        workspaceElement = atom.views.getView(atom.workspace)
-        jasmine.attachToDOM(workspaceElement)
 
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
@@ -48,22 +78,23 @@ describe 'Autocomplete Manager', ->
         spyOn(autocompleteManager, 'findSuggestions').andCallThrough()
         spyOn(autocompleteManager, 'displaySuggestions').andCallThrough()
 
-    afterEach ->
-      jasmine.unspy(autocompleteManager, 'findSuggestions')
-      jasmine.unspy(autocompleteManager, 'displaySuggestions')
+    describe "when strict matching is used", ->
+      beforeEach ->
+        atom.config.set('autocomplete-plus.strictMatching', true)
 
-    it 'does not cause issues when typing', ->
-      runs ->
-        editor.moveToBottom()
-        editor.insertText('h')
-        editor.insertText('e')
-        editor.insertText('l')
-        editor.insertText('l')
-        editor.insertText('o')
-        advanceClock(completionDelay + 1000)
+      it 'using strict matching does not cause issues when typing', ->
+        # FIXME: WTF does this test even test?
+        runs ->
+          editor.moveToBottom()
+          editor.insertText('h')
+          editor.insertText('e')
+          editor.insertText('l')
+          editor.insertText('l')
+          editor.insertText('o')
+          advanceClock(completionDelay + 1000)
 
-      waitsFor ->
-        autocompleteManager.findSuggestions.calls.length is 1
+        waitsFor ->
+          autocompleteManager.findSuggestions.calls.length is 1
 
   describe 'when opening a javascript file', ->
     beforeEach ->
@@ -105,7 +136,7 @@ describe 'Autocomplete Manager', ->
 
           # Check suggestions
           suggestions = ['function', 'if', 'left', 'shift']
-          [].forEach.call editorView.querySelectorAll('.autocomplete-plus li span.word'), (item, index) ->
+          for item, index in editorView.querySelectorAll('.autocomplete-plus li span.word')
             expect(item.innerText).toEqual(suggestions[index])
 
       it 'should not show the suggestion list when no suggestions are found', ->

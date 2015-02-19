@@ -8,6 +8,7 @@ describe 'CSS Language Support', ->
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('editor.fontSize', '16')
+      atom.config.set('autocomplete-plus.maxSuggestions', 10)
 
       # Set the completion delay
       completionDelay = 100

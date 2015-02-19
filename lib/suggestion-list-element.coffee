@@ -15,6 +15,7 @@ class SuggestionListElement extends HTMLElement
     @parentElement.classList.add('autocomplete-plus')
     @addActiveClassToEditor()
     @renderList() unless @ol
+    @calculateMaxListHeight()
     @itemsChanged()
 
   detachedCallback: ->
@@ -95,6 +96,16 @@ class SuggestionListElement extends HTMLElement
     @ol = document.createElement('ol')
     @appendChild(@ol)
     @ol.className = 'list-group'
+
+  calculateMaxListHeight: ->
+    maxItems = atom.config.get('autocomplete-plus.maxVisibleSuggestions')
+    li = document.createElement('li')
+    li.textContent = 'test'
+    @ol.appendChild(li)
+    itemHeight = li.offsetHeight
+    console.log maxItems, itemHeight
+    @ol.style['max-height'] = "#{maxItems * itemHeight}px"
+    li.remove()
 
   renderItems: ->
     items = @visibleItems() or []

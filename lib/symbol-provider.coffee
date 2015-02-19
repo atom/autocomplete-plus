@@ -1,3 +1,5 @@
+# This provider is currently experimental.
+
 _ = require 'underscore-plus'
 Suggestion = require './suggestion'
 fuzzaldrin = require 'fuzzaldrin'

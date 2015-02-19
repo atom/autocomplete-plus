@@ -65,6 +65,11 @@ module.exports =
       type: 'boolean'
       default: false
       order: 9
+    minimumWordLength:
+      description: "Only autocomplete when you've typed at least this many characters."
+      type: 'integer'
+      default: 1
+      order: 10
     enableBuiltinProvider:
       title: 'Enable Built-In Provider'
       description: 'The package comes with a built-in provider that will provide suggestions using the words in your current buffer or all open buffers. You will get better suggestions by installing additional autocomplete+ providers. To stop using the built-in provider, disable this option.'
@@ -90,6 +95,12 @@ module.exports =
       default: 'Cursor'
       enum: ['Cursor', 'Word']
       order: 13
+    defaultProvider:
+      description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
+      type: 'string'
+      default: 'Fuzzy'
+      enum: ['Fuzzy', 'Symbol']
+      order: 14
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

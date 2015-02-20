@@ -100,11 +100,6 @@ class SymbolProvider
   Section: Suggesting Completions
   ###
 
-  # Public:  Gets called when the document has been changed. Returns an array
-  # with suggestions. If `exclusive` is set to true and this method returns
-  # suggestions, the suggestions will be the only ones that are displayed.
-  #
-  # Returns an {Array} of Suggestion instances
   requestHandler: (options) =>
     return unless options?
     return unless options.editor?
@@ -118,11 +113,6 @@ class SymbolProvider
       suggestions = @findSuggestionsForWord(options)
       resolve(suggestions)
 
-  # Private: Finds possible matches for the given string / prefix
-  #
-  # prefix - {String} The prefix
-  #
-  # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (options) =>
     return unless @symbolList?
     # Merge the scope specific words into the default word list
@@ -181,9 +171,6 @@ class SymbolProvider
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) =>
     atom.config.getAll(keyPath, scope: scopeDescriptor)
 
-  # Private: Finds autocompletions in the current syntax scope (e.g. css values)
-  #
-  # Returns an {Array} of strings
   builtinCompletionsForCursorScope: =>
     cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
     completions = @settingsForScopeDescriptor(cursorScope, "editor.completions")

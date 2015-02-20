@@ -3,6 +3,7 @@ _ = require('underscore-plus')
 
 class SuggestionListElement extends HTMLElement
   maxItems: 1000
+  snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
@@ -125,15 +126,23 @@ class SuggestionListElement extends HTMLElement
         li.appendChild(wordSpan)
         wordSpan.className = 'word'
 
-      wordSpan.innerHTML = ("<span>#{ch}</span>" for ch in word).join('')
+      word = word.replace @snippetRegex, (match, snippetText) ->
+        "<span class=\"snippet-completion\">#{snippetText}</span>"
 
       # highlight the prefix
+      displayHtml = ''
       wordIndex = 0
+      lastWordIndex = 0
       for ch, i in prefix
         while wordIndex < word.length and word[wordIndex].toLowerCase() isnt ch.toLowerCase()
           wordIndex += 1
-        wordSpan.childNodes[wordIndex]?.classList.add('character-match')
+        preChar = word.substring(lastWordIndex, wordIndex)
+        highlightedChar = "<span class=\"character-match\">#{word[wordIndex]}</span>"
+        displayHtml = "#{displayHtml}#{preChar}#{highlightedChar}"
         wordIndex += 1
+        lastWordIndex = wordIndex
+      displayHtml += word.substring(lastWordIndex)
+      wordSpan.innerHTML = displayHtml
 
       labelSpan = li.childNodes[1]
       if label

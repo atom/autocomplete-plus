@@ -52,7 +52,7 @@ describe 'CSS Language Support', ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         items = suggestionListView.querySelectorAll('li')
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        expect(items.length).toBe(10)
+        expect(items.length).toBe(23)
         expect(items[0]).toHaveText('outline')
         expect(items[1]).toHaveText('outline-color')
         expect(items[2]).toHaveText('outline-width')

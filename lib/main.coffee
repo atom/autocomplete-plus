@@ -17,7 +17,7 @@ module.exports =
       type: 'integer'
       default: 100
       order: 2
-    maxSuggestions:
+    maxVisibleSuggestions:
       title: 'Maximum Visible Suggestions'
       description: 'The autocomplete popup will only show this many suggestions.'
       type: 'integer'
@@ -105,6 +105,13 @@ module.exports =
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
+    # Upgrade to the new config key name
+    oldMax = atom.config.get('autocomplete-plus.maxSuggestions')
+    if oldMax isnt 10
+      atom.config.transact ->
+        atom.config.set('autocomplete-plus.maxVisibleSuggestions', oldMax)
+        atom.config.unset('autocomplete-plus.maxSuggestions')
+
     @getAutocompleteManager()
     # @activateTimeout = setTimeout(@getAutocompleteManager, 0)
 

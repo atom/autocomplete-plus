@@ -19,7 +19,7 @@ describe 'Autocomplete Manager', ->
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
 
-      atom.config.set('autocomplete-plus.maxSuggestions', 10)
+      atom.config.set('autocomplete-plus.maxVisibleSuggestions', 10)
 
   describe "when an external provider is registered", ->
     class SpecialProvider
@@ -42,11 +42,11 @@ describe 'Autocomplete Manager', ->
       runs ->
         mainModule.consumeProvider(provider: new SpecialProvider)
 
-    describe "when number of suggestions > maxSuggestions", ->
+    describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
-        atom.config.set('autocomplete-plus.maxSuggestions', 2)
+        atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
 
-      it "only shows the maxSuggestions in the suggestion popup", ->
+      it "only shows the maxVisibleSuggestions in the suggestion popup", ->
         triggerAutocompletion(editor, true, 'a')
 
         runs ->

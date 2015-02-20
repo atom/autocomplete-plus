@@ -37,6 +37,8 @@ class AutocompleteManager
     @subscriptions.add(@suggestionList) # We're adding this last so it is disposed after events
     @ready = true
 
+  setSnippetsManager: (@snippetsManager) ->
+
   updateCurrentEditor: (currentPaneItem) =>
     return if not currentPaneItem? or currentPaneItem is @editor
 
@@ -205,7 +207,10 @@ class AutocompleteManager
         @editor.selectLeft(match.prefix.length)
         @editor.delete()
 
-      @editor.insertText(match.word)
+      if @snippetsManager?
+        @snippetsManager.insertSnippet(match.word, @editor)
+      else
+        @editor.insertText(match.word)
 
   # Private: Checks whether the current file is blacklisted.
   #

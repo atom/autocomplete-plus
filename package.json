@@ -31,7 +31,7 @@
     },
     "snippets": {
       "versions": {
-        "0.73.0": "consumeSnippets"
+        "0.1.0": "consumeSnippets"
       }
     }
   }

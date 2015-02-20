@@ -152,5 +152,5 @@ module.exports =
           registration?.dispose?()
       )
 
-  consumeSnippets: (snippets) ->
-    @getAutocompleteManager().snippets = snippets
+  consumeSnippets: (snippetsManager) ->
+    @getAutocompleteManager().setSnippetsManager(snippetsManager)

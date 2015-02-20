@@ -2,12 +2,11 @@
 _ = require('underscore-plus')
 
 class SuggestionListElement extends HTMLElement
-  maxItems: 10
+  maxItems: 1000
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
     @classList.add('popover-list', 'select-list', 'autocomplete-suggestion-list')
-    @subscriptions.add(atom.config.observe('autocomplete-plus.maxSuggestions', => @maxItems = atom.config.get('autocomplete-plus.maxSuggestions')))
     @registerMouseHandling()
 
   attachedCallback: ->
@@ -98,7 +97,7 @@ class SuggestionListElement extends HTMLElement
     @ol.className = 'list-group'
 
   calculateMaxListHeight: ->
-    maxItems = atom.config.get('autocomplete-plus.maxVisibleSuggestions')
+    maxItems = atom.config.get('autocomplete-plus.maxSuggestions')
     li = document.createElement('li')
     li.textContent = 'test'
     @ol.appendChild(li)

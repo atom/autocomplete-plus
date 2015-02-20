@@ -8,7 +8,6 @@ describe 'CSS Language Support', ->
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('editor.fontSize', '16')
-      atom.config.set('autocomplete-plus.maxSuggestions', 10)
 
       # Set the completion delay
       completionDelay = 100
@@ -53,7 +52,7 @@ describe 'CSS Language Support', ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         items = suggestionListView.querySelectorAll('li')
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        expect(items.length).toBe(10)
+        expect(items.length).toBe(23)
         expect(items[0]).toHaveText('outline')
         expect(items[1]).toHaveText('outline-color')
         expect(items[2]).toHaveText('outline-width')

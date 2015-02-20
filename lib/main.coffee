@@ -19,7 +19,7 @@ module.exports =
       order: 2
     maxVisibleSuggestions:
       title: 'Maximum Visible Suggestions'
-      description: 'The autocomplete popup will only show this many suggestions.'
+      description: 'The suggestion list will only show this many suggestions.'
       type: 'integer'
       default: 10
       minimum: 1

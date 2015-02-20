@@ -97,13 +97,12 @@ class SuggestionListElement extends HTMLElement
     @ol.className = 'list-group'
 
   calculateMaxListHeight: ->
-    maxItems = atom.config.get('autocomplete-plus.maxVisibleSuggestions')
+    maxVisibleItems = atom.config.get('autocomplete-plus.maxVisibleSuggestions')
     li = document.createElement('li')
     li.textContent = 'test'
     @ol.appendChild(li)
     itemHeight = li.offsetHeight
-    console.log maxItems, itemHeight
-    @ol.style['max-height'] = "#{maxItems * itemHeight}px"
+    @ol.style['max-height'] = "#{maxVisibleItems * itemHeight}px"
     li.remove()
 
   renderItems: ->

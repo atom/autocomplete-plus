@@ -1,5 +1,4 @@
 _ = require('underscore-plus')
-Suggestion = require('./suggestion')
 fuzzaldrin = require('fuzzaldrin')
 {TextEditor, CompositeDisposable}  = require('atom')
 

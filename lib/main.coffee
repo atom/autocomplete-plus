@@ -1,7 +1,4 @@
 {Disposable} = require('atom')
-Provider = require('./provider')
-Suggestion = require('./suggestion')
-{deprecate} = require('grim')
 
 module.exports =
   config:
@@ -120,28 +117,6 @@ module.exports =
     @autocompleteManager?.dispose()
     @autocompleteManager = null
 
-  registerProviderForEditorView: (provider, editorView) ->
-    @registerProviderForEditor(provider, editorView?.getModel())
-
-  # Private: Finds the autocomplete for the given TextEditor
-  # and registers the given provider
-  #
-  # provider - The new {Provider}
-  # editor - The {TextEditor} we should register the provider with
-  registerProviderForEditor: (provider, editor) ->
-    return unless @autocompleteManager?.providerManager?
-    return unless editor?.getGrammar()?.scopeName?
-    deprecate('registerProviderForEditor and registerProviderForEditorView are no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
-    return @getAutocompleteManager().providerManager.registerLegacyProvider(provider, '.' + editor?.getGrammar()?.scopeName)
-
-  # Private: unregisters the given provider
-  #
-  # provider - The {Provider} to unregister
-  unregisterProvider: (provider) ->
-    return unless @getAutocompleteManager()?.providerManager?
-    deprecate('unregisterProvider is no longer supported. Please switch to the new API: https://github.com/atom-community/autocomplete-plus/wiki/Provider-API')
-    @getAutocompleteManager().providerManager.unregisterLegacyProvider(provider)
-
   getAutocompleteManager: ->
     if @activateTimeout?
       clearTimeout(@activateTimeout)
@@ -150,9 +125,6 @@ module.exports =
     AutocompleteManager = require('./autocomplete-manager')
     @autocompleteManager = new AutocompleteManager()
     return @autocompleteManager
-
-  Provider: Provider # TODO: This is deprecated, and will be removed soon
-  Suggestion: Suggestion # TODO: This is deprecated, and will be removed soon
 
   #  |||              |||
   #  vvv PROVIDER API vvv

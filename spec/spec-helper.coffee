@@ -14,7 +14,7 @@ exports.waitForAutocomplete = ->
       advanceClock(10)
       setImmediate ->
         advanceClock(10)
-        done();
+        done()
 
 exports.buildIMECompositionEvent = (event, {data, target} = {}) ->
   event = new CustomEvent(event, {bubbles: true})

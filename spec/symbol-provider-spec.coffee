@@ -1,7 +1,6 @@
 {Point} = require 'atom'
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require('./spec-helper')
 _ = require('underscore-plus')
-TestProvider = require('./lib/test-provider')
 
 indexOfWord = (suggestionList, word) ->
   for suggestion, i in suggestionList

@@ -28,10 +28,13 @@ autocomplete-suggestion-list.select-list.popover-list {
       }
       .character-match {
         font-weight: bold;
-        color: @text-color-selected;
+        color: @text-color-highlight;
+      }
+      &.selected .character-match {
+        color:@text-color-selected;
       }
       &.selected .completion-label {
-        color: @text-color;
+        color: fadeout(@text-color-selected, 60%);
       }
       .completion-label {
         float: right;

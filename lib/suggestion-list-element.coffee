@@ -127,7 +127,7 @@ class SuggestionListElement extends HTMLElement
         wordSpan.className = 'word'
 
       replacement = word
-      if snippet?
+      if _.isString(snippet)
         replacement = snippet.replace @snippetRegex, (match, snippetText) ->
           "<span class=\"snippet-completion\">#{snippetText}</span>"
 

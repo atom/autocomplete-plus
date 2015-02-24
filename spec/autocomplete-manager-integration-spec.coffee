@@ -78,7 +78,7 @@ describe 'Autocomplete Manager', ->
             expect(wordElement.textContent).toBe 'method(something)'
             expect(wordElement.querySelector('.snippet-completion').textContent).toBe 'something'
 
-        it "accepts the ", ->
+        it "accepts the snippet when autocomplete-plus:confirm is triggered", ->
           triggerAutocompletion(editor, true, 'm')
 
           runs ->

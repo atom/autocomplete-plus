@@ -110,7 +110,6 @@ module.exports =
         atom.config.unset('autocomplete-plus.maxSuggestions')
 
     @getAutocompleteManager()
-    # @activateTimeout = setTimeout(@getAutocompleteManager, 0)
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
@@ -118,13 +117,10 @@ module.exports =
     @autocompleteManager = null
 
   getAutocompleteManager: ->
-    if @activateTimeout?
-      clearTimeout(@activateTimeout)
-      @activateTimeout = null
-    return @autocompleteManager if @autocompleteManager?
-    AutocompleteManager = require('./autocomplete-manager')
-    @autocompleteManager = new AutocompleteManager()
-    return @autocompleteManager
+    unless @autocompleteManager?
+      AutocompleteManager = require('./autocomplete-manager')
+      @autocompleteManager = new AutocompleteManager()
+    @autocompleteManager
 
   ###
   Section: Provider API

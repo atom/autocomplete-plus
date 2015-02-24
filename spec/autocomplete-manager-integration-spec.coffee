@@ -2,6 +2,8 @@
 _ = require('underscore-plus')
 {KeymapManager} = require('atom')
 
+NodeTypeText = 3
+
 describe 'Autocomplete Manager', ->
   [workspaceElement, completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule] = []
 
@@ -309,10 +311,10 @@ describe 'Autocomplete Manager', ->
           word = editorView.querySelector('.autocomplete-plus li span.word')
           expect(word.childNodes).toHaveLength 5
           expect(word.childNodes[0]).toHaveClass 'character-match'
-          expect(word.childNodes[1]).not.toHaveClass 'character-match'
+          expect(word.childNodes[1].nodeType).toBe NodeTypeText
           expect(word.childNodes[2]).toHaveClass 'character-match'
           expect(word.childNodes[3]).toHaveClass 'character-match'
-          expect(word.childNodes[4]).not.toHaveClass 'character-match'
+          expect(word.childNodes[4].nodeType).toBe NodeTypeText
 
       it 'highlights repeated characters in the prefix', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -328,12 +330,12 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
           word = editorView.querySelector('.autocomplete-plus li span.word')
-          expect(word.childNodes).toHaveLength 5
+          expect(word.childNodes).toHaveLength 4
           expect(word.childNodes[0]).toHaveClass 'character-match'
           expect(word.childNodes[1]).toHaveClass 'character-match'
           expect(word.childNodes[2]).toHaveClass 'character-match'
-          expect(word.childNodes[3]).not.toHaveClass 'character-match'
-          expect(word.childNodes[4]).not.toHaveClass 'character-match'
+          expect(word.childNodes[3].nodeType).toBe 3 # text
+          expect(word.childNodes[3].textContent).toBe 'ly'
 
     describe 'accepting suggestions', ->
       it 'hides the suggestions list when a suggestion is confirmed', ->

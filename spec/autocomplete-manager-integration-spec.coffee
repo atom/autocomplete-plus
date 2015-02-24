@@ -31,18 +31,21 @@ describe 'Autocomplete Manager', ->
         list = ['a', 'ab', 'abc', 'abcd', 'abcde']
         ({word, prefix} for word in list)
 
+    [provider] = []
+
     beforeEach ->
       waitsForPromise ->
-        atom.workspace.open('').then (e) ->
-          editor = e
-          editorView = atom.views.getView(editor)
-
-      waitsForPromise ->
-        atom.packages.activatePackage('autocomplete-plus').then (a) ->
-          mainModule = a.mainModule
+        Promise.all [
+          atom.workspace.open('').then (e) ->
+            editor = e
+            editorView = atom.views.getView(editor)
+          atom.packages.activatePackage('autocomplete-plus').then (a) ->
+            mainModule = a.mainModule
+        ]
 
       runs ->
-        mainModule.consumeProvider(provider: new SpecialProvider)
+        provider = new SpecialProvider
+        mainModule.consumeProvider({provider})
 
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
@@ -55,6 +58,34 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 5
           expect(editorView.querySelector('.autocomplete-plus .list-group').style['max-height']).toBe("#{2 * 25}px")
+
+    describe "when match.snippet is used", ->
+      beforeEach ->
+        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+          list = ['method(${1:something})']
+          ({snippet, prefix} for snippet in list)
+
+      describe "when the snippets package is enabled", ->
+        beforeEach ->
+          waitsForPromise ->
+            atom.packages.activatePackage('snippets')
+
+        it "displays the snippet without the `${1:}` in its own class", ->
+          triggerAutocompletion(editor, true, 'm')
+
+          runs ->
+            wordElement = editorView.querySelector('.autocomplete-plus span.word')
+            expect(wordElement.textContent).toBe 'method(something)'
+            expect(wordElement.querySelector('.snippet-completion').textContent).toBe 'something'
+
+        it "accepts the ", ->
+          triggerAutocompletion(editor, true, 'm')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+            expect(editor.getSelectedText()).toBe 'something'
 
   describe 'when opening a file without a path', ->
     beforeEach ->

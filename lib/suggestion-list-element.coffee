@@ -108,7 +108,7 @@ class SuggestionListElement extends HTMLElement
 
   renderItems: ->
     items = @visibleItems() or []
-    items.forEach ({word, label, renderLabelAsHtml, className, prefix}, index) =>
+    items.forEach ({snippet, word, label, renderLabelAsHtml, className, prefix}, index) =>
       li = @ol.childNodes[index]
       unless li
         li = document.createElement('li')
@@ -126,22 +126,24 @@ class SuggestionListElement extends HTMLElement
         li.appendChild(wordSpan)
         wordSpan.className = 'word'
 
-      word = word.replace @snippetRegex, (match, snippetText) ->
-        "<span class=\"snippet-completion\">#{snippetText}</span>"
+      replacement = word
+      if snippet?
+        replacement = snippet.replace @snippetRegex, (match, snippetText) ->
+          "<span class=\"snippet-completion\">#{snippetText}</span>"
 
       # highlight the prefix
       displayHtml = ''
       wordIndex = 0
       lastWordIndex = 0
       for ch, i in prefix
-        while wordIndex < word.length and word[wordIndex].toLowerCase() isnt ch.toLowerCase()
+        while wordIndex < replacement.length and replacement[wordIndex].toLowerCase() isnt ch.toLowerCase()
           wordIndex += 1
-        preChar = word.substring(lastWordIndex, wordIndex)
-        highlightedChar = "<span class=\"character-match\">#{word[wordIndex]}</span>"
+        preChar = replacement.substring(lastWordIndex, wordIndex)
+        highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
         displayHtml = "#{displayHtml}#{preChar}#{highlightedChar}"
         wordIndex += 1
         lastWordIndex = wordIndex
-      displayHtml += word.substring(lastWordIndex)
+      displayHtml += replacement.substring(lastWordIndex)
       wordSpan.innerHTML = displayHtml
 
       labelSpan = li.childNodes[1]

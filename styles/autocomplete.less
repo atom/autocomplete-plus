@@ -30,19 +30,21 @@ autocomplete-suggestion-list.select-list.popover-list {
         font-weight: bold;
         color: @text-color-highlight;
       }
-      &.selected .character-match {
-        color:@text-color-selected;
-      }
       .snippet-completion {
         color: @text-color-subtle;
-      }
-      &.selected .completion-label {
-        color: fadeout(@text-color-selected, 60%);
       }
       .completion-label {
         float: right;
         padding-right: 6px;
         padding-left: 6px;
+      }
+      &.selected {
+        .character-match {
+          color: @text-color-selected;
+        }
+        .completion-label, .snippet-completion {
+          color: fadeout(@text-color-selected, 60%);
+        }
       }
     }
   }

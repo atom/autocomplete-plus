@@ -138,7 +138,9 @@ module.exports =
     @consumeProviderArray(service?.providers)
 
   # 2.0.0 API
+  # providers - either a provider or a list of providers
   consumeProviderArray: (providers) ->
+    providers = [providers] if providers? and not Array.isArray(providers)
     return unless providers?.length > 0
     registrations = new CompositeDisposable
     for provider in providers

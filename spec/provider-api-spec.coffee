@@ -43,6 +43,54 @@ describe 'Provider API', ->
       waitsForPromise ->
         atom.packages.activatePackage('language-javascript')
 
+    describe 'Provider API v1.1.0', ->
+      [registration] = []
+
+      beforeEach -> registration = null
+      afterEach -> registration?.dispose()
+
+      it 'registers the provider specified by {providers: [provider]}', ->
+        runs ->
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+
+          testProvider =
+            selector: '.source.js,.source.coffee'
+            requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
+
+          registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.1.0', {providers: [testProvider]})
+
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+
+    describe 'Provider API v2.0.0', ->
+      [registration] = []
+
+      beforeEach -> registration = null
+      afterEach -> registration?.dispose()
+
+      it 'registers the provider specified by [provider]', ->
+        runs ->
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+
+          testProvider =
+            selector: '.source.js,.source.coffee'
+            requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
+
+          registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
+
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+
+      it 'registers the provider specified by the naked provider', ->
+        runs ->
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
+
+          testProvider =
+            selector: '.source.js,.source.coffee'
+            requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
+
+          registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
+
     describe 'Provider API v1.0.0', ->
       [registration1, registration2, registration3] = []
 

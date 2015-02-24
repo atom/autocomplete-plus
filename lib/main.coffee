@@ -1,4 +1,4 @@
-{Disposable} = require('atom')
+{Disposable, CompositeDisposable} = require('atom')
 
 module.exports =
   config:
@@ -126,31 +126,25 @@ module.exports =
     @autocompleteManager = new AutocompleteManager()
     return @autocompleteManager
 
-  #  |||              |||
-  #  vvv PROVIDER API vvv
+  ###
+  Section: Provider API
+  ###
 
-  # Private: Consumes the given provider, from package.json configuration.
-  # Do not use this directly or depend on `autocomplete-plus` directly.
-  #
-  # service - The service to consume
+  # 1.0.0 API
+  # service - {provider: provider1}
   consumeProvider: (service) ->
     return unless service?.provider?
-    service.providers = [service.provider]
-    return @consumeProviders(service)
+    @consumeProviderArray([service.provider])
 
-  # Private: Consumes the given provider, from package.json configuration.
-  # Do not use this directly or depend on `autocomplete-plus` directly.
-  #
-  # service - The service to consume
+  # 1.1.0 API
+  # service - {providers: [provider1, provider2, ...]}
   consumeProviders: (service) ->
-    return unless service?.providers?.length > 0
-    registrations = for provider in service.providers
-      @getAutocompleteManager().providerManager.registerProvider(provider)
-    if registrations?.length > 0
-      return new Disposable(->
-        for registration in registrations
-          registration?.dispose?()
-      )
+    @consumeProviderArray(service?.providers)
 
-  consumeSnippets: (snippetsManager) ->
-    @getAutocompleteManager().setSnippetsManager(snippetsManager)
+  # 2.0.0 API
+  consumeProviderArray: (providers) ->
+    return unless providers?.length > 0
+    registrations = new CompositeDisposable
+    for provider in providers
+      registrations.add @getAutocompleteManager().providerManager.registerProvider(provider)
+    registrations

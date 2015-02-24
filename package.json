@@ -25,7 +25,8 @@
     "autocomplete.provider": {
       "versions": {
         "1.0.0": "consumeProvider",
-        "1.1.0": "consumeProviders"
+        "1.1.0": "consumeProviders",
+        "2.0.0": "consumeProviderArray"
       }
     },
     "snippets": {

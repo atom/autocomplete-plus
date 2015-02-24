@@ -128,18 +128,18 @@ module.exports =
 
   # 1.0.0 API
   # service - {provider: provider1}
-  consumeProvider: (service) ->
+  consumeProviderLegacy: (service) ->
     return unless service?.provider?
-    @consumeProviderArray([service.provider])
+    @consumeProvider([service.provider])
 
   # 1.1.0 API
   # service - {providers: [provider1, provider2, ...]}
-  consumeProviders: (service) ->
-    @consumeProviderArray(service?.providers)
+  consumeProvidersLegacy: (service) ->
+    @consumeProvider(service?.providers)
 
   # 2.0.0 API
   # providers - either a provider or a list of providers
-  consumeProviderArray: (providers) ->
+  consumeProvider: (providers) ->
     providers = [providers] if providers? and not Array.isArray(providers)
     return unless providers?.length > 0
     registrations = new CompositeDisposable

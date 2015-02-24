@@ -45,7 +45,7 @@ describe 'Autocomplete Manager', ->
 
       runs ->
         provider = new SpecialProvider
-        mainModule.consumeProvider({provider})
+        mainModule.consumeProvider(provider)
 
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->

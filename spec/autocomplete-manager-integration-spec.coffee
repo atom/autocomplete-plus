@@ -2,6 +2,8 @@
 _ = require('underscore-plus')
 {KeymapManager} = require('atom')
 
+NodeTypeText = 3
+
 describe 'Autocomplete Manager', ->
   [workspaceElement, completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule] = []
 
@@ -29,18 +31,21 @@ describe 'Autocomplete Manager', ->
         list = ['a', 'ab', 'abc', 'abcd', 'abcde']
         ({word, prefix} for word in list)
 
+    [provider] = []
+
     beforeEach ->
       waitsForPromise ->
-        atom.workspace.open('').then (e) ->
-          editor = e
-          editorView = atom.views.getView(editor)
-
-      waitsForPromise ->
-        atom.packages.activatePackage('autocomplete-plus').then (a) ->
-          mainModule = a.mainModule
+        Promise.all [
+          atom.workspace.open('').then (e) ->
+            editor = e
+            editorView = atom.views.getView(editor)
+          atom.packages.activatePackage('autocomplete-plus').then (a) ->
+            mainModule = a.mainModule
+        ]
 
       runs ->
-        mainModule.consumeProvider(provider: new SpecialProvider)
+        provider = new SpecialProvider
+        mainModule.consumeProvider({provider})
 
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
@@ -53,6 +58,34 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 5
           expect(editorView.querySelector('.autocomplete-plus .list-group').style['max-height']).toBe("#{2 * 25}px")
+
+    describe "when match.snippet is used", ->
+      beforeEach ->
+        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+          list = ['method(${1:something})']
+          ({snippet, prefix} for snippet in list)
+
+      describe "when the snippets package is enabled", ->
+        beforeEach ->
+          waitsForPromise ->
+            atom.packages.activatePackage('snippets')
+
+        it "displays the snippet without the `${1:}` in its own class", ->
+          triggerAutocompletion(editor, true, 'm')
+
+          runs ->
+            wordElement = editorView.querySelector('.autocomplete-plus span.word')
+            expect(wordElement.textContent).toBe 'method(something)'
+            expect(wordElement.querySelector('.snippet-completion').textContent).toBe 'something'
+
+        it "accepts the snippet when autocomplete-plus:confirm is triggered", ->
+          triggerAutocompletion(editor, true, 'm')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+            expect(editor.getSelectedText()).toBe 'something'
 
   describe 'when opening a file without a path', ->
     beforeEach ->
@@ -309,10 +342,10 @@ describe 'Autocomplete Manager', ->
           word = editorView.querySelector('.autocomplete-plus li span.word')
           expect(word.childNodes).toHaveLength 5
           expect(word.childNodes[0]).toHaveClass 'character-match'
-          expect(word.childNodes[1]).not.toHaveClass 'character-match'
+          expect(word.childNodes[1].nodeType).toBe NodeTypeText
           expect(word.childNodes[2]).toHaveClass 'character-match'
           expect(word.childNodes[3]).toHaveClass 'character-match'
-          expect(word.childNodes[4]).not.toHaveClass 'character-match'
+          expect(word.childNodes[4].nodeType).toBe NodeTypeText
 
       it 'highlights repeated characters in the prefix', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -328,12 +361,12 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
           word = editorView.querySelector('.autocomplete-plus li span.word')
-          expect(word.childNodes).toHaveLength 5
+          expect(word.childNodes).toHaveLength 4
           expect(word.childNodes[0]).toHaveClass 'character-match'
           expect(word.childNodes[1]).toHaveClass 'character-match'
           expect(word.childNodes[2]).toHaveClass 'character-match'
-          expect(word.childNodes[3]).not.toHaveClass 'character-match'
-          expect(word.childNodes[4]).not.toHaveClass 'character-match'
+          expect(word.childNodes[3].nodeType).toBe 3 # text
+          expect(word.childNodes[3].textContent).toBe 'ly'
 
     describe 'accepting suggestions', ->
       it 'hides the suggestions list when a suggestion is confirmed', ->

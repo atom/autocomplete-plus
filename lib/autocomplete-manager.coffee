@@ -37,6 +37,8 @@ class AutocompleteManager
     @subscriptions.add(@suggestionList) # We're adding this last so it is disposed after events
     @ready = true
 
+  setSnippetsManager: (@snippetsManager) ->
+
   updateCurrentEditor: (currentPaneItem) =>
     return if not currentPaneItem? or currentPaneItem is @editor
 
@@ -167,6 +169,8 @@ class AutocompleteManager
 
     @replaceTextWithMatch(match)
 
+    # FIXME: move this to the snippet provider's onDidInsertSuggestion() method
+    # when the API has been updated.
     if match.isSnippet
       setTimeout =>
         atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
@@ -205,7 +209,10 @@ class AutocompleteManager
         @editor.selectLeft(match.prefix.length)
         @editor.delete()
 
-      @editor.insertText(match.word)
+      if match.snippet? and @snippetsManager?
+        @snippetsManager.insertSnippet(match.snippet, @editor)
+      else
+        @editor.insertText(match.word ? match.snippet)
 
   # Private: Checks whether the current file is blacklisted.
   #

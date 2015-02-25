@@ -28,6 +28,11 @@
         "1.0.0": "consumeProvider",
         "1.1.0": "consumeProviders"
       }
+    },
+    "snippets": {
+      "versions": {
+        "0.1.0": "consumeSnippets"
+      }
     }
   }
 }

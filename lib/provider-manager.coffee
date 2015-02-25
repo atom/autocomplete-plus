@@ -35,11 +35,11 @@ class ProviderManager
     @providers?.clear()
     @providers = null
 
-  providersForScopeChain: (scopeChain) =>
-    return [] unless scopeChain?
-    return [] unless @store?
-    providers = []
+  providersForScopeDescriptor: (scopeDescriptor) =>
+    scopeChain = scopeDescriptor?.getScopeChain?() or scopeDescriptor
+    return [] unless scopeChain? and @store?
     return [] if _.contains(@blacklist, scopeChain) # Check Blacklist For Exact Match
+
     providers = @store.getAll(scopeChain)
 
     # Check Global Blacklist For Match With Selector

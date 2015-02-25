@@ -84,6 +84,7 @@ class ProviderManager
     @globalBlacklist.add(registration)
 
   isValidProvider: (provider, apiVersion) ->
+    # TODO API: Check based on the apiVersion
     provider? and _.isFunction(provider.requestHandler) and _.isString(provider.selector) and !!provider.selector.length
 
   apiVersionForProvider: (provider) =>
@@ -104,6 +105,8 @@ class ProviderManager
   registerProvider: (provider, apiVersion='2.0.0') =>
     return unless @isValidProvider(provider, apiVersion)
     return if @isProviderRegistered(provider)
+
+    # TODO API: Deprecate the 1.0 APIs
 
     @addProvider(provider, apiVersion)
 

@@ -129,7 +129,16 @@ class AutocompleteManager
 
   getSuggestionsFromProviders: (options) =>
     providers = @providerManager.providersForScopeDescriptor(options.scope)
-    providerPromises = providers?.map((provider) -> provider?.requestHandler(options))
+
+    providerPromises = []
+    providers.forEach (provider) =>
+      apiVersion = @providerManager.apiVersionForProvider(provider)
+      # TODO API: check the version, and set options accordingly
+      providerPromises.push Promise.resolve(provider.requestHandler(options)).then (providerSuggestions) ->
+        # TODO API: check the version, deprecate results and convert results to 2.0 API
+        # providerSuggestions[0].
+        providerSuggestions
+
     return unless providerPromises?.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
       .then(@mergeSuggestionsFromProviders)

@@ -1,5 +1,5 @@
-{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require('./spec-helper')
-_ = require('underscore-plus')
+{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
+_ = require 'underscore-plus'
 
 describe 'Autocomplete', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []

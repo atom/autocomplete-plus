@@ -1,4 +1,4 @@
-{waitForAutocomplete} = require('./spec-helper')
+{waitForAutocomplete} = require './spec-helper'
 
 describe 'HTML labels', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, registration] = []

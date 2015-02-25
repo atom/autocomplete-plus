@@ -1,4 +1,4 @@
-{Disposable, CompositeDisposable} = require('atom')
+{Disposable, CompositeDisposable} = require 'atom'
 
 module.exports =
   config:
@@ -118,7 +118,7 @@ module.exports =
 
   getAutocompleteManager: ->
     unless @autocompleteManager?
-      AutocompleteManager = require('./autocomplete-manager')
+      AutocompleteManager = require './autocomplete-manager'
       @autocompleteManager = new AutocompleteManager()
     @autocompleteManager
 

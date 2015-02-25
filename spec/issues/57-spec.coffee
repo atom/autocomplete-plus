@@ -1,4 +1,4 @@
-{waitForAutocomplete, triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require('../spec-helper')
+{waitForAutocomplete, triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require '../spec-helper'
 
 describe 'Autocomplete', ->
   [mainModule, autocompleteManager, editorView, editor, completionDelay, mainModule] = []

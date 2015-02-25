@@ -1,6 +1,6 @@
-{CompositeDisposable, Disposable} = require('atom')
-ScopedPropertyStore = require('scoped-property-store')
-_ = require('underscore-plus')
+{CompositeDisposable, Disposable} = require 'atom'
+ScopedPropertyStore = require 'scoped-property-store'
+_ = require 'underscore-plus'
 
 # Deferred requires
 SymbolProvider = null

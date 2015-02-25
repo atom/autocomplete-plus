@@ -1,4 +1,4 @@
-{waitForAutocomplete} = require('./spec-helper')
+{waitForAutocomplete} = require './spec-helper'
 
 describe 'Autocomplete Manager', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []

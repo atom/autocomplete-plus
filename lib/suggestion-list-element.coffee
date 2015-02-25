@@ -1,5 +1,5 @@
-{CompositeDisposable} = require('atom')
-_ = require('underscore-plus')
+{CompositeDisposable} = require 'atom'
+_ = require 'underscore-plus'
 
 class SuggestionListElement extends HTMLElement
   maxItems: 1000

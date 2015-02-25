@@ -1,6 +1,6 @@
-_ = require('underscore-plus')
-fuzzaldrin = require('fuzzaldrin')
-{TextEditor, CompositeDisposable}  = require('atom')
+_ = require 'underscore-plus'
+fuzzaldrin = require 'fuzzaldrin'
+{TextEditor, CompositeDisposable}  = require 'atom'
 
 module.exports =
 class FuzzyProvider

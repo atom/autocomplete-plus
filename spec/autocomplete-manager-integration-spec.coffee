@@ -1,6 +1,6 @@
-{triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require('./spec-helper')
-_ = require('underscore-plus')
-{KeymapManager} = require('atom')
+{triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
+_ = require 'underscore-plus'
+{KeymapManager} = require 'atom'
 
 NodeTypeText = 3
 

@@ -1,9 +1,9 @@
-{Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
-_ = require('underscore-plus')
-path = require('path')
-ProviderManager = require('./provider-manager')
-SuggestionList = require('./suggestion-list')
-SuggestionListElement = require('./suggestion-list-element')
+{Range, TextEditor, CompositeDisposable, Disposable}  = require 'atom'
+_ = require 'underscore-plus'
+path = require 'path'
+ProviderManager = require './provider-manager'
+SuggestionList = require './suggestion-list'
+SuggestionListElement = require './suggestion-list-element'
 
 # Deferred requires
 minimatch = null

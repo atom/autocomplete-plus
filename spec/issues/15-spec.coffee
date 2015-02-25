@@ -1,5 +1,5 @@
-{waitForAutocomplete} = require('../spec-helper')
-path = require('path')
+{waitForAutocomplete} = require '../spec-helper'
+path = require 'path'
 temp = require('temp').track()
 
 describe 'Autocomplete', ->

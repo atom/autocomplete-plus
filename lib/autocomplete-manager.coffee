@@ -4,6 +4,7 @@ path = require 'path'
 ProviderManager = require './provider-manager'
 SuggestionList = require './suggestion-list'
 SuggestionListElement = require './suggestion-list-element'
+semver = require 'semver'
 
 # Deferred requires
 minimatch = null
@@ -110,31 +111,31 @@ class AutocompleteManager
     return if @isCurrentFileBlackListed()
     cursor = @editor.getLastCursor()
     return unless cursor?
-    cursorPosition = cursor.getBufferPosition()
+
+    position = cursor.getBufferPosition()
     scopeDescriptor = cursor.getScopeDescriptor()
-    return unless scopeDescriptor?
-    currentScopeChain = scopeDescriptor.getScopeChain()
-    return unless currentScopeChain?
+    prefix = @prefixForCursor(cursor)
 
-    options =
-      editor: @editor
-      buffer: @buffer
-      cursor: cursor
-      position: cursorPosition
-      scope: scopeDescriptor
-      scopeChain: currentScopeChain
-      prefix: @prefixForCursor(cursor)
-
-    @getSuggestionsFromProviders(options)
+    @getSuggestionsFromProviders({@editor, position, scopeDescriptor, prefix})
 
   getSuggestionsFromProviders: (options) =>
-    providers = @providerManager.providersForScopeDescriptor(options.scope)
+    providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)
 
     providerPromises = []
     providers.forEach (provider) =>
       apiVersion = @providerManager.apiVersionForProvider(provider)
-      # TODO API: check the version, and set options accordingly
-      providerPromises.push Promise.resolve(provider.requestHandler(options)).then (providerSuggestions) ->
+      apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+
+      # TODO API: remove upgrading when 1.0 support is removed
+      upgradedOptions = options
+      unless apiIs20
+        upgradedOptions = _.extend {}, options,
+          scope: options.scopeDescriptor
+          scopeChain: options.scopeDescriptor.getScopeChain()
+          buffer: options.editor.getBuffer()
+          cursor: options.editor.getLastCursor()
+
+      providerPromises.push Promise.resolve(provider.requestHandler(upgradedOptions)).then (providerSuggestions) ->
         # TODO API: check the version, deprecate results and convert results to 2.0 API
         # providerSuggestions[0].
         providerSuggestions

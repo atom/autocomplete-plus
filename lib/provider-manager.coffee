@@ -1,7 +1,6 @@
 {CompositeDisposable, Disposable} = require('atom')
 ScopedPropertyStore = require('scoped-property-store')
 _ = require('underscore-plus')
-Uuid = require('node-uuid')
 
 # Deferred requires
 SymbolProvider = null
@@ -84,89 +83,60 @@ class ProviderManager
     registration = @store.addProperties('globalblacklist', properties)
     @globalBlacklist.add(registration)
 
-  addProvider: (provider) =>
-    return unless @isValidProvider(provider)
-    @providers.set(provider, Uuid.v4()) unless @providers.has(provider)
-    @subscriptions.add(provider) if provider.dispose? and not _.contains(@subscriptions?.disposables, provider)
+  isValidProvider: (provider, apiVersion) ->
+    provider? and _.isFunction(provider.requestHandler) and _.isString(provider.selector) and !!provider.selector.length
 
-  isValidProvider: (provider) ->
-    return provider? and provider.requestHandler? and typeof provider.requestHandler is 'function' and provider.selector? and provider.selector isnt '' and provider.selector isnt false
-
-  providerUuid: (provider) =>
-    return false unless provider?
-    return false unless @providers.has(provider)
+  apiVersionForProvider: (provider) =>
     @providers.get(provider)
 
+  isProviderRegistered: (provider) ->
+    @providers.has(provider)
+
+  addProvider: (provider, apiVersion='2.0.0') =>
+    return if @isProviderRegistered(provider)
+    @providers.set(provider, apiVersion)
+    @subscriptions.add(provider) if provider.dispose?
+
   removeProvider: (provider) =>
-    return unless @isValidProvider(provider)
-    @providers.delete(provider) if @providers?.has(provider)
-    @subscriptions.remove(provider) if provider.dispose? and _.contains(@subscriptions?.disposables, provider)
+    @providers.delete(provider)
+    @subscriptions.remove(provider) if provider.dispose?
 
-  #  |||              |||
-  #  vvv PROVIDER API vvv
+  registerProvider: (provider, apiVersion='2.0.0') =>
+    return unless @isValidProvider(provider, apiVersion)
+    return if @isProviderRegistered(provider)
 
-  registerProvider: (provider) =>
-    # Check Validity Of Provider
-    return unless @isValidProvider(provider)
-    @addProvider(provider)
-    id = @providerUuid(provider)
-    @removeProvider(provider) unless id?
-    return unless id?
-
-    # Register Provider
-    selectors = provider.selector.split(',')
-    selectors = _.reject selectors, (s) =>
-      p = @store.propertiesForSourceAndSelector(id, s)
-      return p? and p.provider?
-
-    return unless selectors.length
+    @addProvider(provider, apiVersion)
 
     properties = {}
-    properties[selectors.join(',')] = {provider}
-    registration = @store.addProperties(id, properties)
-    blacklistRegistration = null
+    properties[provider.selector] = {provider}
+    registration = @store.addProperties(null, properties)
 
     # Register Provider's Blacklist (If Present)
+    blacklistRegistration = null
     if provider.blacklist?.length
-      blacklistid = id + '-blacklist'
-      blacklist = provider.blacklist.split(',')
-      blacklist = _.reject blacklist, (s) =>
-        p = @store.propertiesForSourceAndSelector(blacklistid, s)
-        return p? and p.provider? and p.blacklisted? and p.blacklisted
-
-      if blacklist.length
-        blacklistproperties = {}
-        blacklistproperties[blacklist.join(',')] = {provider, blacklisted: true}
-        blacklistRegistration = @store.addProperties(blacklistid, blacklistproperties)
+      blacklistproperties = {}
+      blacklistproperties[provider.blacklist] = {provider, blacklisted: true}
+      blacklistRegistration = @store.addProperties(null, blacklistproperties)
 
     # Register Provider's Provider Blacklist (If Present)
-    # TODO: Support Providers Other Than SymbolProvider
+    providerblacklistRegistration = null
     if provider.providerblacklist?['autocomplete-plus-fuzzyprovider']?.length
-      providerblacklistid = id + '-providerblacklist'
-      providerblacklist = provider.providerblacklist['autocomplete-plus-fuzzyprovider'].split(',')
-      providerblacklist = _.reject providerblacklist, (s) =>
-        p = @store.propertiesForSourceAndSelector(providerblacklistid, s)
-        return p? and p.provider? and p.providerblacklisted? and p.providerblacklisted is 'autocomplete-plus-fuzzyprovider'
-
+      providerblacklist = provider.providerblacklist['autocomplete-plus-fuzzyprovider']
       if providerblacklist.length
         providerblacklistproperties = {}
-        providerblacklistproperties[providerblacklist.join(',')] = {provider, providerblacklisted: 'autocomplete-plus-fuzzyprovider'}
-        providerblacklistRegistration = @store.addProperties(providerblacklistid, providerblacklistproperties)
+        providerblacklistproperties[providerblacklist] = {provider, providerblacklisted: 'autocomplete-plus-fuzzyprovider'}
+        providerblacklistRegistration = @store.addProperties(null, providerblacklistproperties)
 
-    if provider.dispose?
-      provider.dispose = _.wrap provider.dispose, (f) =>
-        f?()
-        registration?.dispose()
-        blacklistRegistration?.dispose()
-        providerblacklistRegistation?.dispose()
-        @removeProvider(provider)
-
-    new Disposable(=>
+    disposable = new Disposable =>
       registration?.dispose()
       blacklistRegistration?.dispose()
       providerblacklistRegistation?.dispose()
       @removeProvider(provider)
-    )
 
-  # ^^^ PROVIDER API ^^^
-  # |||              |||
+    # When the provider is disposed, remove its registration
+    if originalDispose = provider.dispose
+      provider.dispose = ->
+        originalDispose.call(provider)
+        disposable.dispose()
+
+    disposable

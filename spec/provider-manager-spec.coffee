@@ -5,27 +5,25 @@ describe 'Provider Manager', ->
   [providerManager, testProvider, registration] = []
 
   beforeEach ->
-    runs ->
-      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
-      providerManager = new ProviderManager()
-      testProvider =
-        requestHandler: (options) ->
-          [{
-            word: 'ohai',
-            prefix: 'ohai'
-          }]
-        selector: '.source.js'
-        dispose: ->
-          return
+    atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
+    providerManager = new ProviderManager()
+    testProvider =
+      requestHandler: (options) ->
+        [{
+          word: 'ohai',
+          prefix: 'ohai'
+        }]
+      selector: '.source.js'
+      dispose: ->
+        return
 
   afterEach ->
-    runs ->
-      registration?.dispose() if registration?.dispose?
-      registration = null
-      testProvider?.dispose() if testProvider?.dispose?
-      testProvider = null
-      providerManager?.dispose()
-      providerManager = null
+    registration?.dispose?()
+    registration = null
+    testProvider?.dispose?()
+    testProvider = null
+    providerManager?.dispose()
+    providerManager = null
 
   describe 'when no providers have been registered, and enableBuiltinProvider is true', ->
     beforeEach ->
@@ -49,24 +47,14 @@ describe 'Provider Manager', ->
       expect(providerManager.providersForScopeChain('*')[0]).toBe(providerManager.fuzzyProvider)
 
     it 'adds providers', ->
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
 
-      providerManager.addProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
-      uuid = providerManager.providers.get(testProvider)
-      expect(uuid).toBeDefined()
-      expect(uuid).not.toEqual('')
+      providerManager.addProvider(testProvider, '2.0.0')
+      expect(providerManager.isProviderRegistered(testProvider)).toEqual(true)
+      apiVersion = providerManager.apiVersionForProvider(testProvider)
+      expect(apiVersion).toEqual('2.0.0')
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(true)
-
-      providerManager.addProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
-      uuid2 = providerManager.providers.get(testProvider)
-      expect(uuid2).toBeDefined()
-      expect(uuid2).not.toEqual('')
-      expect(uuid).toEqual(uuid2)
-      expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(true)
-      providerManager.removeProvider(testProvider)
 
     it 'removes providers', ->
       expect(providerManager.providers.has(testProvider)).toEqual(false)

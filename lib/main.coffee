@@ -130,19 +130,19 @@ module.exports =
   # service - {provider: provider1}
   consumeProviderLegacy: (service) ->
     return unless service?.provider?
-    @consumeProvider([service.provider])
+    @consumeProvider([service.provider], '1.0.0')
 
   # 1.1.0 API
   # service - {providers: [provider1, provider2, ...]}
   consumeProvidersLegacy: (service) ->
-    @consumeProvider(service?.providers)
+    @consumeProvider(service?.providers, '1.1.0')
 
   # 2.0.0 API
   # providers - either a provider or a list of providers
-  consumeProvider: (providers) ->
+  consumeProvider: (providers, apiVersion='2.0.0') ->
     providers = [providers] if providers? and not Array.isArray(providers)
     return unless providers?.length > 0
     registrations = new CompositeDisposable
     for provider in providers
-      registrations.add @getAutocompleteManager().providerManager.registerProvider(provider)
+      registrations.add @getAutocompleteManager().providerManager.registerProvider(provider, apiVersion)
     registrations

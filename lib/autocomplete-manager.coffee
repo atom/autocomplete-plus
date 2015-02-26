@@ -1,13 +1,15 @@
 {Range, TextEditor, CompositeDisposable, Disposable}  = require 'atom'
 _ = require 'underscore-plus'
 path = require 'path'
+semver = require 'semver'
+
 ProviderManager = require './provider-manager'
 SuggestionList = require './suggestion-list'
 SuggestionListElement = require './suggestion-list-element'
-semver = require 'semver'
 
 # Deferred requires
 minimatch = null
+grim = null
 
 module.exports =
 class AutocompleteManager
@@ -141,7 +143,7 @@ class AutocompleteManager
       providerPromises.push Promise.resolve(getSuggestions(upgradedOptions)).then (providerSuggestions) ->
         # TODO API: remove upgrading when 1.0 support is removed
         unless apiIs20
-          providerSuggestions = providerSuggestions.map (suggestion) ->
+          providerSuggestions = providerSuggestions?.map (suggestion) ->
             newSuggestion =
               text: suggestion.word
               snippet: suggestion.snippet

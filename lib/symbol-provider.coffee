@@ -31,7 +31,6 @@ class SymbolProvider
       priority: 1
 
   constructor: ->
-    @id = 'autocomplete-plus-symbolprovider'
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 

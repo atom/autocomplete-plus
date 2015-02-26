@@ -151,6 +151,9 @@ class AutocompleteManager
             newSuggestion.rightLabel = suggestion.label unless suggestion.renderLabelAsHtml
             newSuggestion
 
+        if providerSuggestions?
+          suggestion.provider = provider for suggestion in providerSuggestions
+
         providerSuggestions
 
     return unless providerPromises?.length
@@ -184,24 +187,33 @@ class AutocompleteManager
   # Private: Gets called when the user successfully confirms a suggestion
   #
   # match - An {Object} representing the confirmed suggestion
-  confirm: (match) =>
-    return unless @editor? and match? and not @disposed
+  confirm: (suggestion) =>
+    return unless @editor? and suggestion? and not @disposed
 
-    match.onWillConfirm?()
+    apiVersion = @providerManager.apiVersionForProvider(suggestion.provider)
+    apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+    triggerPosition = @editor.getLastCursor().getBufferPosition()
+
+    # TODO API: Remove as this is no longer used
+    suggestion.onWillConfirm?()
 
     @editor.getSelections()?.forEach((selection) -> selection?.clear())
     @hideSuggestionList()
 
-    @replaceTextWithMatch(match)
+    @replaceTextWithMatch(suggestion)
 
     # FIXME: move this to the snippet provider's onDidInsertSuggestion() method
     # when the API has been updated.
-    if match.isSnippet
+    if suggestion.isSnippet
       setTimeout =>
         atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
       , 1
 
-    match.onDidConfirm?()
+    # TODO API: Remove when we remove the 1.0 API
+    if apiIs20
+      suggestion.provider.onDidInsertSuggestion?({@editor, suggestion, triggerPosition})
+    else
+      suggestion.onDidConfirm?()
 
   showSuggestionList: (suggestions) ->
     return if @disposed

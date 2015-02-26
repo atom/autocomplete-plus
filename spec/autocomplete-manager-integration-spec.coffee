@@ -44,6 +44,22 @@ describe 'Autocomplete Manager', ->
             ({text, replacementPrefix: prefix} for text in list)
         mainModule.consumeProvider(provider)
 
+    it "calls the provider's onDidInsertSuggestion method when it exists", ->
+      provider.onDidInsertSuggestion = jasmine.createSpy()
+
+      triggerAutocompletion(editor, true, 'a')
+
+      runs ->
+        suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+        expect(provider.onDidInsertSuggestion).toHaveBeenCalled()
+
+        {editor, triggerPosition, suggestion} = provider.onDidInsertSuggestion.mostRecentCall.args[0]
+        expect(editor).toBe editor
+        expect(triggerPosition).toEqual [0, 1]
+        expect(suggestion.text).toBe 'a'
+
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)

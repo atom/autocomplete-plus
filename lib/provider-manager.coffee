@@ -1,9 +1,11 @@
-{CompositeDisposable, Disposable, Emitter} = require('atom')
+{CompositeDisposable, Disposable} = require('atom')
 ScopedPropertyStore = require('scoped-property-store')
 _ = require('underscore-plus')
 Uuid = require('node-uuid')
-SymbolProvider = require('./symbol-provider')
-FuzzyProvider = require('./fuzzy-provider')
+
+# Deferred requires
+SymbolProvider = null
+FuzzyProvider =  null
 
 module.exports =
 class ProviderManager
@@ -60,8 +62,10 @@ class ProviderManager
     if enabled
       return if @fuzzyProvider? or @fuzzyRegistration?
       if atom.config.get('autocomplete-plus.defaultProvider') is 'Symbol'
+        SymbolProvider ?= require('./symbol-provider')
         @fuzzyProvider = new SymbolProvider()
       else
+        FuzzyProvider ?= require('./fuzzy-provider')
         @fuzzyProvider = new FuzzyProvider()
       @fuzzyRegistration = @registerProvider(@fuzzyProvider)
     else

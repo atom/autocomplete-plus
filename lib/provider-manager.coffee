@@ -1,4 +1,4 @@
-{CompositeDisposable, Disposable, Emitter} = require('atom')
+{CompositeDisposable, Disposable} = require('atom')
 ScopedPropertyStore = require('scoped-property-store')
 _ = require('underscore-plus')
 Uuid = require('node-uuid')

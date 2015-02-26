@@ -122,6 +122,9 @@ module.exports =
       @autocompleteManager = new AutocompleteManager()
     @autocompleteManager
 
+  consumeSnippets: (snippetsManager) ->
+    @getAutocompleteManager().setSnippetsManager(snippetsManager)
+
   ###
   Section: Provider API
   ###

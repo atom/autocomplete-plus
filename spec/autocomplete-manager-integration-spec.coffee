@@ -24,13 +24,6 @@ describe 'Autocomplete Manager', ->
       atom.config.set('autocomplete-plus.maxVisibleSuggestions', 10)
 
   describe "when an external provider is registered", ->
-    class SpecialProvider
-      id: 'my-some-provider'
-      selector: '*'
-      requestHandler: ({prefix}) ->
-        list = ['a', 'ab', 'abc', 'abcd', 'abcde']
-        ({word, prefix} for word in list)
-
     [provider] = []
 
     beforeEach ->
@@ -44,7 +37,11 @@ describe 'Autocomplete Manager', ->
         ]
 
       runs ->
-        provider = new SpecialProvider
+        provider =
+          selector: '*'
+          requestHandler: ({prefix}) ->
+            list = ['a', 'ab', 'abc', 'abcd', 'abcde']
+            ({text, replacementPrefix: prefix} for text in list)
         mainModule.consumeProvider(provider)
 
     describe "when number of suggestions > maxVisibleSuggestions", ->
@@ -63,7 +60,7 @@ describe 'Autocomplete Manager', ->
       beforeEach ->
         spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
           list = ['method(${1:something})']
-          ({snippet, prefix} for snippet in list)
+          ({snippet, replacementPrefix: prefix} for snippet in list)
 
       describe "when the snippets package is enabled", ->
         beforeEach ->
@@ -90,7 +87,7 @@ describe 'Autocomplete Manager', ->
     describe "when the matched prefix is highlighted", ->
       it 'highlights the prefix of the word in the suggestion list', ->
         spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
-          [{word: 'items', prefix}]
+          [{text: 'items', replacementPrefix: prefix}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -114,7 +111,7 @@ describe 'Autocomplete Manager', ->
 
       it 'highlights repeated characters in the prefix', ->
         spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
-          [{word: 'apply', prefix}]
+          [{text: 'apply', replacementPrefix: prefix}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -139,7 +136,7 @@ describe 'Autocomplete Manager', ->
       describe "when the prefix does not match the word", ->
         it "does not render any character-match spans", ->
           spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
-            [{word: 'omgnope', prefix}]
+            [{text: 'omgnope', replacementPrefix: prefix}]
 
           editor.moveToBottom()
           editor.insertText('x')

@@ -10,8 +10,8 @@ describe 'Provider Manager', ->
     testProvider =
       requestHandler: (options) ->
         [{
-          word: 'ohai',
-          prefix: 'ohai'
+          text: 'ohai',
+          replacementPrefix: 'ohai'
         }]
       selector: '.source.js'
       dispose: ->
@@ -185,8 +185,8 @@ describe 'Provider Manager', ->
       testProvider =
         requestHandler: (options) ->
           [{
-            word: 'ohai',
-            prefix: 'ohai'
+            text: 'ohai',
+            replacementPrefix: 'ohai'
           }]
         selector: '.source.js'
         blacklist: '.source.js .comment'
@@ -224,8 +224,8 @@ describe 'Provider Manager', ->
         testProvider1 =
           requestHandler: (options) ->
             [{
-              word: 'ohai2',
-              prefix: 'ohai2'
+              text: 'ohai2',
+              replacementPrefix: 'ohai2'
             }]
           selector: '.source.js'
           dispose: ->
@@ -234,8 +234,8 @@ describe 'Provider Manager', ->
         testProvider2 =
           requestHandler: (options) ->
             [{
-              word: 'ohai2',
-              prefix: 'ohai2'
+              text: 'ohai2',
+              replacementPrefix: 'ohai2'
             }]
           selector: '.source.js .variable.js'
           blacklist: '.source.js .variable.js .comment2'
@@ -247,8 +247,8 @@ describe 'Provider Manager', ->
         testProvider3 =
           requestHandler: (options) ->
             [{
-              word: 'ohai3',
-              prefix: 'ohai3'
+              text: 'ohai3',
+              replacementPrefix: 'ohai3'
             }]
           selector: '*'
           dispose: ->
@@ -257,8 +257,8 @@ describe 'Provider Manager', ->
         testProvider4 =
           requestHandler: (options) ->
             [{
-              word: 'ohai4',
-              prefix: 'ohai4'
+              text: 'ohai4',
+              replacementPrefix: 'ohai4'
             }]
           selector: '.source.js .comment'
           dispose: ->

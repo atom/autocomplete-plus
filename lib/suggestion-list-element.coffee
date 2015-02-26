@@ -107,63 +107,64 @@ class SuggestionListElement extends HTMLElement
     li.remove()
 
   renderItems: ->
-    items = @visibleItems() or []
-    items.forEach ({snippet, word, label, renderLabelAsHtml, className, prefix}, index) =>
-      li = @ol.childNodes[index]
-      unless li
-        li = document.createElement('li')
-        @ol.appendChild(li)
-        li.dataset.index = index
-
-      li.className = ''
-      li.classList.add(className) if className
-      li.classList.add('selected') if index is @selectedIndex
-      @selectedLi = li if index is @selectedIndex
-
-      wordSpan = li.childNodes[0]
-      unless wordSpan
-        wordSpan = document.createElement('span')
-        li.appendChild(wordSpan)
-        wordSpan.className = 'word'
-
-      replacement = word
-      if _.isString(snippet)
-        replacement = snippet.replace @snippetRegex, (match, snippetText) ->
-          "<span class=\"snippet-completion\">#{snippetText}</span>"
-
-      # highlight the prefix
-      displayHtml = ''
-      wordIndex = 0
-      lastWordIndex = 0
-      for ch, i in prefix
-        while wordIndex < replacement.length and replacement[wordIndex].toLowerCase() isnt ch.toLowerCase()
-          wordIndex += 1
-        break if wordIndex >= replacement.length
-        preChar = replacement.substring(lastWordIndex, wordIndex)
-        highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
-        displayHtml = "#{displayHtml}#{preChar}#{highlightedChar}"
-        wordIndex += 1
-        lastWordIndex = wordIndex
-      displayHtml += replacement.substring(lastWordIndex)
-      wordSpan.innerHTML = displayHtml
-
-      labelSpan = li.childNodes[1]
-      if label
-        unless labelSpan
-          labelSpan = document.createElement('span')
-          li.appendChild(labelSpan) if label
-          labelSpan.className = 'completion-label text-smaller text-subtle'
-
-        if renderLabelAsHtml
-          labelSpan.innerHTML = label
-        else
-          labelSpan.textContent = label
-      else
-        labelSpan?.remove()
-
+    items = @visibleItems() ? []
+    @renderItem(item, index) for item, index in items
     li.remove() while li = @ol.childNodes[items.length]
-
     @selectedLi?.scrollIntoView(false)
+
+  renderItem: ({snippet, text, rightLabel, rightLabelHTML, className, replacementPrefix}, index) ->
+    li = @ol.childNodes[index]
+    unless li
+      li = document.createElement('li')
+      @ol.appendChild(li)
+      li.dataset.index = index
+
+    li.className = ''
+    li.classList.add(className) if className
+    li.classList.add('selected') if index is @selectedIndex
+    @selectedLi = li if index is @selectedIndex
+
+    wordSpan = li.childNodes[0]
+    unless wordSpan
+      wordSpan = document.createElement('span')
+      li.appendChild(wordSpan)
+      wordSpan.className = 'word'
+
+    replacement = text
+    if _.isString(snippet)
+      replacement = snippet.replace @snippetRegex, (match, snippetText) ->
+        "<span class=\"snippet-completion\">#{snippetText}</span>"
+
+    # highlight the prefix
+    displayHtml = ''
+    wordIndex = 0
+    lastWordIndex = 0
+    for ch, i in replacementPrefix
+      while wordIndex < replacement.length and replacement[wordIndex].toLowerCase() isnt ch.toLowerCase()
+        wordIndex += 1
+      break if wordIndex >= replacement.length
+      preChar = replacement.substring(lastWordIndex, wordIndex)
+      highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
+      displayHtml = "#{displayHtml}#{preChar}#{highlightedChar}"
+      wordIndex += 1
+      lastWordIndex = wordIndex
+    displayHtml += replacement.substring(lastWordIndex)
+    wordSpan.innerHTML = displayHtml
+
+    labelSpan = li.childNodes[1]
+    hasRightLabel = rightLabel or rightLabelHTML
+    if hasRightLabel
+      unless labelSpan
+        labelSpan = document.createElement('span')
+        li.appendChild(labelSpan) if hasRightLabel
+        labelSpan.className = 'completion-label text-smaller text-subtle'
+
+      if rightLabelHTML?
+        labelSpan.innerHTML = rightLabelHTML
+      else
+        labelSpan.textContent = rightLabel
+    else
+      labelSpan?.remove()
 
   dispose: ->
     @subscriptions.dispose()

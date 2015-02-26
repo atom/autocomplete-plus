@@ -4,12 +4,12 @@ _ = require 'underscore-plus'
 
 indexOfWord = (suggestionList, word) ->
   for suggestion, i in suggestionList
-    return i if suggestion.word is word
+    return i if suggestion.text is word
   -1
 
 suggestionForWord = (suggestionList, word) ->
   for suggestion in suggestionList
-    return suggestion if suggestion.word is word
+    return suggestion if suggestion.text is word
   null
 
 describe 'SymbolProvider', ->
@@ -141,7 +141,7 @@ describe 'SymbolProvider', ->
           promise.then (r) -> results = r
 
         runs ->
-          expect(results[0].word).toBe 'items'
+          expect(results[0].text).toBe 'items'
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->

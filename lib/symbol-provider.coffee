@@ -101,13 +101,8 @@ class SymbolProvider
   ###
 
   requestHandler: (options) =>
-    return unless options?
-    return unless options.editor?
-    selection = options.editor.getLastSelection()
-    prefix = options.prefix
-
     # No prefix? Don't autocomplete!
-    return unless prefix.trim().length
+    return unless options.prefix.trim().length
 
     new Promise (resolve) =>
       suggestions = @findSuggestionsForWord(options)
@@ -120,13 +115,13 @@ class SymbolProvider
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
-        symbolList.filter((match) -> match.word?.indexOf(options.prefix) is 0)
+        symbolList.filter((match) -> match.text?.indexOf(options.prefix) is 0)
       else
         @fuzzyFilter(symbolList, options)
 
     for word in words
-      word.prefix = options.prefix
-      word.label = word.type
+      word.replacementPrefix = options.prefix
+      word.rightLabel = word.type
 
     return words
 
@@ -134,8 +129,8 @@ class SymbolProvider
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
-      continue unless prefix[0].toLowerCase() is symbol.word[0].toLowerCase() # must match the first char!
-      score = fuzzaldrin.score(symbol.word, prefix)
+      continue unless prefix[0].toLowerCase() is symbol.text[0].toLowerCase() # must match the first char!
+      score = fuzzaldrin.score(symbol.text, prefix)
       score *= @getLocalityScore(symbol, position) if symbol.path is @editor.getPath()
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
@@ -146,8 +141,8 @@ class SymbolProvider
     results = []
     for {symbol, score, locality, rowDifference}, i in candidates
       break if results.length is 20
-      # console.log 'match', symbol.word, score, locality, rowDifference
-      key = @getSymbolKey(symbol.word)
+      # console.log 'match', symbol.text, score, locality, rowDifference
+      key = @getSymbolKey(symbol.text)
       results.push(symbol) unless wordsSeen[key]
       wordsSeen[key] = true
     results
@@ -179,10 +174,10 @@ class SymbolProvider
       if suggestions = _.valueForKeyPath(properties, "editor.completions")
         for suggestion in suggestions
           scopedCompletions.push
-            word: suggestion
+            text: suggestion
             type: 'builtin'
 
-    _.uniq scopedCompletions, (completion) -> completion.word
+    _.uniq scopedCompletions, (completion) -> completion.text
 
   ###
   Section: Word List Building
@@ -223,8 +218,8 @@ class SymbolProvider
     # class MyClass extends SomeModule # This line parses SomeModule as a class
     # ```
     # `class` types are higher priority than `variables`
-    cacheSymbol = (word, type, bufferRow, scopes) =>
-      key = @getSymbolKey(word)
+    cacheSymbol = (text, type, bufferRow, scopes) =>
+      key = @getSymbolKey(text)
       cachedSymbol = symbols[key]
       if cachedSymbol?
         currentTypePriority = @config[type].priority
@@ -233,7 +228,7 @@ class SymbolProvider
         cachedSymbol.bufferRows.push(bufferRow)
         cachedSymbol.scopes.push(scopes)
       else
-        symbols[key] = {word, type, bufferRows: [bufferRow], scopes: [scopes], path: editor.getPath()}
+        symbols[key] = {text, type, bufferRows: [bufferRow], scopes: [scopes], path: editor.getPath()}
 
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
@@ -241,15 +236,15 @@ class SymbolProvider
         for type, options of @config
           for selector in options.selectors
             if selector.matches(scopes) and matches = token.value.match(options.wordRegex)
-              for word in matches
-                if word.length >= minimumWordLength
-                  cacheSymbol(word, type, bufferRow, scopes)
+              for matchText in matches
+                if matchText.length >= minimumWordLength
+                  cacheSymbol(matchText, type, bufferRow, scopes)
               break
 
     (symbol for key, symbol of symbols)
 
   # some words are reserved, like 'constructor' :/
-  getSymbolKey: (word) -> word + '$$'
+  getSymbolKey: (symbolText) -> symbolText + '$$'
 
   getTokenizedLines: (editor) ->
     # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not

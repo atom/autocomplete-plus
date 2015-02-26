@@ -68,51 +68,62 @@ describe 'Provider API', ->
       afterEach -> registration?.dispose()
 
       it 'registers the provider specified by [provider]', ->
-        runs ->
-          expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
+        testProvider =
+          selector: '.source.js,.source.coffee'
+          requestHandler: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
-          testProvider =
-            selector: '.source.js,.source.coffee'
-            requestHandler: (options) -> [text: 'ohai', prefix: 'ohai']
-
-          registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
-
-          expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
+        expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
+        registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
+        expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
 
       it 'registers the provider specified by the naked provider', ->
-        runs ->
-          expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
+        testProvider =
+          selector: '.source.js,.source.coffee'
+          requestHandler: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
-          testProvider =
-            selector: '.source.js,.source.coffee'
-            requestHandler: (options) -> [text: 'ohai', prefix: 'ohai']
-
-          registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
-
-          expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
+        expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
+        registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+        expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
 
       it 'passes the correct parameters to requestHandler for the version', ->
+        testProvider =
+          selector: '.source.js,.source.coffee'
+          requestHandler: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
+
+        registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+        spyOn(testProvider, 'requestHandler')
+        triggerAutocompletion(editor, true, 'o')
+
         runs ->
-          testProvider =
-            selector: '.source.js,.source.coffee'
-            requestHandler: (options) -> [text: 'ohai', prefix: 'ohai']
+          args = testProvider.requestHandler.mostRecentCall.args[0]
+          expect(args.editor).toBeDefined()
+          expect(args.position).toBeDefined()
+          expect(args.scopeDescriptor).toBeDefined()
+          expect(args.prefix).toBeDefined()
 
-          registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+          expect(args.scope).not.toBeDefined()
+          expect(args.scopeChain).not.toBeDefined()
+          expect(args.buffer).not.toBeDefined()
+          expect(args.cursor).not.toBeDefined()
 
-          spyOn(testProvider, 'requestHandler')
-          triggerAutocompletion(editor, true, 'o')
+      it 'correctly displays the suggestion options', ->
+        testProvider =
+          selector: '.source.js, .source.coffee'
+          requestHandler: (options) ->
+            [
+              text: 'ohai',
+              replacementPrefix: 'o',
+              rightLabelHTML: '<span style="color: red">ohai</span>',
+            ]
+        registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
-          runs ->
-            args = testProvider.requestHandler.mostRecentCall.args[0]
-            expect(args.editor).toBeDefined()
-            expect(args.position).toBeDefined()
-            expect(args.scopeDescriptor).toBeDefined()
-            expect(args.prefix).toBeDefined()
+        triggerAutocompletion(editor, true, 'o')
 
-            expect(args.scope).not.toBeDefined()
-            expect(args.scopeChain).not.toBeDefined()
-            expect(args.buffer).not.toBeDefined()
-            expect(args.cursor).not.toBeDefined()
+        runs ->
+          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+          expect(suggestionListView.querySelector('li .completion-label')).toHaveHtml('<span style="color: red">ohai</span>')
+          expect(suggestionListView.querySelector('span.word')).toHaveText('ohai')
 
     describe 'Provider API v1.0.0', ->
       [registration1, registration2, registration3] = []

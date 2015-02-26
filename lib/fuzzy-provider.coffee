@@ -50,11 +50,8 @@ class FuzzyProvider
   # suggestions, the suggestions will be the only ones that are displayed.
   #
   # Returns an {Array} of Suggestion instances
-  requestHandler: (options) =>
-    return unless options?
-    return unless options.editor?
-    selection = options.editor.getLastSelection()
-    prefix = options.prefix
+  requestHandler: ({editor, prefix}) =>
+    return unless editor?
 
     # No prefix? Don't autocomplete!
     return unless prefix.length
@@ -157,7 +154,7 @@ class FuzzyProvider
         fuzzaldrin.filter(wordList, prefix)
 
     results = for word in words when word isnt prefix
-      {word: word, prefix: prefix}
+      {text: word, replacementPrefix: prefix}
 
     return results
 

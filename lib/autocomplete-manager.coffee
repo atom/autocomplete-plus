@@ -136,8 +136,18 @@ class AutocompleteManager
           cursor: options.editor.getLastCursor()
 
       providerPromises.push Promise.resolve(provider.requestHandler(upgradedOptions)).then (providerSuggestions) ->
-        # TODO API: check the version, deprecate results and convert results to 2.0 API
-        # providerSuggestions[0].
+        # TODO API: remove upgrading when 1.0 support is removed
+        unless apiIs20
+          providerSuggestions = providerSuggestions.map (suggestion) ->
+            newSuggestion =
+              text: suggestion.word
+              snippet: suggestion.snippet
+              replacementPrefix: suggestion.prefix
+              className: suggestion.className
+            newSuggestion.rightLabelHTML = suggestion.label if suggestion.renderLabelAsHtml
+            newSuggestion.rightLabel = suggestion.label unless suggestion.renderLabelAsHtml
+            newSuggestion
+
         providerSuggestions
 
     return unless providerPromises?.length
@@ -155,7 +165,7 @@ class AutocompleteManager
     , []
 
   displaySuggestions: (suggestions, options) =>
-    suggestions = _.uniq(suggestions, (s) -> s.word)
+    suggestions = _.uniq(suggestions, (s) -> s.text)
     if @shouldDisplaySuggestions and suggestions.length
       @showSuggestionList(suggestions)
     else
@@ -217,14 +227,14 @@ class AutocompleteManager
     selections = @editor.getSelections()
     return unless selections?
     @editor.transact =>
-      if match.prefix?.length > 0
-        @editor.selectLeft(match.prefix.length)
+      if match.replacementPrefix?.length > 0
+        @editor.selectLeft(match.replacementPrefix.length)
         @editor.delete()
 
       if match.snippet? and @snippetsManager?
         @snippetsManager.insertSnippet(match.snippet, @editor)
       else
-        @editor.insertText(match.word ? match.snippet)
+        @editor.insertText(match.text ? match.snippet)
 
   # Private: Checks whether the current file is blacklisted.
   #

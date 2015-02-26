@@ -28,7 +28,12 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.add(@model.onDidSelectPrevious(@moveSelectionUp.bind(this)))
     @subscriptions.add(@model.onDidConfirmSelection(@confirmSelection.bind(this)))
     @subscriptions.add(@model.onDidDispose(@dispose.bind(this)))
+    @subscriptions.add atom.keymap.onDidFailToMatchBinding ({keystrokes, keyboardEventTarget}) =>
+      if atom.config.get('autocomplete-plus.typingConfirmsSelection') and not _.contains(["cmd", "alt", "shift", "ctrl"], keystrokes)
+        unless @selectedIndex is -1
+          @confirmSelection(keystrokes)
     this
+
 
   # This should be unnecessary but the events we need to override
   # are handled at a level that can't be blocked by react synthetic
@@ -46,7 +51,7 @@ class SuggestionListElement extends HTMLElement
       @confirmSelection()
 
   itemsChanged: ->
-    @selectedIndex = 0
+    @selectedIndex = if atom.config.get('autocomplete-plus.typingConfirmsSelection') then -1 else 0
     @renderItems()
 
   addActiveClassToEditor: ->
@@ -84,11 +89,11 @@ class SuggestionListElement extends HTMLElement
 
   # Private: Confirms the currently selected item or cancels the list view
   # if no item has been selected
-  confirmSelection: ->
+  confirmSelection: (keystroke)->
     return unless @model.isActive()
     item = @getSelectedItem()
     if item?
-      @model.confirm(item)
+      @model.confirm(item, keystroke)
     else
       @model.cancel()
 

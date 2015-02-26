@@ -1,6 +1,7 @@
 {CompositeDisposable, Disposable} = require 'atom'
 ScopedPropertyStore = require 'scoped-property-store'
 _ = require 'underscore-plus'
+semver = require 'semver'
 
 # Deferred requires
 SymbolProvider = null
@@ -48,6 +49,8 @@ class ProviderManager
 
     # Determine Blacklisted Providers
     blacklistedProviders = _.chain(providers).filter((p) -> p.value.blacklisted? and p.value.blacklisted is true).map((p) -> p.value.provider).value()
+
+    # TODO API: Remove this when 1.0 API is removed
     fuzzyProviderBlacklisted = _.chain(providers).filter((p) -> p.value.providerblacklisted? and p.value.providerblacklisted is 'autocomplete-plus-fuzzyprovider').map((p) -> p.value.provider).value() if @fuzzyProvider?
 
     # Exclude Blacklisted Providers
@@ -85,7 +88,10 @@ class ProviderManager
 
   isValidProvider: (provider, apiVersion) ->
     # TODO API: Check based on the apiVersion
-    provider? and _.isFunction(provider.requestHandler) and _.isString(provider.selector) and !!provider.selector.length
+    if semver.satisfies(apiVersion, '>=2.0.0')
+      provider? and _.isFunction(provider.getSuggestions) and _.isString(provider.selector) and !!provider.selector.length
+    else
+      provider? and _.isFunction(provider.requestHandler) and _.isString(provider.selector) and !!provider.selector.length
 
   apiVersionForProvider: (provider) =>
     @providers.get(provider)
@@ -106,22 +112,27 @@ class ProviderManager
     return unless @isValidProvider(provider, apiVersion)
     return if @isProviderRegistered(provider)
 
+    apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+
     # TODO API: Deprecate the 1.0 APIs
+    selector = provider.selector
+    disabledSelector = provider.disableForSelector
+    disabledSelector = provider.blacklist unless apiIs20
 
     @addProvider(provider, apiVersion)
 
     properties = {}
-    properties[provider.selector] = {provider}
+    properties[selector] = {provider}
     registration = @store.addProperties(null, properties)
 
     # Register Provider's Blacklist (If Present)
     blacklistRegistration = null
-    if provider.blacklist?.length
+    if disabledSelector?.length
       blacklistproperties = {}
-      blacklistproperties[provider.blacklist] = {provider, blacklisted: true}
+      blacklistproperties[disabledSelector] = {provider, blacklisted: true}
       blacklistRegistration = @store.addProperties(null, blacklistproperties)
 
-    # Register Provider's Provider Blacklist (If Present)
+    # TODO API: Remove providerblacklist stuff when 1.0 API is removed
     providerblacklistRegistration = null
     if provider.providerblacklist?['autocomplete-plus-fuzzyprovider']?.length
       providerblacklist = provider.providerblacklist['autocomplete-plus-fuzzyprovider']
@@ -131,9 +142,11 @@ class ProviderManager
         providerblacklistRegistration = @store.addProperties(null, providerblacklistproperties)
 
     disposable = new Disposable =>
+      # TODO API: Remove this when 1.0 API is removed
+      providerblacklistRegistation?.dispose()
+
       registration?.dispose()
       blacklistRegistration?.dispose()
-      providerblacklistRegistation?.dispose()
       @removeProvider(provider)
 
     # When the provider is disposed, remove its registration

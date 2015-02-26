@@ -50,7 +50,7 @@ class FuzzyProvider
   # suggestions, the suggestions will be the only ones that are displayed.
   #
   # Returns an {Array} of Suggestion instances
-  requestHandler: ({editor, prefix}) =>
+  getSuggestions: ({editor, prefix}) =>
     return unless editor?
 
     # No prefix? Don't autocomplete!

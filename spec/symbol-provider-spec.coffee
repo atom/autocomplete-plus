@@ -65,7 +65,7 @@ describe 'SymbolProvider', ->
       provider = autocompleteManager.providerManager.fuzzyProvider
       results = null
       waitsForPromise ->
-        promise = provider.requestHandler({editor, prefix: 'item', position: new Point(7, 0)})
+        promise = provider.getSuggestions({editor, prefix: 'item', position: new Point(7, 0)})
         advanceClock 1
         promise.then (r) -> results = r
 
@@ -125,7 +125,7 @@ describe 'SymbolProvider', ->
         provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
-          promise = provider.requestHandler({editor, prefix: 'qu', position: new Point(7, 0)})
+          promise = provider.getSuggestions({editor, prefix: 'qu', position: new Point(7, 0)})
           advanceClock 1
           promise.then (r) -> results = r
 
@@ -136,7 +136,7 @@ describe 'SymbolProvider', ->
         provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
-          promise = provider.requestHandler({editor, prefix: 'item', position: new Point(7, 0)})
+          promise = provider.getSuggestions({editor, prefix: 'item', position: new Point(7, 0)})
           advanceClock 1
           promise.then (r) -> results = r
 

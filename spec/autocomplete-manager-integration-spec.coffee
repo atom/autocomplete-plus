@@ -39,7 +39,7 @@ describe 'Autocomplete Manager', ->
       runs ->
         provider =
           selector: '*'
-          requestHandler: ({prefix}) ->
+          getSuggestions: ({prefix}) ->
             list = ['a', 'ab', 'abc', 'abcd', 'abcde']
             ({text, replacementPrefix: prefix} for text in list)
         mainModule.consumeProvider(provider)
@@ -58,7 +58,7 @@ describe 'Autocomplete Manager', ->
 
     describe "when match.snippet is used", ->
       beforeEach ->
-        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
           list = ['method(${1:something})']
           ({snippet, replacementPrefix: prefix} for snippet in list)
 
@@ -705,7 +705,7 @@ describe 'Autocomplete Manager', ->
   #     atom.config.set('autocomplete-plus.enableAutoActivation', false)
   #   beforeEach ->
   #     testProvider =
-  #       requestHandler: (options) ->
+  #       getSuggestions: (options) ->
   #         [{
   #           word: 'ohai',
   #           prefix: ''

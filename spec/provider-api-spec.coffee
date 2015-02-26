@@ -70,7 +70,7 @@ describe 'Provider API', ->
       it 'registers the provider specified by [provider]', ->
         testProvider =
           selector: '.source.js,.source.coffee'
-          requestHandler: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
+          getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
         expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
@@ -79,24 +79,24 @@ describe 'Provider API', ->
       it 'registers the provider specified by the naked provider', ->
         testProvider =
           selector: '.source.js,.source.coffee'
-          requestHandler: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
+          getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
         expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
         expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
 
-      it 'passes the correct parameters to requestHandler for the version', ->
+      it 'passes the correct parameters to getSuggestions for the version', ->
         testProvider =
           selector: '.source.js,.source.coffee'
-          requestHandler: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
+          getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
-        spyOn(testProvider, 'requestHandler')
+        spyOn(testProvider, 'getSuggestions')
         triggerAutocompletion(editor, true, 'o')
 
         runs ->
-          args = testProvider.requestHandler.mostRecentCall.args[0]
+          args = testProvider.getSuggestions.mostRecentCall.args[0]
           expect(args.editor).toBeDefined()
           expect(args.position).toBeDefined()
           expect(args.scopeDescriptor).toBeDefined()
@@ -110,7 +110,7 @@ describe 'Provider API', ->
       it 'correctly displays the suggestion options', ->
         testProvider =
           selector: '.source.js, .source.coffee'
-          requestHandler: (options) ->
+          getSuggestions: (options) ->
             [
               text: 'ohai',
               replacementPrefix: 'o',

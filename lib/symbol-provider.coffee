@@ -100,7 +100,7 @@ class SymbolProvider
   Section: Suggesting Completions
   ###
 
-  requestHandler: (options) =>
+  getSuggestions: (options) =>
     # No prefix? Don't autocomplete!
     return unless options.prefix.trim().length
 

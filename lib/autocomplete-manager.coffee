@@ -127,15 +127,18 @@ class AutocompleteManager
       apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
 
       # TODO API: remove upgrading when 1.0 support is removed
-      upgradedOptions = options
-      unless apiIs20
+      if apiIs20
+        getSuggestions = provider.getSuggestions.bind(provider)
+        upgradedOptions = options
+      else
+        getSuggestions = provider.requestHandler.bind(provider)
         upgradedOptions = _.extend {}, options,
           scope: options.scopeDescriptor
           scopeChain: options.scopeDescriptor.getScopeChain()
           buffer: options.editor.getBuffer()
           cursor: options.editor.getLastCursor()
 
-      providerPromises.push Promise.resolve(provider.requestHandler(upgradedOptions)).then (providerSuggestions) ->
+      providerPromises.push Promise.resolve(getSuggestions(upgradedOptions)).then (providerSuggestions) ->
         # TODO API: remove upgrading when 1.0 support is removed
         unless apiIs20
           providerSuggestions = providerSuggestions.map (suggestion) ->

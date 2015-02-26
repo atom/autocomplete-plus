@@ -8,7 +8,7 @@ describe 'Provider Manager', ->
     atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
     providerManager = new ProviderManager()
     testProvider =
-      requestHandler: (options) ->
+      getSuggestions: (options) ->
         [{
           text: 'ohai',
           replacementPrefix: 'ohai'
@@ -70,55 +70,60 @@ describe 'Provider Manager', ->
       expect(providerManager.providers.has(testProvider)).toEqual(false)
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
 
-    it 'can identify a provider with a missing requestHandler', ->
+    it 'can identify a provider with a missing getSuggestions', ->
       bogusProvider =
-        badRequestHandler: (options) ->
-          return []
+        badgetSuggestions: (options) ->
         selector: '.source.js'
         dispose: ->
-          return
-      expect(providerManager.isValidProvider({})).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
-    it 'can identify a provider with an invalid requestHandler', ->
+    it 'can identify a provider with an invalid getSuggestions', ->
       bogusProvider =
-        requestHandler: 'yo, this is a bad handler'
+        getSuggestions: 'yo, this is a bad handler'
         selector: '.source.js'
         dispose: ->
-          return
-      expect(providerManager.isValidProvider({})).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
     it 'can identify a provider with a missing selector', ->
       bogusProvider =
-        requestHandler: (options) ->
-          return []
+        getSuggestions: (options) ->
         aSelector: '.source.js'
         dispose: ->
-          return
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
     it 'can identify a provider with an invalid selector', ->
       bogusProvider =
-        requestHandler: (options) ->
-          return []
+        getSuggestions: (options) ->
         selector: ''
         dispose: ->
-          return
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
       bogusProvider =
-        requestHandler: (options) ->
-          return []
+        getSuggestions: (options) ->
         selector: false
         dispose: ->
-          return
 
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+
+    it 'correctly identifies a 1.0 provider', ->
+      bogusProvider =
+        selector: '.source.js'
+        requestHandler: 'yo, this is a bad handler'
+        dispose: ->
+      expect(providerManager.isValidProvider({}, '1.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '1.0.0')).toEqual(false)
+
+      legitProvider =
+        selector: '.source.js'
+        requestHandler: ->
+        dispose: ->
+      expect(providerManager.isValidProvider(legitProvider, '1.0.0')).toEqual(true)
 
     it 'registers a valid provider', ->
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
@@ -167,7 +172,7 @@ describe 'Provider Manager', ->
 
     it 'does not register an invalid provider', ->
       bogusProvider =
-        requestHandler: 'yo, this is a bad handler'
+        getSuggestions: 'yo, this is a bad handler'
         selector: '.source.js'
         dispose: ->
           return
@@ -183,17 +188,17 @@ describe 'Provider Manager', ->
 
     it 'registers a provider with a blacklist', ->
       testProvider =
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           [{
             text: 'ohai',
             replacementPrefix: 'ohai'
           }]
         selector: '.source.js'
-        blacklist: '.source.js .comment'
+        disableForSelector: '.source.js .comment'
         dispose: ->
           return
 
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
@@ -222,47 +227,43 @@ describe 'Provider Manager', ->
         atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
         providerManager = new ProviderManager()
         testProvider1 =
-          requestHandler: (options) ->
+          getSuggestions: (options) ->
             [{
               text: 'ohai2',
               replacementPrefix: 'ohai2'
             }]
           selector: '.source.js'
           dispose: ->
-            return
 
         testProvider2 =
-          requestHandler: (options) ->
+          getSuggestions: (options) ->
             [{
               text: 'ohai2',
               replacementPrefix: 'ohai2'
             }]
           selector: '.source.js .variable.js'
-          blacklist: '.source.js .variable.js .comment2'
+          disableForSelector: '.source.js .variable.js .comment2'
           providerblacklist:
             'autocomplete-plus-fuzzyprovider': '.source.js .variable.js .comment3'
           dispose: ->
-            return
 
         testProvider3 =
-          requestHandler: (options) ->
+          getSuggestions: (options) ->
             [{
               text: 'ohai3',
               replacementPrefix: 'ohai3'
             }]
           selector: '*'
           dispose: ->
-            return
 
         testProvider4 =
-          requestHandler: (options) ->
+          getSuggestions: (options) ->
             [{
               text: 'ohai4',
               replacementPrefix: 'ohai4'
             }]
           selector: '.source.js .comment'
           dispose: ->
-            return
 
         registration1 = providerManager.registerProvider(testProvider1)
         registration2 = providerManager.registerProvider(testProvider2)

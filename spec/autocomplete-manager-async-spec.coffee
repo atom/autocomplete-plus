@@ -38,7 +38,7 @@ describe 'Async providers', ->
   describe 'when an async provider is registered', ->
     beforeEach ->
       testAsyncProvider =
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           return new Promise((resolve) ->
             setTimeout ->
               resolve(
@@ -67,7 +67,7 @@ describe 'Async providers', ->
     beforeEach ->
       testAsyncProvider =
         selector: '.source.js'
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           return new Promise((resolve) ->
             setTimeout ->
               resolve(

@@ -1,10 +1,12 @@
 {Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
 _ = require('underscore-plus')
-minimatch = require('minimatch')
 path = require('path')
 ProviderManager = require('./provider-manager')
 SuggestionList = require('./suggestion-list')
 SuggestionListElement = require('./suggestion-list-element')
+
+# Deferred requires
+minimatch = null
 
 module.exports =
 class AutocompleteManager
@@ -219,7 +221,9 @@ class AutocompleteManager
   # Returns {Boolean} that defines whether the current file is blacklisted
   isCurrentFileBlackListed: =>
     blacklist = atom.config.get('autocomplete-plus.fileBlacklist')?.map((s) -> s.trim())
-    return false unless blacklist? and blacklist.length
+    return false unless blacklist?.length > 0
+
+    minimatch ?= require('minimatch')
     fileName = path.basename(@buffer.getPath())
     for blacklistGlob in blacklist
       return true if minimatch(fileName, blacklistGlob)

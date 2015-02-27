@@ -159,7 +159,10 @@ class AutocompleteManager
             newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
             newSuggestion
 
-        suggestion.provider = provider for suggestion in providerSuggestions
+        # FIXME: Cycling through the suggestions again is not ideal :/
+        for suggestion in providerSuggestions
+          suggestion.replacementPrefix ?= options.prefix
+          suggestion.provider = provider
 
         providerSuggestions
 

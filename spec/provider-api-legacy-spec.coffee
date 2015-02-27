@@ -1,4 +1,5 @@
 {waitForAutocomplete, triggerAutocompletion} = require './spec-helper'
+grim = require 'grim'
 _ = require 'underscore-plus'
 
 describe 'Provider API Legacy', ->
@@ -32,6 +33,30 @@ describe 'Provider API Legacy', ->
     registration = null
     testProvider?.dispose() if testProvider?.dispose?
     testProvider = null
+
+  describe 'Provider with API v1.0 registered as 2.0', ->
+    it "raises deprecations", ->
+      numberDeprecations = grim.getDeprecationsLength()
+
+      testProvider =
+        id: 'omg'
+        selector: '.source.js,.source.coffee'
+        blacklist: '.comment'
+        requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      expect(grim.getDeprecationsLength() - numberDeprecations).toBe 3
+
+      deprecations = grim.getDeprecations()
+
+      deprecation = deprecations[deprecations.length - 3]
+      expect(deprecation.getMessage()).toContain '`id`'
+
+      deprecation = deprecations[deprecations.length - 2]
+      expect(deprecation.getMessage()).toContain '`requestHandler`'
+
+      deprecation = deprecations[deprecations.length - 1]
+      expect(deprecation.getMessage()).toContain '`blacklist`'
 
   describe 'Provider API v1.1.0', ->
     it 'registers the provider specified by {providers: [provider]}', ->

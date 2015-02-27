@@ -105,14 +105,34 @@ class ProviderManager
     @subscriptions.add(provider) if provider.dispose?
 
   removeProvider: (provider) =>
-    @providers.delete(provider)
-    @subscriptions.remove(provider) if provider.dispose?
+    @providers?.delete(provider)
+    @subscriptions?.remove(provider) if provider.dispose?
 
   registerProvider: (provider, apiVersion='2.0.0') =>
+    apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+
+    if apiIs20
+      if provider.id? and provider isnt @fuzzyProvider
+        grim ?= require 'grim'
+        grim.deprecate """
+          An `id` attribute on your provider is no longer necessary.
+          See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+        """
+      if provider.requestHandler?
+        grim ?= require 'grim'
+        grim.deprecate """
+          `requestHandler` has been renamed to `getSuggestions`.
+          See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+        """
+      if provider.blacklist?
+        grim ?= require 'grim'
+        grim.deprecate """
+          `blacklist` has been renamed to `disableForSelector`.
+          See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+        """
+
     return unless @isValidProvider(provider, apiVersion)
     return if @isProviderRegistered(provider)
-
-    apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
 
     # TODO API: Deprecate the 1.0 APIs
     selector = provider.selector

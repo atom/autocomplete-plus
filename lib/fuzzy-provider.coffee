@@ -16,7 +16,7 @@ class FuzzyProvider
     @buildWordList()
     @selector = '*'
     builtinProviderBlacklist = atom.config.get('autocomplete-plus.builtinProviderBlacklist')
-    @blacklist = builtinProviderBlacklist if builtinProviderBlacklist? and builtinProviderBlacklist.length
+    @disableForSelector = builtinProviderBlacklist if builtinProviderBlacklist? and builtinProviderBlacklist.length
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?

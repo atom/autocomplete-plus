@@ -15,7 +15,6 @@ describe 'Provider Manager', ->
         }]
       selector: '.source.js'
       dispose: ->
-        return
 
   afterEach ->
     registration?.dispose?()

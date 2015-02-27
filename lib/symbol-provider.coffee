@@ -157,7 +157,7 @@ class SymbolProvider
   getLocalityScore: (symbol, position) ->
     if symbol.bufferRows?
       rowDifference = Number.MAX_VALUE
-      rowDifference = Math.min(rowDifference, bufferRow - position.row) for bufferRow in symbol.bufferRows
+      rowDifference = (Math.min(rowDifference, bufferRow - position.row) for bufferRow in symbol.bufferRows)
       locality = @computeLocalityModifier(rowDifference)
       locality
     else
@@ -168,7 +168,7 @@ class SymbolProvider
     # Will be between 1 and ~2.75
     1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)
 
-  settingsForScopeDescriptor: (scopeDescriptor, keyPath) =>
+  settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     atom.config.getAll(keyPath, scope: scopeDescriptor)
 
   builtinCompletionsForCursorScope: =>

@@ -110,6 +110,8 @@ class ProviderManager
     @subscriptions?.remove(provider) if provider.dispose?
 
   registerProvider: (provider, apiVersion='2.0.0') =>
+    return unless provider?
+
     apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
 
     if apiIs20

@@ -140,10 +140,16 @@ class AutocompleteManager
           buffer: options.editor.getBuffer()
           cursor: options.editor.getLastCursor()
 
-      providerPromises.push Promise.resolve(getSuggestions(upgradedOptions)).then (providerSuggestions) ->
+      providerPromises.push Promise.resolve(getSuggestions(upgradedOptions)).then (providerSuggestions) =>
+        return unless providerSuggestions?
+
         # TODO API: remove upgrading when 1.0 support is removed
-        unless apiIs20
-          providerSuggestions = providerSuggestions?.map (suggestion) ->
+        hasDeprecations = false
+        if apiIs20 and providerSuggestions.length
+          hasDeprecations = @deprecateForSuggestion(provider, providerSuggestions[0])
+
+        if hasDeprecations or not apiIs20
+          providerSuggestions = providerSuggestions.map (suggestion) ->
             newSuggestion =
               text: suggestion.word
               snippet: suggestion.snippet
@@ -153,8 +159,7 @@ class AutocompleteManager
             newSuggestion.rightLabel = suggestion.label unless suggestion.renderLabelAsHtml
             newSuggestion
 
-        if providerSuggestions?
-          suggestion.provider = provider for suggestion in providerSuggestions
+        suggestion.provider = provider for suggestion in providerSuggestions
 
         providerSuggestions
 
@@ -171,6 +176,37 @@ class AutocompleteManager
       suggestions = suggestions.concat(providerSuggestions) if providerSuggestions?.length
       suggestions
     , []
+
+  deprecateForSuggestion: (provider, suggestion) ->
+    hasDeprecations = false
+    if suggestion.word?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `word` attribute.
+        The `word` attribute is now `text`.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.prefix?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `prefix` attribute.
+        The `prefix` attribute is now `replacementPrefix` and is optional.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.label?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `label` attribute.
+        The `label` attribute is now `rightLabel` or `rightLabelHTML`.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    hasDeprecations
 
   displaySuggestions: (suggestions, options) =>
     suggestions = _.uniq(suggestions, (s) -> s.text)

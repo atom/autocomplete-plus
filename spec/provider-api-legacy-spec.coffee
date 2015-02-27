@@ -39,7 +39,7 @@ describe 'Provider API Legacy', ->
       numberDeprecations = grim.getDeprecationsLength()
 
       class SampleProvider
-        id: 'omg'
+        id: 'sample-provider'
         selector: '.source.js,.source.coffee'
         blacklist: '.comment'
         requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
@@ -59,6 +59,36 @@ describe 'Provider API Legacy', ->
 
       deprecation = deprecations[deprecations.length - 1]
       expect(deprecation.getMessage()).toContain '`blacklist`'
+
+    it "raises deprecations when old API parameters are used in the 2.0 API", ->
+      class SampleProvider
+        selector: '.source.js,.source.coffee'
+        getSuggestions: (options) ->
+          [
+            word: 'ohai',
+            prefix: 'ohai',
+            label: '<span style="color: red">ohai</span>',
+            renderLabelAsHtml: true,
+            className: 'ohai'
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider)
+      numberDeprecations = grim.getDeprecationsLength()
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        expect(grim.getDeprecationsLength() - numberDeprecations).toBe 3
+
+        deprecations = grim.getDeprecations()
+
+        deprecation = deprecations[deprecations.length - 3]
+        expect(deprecation.getMessage()).toContain '`word`'
+        expect(deprecation.getMessage()).toContain 'SampleProvider'
+
+        deprecation = deprecations[deprecations.length - 2]
+        expect(deprecation.getMessage()).toContain '`prefix`'
+
+        deprecation = deprecations[deprecations.length - 1]
+        expect(deprecation.getMessage()).toContain '`label`'
 
   describe 'Provider API v1.1.0', ->
     it 'registers the provider specified by {providers: [provider]}', ->

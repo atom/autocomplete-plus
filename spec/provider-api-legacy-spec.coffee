@@ -35,15 +35,16 @@ describe 'Provider API Legacy', ->
     testProvider = null
 
   describe 'Provider with API v1.0 registered as 2.0', ->
-    it "raises deprecations", ->
+    it "raises deprecations for provider attributes on registration", ->
       numberDeprecations = grim.getDeprecationsLength()
 
-      testProvider =
+      class SampleProvider
         id: 'omg'
         selector: '.source.js,.source.coffee'
         blacklist: '.comment'
         requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider)
 
       expect(grim.getDeprecationsLength() - numberDeprecations).toBe 3
 
@@ -51,6 +52,7 @@ describe 'Provider API Legacy', ->
 
       deprecation = deprecations[deprecations.length - 3]
       expect(deprecation.getMessage()).toContain '`id`'
+      expect(deprecation.getMessage()).toContain 'SampleProvider'
 
       deprecation = deprecations[deprecations.length - 2]
       expect(deprecation.getMessage()).toContain '`requestHandler`'

@@ -338,4 +338,60 @@ describe 'Provider Manager', ->
       expect(providers[2]).toEqual fuzzyProvider
 
   describe "when inclusion priorities are used", ->
-    body
+    [accessoryProvider1, accessoryProvider2, verySpecificProvider, mainProvider, fuzzyProvider] = []
+
+    beforeEach ->
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
+      providerManager = new ProviderManager()
+      fuzzyProvider = providerManager.fuzzyProvider
+
+      accessoryProvider1 =
+        selector: '*'
+        inclusionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      accessoryProvider2 =
+        selector: '.source.js'
+        inclusionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      verySpecificProvider =
+        selector: '.source.js .comment'
+        inclusionPriority: 2
+        excludeLowerPriority: true
+        getSuggestions: (options) ->
+        dispose: ->
+
+      mainProvider =
+        selector: '.source.js'
+        inclusionPriority: 1
+        excludeLowerPriority: true
+        getSuggestions: (options) ->
+        dispose: ->
+
+      providerManager.registerProvider(accessoryProvider1)
+      providerManager.registerProvider(accessoryProvider2)
+      providerManager.registerProvider(verySpecificProvider)
+      providerManager.registerProvider(mainProvider)
+
+    it 'returns the default provider and higher when nothing with a higher proirity is excluding the lower', ->
+      providers = providerManager.providersForScopeDescriptor('.source.coffee')
+      expect(providers).toHaveLength 2
+      expect(providers[0]).toEqual accessoryProvider1
+      expect(providers[1]).toEqual fuzzyProvider
+
+    it 'exclude the lower priority provider, the default, when one with a higher proirity excludes the lower', ->
+      providers = providerManager.providersForScopeDescriptor('.source.js')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual mainProvider
+      expect(providers[1]).toEqual accessoryProvider2
+      expect(providers[2]).toEqual accessoryProvider1
+
+    it 'excludes the all lower priority providers when multiple providers of lower priority', ->
+      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual verySpecificProvider
+      expect(providers[1]).toEqual accessoryProvider2
+      expect(providers[2]).toEqual accessoryProvider1

@@ -14,6 +14,7 @@ class SymbolProvider
   changeUpdateDelay: 300
 
   selector: '*'
+  inclusionPriority: 0
 
   config: null
   defaultConfig:

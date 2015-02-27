@@ -53,7 +53,6 @@ class ProviderManager
 
     # TODO API: Remove this when 1.0 API is removed
     fuzzyProviderBlacklisted = _.chain(providers).filter((p) -> p.value.providerblacklisted? and p.value.providerblacklisted is 'autocomplete-plus-fuzzyprovider').map((p) -> p.value.provider).value() if @fuzzyProvider?
-    providers = _.without(providers, @fuzzyProvider) if fuzzyProviderBlacklisted? and fuzzyProviderBlacklisted.length and @fuzzyProvider?
 
     providers = _.chain(providers)
       .sortBy((p) -> -p.scopeSelector.length) # Sort by a bad proxy for 'specificity'
@@ -61,6 +60,7 @@ class ProviderManager
       .uniq()
       .difference(blacklistedProviders) # Exclude Blacklisted Providers
       .value()
+    providers = _.without(providers, @fuzzyProvider) if fuzzyProviderBlacklisted? and fuzzyProviderBlacklisted.length and @fuzzyProvider?
 
     lowestIncludedPriority = 0
     for provider in providers

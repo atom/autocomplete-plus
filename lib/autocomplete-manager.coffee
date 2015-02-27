@@ -151,12 +151,12 @@ class AutocompleteManager
         if hasDeprecations or not apiIs20
           providerSuggestions = providerSuggestions.map (suggestion) ->
             newSuggestion =
-              text: suggestion.word
+              text: suggestion.text ? suggestion.word
               snippet: suggestion.snippet
-              replacementPrefix: suggestion.prefix
+              replacementPrefix: suggestion.replacementPrefix ? suggestion.prefix
               className: suggestion.className
-            newSuggestion.rightLabelHTML = suggestion.label if suggestion.renderLabelAsHtml
-            newSuggestion.rightLabel = suggestion.label unless suggestion.renderLabelAsHtml
+            newSuggestion.rightLabelHTML = suggestion.label if not newSuggestion.rightLabelHTML? and suggestion.renderLabelAsHtml
+            newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
             newSuggestion
 
         suggestion.provider = provider for suggestion in providerSuggestions
@@ -204,6 +204,24 @@ class AutocompleteManager
         Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
         returns suggestions with a `label` attribute.
         The `label` attribute is now `rightLabel` or `rightLabelHTML`.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.onWillConfirm?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `onWillConfirm` callback.
+        The `onWillConfirm` callback is no longer supported.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.onDidConfirm?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `onDidConfirm` callback.
+        The `onDidConfirm` callback is now a `onDidInsertSuggestion` callback on the provider itself.
         See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
       """
     hasDeprecations

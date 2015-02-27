@@ -90,6 +90,32 @@ describe 'Provider API Legacy', ->
         deprecation = deprecations[deprecations.length - 1]
         expect(deprecation.getMessage()).toContain '`label`'
 
+    it "raises deprecations when hooks are passed via each suggestion", ->
+      class SampleProvider
+        selector: '.source.js,.source.coffee'
+        getSuggestions: (options) ->
+          [
+            text: 'ohai',
+            replacementPrefix: 'ohai'
+            onWillConfirm: ->
+            onDidConfirm: ->
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider)
+      numberDeprecations = grim.getDeprecationsLength()
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        expect(grim.getDeprecationsLength() - numberDeprecations).toBe 2
+
+        deprecations = grim.getDeprecations()
+
+        deprecation = deprecations[deprecations.length - 2]
+        expect(deprecation.getMessage()).toContain '`onWillConfirm`'
+        expect(deprecation.getMessage()).toContain 'SampleProvider'
+
+        deprecation = deprecations[deprecations.length - 1]
+        expect(deprecation.getMessage()).toContain '`onDidConfirm`'
+
   describe 'Provider API v1.1.0', ->
     it 'registers the provider specified by {providers: [provider]}', ->
       expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)

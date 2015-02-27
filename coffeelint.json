@@ -14,19 +14,18 @@
   "no_debugger": {
     "level": "error"
   },
-
   "colon_assignment_spacing": {
-      "level": "error",
-      "spacing": {
-          "left": 0,
-          "right": 1
-      }
+    "level": "error",
+    "spacing": {
+      "left": 0,
+      "right": 1
+    }
   },
   "indentation": {
-      "value": 2,
-      "level": "error"
+    "value": 2,
+    "level": "error"
   },
   "no_interpolation_in_single_quotes": {
-      "level": "warn"
+    "level": "warn"
   }
 }

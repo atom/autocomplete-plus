@@ -268,7 +268,8 @@ class AutocompleteManager
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
+    # new text can have a length of 2 because of bracket-matcher: (), [], {}, etc.
+    wouldAutoActivate = newText.length in [1..2] or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.length in [1..2])
 
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()

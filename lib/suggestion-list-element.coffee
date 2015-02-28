@@ -89,7 +89,7 @@ class SuggestionListElement extends HTMLElement
 
   # Private: Confirms the currently selected item or cancels the list view
   # if no item has been selected
-  confirmSelection: (keystroke)->
+  confirmSelection: (keystroke) ->
     return unless @model.isActive()
     item = @getSelectedItem()
     if item?

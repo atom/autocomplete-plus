@@ -29,7 +29,7 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.add(@model.onDidConfirmSelection(@confirmSelection.bind(this)))
     @subscriptions.add(@model.onDidDispose(@dispose.bind(this)))
     @subscriptions.add atom.keymap.onDidFailToMatchBinding ({keystrokes, keyboardEventTarget}) =>
-      if atom.config.get('autocomplete-plus.typingConfirmsSelection') and not _.contains(["cmd", "alt", "shift", "ctrl"], keystrokes)
+      if atom.config.get('autocomplete-plus.typingConfirmsSelection') and not (keystrokes in ["cmd", "alt", "shift", "ctrl"])
         unless @selectedIndex is -1
           @confirmSelection(keystrokes)
     this

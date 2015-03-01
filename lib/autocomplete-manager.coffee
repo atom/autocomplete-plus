@@ -268,7 +268,14 @@ class AutocompleteManager
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1)
+    editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
+    vimModeActive = editorElement?.classList?.contains('vim-mode')
+
+    if vimModeActive
+      vimInsertModeActive = editorElement?.classList?.contains('insert-mode')
+
+    wouldAutoActivate = (!vimModeActive or vimInsertModeActive) and
+    (newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1))
 
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()

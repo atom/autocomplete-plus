@@ -86,19 +86,25 @@ module.exports =
       type: 'boolean'
       default: true
       order: 13
+    typingConfirmsSelection:
+      title: 'Confirm Selection By Typing'
+      description: 'If enabled, typing a key that doesn\'t match any binding will confirm your selection in case you made any. Nothing will be selected by default. If disabled, you\'ll just continue typing.'
+      type: 'boolean'
+      default: false
+      order: 14
     suggestionListFollows:
       title: 'Suggestions List Follows'
       description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appers at the beginning of the word that\'s being completed.'
       type: 'string'
       default: 'Cursor'
       enum: ['Cursor', 'Word']
-      order: 14
+      order: 15
     defaultProvider:
       description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
       type: 'string'
       default: 'Fuzzy'
       enum: ['Fuzzy', 'Symbol']
-      order: 15
+      order: 16
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

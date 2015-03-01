@@ -12,6 +12,7 @@ module.exports =
 class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
+  typingConfirmsSelection: false
   buffer: null
   compositionInProgress: false
   disposed: false
@@ -161,7 +162,7 @@ class AutocompleteManager
   # Private: Gets called when the user successfully confirms a suggestion
   #
   # match - An {Object} representing the confirmed suggestion
-  confirm: (match) =>
+  confirm: (match, keystroke) =>
     return unless @editor? and match? and not @disposed
 
     match.onWillConfirm?()
@@ -179,6 +180,7 @@ class AutocompleteManager
       , 1
 
     match.onDidConfirm?()
+    @editor.insertText(keystroke) if keystroke?
 
   showSuggestionList: (suggestions) ->
     return if @disposed

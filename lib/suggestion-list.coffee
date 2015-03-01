@@ -46,8 +46,8 @@ class SuggestionList
   onDidConfirmSelection: (fn) ->
     @emitter.on('did-confirm-selection', fn)
 
-  confirm: (match) =>
-    @emitter.emit('did-confirm', match)
+  confirm: (match, keystroke) =>
+    @emitter.emit('did-confirm', match, keystroke)
 
   onDidConfirm: (fn) ->
     @emitter.on('did-confirm', fn)

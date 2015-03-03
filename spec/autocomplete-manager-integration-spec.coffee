@@ -102,7 +102,7 @@ describe 'Autocomplete Manager', ->
 
     describe "when the matched prefix is highlighted", ->
       it 'highlights the prefix of the word in the suggestion list', ->
-        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
           [{text: 'items', replacementPrefix: prefix}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -126,7 +126,7 @@ describe 'Autocomplete Manager', ->
           expect(word.childNodes[4].nodeType).toBe NodeTypeText
 
       it 'highlights repeated characters in the prefix', ->
-        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
           [{text: 'apply', replacementPrefix: prefix}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -151,7 +151,7 @@ describe 'Autocomplete Manager', ->
 
       describe "when the prefix does not match the word", ->
         it "does not render any character-match spans", ->
-          spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+          spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
             [{text: 'omgnope', replacementPrefix: prefix}]
 
           editor.moveToBottom()

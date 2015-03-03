@@ -140,7 +140,10 @@ class SuggestionListElement extends HTMLElement
           wordIndex += 1
         break if wordIndex >= replacement.length
         preChar = replacement.substring(lastWordIndex, wordIndex)
-        highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
+        highlightedChar = if replacement[wordIndex]?
+          "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
+        else
+          ""
         displayHtml = "#{displayHtml}#{preChar}#{highlightedChar}"
         wordIndex += 1
         lastWordIndex = wordIndex

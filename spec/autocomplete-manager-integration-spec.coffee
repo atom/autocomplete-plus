@@ -87,6 +87,76 @@ describe 'Autocomplete Manager', ->
             expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
             expect(editor.getSelectedText()).toBe 'something'
 
+    describe "when the matched prefix is highlighted", ->
+      it 'highlights the prefix of the word in the suggestion list', ->
+        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+          [{word: 'items', prefix}]
+
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        editor.moveToBottom()
+        editor.insertText('i')
+        editor.insertText('e')
+        editor.insertText('m')
+
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          word = editorView.querySelector('.autocomplete-plus li span.word')
+          expect(word.childNodes).toHaveLength 5
+          expect(word.childNodes[0]).toHaveClass 'character-match'
+          expect(word.childNodes[1].nodeType).toBe NodeTypeText
+          expect(word.childNodes[2]).toHaveClass 'character-match'
+          expect(word.childNodes[3]).toHaveClass 'character-match'
+          expect(word.childNodes[4].nodeType).toBe NodeTypeText
+
+      it 'highlights repeated characters in the prefix', ->
+        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+          [{word: 'apply', prefix}]
+
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        editor.moveToBottom()
+        editor.insertText('a')
+        editor.insertText('p')
+        editor.insertText('p')
+
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          word = editorView.querySelector('.autocomplete-plus li span.word')
+          expect(word.childNodes).toHaveLength 4
+          expect(word.childNodes[0]).toHaveClass 'character-match'
+          expect(word.childNodes[1]).toHaveClass 'character-match'
+          expect(word.childNodes[2]).toHaveClass 'character-match'
+          expect(word.childNodes[3].nodeType).toBe 3 # text
+          expect(word.childNodes[3].textContent).toBe 'ly'
+
+      describe "when the prefix does not match the word", ->
+        it "does not render any character-match spans", ->
+          spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+            [{word: 'omgnope', prefix}]
+
+          editor.moveToBottom()
+          editor.insertText('x')
+          editor.insertText('y')
+          editor.insertText('z')
+
+          waitForAutocomplete()
+
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+            characterMatches = editorView.querySelectorAll('.autocomplete-plus li span.word .character-match')
+            text = editorView.querySelector('.autocomplete-plus li span.word').textContent
+            console.log characterMatches
+            expect(characterMatches).toHaveLength 0
+            expect(text).toBe 'omgnope'
+
   describe 'when opening a file without a path', ->
     beforeEach ->
       waitsForPromise ->
@@ -324,49 +394,6 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-    describe "when the matched prefix is highlighted", ->
-      it 'highlights the prefix of the word in the suggestion list', ->
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-        editor.moveToBottom()
-        editor.insertText('i')
-        editor.insertText('e')
-        editor.insertText('m')
-
-        waitForAutocomplete()
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
-
-          word = editorView.querySelector('.autocomplete-plus li span.word')
-          expect(word.childNodes).toHaveLength 5
-          expect(word.childNodes[0]).toHaveClass 'character-match'
-          expect(word.childNodes[1].nodeType).toBe NodeTypeText
-          expect(word.childNodes[2]).toHaveClass 'character-match'
-          expect(word.childNodes[3]).toHaveClass 'character-match'
-          expect(word.childNodes[4].nodeType).toBe NodeTypeText
-
-      it 'highlights repeated characters in the prefix', ->
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-        editor.moveToBottom()
-        editor.insertText('a')
-        editor.insertText('p')
-        editor.insertText('p')
-
-        waitForAutocomplete()
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
-
-          word = editorView.querySelector('.autocomplete-plus li span.word')
-          expect(word.childNodes).toHaveLength 4
-          expect(word.childNodes[0]).toHaveClass 'character-match'
-          expect(word.childNodes[1]).toHaveClass 'character-match'
-          expect(word.childNodes[2]).toHaveClass 'character-match'
-          expect(word.childNodes[3].nodeType).toBe 3 # text
-          expect(word.childNodes[3].textContent).toBe 'ly'
 
     describe 'accepting suggestions', ->
       it 'hides the suggestions list when a suggestion is confirmed', ->

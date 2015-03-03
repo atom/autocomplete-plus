@@ -1,6 +1,6 @@
-_ = require('underscore-plus')
-fuzzaldrin = require('fuzzaldrin')
-{TextEditor, CompositeDisposable}  = require('atom')
+_ = require 'underscore-plus'
+fuzzaldrin = require 'fuzzaldrin'
+{TextEditor, CompositeDisposable}  = require 'atom'
 
 module.exports =
 class FuzzyProvider
@@ -9,14 +9,16 @@ class FuzzyProvider
   editor: null
   buffer: null
 
+  selector: '*'
+  inclusionPriority: 0
+  id: 'autocomplete-plus-fuzzyprovider'
+
   constructor: ->
-    @id = 'autocomplete-plus-fuzzyprovider'
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @buildWordList()
-    @selector = '*'
     builtinProviderBlacklist = atom.config.get('autocomplete-plus.builtinProviderBlacklist')
-    @blacklist = builtinProviderBlacklist if builtinProviderBlacklist? and builtinProviderBlacklist.length
+    @disableForSelector = builtinProviderBlacklist if builtinProviderBlacklist? and builtinProviderBlacklist.length
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -50,11 +52,8 @@ class FuzzyProvider
   # suggestions, the suggestions will be the only ones that are displayed.
   #
   # Returns an {Array} of Suggestion instances
-  requestHandler: (options) =>
-    return unless options?
-    return unless options.editor?
-    selection = options.editor.getLastSelection()
-    prefix = options.prefix
+  getSuggestions: ({editor, prefix}) =>
+    return unless editor?
 
     # No prefix? Don't autocomplete!
     return unless prefix.length
@@ -157,7 +156,7 @@ class FuzzyProvider
         fuzzaldrin.filter(wordList, prefix)
 
     results = for word in words when word isnt prefix
-      {word: word, prefix: prefix}
+      {text: word, replacementPrefix: prefix}
 
     return results
 

@@ -1,12 +1,15 @@
-{Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
-_ = require('underscore-plus')
-path = require('path')
-ProviderManager = require('./provider-manager')
-SuggestionList = require('./suggestion-list')
-SuggestionListElement = require('./suggestion-list-element')
+{Range, TextEditor, CompositeDisposable, Disposable}  = require 'atom'
+_ = require 'underscore-plus'
+path = require 'path'
+semver = require 'semver'
+
+ProviderManager = require './provider-manager'
+SuggestionList = require './suggestion-list'
+SuggestionListElement = require './suggestion-list-element'
 
 # Deferred requires
 minimatch = null
+grim = null
 
 module.exports =
 class AutocompleteManager
@@ -110,26 +113,60 @@ class AutocompleteManager
     return if @isCurrentFileBlackListed()
     cursor = @editor.getLastCursor()
     return unless cursor?
-    cursorPosition = cursor.getBufferPosition()
-    currentScope = cursor.getScopeDescriptor()
-    return unless currentScope?
-    currentScopeChain = currentScope.getScopeChain()
-    return unless currentScopeChain?
 
-    options =
-      editor: @editor
-      buffer: @buffer
-      cursor: cursor
-      position: cursorPosition
-      scope: currentScope
-      scopeChain: currentScopeChain
-      prefix: @prefixForCursor(cursor)
+    bufferPosition = cursor.getBufferPosition()
+    scopeDescriptor = cursor.getScopeDescriptor()
+    prefix = @prefixForCursor(cursor)
 
-    @getSuggestionsFromProviders(options)
+    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix})
 
   getSuggestionsFromProviders: (options) =>
-    providers = @providerManager.providersForScopeChain(options.scopeChain)
-    providerPromises = providers?.map((provider) -> provider?.requestHandler(options))
+    providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)
+
+    providerPromises = []
+    providers.forEach (provider) =>
+      apiVersion = @providerManager.apiVersionForProvider(provider)
+      apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+
+      # TODO API: remove upgrading when 1.0 support is removed
+      if apiIs20
+        getSuggestions = provider.getSuggestions.bind(provider)
+        upgradedOptions = options
+      else
+        getSuggestions = provider.requestHandler.bind(provider)
+        upgradedOptions = _.extend {}, options,
+          position: options.bufferPosition
+          scope: options.scopeDescriptor
+          scopeChain: options.scopeDescriptor.getScopeChain()
+          buffer: options.editor.getBuffer()
+          cursor: options.editor.getLastCursor()
+
+      providerPromises.push Promise.resolve(getSuggestions(upgradedOptions)).then (providerSuggestions) =>
+        return unless providerSuggestions?
+
+        # TODO API: remove upgrading when 1.0 support is removed
+        hasDeprecations = false
+        if apiIs20 and providerSuggestions.length
+          hasDeprecations = @deprecateForSuggestion(provider, providerSuggestions[0])
+
+        if hasDeprecations or not apiIs20
+          providerSuggestions = providerSuggestions.map (suggestion) ->
+            newSuggestion =
+              text: suggestion.text ? suggestion.word
+              snippet: suggestion.snippet
+              replacementPrefix: suggestion.replacementPrefix ? suggestion.prefix
+              className: suggestion.className
+            newSuggestion.rightLabelHTML = suggestion.label if not newSuggestion.rightLabelHTML? and suggestion.renderLabelAsHtml
+            newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
+            newSuggestion
+
+        # FIXME: Cycling through the suggestions again is not ideal :/
+        for suggestion in providerSuggestions
+          suggestion.replacementPrefix ?= options.prefix
+          suggestion.provider = provider
+
+        providerSuggestions
+
     return unless providerPromises?.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
       .then(@mergeSuggestionsFromProviders)
@@ -144,8 +181,57 @@ class AutocompleteManager
       suggestions
     , []
 
+  deprecateForSuggestion: (provider, suggestion) ->
+    hasDeprecations = false
+    if suggestion.word?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `word` attribute.
+        The `word` attribute is now `text`.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.prefix?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `prefix` attribute.
+        The `prefix` attribute is now `replacementPrefix` and is optional.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.label?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `label` attribute.
+        The `label` attribute is now `rightLabel` or `rightLabelHTML`.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.onWillConfirm?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `onWillConfirm` callback.
+        The `onWillConfirm` callback is no longer supported.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.onDidConfirm?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `onDidConfirm` callback.
+        The `onDidConfirm` callback is now a `onDidInsertSuggestion` callback on the provider itself.
+        See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+      """
+    hasDeprecations
+
   displaySuggestions: (suggestions, options) =>
-    suggestions = _.uniq(suggestions, (s) -> s.word)
+    suggestions = _.uniq(suggestions, (s) -> s.text)
     if @shouldDisplaySuggestions and suggestions.length
       @showSuggestionList(suggestions)
     else
@@ -161,24 +247,33 @@ class AutocompleteManager
   # Private: Gets called when the user successfully confirms a suggestion
   #
   # match - An {Object} representing the confirmed suggestion
-  confirm: (match) =>
-    return unless @editor? and match? and not @disposed
+  confirm: (suggestion) =>
+    return unless @editor? and suggestion? and not @disposed
 
-    match.onWillConfirm?()
+    apiVersion = @providerManager.apiVersionForProvider(suggestion.provider)
+    apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+    triggerPosition = @editor.getLastCursor().getBufferPosition()
+
+    # TODO API: Remove as this is no longer used
+    suggestion.onWillConfirm?()
 
     @editor.getSelections()?.forEach((selection) -> selection?.clear())
     @hideSuggestionList()
 
-    @replaceTextWithMatch(match)
+    @replaceTextWithMatch(suggestion)
 
     # FIXME: move this to the snippet provider's onDidInsertSuggestion() method
     # when the API has been updated.
-    if match.isSnippet
+    if suggestion.isSnippet
       setTimeout =>
         atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
       , 1
 
-    match.onDidConfirm?()
+    # TODO API: Remove when we remove the 1.0 API
+    if apiIs20
+      suggestion.provider.onDidInsertSuggestion?({@editor, suggestion, triggerPosition})
+    else
+      suggestion.onDidConfirm?()
 
   showSuggestionList: (suggestions) ->
     return if @disposed
@@ -207,14 +302,14 @@ class AutocompleteManager
     selections = @editor.getSelections()
     return unless selections?
     @editor.transact =>
-      if match.prefix?.length > 0
-        @editor.selectLeft(match.prefix.length)
+      if match.replacementPrefix?.length > 0
+        @editor.selectLeft(match.replacementPrefix.length)
         @editor.delete()
 
       if match.snippet? and @snippetsManager?
         @snippetsManager.insertSnippet(match.snippet, @editor)
       else
-        @editor.insertText(match.word ? match.snippet)
+        @editor.insertText(match.text ? match.snippet)
 
   # Private: Checks whether the current file is blacklisted.
   #

@@ -1,4 +1,4 @@
-{waitForAutocomplete} = require('./spec-helper')
+{waitForAutocomplete} = require './spec-helper'
 describe 'Async providers', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, registration] = []
 
@@ -38,20 +38,20 @@ describe 'Async providers', ->
   describe 'when an async provider is registered', ->
     beforeEach ->
       testAsyncProvider =
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           return new Promise((resolve) ->
             setTimeout ->
               resolve(
                 [{
-                  word: 'asyncProvided',
-                  prefix: 'asyncProvided',
-                  label: 'asyncProvided'
+                  text: 'asyncProvided',
+                  replacementPrefix: 'asyncProvided',
+                  rightLabel: 'asyncProvided'
                 }]
               )
             , 10
             )
         selector: '.source.js'
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testAsyncProvider)
 
     it 'should provide completions when a provider returns a promise that results in an array of suggestions', ->
       editor.moveToBottom()
@@ -67,19 +67,19 @@ describe 'Async providers', ->
     beforeEach ->
       testAsyncProvider =
         selector: '.source.js'
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           return new Promise((resolve) ->
             setTimeout ->
               resolve(
                 [{
-                  word: 'asyncProvided',
-                  prefix: 'asyncProvided',
-                  label: 'asyncProvided'
+                  text: 'asyncProvided',
+                  replacementPrefix: 'asyncProvided',
+                  rightLabel: 'asyncProvided'
                 }]
               )
             , 1000
             )
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testAsyncProvider)
 
     it 'does not show the suggestion list when it is triggered then no longer needed', ->
       runs ->

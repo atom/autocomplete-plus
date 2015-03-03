@@ -8,13 +8,13 @@
     "atom": ">=0.183.0 <2.0.0"
   },
   "dependencies": {
-    "async": ">=0.9.0",
-    "fuzzaldrin": ">=1.0.0",
-    "minimatch": ">=0.2.14",
-    "node-uuid": ">=1.4.1",
-    "scoped-property-store": ">=0.16.2",
+    "fuzzaldrin": "^2.1.0",
+    "grim": "^1.2.0",
+    "minimatch": "^2.0.1",
+    "scoped-property-store": "^0.16.2",
     "selector-kit": "^0.1",
-    "underscore-plus": ">=1.0.0"
+    "semver": "^4.3.1",
+    "underscore-plus": "^1.6.6"
   },
   "devDependencies": {
     "coffeelint": ">=1.8.1",
@@ -24,8 +24,9 @@
   "consumedServices": {
     "autocomplete.provider": {
       "versions": {
-        "1.0.0": "consumeProvider",
-        "1.1.0": "consumeProviders"
+        "1.0.0": "consumeProviderLegacy",
+        "1.1.0": "consumeProvidersLegacy",
+        "2.0.0": "consumeProvider"
       }
     },
     "snippets": {

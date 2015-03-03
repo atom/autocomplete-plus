@@ -1,15 +1,15 @@
 {Point} = require 'atom'
-{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require('./spec-helper')
-_ = require('underscore-plus')
+{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
+_ = require 'underscore-plus'
 
 indexOfWord = (suggestionList, word) ->
   for suggestion, i in suggestionList
-    return i if suggestion.word is word
+    return i if suggestion.text is word
   -1
 
 suggestionForWord = (suggestionList, word) ->
   for suggestion in suggestionList
-    return suggestion if suggestion.word is word
+    return suggestion if suggestion.text is word
   null
 
 describe 'SymbolProvider', ->
@@ -65,7 +65,7 @@ describe 'SymbolProvider', ->
       provider = autocompleteManager.providerManager.fuzzyProvider
       results = null
       waitsForPromise ->
-        promise = provider.requestHandler({editor, prefix: 'item', position: new Point(7, 0)})
+        promise = provider.getSuggestions({editor, prefix: 'item', bufferPosition: new Point(7, 0)})
         advanceClock 1
         promise.then (r) -> results = r
 
@@ -125,7 +125,7 @@ describe 'SymbolProvider', ->
         provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
-          promise = provider.requestHandler({editor, prefix: 'qu', position: new Point(7, 0)})
+          promise = provider.getSuggestions({editor, prefix: 'qu', bufferPosition: new Point(7, 0)})
           advanceClock 1
           promise.then (r) -> results = r
 
@@ -136,12 +136,12 @@ describe 'SymbolProvider', ->
         provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
-          promise = provider.requestHandler({editor, prefix: 'item', position: new Point(7, 0)})
+          promise = provider.getSuggestions({editor, prefix: 'item', bufferPosition: new Point(7, 0)})
           advanceClock 1
           promise.then (r) -> results = r
 
         runs ->
-          expect(results[0].word).toBe 'items'
+          expect(results[0].text).toBe 'items'
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->

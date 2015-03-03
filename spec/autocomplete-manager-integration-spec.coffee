@@ -1,6 +1,6 @@
-{triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require('./spec-helper')
-_ = require('underscore-plus')
-{KeymapManager} = require('atom')
+{triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
+_ = require 'underscore-plus'
+{KeymapManager} = require 'atom'
 
 NodeTypeText = 3
 
@@ -24,13 +24,6 @@ describe 'Autocomplete Manager', ->
       atom.config.set('autocomplete-plus.maxVisibleSuggestions', 10)
 
   describe "when an external provider is registered", ->
-    class SpecialProvider
-      id: 'my-some-provider'
-      selector: '*'
-      requestHandler: ({prefix}) ->
-        list = ['a', 'ab', 'abc', 'abcd', 'abcde']
-        ({word, prefix} for word in list)
-
     [provider] = []
 
     beforeEach ->
@@ -44,8 +37,28 @@ describe 'Autocomplete Manager', ->
         ]
 
       runs ->
-        provider = new SpecialProvider
-        mainModule.consumeProvider({provider})
+        provider =
+          selector: '*'
+          getSuggestions: ({prefix}) ->
+            list = ['a', 'ab', 'abc', 'abcd', 'abcde']
+            ({text, replacementPrefix: prefix} for text in list)
+        mainModule.consumeProvider(provider)
+
+    it "calls the provider's onDidInsertSuggestion method when it exists", ->
+      provider.onDidInsertSuggestion = jasmine.createSpy()
+
+      triggerAutocompletion(editor, true, 'a')
+
+      runs ->
+        suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+        expect(provider.onDidInsertSuggestion).toHaveBeenCalled()
+
+        {editor, triggerPosition, suggestion} = provider.onDidInsertSuggestion.mostRecentCall.args[0]
+        expect(editor).toBe editor
+        expect(triggerPosition).toEqual [0, 1]
+        expect(suggestion.text).toBe 'a'
 
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
@@ -61,9 +74,9 @@ describe 'Autocomplete Manager', ->
 
     describe "when match.snippet is used", ->
       beforeEach ->
-        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
           list = ['method(${1:something})']
-          ({snippet, prefix} for snippet in list)
+          ({snippet, replacementPrefix: prefix} for snippet in list)
 
       describe "when the snippets package is enabled", ->
         beforeEach ->
@@ -89,8 +102,8 @@ describe 'Autocomplete Manager', ->
 
     describe "when the matched prefix is highlighted", ->
       it 'highlights the prefix of the word in the suggestion list', ->
-        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
-          [{word: 'items', prefix}]
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+          [{text: 'items', replacementPrefix: prefix}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -113,8 +126,8 @@ describe 'Autocomplete Manager', ->
           expect(word.childNodes[4].nodeType).toBe NodeTypeText
 
       it 'highlights repeated characters in the prefix', ->
-        spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
-          [{word: 'apply', prefix}]
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+          [{text: 'apply', replacementPrefix: prefix}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -138,8 +151,8 @@ describe 'Autocomplete Manager', ->
 
       describe "when the prefix does not match the word", ->
         it "does not render any character-match spans", ->
-          spyOn(provider, 'requestHandler').andCallFake ({prefix}) ->
-            [{word: 'omgnope', prefix}]
+          spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+            [{text: 'omgnope', replacementPrefix: prefix}]
 
           editor.moveToBottom()
           editor.insertText('x')
@@ -156,6 +169,23 @@ describe 'Autocomplete Manager', ->
             console.log characterMatches
             expect(characterMatches).toHaveLength 0
             expect(text).toBe 'omgnope'
+
+    describe "when a replacementPrefix is not specified", ->
+      beforeEach ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [text: 'something']
+
+      it "replaces with the default input prefix", ->
+        editor.insertText('abc')
+        triggerAutocompletion(editor, false, 'm')
+
+        expect(editor.getText()).toBe 'abcm'
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+          expect(editor.getText()).toBe 'something'
 
   describe 'when opening a file without a path', ->
     beforeEach ->
@@ -708,7 +738,7 @@ describe 'Autocomplete Manager', ->
   #     atom.config.set('autocomplete-plus.enableAutoActivation', false)
   #   beforeEach ->
   #     testProvider =
-  #       requestHandler: (options) ->
+  #       getSuggestions: (options) ->
   #         [{
   #           word: 'ohai',
   #           prefix: ''

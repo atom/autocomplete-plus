@@ -1,4 +1,4 @@
-{Emitter, CompositeDisposable} = require('atom')
+{Emitter, CompositeDisposable} = require 'atom'
 
 module.exports =
 class SuggestionList

@@ -1,4 +1,4 @@
-{waitForAutocomplete} = require('./spec-helper')
+{waitForAutocomplete} = require './spec-helper'
 
 describe 'CSS Language Support', ->
   [completionDelay, editorView, editor, autocompleteManager, mainModule, css] = []

@@ -66,7 +66,7 @@ describe 'Provider API', ->
       runs ->
         args = testProvider.getSuggestions.mostRecentCall.args[0]
         expect(args.editor).toBeDefined()
-        expect(args.position).toBeDefined()
+        expect(args.bufferPosition).toBeDefined()
         expect(args.scopeDescriptor).toBeDefined()
         expect(args.prefix).toBeDefined()
 

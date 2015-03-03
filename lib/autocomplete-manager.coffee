@@ -114,11 +114,11 @@ class AutocompleteManager
     cursor = @editor.getLastCursor()
     return unless cursor?
 
-    position = cursor.getBufferPosition()
+    bufferPosition = cursor.getBufferPosition()
     scopeDescriptor = cursor.getScopeDescriptor()
     prefix = @prefixForCursor(cursor)
 
-    @getSuggestionsFromProviders({@editor, position, scopeDescriptor, prefix})
+    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix})
 
   getSuggestionsFromProviders: (options) =>
     providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)
@@ -135,6 +135,7 @@ class AutocompleteManager
       else
         getSuggestions = provider.requestHandler.bind(provider)
         upgradedOptions = _.extend {}, options,
+          position: options.bufferPosition
           scope: options.scopeDescriptor
           scopeChain: options.scopeDescriptor.getScopeChain()
           buffer: options.editor.getBuffer()

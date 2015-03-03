@@ -125,13 +125,13 @@ class SymbolProvider
 
     return words
 
-  fuzzyFilter: (symbolList, {position, prefix}) ->
+  fuzzyFilter: (symbolList, {bufferPosition, prefix}) ->
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
       continue unless prefix[0].toLowerCase() is symbol.text[0].toLowerCase() # must match the first char!
       score = fuzzaldrin.score(symbol.text, prefix)
-      score *= @getLocalityScore(symbol, position) if symbol.path is @editor.getPath()
+      score *= @getLocalityScore(symbol, bufferPosition) if symbol.path is @editor.getPath()
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
     candidates.sort(@symbolSortReverseIterator)
@@ -149,10 +149,10 @@ class SymbolProvider
 
   symbolSortReverseIterator: (a, b) -> b.score - a.score
 
-  getLocalityScore: (symbol, position) ->
+  getLocalityScore: (symbol, bufferPosition) ->
     if symbol.bufferRows?
       rowDifference = Number.MAX_VALUE
-      rowDifference = Math.min(rowDifference, bufferRow - position.row) for bufferRow in symbol.bufferRows
+      rowDifference = Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in symbol.bufferRows
       locality = @computeLocalityModifier(rowDifference)
       locality
     else

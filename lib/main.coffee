@@ -104,7 +104,7 @@ module.exports =
   activate: ->
     # Upgrade to the new config key name
     oldMax = atom.config.get('autocomplete-plus.maxSuggestions')
-    if oldMax isnt 10
+    if oldMax? and oldMax isnt 10
       atom.config.transact ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', oldMax)
         atom.config.unset('autocomplete-plus.maxSuggestions')

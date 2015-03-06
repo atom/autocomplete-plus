@@ -8,6 +8,7 @@
     "atom": ">=0.183.0 <2.0.0"
   },
   "dependencies": {
+    "clear-cut": "^0.4.0",
     "fuzzaldrin": "^2.1.0",
     "grim": "^1.2.0",
     "minimatch": "^2.0.1",

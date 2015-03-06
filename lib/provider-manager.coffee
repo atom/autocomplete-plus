@@ -2,6 +2,7 @@
 ScopedPropertyStore = require 'scoped-property-store'
 _ = require 'underscore-plus'
 semver = require 'semver'
+{specificity} = require 'clear-cut'
 
 # Deferred requires
 SymbolProvider = null
@@ -55,7 +56,7 @@ class ProviderManager
     fuzzyProviderBlacklisted = _.chain(providers).filter((p) -> p.value.providerblacklisted? and p.value.providerblacklisted is 'autocomplete-plus-fuzzyprovider').map((p) -> p.value.provider).value() if @fuzzyProvider?
 
     providers = _.chain(providers)
-      .sortBy((p) -> -p.scopeSelector.length) # Sort by a bad proxy for 'specificity'
+      .sortBy((p) -> -specificity(p.scopeSelector))
       .map((p) -> p.value.provider)
       .uniq()
       .difference(blacklistedProviders) # Exclude Blacklisted Providers

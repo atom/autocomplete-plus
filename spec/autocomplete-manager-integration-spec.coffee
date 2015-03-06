@@ -75,7 +75,7 @@ describe 'Autocomplete Manager', ->
     describe "when match.snippet is used", ->
       beforeEach ->
         spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
-          list = ['method(${1:something})']
+          list = ['method(${1:something})', 'method2(${1:something})', 'method3(${1:something})']
           ({snippet, replacementPrefix: prefix} for snippet in list)
 
       describe "when the snippets package is enabled", ->
@@ -90,6 +90,9 @@ describe 'Autocomplete Manager', ->
             wordElement = editorView.querySelector('.autocomplete-plus span.word')
             expect(wordElement.textContent).toBe 'method(something)'
             expect(wordElement.querySelector('.snippet-completion').textContent).toBe 'something'
+
+            wordElements = editorView.querySelectorAll('.autocomplete-plus span.word')
+            expect(wordElements).toHaveLength 3
 
         it "accepts the snippet when autocomplete-plus:confirm is triggered", ->
           triggerAutocompletion(editor, true, 'm')

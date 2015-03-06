@@ -231,7 +231,7 @@ class AutocompleteManager
     hasDeprecations
 
   displaySuggestions: (suggestions, options) =>
-    suggestions = _.uniq(suggestions, (s) -> s.text)
+    suggestions = _.uniq(suggestions, (s) -> s.text + s.snippet)
     if @shouldDisplaySuggestions and suggestions.length
       @showSuggestionList(suggestions)
     else

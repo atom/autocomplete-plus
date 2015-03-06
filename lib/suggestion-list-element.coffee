@@ -4,6 +4,8 @@ _ = require 'underscore-plus'
 class SuggestionListElement extends HTMLElement
   maxItems: 1000
   snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
+  snippetMarkerChar: '|'
+  snippetMarkerRegex: /\|/g
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
@@ -130,26 +132,7 @@ class SuggestionListElement extends HTMLElement
       li.appendChild(wordSpan)
       wordSpan.className = 'word'
 
-    replacement = text
-    if _.isString(snippet)
-      replacement = snippet.replace @snippetRegex, (match, snippetText) ->
-        "<span class=\"snippet-completion\">#{snippetText}</span>"
-
-    # highlight the prefix
-    displayHtml = ''
-    wordIndex = 0
-    lastWordIndex = 0
-    for ch, i in replacementPrefix
-      while wordIndex < replacement.length and replacement[wordIndex].toLowerCase() isnt ch.toLowerCase()
-        wordIndex += 1
-      break if wordIndex >= replacement.length
-      preChar = replacement.substring(lastWordIndex, wordIndex)
-      highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
-      displayHtml = "#{displayHtml}#{preChar}#{highlightedChar}"
-      wordIndex += 1
-      lastWordIndex = wordIndex
-    displayHtml += replacement.substring(lastWordIndex)
-    wordSpan.innerHTML = displayHtml
+    wordSpan.innerHTML = @getHighlightedHTML(text, snippet, replacementPrefix)
 
     labelSpan = li.childNodes[1]
     hasRightLabel = rightLabel or rightLabelHTML
@@ -165,6 +148,50 @@ class SuggestionListElement extends HTMLElement
         labelSpan.textContent = rightLabel
     else
       labelSpan?.remove()
+
+  getHighlightedHTML: (text, snippet, replacementPrefix) ->
+    # 1. Pull the snippets out, replacing with placeholder
+    # 2. Highlight relevant characters
+    # 3. Place snippet HTML back at the placeholders
+
+    # Pull out snippet
+    # e.g. replacementPrefix: 'a', snippet: 'abc(${d}, ${e})f'
+    # ->   replacement: 'abc(|, |)f'
+    replacement = text
+    snippetCompletions = []
+    if _.isString(snippet)
+      replacement = snippet.replace @snippetRegex, (match, snippetText) =>
+        snippetCompletions.push "<span class=\"snippet-completion\">#{snippetText}</span>"
+        @snippetMarkerChar
+
+    # Add spans for replacement prefix
+    # e.g. replacement: 'abc(|, |)f'
+    # ->   highlightedHTML: '<span class="character-match">a</span>bc(|, |)f'
+    highlightedHTML = ''
+    wordIndex = 0
+    lastWordIndex = 0
+    for ch, i in replacementPrefix
+      while wordIndex < replacement.length and replacement[wordIndex].toLowerCase() isnt ch.toLowerCase()
+        wordIndex += 1
+
+      break if wordIndex >= replacement.length
+      preChar = replacement.substring(lastWordIndex, wordIndex)
+      highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
+      highlightedHTML = "#{highlightedHTML}#{preChar}#{highlightedChar}"
+      wordIndex += 1
+      lastWordIndex = wordIndex
+
+    highlightedHTML += replacement.substring(lastWordIndex)
+
+    # Place the snippets back at the placeholders
+    # e.g. highlightedHTML: '<span class="character-match">a</span>bc(|, |)f'
+    # ->   highlightedHTML: '<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f'
+    if snippetCompletions.length
+      completionIndex = 0
+      highlightedHTML = highlightedHTML.replace @snippetMarkerRegex, (match, snippetText) ->
+        snippetCompletions[completionIndex++]
+
+    highlightedHTML
 
   dispose: ->
     @subscriptions.dispose()

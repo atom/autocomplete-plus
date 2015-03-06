@@ -173,6 +173,47 @@ describe 'Autocomplete Manager', ->
             expect(characterMatches).toHaveLength 0
             expect(text).toBe 'omgnope'
 
+        describe "when the snippets package is enabled", ->
+          beforeEach ->
+            waitsForPromise -> atom.packages.activatePackage('snippets')
+
+          it "does not highlight the snippet html; ref issue 301", ->
+            spyOn(provider, 'getSuggestions').andCallFake ->
+              [{snippet: 'ab(${1:c})c'}]
+
+            editor.moveToBottom()
+            editor.insertText('c')
+            waitForAutocomplete()
+
+            runs ->
+              word = editorView.querySelector('.autocomplete-plus li span.word')
+              charMatch = editorView.querySelector('.autocomplete-plus li span.word .character-match')
+              expect(word.textContent).toBe 'ab(c)c'
+              expect(charMatch.textContent).toBe 'c'
+              expect(charMatch.parentNode).toHaveClass 'word'
+
+          it "does not highlight the snippet html when highlight beginning of the word", ->
+            spyOn(provider, 'getSuggestions').andCallFake ->
+              [{snippet: 'abcde(${1:e}, ${1:f})f'}]
+
+            editor.moveToBottom()
+            editor.insertText('c')
+            editor.insertText('e')
+            editor.insertText('f')
+            waitForAutocomplete()
+
+            runs ->
+              word = editorView.querySelector('.autocomplete-plus li span.word')
+              expect(word.textContent).toBe 'abcde(e, f)f'
+
+              charMatches = editorView.querySelectorAll('.autocomplete-plus li span.word .character-match')
+              expect(charMatches[0].textContent).toBe 'c'
+              expect(charMatches[0].parentNode).toHaveClass 'word'
+              expect(charMatches[1].textContent).toBe 'e'
+              expect(charMatches[1].parentNode).toHaveClass 'word'
+              expect(charMatches[2].textContent).toBe 'f'
+              expect(charMatches[2].parentNode).toHaveClass 'word'
+
     describe "when a replacementPrefix is not specified", ->
       beforeEach ->
         spyOn(provider, 'getSuggestions').andCallFake ->

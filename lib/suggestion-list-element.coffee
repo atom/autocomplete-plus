@@ -4,6 +4,8 @@ _ = require 'underscore-plus'
 class SuggestionListElement extends HTMLElement
   maxItems: 1000
   snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
+  snippetMarkerChar: '|'
+  snippetMarkerRegex: /\|/g
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
@@ -131,9 +133,11 @@ class SuggestionListElement extends HTMLElement
       wordSpan.className = 'word'
 
     replacement = text
+    snippetCompletions = []
     if _.isString(snippet)
-      replacement = snippet.replace @snippetRegex, (match, snippetText) ->
-        "<span class=\"snippet-completion\">#{snippetText}</span>"
+      replacement = snippet.replace @snippetRegex, (match, snippetText) =>
+        snippetCompletions.push "<span class=\"snippet-completion\">#{snippetText}</span>"
+        @snippetMarkerChar
 
     # highlight the prefix
     displayHtml = ''
@@ -142,6 +146,7 @@ class SuggestionListElement extends HTMLElement
     for ch, i in replacementPrefix
       while wordIndex < replacement.length and replacement[wordIndex].toLowerCase() isnt ch.toLowerCase()
         wordIndex += 1
+
       break if wordIndex >= replacement.length
       preChar = replacement.substring(lastWordIndex, wordIndex)
       highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
@@ -149,6 +154,12 @@ class SuggestionListElement extends HTMLElement
       wordIndex += 1
       lastWordIndex = wordIndex
     displayHtml += replacement.substring(lastWordIndex)
+
+    if snippetCompletions.length
+      completionIndex = 0
+      displayHtml = displayHtml.replace @snippetMarkerRegex, (match, snippetText) ->
+        snippetCompletions[completionIndex++]
+
     wordSpan.innerHTML = displayHtml
 
     labelSpan = li.childNodes[1]

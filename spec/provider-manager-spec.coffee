@@ -31,14 +31,12 @@ describe 'Provider Manager', ->
     it 'is constructed correctly', ->
       expect(providerManager.providers).toBeDefined()
       expect(providerManager.subscriptions).toBeDefined()
-      expect(providerManager.store).toBeDefined()
       expect(providerManager.fuzzyProvider).toBeDefined()
 
     it 'disposes correctly', ->
       providerManager.dispose()
       expect(providerManager.providers).toBeNull()
       expect(providerManager.subscriptions).toBeNull()
-      expect(providerManager.store).toBeNull()
       expect(providerManager.fuzzyProvider).toBeNull()
 
     it 'registers FuzzyProvider for all scopes', ->
@@ -56,17 +54,15 @@ describe 'Provider Manager', ->
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(true)
 
     it 'removes providers', ->
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
 
       providerManager.addProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
-      expect(providerManager.providers.get(testProvider)).toBeDefined()
-      expect(providerManager.providers.get(testProvider)).not.toEqual('')
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(true)
 
       providerManager.removeProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
       expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
 
     it 'can identify a provider with a missing getSuggestions', ->
@@ -127,47 +123,47 @@ describe 'Provider Manager', ->
     it 'registers a valid provider', ->
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'removes a registration', ->
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
       registration.dispose()
 
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
     it 'does not create duplicate registrations for the same scope', ->
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'does not register an invalid provider', ->
       bogusProvider =
@@ -178,12 +174,12 @@ describe 'Provider Manager', ->
 
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), bogusProvider)).toEqual(false)
-      expect(providerManager.providers.has(bogusProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(bogusProvider)
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), bogusProvider)).toEqual(false)
-      expect(providerManager.providers.has(bogusProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
     it 'registers a provider with a blacklist', ->
       testProvider =
@@ -201,12 +197,12 @@ describe 'Provider Manager', ->
 
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(_.size(providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
       expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
   describe 'when no providers have been registered, and enableBuiltinProvider is false', ->
 
@@ -401,8 +397,8 @@ describe 'Provider Manager', ->
     it 'exclude the lower priority provider, the default, when one with a higher proirity excludes the lower', ->
       providers = providerManager.providersForScopeDescriptor('.source.js')
       expect(providers).toHaveLength 3
-      expect(providers[0]).toEqual mainProvider
-      expect(providers[1]).toEqual accessoryProvider2
+      expect(providers[0]).toEqual accessoryProvider2
+      expect(providers[1]).toEqual mainProvider
       expect(providers[2]).toEqual accessoryProvider1
 
     it 'excludes the all lower priority providers when multiple providers of lower priority', ->

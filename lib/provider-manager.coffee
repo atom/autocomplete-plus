@@ -6,7 +6,6 @@ semver = require 'semver'
 stableSort = require 'stable'
 
 slick = require 'atom-slick'
-window.Selector = Selector
 
 # Deferred requires
 SymbolProvider = null

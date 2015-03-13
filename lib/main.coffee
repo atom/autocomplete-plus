@@ -88,7 +88,7 @@ module.exports =
       order: 13
     suggestionListFollows:
       title: 'Suggestions List Follows'
-      description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appers at the beginning of the word that\'s being completed.'
+      description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appears at the beginning of the word that\'s being completed.'
       type: 'string'
       default: 'Cursor'
       enum: ['Cursor', 'Word']

@@ -37,7 +37,7 @@ class ProviderMetadata
     if providerBlacklist = @provider.providerblacklist?['autocomplete-plus-fuzzyprovider']
       @disableDefaultProviderSelectors = Selector.create(providerBlacklist)
 
-  matchesScopeDescriptor: (scopeChain) ->
+  matchesScopeChain: (scopeChain) ->
     if @disableForSelectors?
       return false if selectorsMatchScopeChain(@disableForSelectors, scopeChain)
 
@@ -89,7 +89,7 @@ class ProviderManager
 
     for providerMetadata in @providers
       {provider} = providerMetadata
-      if providerMetadata.matchesScopeDescriptor(scopeChain)
+      if providerMetadata.matchesScopeChain(scopeChain)
         matchingProviders.push(provider)
         disableDefaultProvider = true if providerMetadata.shouldDisableDefaultProvider(scopeChain)
 

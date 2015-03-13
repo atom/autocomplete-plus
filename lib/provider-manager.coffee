@@ -86,12 +86,16 @@ class ProviderManager
 
     matchingProviders = []
     disableDefaultProvider = false
+    lowestIncludedPriority = 0
 
     for providerMetadata in @providers
       {provider} = providerMetadata
       if providerMetadata.matchesScopeChain(scopeChain)
         matchingProviders.push(provider)
-        disableDefaultProvider = true if providerMetadata.shouldDisableDefaultProvider(scopeChain)
+        if provider.excludeLowerPriority?
+          lowestIncludedPriority = Math.max(lowestIncludedPriority, provider.inclusionPriority ? 0)
+        if providerMetadata.shouldDisableDefaultProvider(scopeChain)
+          disableDefaultProvider = true
 
     matchingProviders = _.without(matchingProviders, @fuzzyProvider) if disableDefaultProvider
 
@@ -105,10 +109,6 @@ class ProviderManager
       else
         (providerB.suggestionPriority ? 1) - (providerA.suggestionPriority ? 1)
 
-    lowestIncludedPriority = 0
-    for provider in matchingProviders
-      if provider.excludeLowerPriority?
-        lowestIncludedPriority = Math.max(lowestIncludedPriority, provider.inclusionPriority ? 0)
     (provider for provider in matchingProviders when (provider.inclusionPriority ? 0) >= lowestIncludedPriority)
 
   toggleFuzzyProvider: (enabled) =>

@@ -2,7 +2,7 @@
 _ = require 'underscore-plus'
 
 class SuggestionListElement extends HTMLElement
-  maxItems: 1000
+  maxItems: 200
   snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
   snippetMarkerChar: '|'
   snippetMarkerRegex: /\|/g

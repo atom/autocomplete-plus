@@ -1,62 +1,15 @@
 {CompositeDisposable, Disposable} = require 'atom'
 _ = require 'underscore-plus'
 semver = require 'semver'
-{specificity} = require 'clear-cut'
 {Selector} = require 'selector-kit'
 stableSort = require 'stable'
-
-slick = require 'atom-slick'
 
 # Deferred requires
 SymbolProvider = null
 FuzzyProvider =  null
 grim = null
-
-escapeCharacterRegex = /[-!"#$%&'*+,/:;=?@|^~()<>{}[\]]/g
-parseScopeChain = (scopeChain) ->
-  scopeChain = scopeChain.replace escapeCharacterRegex, (match) -> "\\#{match[0]}"
-  scope for scope in slick.parse(scopeChain)[0] ? []
-
-selectorForScopeChain = (selectors, scopeChain) ->
-  scopes = parseScopeChain(scopeChain)
-  for selector in selectors
-    while scopes.length > 0
-      return selector if selector.matches(scopes)
-      scopes.pop()
-  null
-
-selectorsMatchScopeChain = (selectors, scopeChain) ->
-  selectorForScopeChain(selectors, scopeChain)?
-
-class ProviderMetadata
-  constructor: (@provider, @apiVersion) ->
-    @selectors = Selector.create(@provider.selector)
-    @disableForSelectors = Selector.create(@provider.disableForSelector) if @provider.disableForSelector?
-
-    # TODO API: remove this when 1.0 is pulled out
-    if providerBlacklist = @provider.providerblacklist?['autocomplete-plus-fuzzyprovider']
-      @disableDefaultProviderSelectors = Selector.create(providerBlacklist)
-
-  matchesScopeChain: (scopeChain) ->
-    if @disableForSelectors?
-      return false if selectorsMatchScopeChain(@disableForSelectors, scopeChain)
-
-    if selectorsMatchScopeChain(@selectors, scopeChain)
-      true
-    else
-      false
-
-  shouldDisableDefaultProvider: (scopeChain) ->
-    if @disableDefaultProviderSelectors?
-      selectorsMatchScopeChain(@disableDefaultProviderSelectors, scopeChain)
-    else
-      false
-
-  getSpecificity: (scopeChain) ->
-    if selector = selectorForScopeChain(@selectors, scopeChain)
-      selector.getSpecificity()
-    else
-      0
+selectorsMatchScopeChain = null
+ProviderMetadata = null
 
 module.exports =
 class ProviderManager
@@ -80,6 +33,8 @@ class ProviderManager
     @providers = null
 
   providersForScopeDescriptor: (scopeDescriptor) =>
+    selectorsMatchScopeChain ?= require('./scope-helpers').selectorsMatchScopeChain
+
     scopeChain = scopeDescriptor?.getScopeChain?() or scopeDescriptor
     return [] unless scopeChain
     return [] if @globalBlacklistSelectors? and selectorsMatchScopeChain(@globalBlacklistSelectors, scopeChain)
@@ -98,7 +53,6 @@ class ProviderManager
           disableDefaultProvider = true
 
     matchingProviders = _.without(matchingProviders, @fuzzyProvider) if disableDefaultProvider
-
     matchingProviders = stableSort matchingProviders, (providerA, providerB) =>
       specificityA = @metadataForProvider(providerA).getSpecificity(scopeChain)
       specificityB = @metadataForProvider(providerB).getSpecificity(scopeChain)
@@ -154,6 +108,7 @@ class ProviderManager
 
   addProvider: (provider, apiVersion='2.0.0') =>
     return if @isProviderRegistered(provider)
+    ProviderMetadata ?= require './provider-metadata'
     @providers.push new ProviderMetadata(provider, apiVersion)
     @subscriptions.add(provider) if provider.dispose?
 

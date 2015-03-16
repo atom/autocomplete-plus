@@ -7,8 +7,8 @@ parseScopeChain = (scopeChain) ->
   scope for scope in slick.parse(scopeChain)[0] ? []
 
 selectorForScopeChain = (selectors, scopeChain) ->
-  scopes = parseScopeChain(scopeChain)
   for selector in selectors
+    scopes = parseScopeChain(scopeChain)
     while scopes.length > 0
       return selector if selector.matches(scopes)
       scopes.pop()

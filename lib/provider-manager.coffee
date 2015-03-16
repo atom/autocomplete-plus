@@ -4,11 +4,12 @@ semver = require 'semver'
 {Selector} = require 'selector-kit'
 stableSort = require 'stable'
 
+{selectorsMatchScopeChain} = require('./scope-helpers')
+
 # Deferred requires
 SymbolProvider = null
 FuzzyProvider =  null
 grim = null
-selectorsMatchScopeChain = null
 ProviderMetadata = null
 
 module.exports =
@@ -33,8 +34,6 @@ class ProviderManager
     @providers = null
 
   providersForScopeDescriptor: (scopeDescriptor) =>
-    selectorsMatchScopeChain ?= require('./scope-helpers').selectorsMatchScopeChain
-
     scopeChain = scopeDescriptor?.getScopeChain?() or scopeDescriptor
     return [] unless scopeChain
     return [] if @globalBlacklistSelectors? and selectorsMatchScopeChain(@globalBlacklistSelectors, scopeChain)

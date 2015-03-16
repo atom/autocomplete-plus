@@ -54,7 +54,12 @@ class ProviderManager
 
     matchingProviders = _.without(matchingProviders, @fuzzyProvider) if disableDefaultProvider
     matchingProviders = (provider for provider in matchingProviders when (provider.inclusionPriority ? 0) >= lowestIncludedPriority)
-    stableSort(matchingProviders, ProviderComparator)
+    stableSort matchingProviders, (providerA, providerB) =>
+      specificityA = @metadataForProvider(providerA).getSpecificity(scopeChain)
+      specificityB = @metadataForProvider(providerB).getSpecificity(scopeChain)
+      difference = specificityB - specificityA
+      difference = (providerB.suggestionPriority ? 1) - (providerA.suggestionPriority ? 1) if difference is 0
+      difference
 
   toggleFuzzyProvider: (enabled) =>
     return unless enabled?
@@ -161,10 +166,3 @@ class ProviderManager
         disposable.dispose()
 
     disposable
-
-ProviderComparator = (providerA, providerB) ->
-  specificityA = @metadataForProvider(providerA).getSpecificity(scopeChain)
-  specificityB = @metadataForProvider(providerB).getSpecificity(scopeChain)
-  difference = specificityB - specificityA
-  difference = (providerB.suggestionPriority ? 1) - (providerA.suggestionPriority ? 1) if difference is 0
-  difference

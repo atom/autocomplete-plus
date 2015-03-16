@@ -15,6 +15,7 @@ class SymbolProvider
 
   selector: '*'
   inclusionPriority: 0
+  suggestionPriority: 0
 
   config: null
   defaultConfig:

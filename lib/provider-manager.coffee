@@ -109,6 +109,7 @@ class ProviderManager
     @subscriptions.add(provider) if provider.dispose?
 
   removeProvider: (provider) =>
+    return unless @providers
     for providerMetadata, i in @providers
       if providerMetadata.provider is provider
         @providers.splice(i, 1)

@@ -146,7 +146,10 @@ class ProviderManager
           See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
         """
 
-    return unless @isValidProvider(provider, apiVersion)
+    unless @isValidProvider(provider, apiVersion)
+      console.warn "Provider #{provider.constructor.name} is not valid", provider
+      return
+
     return if @isProviderRegistered(provider)
 
     # TODO API: Deprecate the 1.0 APIs

@@ -262,13 +262,6 @@ class AutocompleteManager
 
     @replaceTextWithMatch(suggestion)
 
-    # FIXME: move this to the snippet provider's onDidInsertSuggestion() method
-    # when the API has been updated.
-    if suggestion.isSnippet
-      setTimeout =>
-        atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
-      , 1
-
     # TODO API: Remove when we remove the 1.0 API
     if apiIs20
       suggestion.provider.onDidInsertSuggestion?({@editor, suggestion, triggerPosition})

@@ -308,6 +308,7 @@ class AutocompleteManager
             @snippetsManager.insertSnippet(match.snippet, @editor, cursor)
           else
             selection.insertText(match.text ? match.snippet)
+      return
 
   # Private: Checks whether the current file is blacklisted.
   #

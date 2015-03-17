@@ -239,7 +239,8 @@ class AutocompleteManager
 
   prefixForCursor: (cursor) =>
     return '' unless @buffer? and cursor?
-    start = cursor.getBeginningOfCurrentWordBufferPosition()
+    regex = new RegExp(cursor.wordRegExp().source.replace(/\\\-/g, ''), 'g')
+    start = cursor.getBeginningOfCurrentWordBufferPosition({ wordRegex: regex })
     end = cursor.getBufferPosition()
     return '' unless start? and end?
     @buffer.getTextInRange(new Range(start, end))

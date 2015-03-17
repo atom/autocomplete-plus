@@ -291,17 +291,23 @@ class AutocompleteManager
     return unless @editor?
     newSelectedBufferRanges = []
 
-    selections = @editor.getSelections()
-    return unless selections?
-    @editor.transact =>
-      if match.replacementPrefix?.length > 0
-        @editor.selectLeft(match.replacementPrefix.length)
-        @editor.delete()
+    cursors = @editor.getCursors()
+    return unless cursors?
+    return unless match.replacementPrefix?.length > 0
 
-      if match.snippet? and @snippetsManager?
-        @snippetsManager.insertSnippet(match.snippet, @editor)
-      else
-        @editor.insertText(match.text ? match.snippet)
+    @editor.transact =>
+      for cursor in cursors
+        endPosition = cursor.getBufferPosition()
+        beginningPosition = [endPosition.row, endPosition.column - match.replacementPrefix.length]
+
+        if @editor.getTextInRange([beginningPosition, endPosition]) is match.replacementPrefix
+          selection = cursor.selection
+          selection.selectLeft(match.replacementPrefix.length)
+
+          if match.snippet? and @snippetsManager?
+            @snippetsManager.insertSnippet(match.snippet, @editor, cursor)
+          else
+            selection.insertText(match.text ? match.snippet)
 
   # Private: Checks whether the current file is blacklisted.
   #

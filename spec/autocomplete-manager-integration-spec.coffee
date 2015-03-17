@@ -328,6 +328,56 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
+    describe "when the replacementPrefix doesnt match the actual prefix", ->
+      describe "when snippets are not used", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            [text: 'something', replacementPrefix: 'bcm']
+
+        it "only replaces the suggestion at cursors whos prefix matches the replacementPrefix", ->
+          editor.setText """
+          abc abc
+          def
+          """
+          editor.setCursorBufferPosition([0, 3])
+          editor.addCursorAtBufferPosition([0, 7])
+          editor.addCursorAtBufferPosition([1, 3])
+          triggerAutocompletion(editor, false, 'm')
+
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            expect(editor.getText()).toBe """
+            asomething asomething
+            defm
+            """
+
+      describe "when snippets are used", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            [snippet: 'ok(${1:omg})', replacementPrefix: 'bcm']
+          waitsForPromise -> atom.packages.activatePackage('snippets')
+
+        it "only replaces the suggestion at cursors whos prefix matches the replacementPrefix", ->
+          editor.setText """
+          abc abc
+          def
+          """
+          editor.setCursorBufferPosition([0, 3])
+          editor.addCursorAtBufferPosition([0, 7])
+          editor.addCursorAtBufferPosition([1, 3])
+          triggerAutocompletion(editor, false, 'm')
+
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            expect(editor.getText()).toBe """
+            aok(omg) aok(omg)
+            defm
+            """
+
   describe 'when opening a file without a path', ->
     beforeEach ->
       waitsForPromise ->

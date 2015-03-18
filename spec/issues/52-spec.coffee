@@ -34,7 +34,7 @@ describe 'Autocomplete', ->
       runs ->
         editorView = atom.views.getView(editor)
 
-    it 'closes the suggestion list when entering an empty string (e.g. space)', ->
+    it 'closes the suggestion list when entering an empty string (e.g. carriage return)', ->
       runs ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -47,6 +47,6 @@ describe 'Autocomplete', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
-          editor.insertText(' ')
+          editor.insertText('\r')
 
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

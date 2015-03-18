@@ -95,7 +95,7 @@ describe 'Async providers', ->
 
       runs ->
         # Waiting will kick off the suggestion request
-        editor.insertText(' ')
+        editor.insertText('\r')
         waitForAutocomplete()
 
         # Expect nothing because the provider has not come back yet

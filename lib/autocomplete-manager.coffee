@@ -15,6 +15,7 @@ module.exports =
 class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
+  bracketMatcherPairs: ['()', '[]', '{}', '""', "''", '``', "“”", '‘’', "«»", "‹›"]
   buffer: null
   compositionInProgress: false
   disposed: false
@@ -356,7 +357,16 @@ class AutocompleteManager
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = newText.trim().length in [1..2] or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length in [1..2])
+    wouldAutoActivate = false
+
+    if autoActivationEnabled
+      if newText?.length
+        # Activate on space, a non-whitespace character, or a bracket-matcher pair
+        wouldAutoActivate = newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs
+      else if oldText?.length
+        # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
+        # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
+        wouldAutoActivate = (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
 
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()

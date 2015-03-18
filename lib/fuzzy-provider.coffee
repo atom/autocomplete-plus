@@ -4,7 +4,10 @@ fuzzaldrin = require 'fuzzaldrin'
 
 module.exports =
 class FuzzyProvider
-  wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
+  deferBuildWordListInterval: 300
+  updateBuildWordListTimeout: null
+  updateCurrentEditorTimeout: null
+  wordRegex: /\b\w+[\w-]*\b/g
   wordList: null
   editor: null
   buffer: null
@@ -15,11 +18,18 @@ class FuzzyProvider
   id: 'autocomplete-plus-fuzzyprovider'
 
   constructor: ->
+    @debouncedBuildWordList()
     @subscriptions = new CompositeDisposable
-    @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
-    @buildWordList()
+    @subscriptions.add(atom.workspace.observeActivePaneItem(@debouncedUpdateCurrentEditor))
     builtinProviderBlacklist = atom.config.get('autocomplete-plus.builtinProviderBlacklist')
     @disableForSelector = builtinProviderBlacklist if builtinProviderBlacklist? and builtinProviderBlacklist.length
+
+  debouncedUpdateCurrentEditor: (currentPaneItem) =>
+    clearTimeout(@updateBuildWordListTimeout)
+    clearTimeout(@updateCurrentEditorTimeout)
+    @updateCurrentEditorTimeout = setTimeout =>
+      @updateCurrentEditor(currentPaneItem)
+    , @deferBuildWordListInterval
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -57,12 +67,12 @@ class FuzzyProvider
     return unless editor?
 
     # No prefix? Don't autocomplete!
-    return unless prefix.length
+    return unless prefix.trim().length
 
     suggestions = @findSuggestionsForWord(prefix)
 
     # No suggestions? Don't autocomplete!
-    return unless suggestions.length
+    return unless suggestions?.length
 
     # Now we're ready - display the suggestions
     return suggestions
@@ -113,6 +123,12 @@ class FuzzyProvider
 
     return lastWord
 
+  debouncedBuildWordList: ->
+    clearTimeout(@updateBuildWordListTimeout)
+    @updateBuildWordListTimeout = setTimeout =>
+      @buildWordList()
+    , @deferBuildWordListInterval
+
   # Private: Generates the word list from the editor buffer(s)
   buildWordList: =>
     return unless @editor?
@@ -156,10 +172,18 @@ class FuzzyProvider
       else
         fuzzaldrin.filter(wordList, prefix)
 
-    results = for word in words when word isnt prefix
-      {text: word, replacementPrefix: prefix}
+    results = []
 
-    return results
+    for word in words when word isnt prefix
+      # dont show matches that are the same as the prefix
+      continue if word is prefix
+
+      # must match the first char!
+      continue unless prefix[0].toLowerCase() is word[0].toLowerCase()
+
+      results.push {text: word, replacementPrefix: prefix}
+
+    results
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     return [] unless atom?.config? and scopeDescriptor? and keyPath?
@@ -177,6 +201,8 @@ class FuzzyProvider
 
   # Public: Clean up, stop listening to events
   dispose: =>
+    clearTimeout(@updateBuildWordListTimeout)
+    clearTimeout(@updateCurrentEditorTimeout)
     @bufferSavedSubscription?.dispose()
     @bufferChangedSubscription?.dispose()
     @subscriptions.dispose()

@@ -60,6 +60,60 @@ describe 'Autocomplete Manager', ->
         expect(triggerPosition).toEqual [0, 1]
         expect(suggestion.text).toBe 'a'
 
+    describe "prefix passed to getSuggestions", ->
+      prefix = null
+      beforeEach ->
+        editor.setText('var something = abc')
+        editor.setCursorBufferPosition([0, 10000])
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          prefix = options.prefix
+          []
+
+      it "calls with word prefix", ->
+        editor.insertText('d')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe 'abcd'
+
+      it "calls with word prefix after punctuation", ->
+        editor.insertText('d.okyea')
+        editor.insertText('h')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe 'okyeah'
+
+      it "calls with word prefix containing a dash", ->
+        editor.insertText('-okyea')
+        editor.insertText('h')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe 'abc-okyeah'
+
+      it "calls with space character", ->
+        editor.insertText(' ')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe ' '
+
+      it "calls with non-word prefix", ->
+        editor.insertText(':')
+        editor.insertText(':')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe '::'
+
+      it "calls with non-word bracket", ->
+        editor.insertText('[')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe '['
+
+      it "calls with dot prefix", ->
+        editor.insertText('.')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe '.'
+
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
@@ -253,6 +307,27 @@ describe 'Autocomplete Manager', ->
           atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+    describe 'when auto-activation is disabled', ->
+      beforeEach ->
+        atom.config.set('autocomplete-plus.enableAutoActivation', false)
+
+      it 'does not show suggestions after a delay', ->
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      it 'shows suggestions when explicitly triggered', ->
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
   describe 'when opening a file without a path', ->
     beforeEach ->
       waitsForPromise ->
@@ -310,7 +385,10 @@ describe 'Autocomplete Manager', ->
         mainModule = a.mainModule
         autocompleteManager = mainModule.autocompleteManager
 
-    describe 'when fuzzyprovider is disabled', ->
+      runs ->
+        advanceClock(autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
+
+    describe 'when fuzzyProvider is disabled', ->
       it 'should not show the suggestion list', ->
         atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -590,14 +668,13 @@ describe 'Autocomplete Manager', ->
       it 'selects the previous item in the list', ->
 
         # Trigger an autocompletion
-        triggerAutocompletion(editor)
+        triggerAutocompletion(editor, false, 'a')
 
         runs ->
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).toHaveClass('selected')
           expect(items[1]).not.toHaveClass('selected')
           expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).not.toHaveClass('selected')
 
           # Select previous item
           suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
@@ -606,8 +683,7 @@ describe 'Autocomplete Manager', ->
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).not.toHaveClass('selected')
           expect(items[1]).not.toHaveClass('selected')
-          expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).toHaveClass('selected')
+          expect(items[2]).toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
         # Trigger an autocompletion
@@ -651,14 +727,13 @@ describe 'Autocomplete Manager', ->
     describe 'select-next event', ->
       it 'selects the next item in the list', ->
         # Trigger an autocompletion
-        triggerAutocompletion(editor)
+        triggerAutocompletion(editor, false, 'a')
 
         runs ->
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).toHaveClass('selected')
           expect(items[1]).not.toHaveClass('selected')
           expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).not.toHaveClass('selected')
 
           # Select next item
 
@@ -669,7 +744,6 @@ describe 'Autocomplete Manager', ->
           expect(items[0]).not.toHaveClass('selected')
           expect(items[1]).toHaveClass('selected')
           expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).not.toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
         # Trigger an autocompletion
@@ -713,7 +787,7 @@ describe 'Autocomplete Manager', ->
     describe 'when a suggestion is clicked', ->
       it 'should select the item and confirm the selection', ->
         # Trigger an autocompletion
-        triggerAutocompletion(editor)
+        triggerAutocompletion(editor, true, 'a')
 
         runs ->
           # Get the second item
@@ -766,90 +840,3 @@ describe 'Autocomplete Manager', ->
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.scrollWidth).toBe(suggestionListView.offsetWidth)
-
-  describe 'when auto-activation is disabled', ->
-    beforeEach ->
-      runs ->
-        atom.config.set('autocomplete-plus.enableAutoActivation', false)
-
-      waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
-        editor = e
-        editorView = atom.views.getView(e)
-
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManager
-
-    it 'does not show suggestions after a delay', ->
-      triggerAutocompletion(editor)
-
-      runs ->
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-    it 'shows suggestions when explicitly triggered', ->
-      triggerAutocompletion(editor)
-
-      runs ->
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-        atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
-        waitForAutocomplete()
-
-      runs ->
-        expect(editorView.querySelector('.autocomplete-plus')).toExist()
-
-  # describe 'when prefix length is 0', ->
-  #   [registration] = []
-  #   runs ->
-  #     atom.config.set('autocomplete-plus.enableAutoActivation', false)
-  #   beforeEach ->
-  #     testProvider =
-  #       getSuggestions: (options) ->
-  #         [{
-  #           word: 'ohai',
-  #           prefix: ''
-  #         }]
-  #       selector: '.source.js'
-  #     registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
-  #
-  #     waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
-  #       editor = e
-  #       editorView = atom.views.getView(e)
-  #
-  #     # Activate the package
-  #     waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-  #       mainModule = a.mainModule
-  #       autocompleteManager = mainModule.autocompleteManager
-  #
-  #     runs ->
-  #
-  #   afterEach -> registration.dispose()
-  #
-  #
-  #   it 'inserts suggestion correctly', =>
-  #     # Trigger an autocompletion
-  #     editor.moveToBottom()
-  #     editor.moveUp()
-  #     editor.moveToEndOfLine()
-  #     atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
-  #
-  #     waitForAutocomplete()
-  #
-  #     runs ->
-  #       expect(editorView.querySelector('.autocomplete-plus')).toExist()
-  #       expect(editor.getBuffer().getLastLine()).toEqual('f')
-  #       expect(editor.getBuffer()
-  #         .lineForRow(
-  #           editor.getLineCount() - 2
-  #         )
-  #       ).toEqual('};')
-  #       suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-  #       expect(suggestionListView).not.toExist()
-  #       atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
-  #       expect(editor.getBuffer()
-  #         .lineForRow(
-  #           editor.getLineCount() - 2
-  #         )
-  #       ).toEqual('}function')
-  #
-  #       expect(editor.getBuffer().getLastLine()).toEqual('f')

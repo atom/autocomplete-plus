@@ -35,6 +35,7 @@ describe 'Autocomplete', ->
 
     runs ->
       editorView = atom.views.getView(editor)
+      advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
 
   describe '@activate()', ->
     it 'activates autocomplete and initializes AutocompleteManager', ->

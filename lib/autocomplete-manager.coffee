@@ -118,6 +118,7 @@ class AutocompleteManager
     bufferPosition = cursor.getBufferPosition()
     scopeDescriptor = cursor.getScopeDescriptor()
     prefix = @prefixForCursor(cursor)
+    return unless bufferPosition? and scopeDescriptor?
 
     @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix})
 

@@ -7,9 +7,9 @@ install:
 
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - %LOCALAPPDATA%\atom\bin\apm clean
-  - %LOCALAPPDATA%\atom\bin\apm install
-  - %LOCALAPPDATA%\atom\bin\apm test
+  - "%LOCALAPPDATA%\atom\bin\apm clean"
+  - "%LOCALAPPDATA%\atom\bin\apm install"
+  - "%LOCALAPPDATA%\atom\bin\apm test"
 
 test: off
 

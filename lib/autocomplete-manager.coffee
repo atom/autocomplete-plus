@@ -28,6 +28,7 @@ class AutocompleteManager
   suggestionDelay: 50
   suggestionList: null
   shouldDisplaySuggestions: false
+  prefixRegex:/\b((\w+[\w-]*)|([.:; ]+))$/g
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -117,7 +118,7 @@ class AutocompleteManager
 
     bufferPosition = cursor.getBufferPosition()
     scopeDescriptor = cursor.getScopeDescriptor()
-    prefix = @prefixForCursor(cursor)
+    prefix = @getPrefix(@editor, bufferPosition)
 
     @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix})
 
@@ -238,12 +239,9 @@ class AutocompleteManager
     else
       @hideSuggestionList()
 
-  prefixForCursor: (cursor) =>
-    return '' unless @buffer? and cursor?
-    start = cursor.getBeginningOfCurrentWordBufferPosition()
-    end = cursor.getBufferPosition()
-    return '' unless start? and end?
-    @buffer.getTextInRange(new Range(start, end))
+  getPrefix: (editor, bufferPosition) ->
+    line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
+    line.match(@prefixRegex)?[0] or ''
 
   # Private: Gets called when the user successfully confirms a suggestion
   #

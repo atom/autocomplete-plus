@@ -60,6 +60,54 @@ describe 'Autocomplete Manager', ->
         expect(triggerPosition).toEqual [0, 1]
         expect(suggestion.text).toBe 'a'
 
+    describe "prefix passed to getSuggestions", ->
+      prefix = null
+      beforeEach ->
+        editor.setText('var something = abc')
+        editor.setCursorBufferPosition([0, 10000])
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          prefix = options.prefix
+          []
+
+      it "calls with word prefix", ->
+        editor.insertText('d')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe 'abcd'
+
+      it "calls with word prefix after punctuation", ->
+        editor.insertText('d.okyea')
+        editor.insertText('h')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe 'okyeah'
+
+      it "calls with word prefix containing a dash", ->
+        editor.insertText('-okyea')
+        editor.insertText('h')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe 'abc-okyeah'
+
+      it "calls with space character", ->
+        editor.insertText(' ')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe ' '
+
+      it "calls with non-word prefix", ->
+        editor.insertText(':')
+        editor.insertText(':')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe '::'
+
+      it "calls with dot prefix", ->
+        editor.insertText('.')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe '.'
+
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)

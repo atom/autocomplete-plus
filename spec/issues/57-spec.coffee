@@ -68,7 +68,8 @@ describe 'Autocomplete', ->
       describe 'where text differs between cursors', ->
         it 'cancels the autocomplete', ->
           editor.getBuffer().insert([10, 0], 's:extra:a')
-          editor.setSelectedBufferRanges([[[10, 1], [10, 1]], [[10, 9], [10, 9]]])
+          editor.setCursorBufferPosition([10, 1])
+          editor.addCursorAtBufferPosition([10, 9])
 
           runs ->
             triggerAutocompletion(editor, false, 'h')

@@ -23,8 +23,7 @@ class ProviderMetadata
       false
 
   shouldDisableDefaultProvider: (scopeChain) ->
-    return false unless scopeChain?
-    if @disableDefaultProviderSelectors?
+    if scopeChain? and @disableDefaultProviderSelectors?
       selectorsMatchScopeChain(@disableDefaultProviderSelectors, scopeChain)
     else
       false

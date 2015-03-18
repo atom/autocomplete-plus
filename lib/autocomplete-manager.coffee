@@ -15,6 +15,7 @@ module.exports =
 class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
+  bracketMatcherPairs: ['()', '[]', '{}', '""', "''", '``', "“”", '‘’', "«»", "‹›"]
   buffer: null
   compositionInProgress: false
   disposed: false
@@ -23,6 +24,7 @@ class AutocompleteManager
   editorView: null
   providerManager: null
   ready: false
+  spaceTriggersAutocomplete: false
   subscriptions: null
   suggestionDelay: 50
   suggestionList: null
@@ -94,6 +96,7 @@ class AutocompleteManager
     # Watch config values
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.spaceTriggersAutocomplete', (value) => @spaceTriggersAutocomplete = value))
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
@@ -356,7 +359,12 @@ class AutocompleteManager
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = newText.trim().length in [1..2] or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length in [1..2])
+    # TODO: Can we avoid bracket-matcher causing a 2-character change in the buffer changed event (can we get each character separately)?
+    wouldAutoActivate = false
+    if @spaceTriggersAutocomplete
+      wouldAutoActivate = (newText.length is 1 or newText in @bracketMatcherPairs) or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and (oldText.trim().length is 1 or oldText in @bracketMatcherPairs))
+    else
+      wouldAutoActivate = (newText.trim().length is 1 or newText in @bracketMatcherPairs) or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and (oldText.trim().length is 1 or oldText in @bracketMatcherPairs))
 
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()

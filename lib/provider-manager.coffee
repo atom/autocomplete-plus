@@ -35,7 +35,7 @@ class ProviderManager
 
   providersForScopeDescriptor: (scopeDescriptor) =>
     scopeChain = scopeDescriptor?.getScopeChain?() or scopeDescriptor
-    return [] unless scopeChain
+    return [] unless scopeChain?
     return [] if @globalBlacklistSelectors? and selectorsMatchScopeChain(@globalBlacklistSelectors, scopeChain)
 
     matchingProviders = []

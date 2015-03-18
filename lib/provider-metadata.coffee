@@ -13,6 +13,7 @@ class ProviderMetadata
       @disableDefaultProviderSelectors = Selector.create(providerBlacklist)
 
   matchesScopeChain: (scopeChain) ->
+    return false unless scopeChain?
     if @disableForSelectors?
       return false if selectorsMatchScopeChain(@disableForSelectors, scopeChain)
 
@@ -22,12 +23,14 @@ class ProviderMetadata
       false
 
   shouldDisableDefaultProvider: (scopeChain) ->
+    return false unless scopeChain?
     if @disableDefaultProviderSelectors?
       selectorsMatchScopeChain(@disableDefaultProviderSelectors, scopeChain)
     else
       false
 
   getSpecificity: (scopeChain) ->
+    return 0 unless scopeChain?
     if selector = selectorForScopeChain(@selectors, scopeChain)
       selector.getSpecificity()
     else

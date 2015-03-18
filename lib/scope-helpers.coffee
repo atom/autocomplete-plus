@@ -3,6 +3,7 @@ slick = require 'atom-slick'
 EscapeCharacterRegex = /[-!"#$%&'*+,/:;=?@|^~()<>{}[\]]/g
 
 parseScopeChain = (scopeChain) ->
+  return [] unless scopeChain?
   scopeChain = scopeChain.replace EscapeCharacterRegex, (match) -> "\\#{match[0]}"
   scope for scope in slick.parse(scopeChain)[0] ? []
 

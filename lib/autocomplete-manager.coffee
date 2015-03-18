@@ -28,7 +28,7 @@ class AutocompleteManager
   suggestionDelay: 50
   suggestionList: null
   shouldDisplaySuggestions: false
-  prefixRegex:/\b((\w+[\w-]*)|([.:; ]+))$/g
+  prefixRegex:/\b((\w+[\w-]*)|([.:;[{(< ]+))$/g
 
   constructor: ->
     @subscriptions = new CompositeDisposable

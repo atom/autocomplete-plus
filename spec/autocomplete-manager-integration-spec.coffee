@@ -102,6 +102,12 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(prefix).toBe '::'
 
+      it "calls with non-word bracket", ->
+        editor.insertText('[')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe '['
+
       it "calls with dot prefix", ->
         editor.insertText('.')
         waitForAutocomplete()

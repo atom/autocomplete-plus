@@ -7,7 +7,7 @@ class FuzzyProvider
   deferBuildWordListInterval: 300
   updateBuildWordListTimeout: null
   updateCurrentEditorTimeout: null
-  wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
+  wordRegex: /\b\w+[\w-]*\b/g
   wordList: null
   editor: null
   buffer: null

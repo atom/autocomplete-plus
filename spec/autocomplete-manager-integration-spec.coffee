@@ -590,14 +590,13 @@ describe 'Autocomplete Manager', ->
       it 'selects the previous item in the list', ->
 
         # Trigger an autocompletion
-        triggerAutocompletion(editor)
+        triggerAutocompletion(editor, false, 'a')
 
         runs ->
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).toHaveClass('selected')
           expect(items[1]).not.toHaveClass('selected')
           expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).not.toHaveClass('selected')
 
           # Select previous item
           suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
@@ -606,8 +605,7 @@ describe 'Autocomplete Manager', ->
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).not.toHaveClass('selected')
           expect(items[1]).not.toHaveClass('selected')
-          expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).toHaveClass('selected')
+          expect(items[2]).toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
         # Trigger an autocompletion
@@ -651,14 +649,13 @@ describe 'Autocomplete Manager', ->
     describe 'select-next event', ->
       it 'selects the next item in the list', ->
         # Trigger an autocompletion
-        triggerAutocompletion(editor)
+        triggerAutocompletion(editor, false, 'a')
 
         runs ->
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).toHaveClass('selected')
           expect(items[1]).not.toHaveClass('selected')
           expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).not.toHaveClass('selected')
 
           # Select next item
 
@@ -669,7 +666,6 @@ describe 'Autocomplete Manager', ->
           expect(items[0]).not.toHaveClass('selected')
           expect(items[1]).toHaveClass('selected')
           expect(items[2]).not.toHaveClass('selected')
-          expect(items[3]).not.toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
         # Trigger an autocompletion
@@ -713,7 +709,7 @@ describe 'Autocomplete Manager', ->
     describe 'when a suggestion is clicked', ->
       it 'should select the item and confirm the selection', ->
         # Trigger an autocompletion
-        triggerAutocompletion(editor)
+        triggerAutocompletion(editor, true, 'a')
 
         runs ->
           # Get the second item

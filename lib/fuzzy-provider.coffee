@@ -156,10 +156,18 @@ class FuzzyProvider
       else
         fuzzaldrin.filter(wordList, prefix)
 
-    results = for word in words when word isnt prefix
-      {text: word, replacementPrefix: prefix}
+    results = []
 
-    return results
+    for word in words when word isnt prefix
+      # dont show matches that are the same as the prefix
+      continue if word is prefix
+
+      # must match the first char!
+      continue unless prefix[0].toLowerCase() is word[0].toLowerCase()
+
+      results.push {text: word, replacementPrefix: prefix}
+
+    results
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     return [] unless atom?.config? and scopeDescriptor? and keyPath?

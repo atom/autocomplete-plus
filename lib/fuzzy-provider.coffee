@@ -4,6 +4,9 @@ fuzzaldrin = require 'fuzzaldrin'
 
 module.exports =
 class FuzzyProvider
+  deferBuildWordListInterval: 300
+  updateBuildWordListTimeout: null
+  updateCurrentEditorTimeout: null
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
   wordList: null
   editor: null
@@ -15,11 +18,18 @@ class FuzzyProvider
   id: 'autocomplete-plus-fuzzyprovider'
 
   constructor: ->
+    @debouncedBuildWordList()
     @subscriptions = new CompositeDisposable
-    @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
-    @buildWordList()
+    @subscriptions.add(atom.workspace.observeActivePaneItem(@debouncedUpdateCurrentEditor))
     builtinProviderBlacklist = atom.config.get('autocomplete-plus.builtinProviderBlacklist')
     @disableForSelector = builtinProviderBlacklist if builtinProviderBlacklist? and builtinProviderBlacklist.length
+
+  debouncedUpdateCurrentEditor: (currentPaneItem) =>
+    clearTimeout(@updateBuildWordListTimeout)
+    clearTimeout(@updateCurrentEditorTimeout)
+    @updateCurrentEditorTimeout = setTimeout =>
+      @updateCurrentEditor(currentPaneItem)
+    , @deferBuildWordListInterval
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
@@ -62,7 +72,7 @@ class FuzzyProvider
     suggestions = @findSuggestionsForWord(prefix)
 
     # No suggestions? Don't autocomplete!
-    return unless suggestions.length
+    return unless suggestions?.length
 
     # Now we're ready - display the suggestions
     return suggestions
@@ -112,6 +122,12 @@ class FuzzyProvider
     @buffer.scanInRange(@wordRegex, lineRange, ({match, range, stop}) -> lastWord = match[0])
 
     return lastWord
+
+  debouncedBuildWordList: ->
+    clearTimeout(@updateBuildWordListTimeout)
+    @updateBuildWordListTimeout = setTimeout =>
+      @buildWordList()
+    , @deferBuildWordListInterval
 
   # Private: Generates the word list from the editor buffer(s)
   buildWordList: =>
@@ -185,6 +201,8 @@ class FuzzyProvider
 
   # Public: Clean up, stop listening to events
   dispose: =>
+    clearTimeout(@updateBuildWordListTimeout)
+    clearTimeout(@updateCurrentEditorTimeout)
     @bufferSavedSubscription?.dispose()
     @bufferChangedSubscription?.dispose()
     @subscriptions.dispose()

@@ -36,6 +36,7 @@ describe 'Autocomplete', ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->
+        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
         editorView = atom.views.getView(editor)
 
     it 'adds words to the wordlist after they have been written', ->

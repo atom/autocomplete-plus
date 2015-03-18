@@ -36,6 +36,7 @@ describe 'CSS Language Support', ->
 
     runs ->
       autocompleteManager = mainModule.autocompleteManager
+      advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
 
   it 'includes completions for the scopes completion preferences', ->
     runs ->

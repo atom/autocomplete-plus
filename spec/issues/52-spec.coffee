@@ -32,6 +32,7 @@ describe 'Autocomplete', ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->
+        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
         editorView = atom.views.getView(editor)
 
     it 'closes the suggestion list when entering an empty string (e.g. carriage return)', ->

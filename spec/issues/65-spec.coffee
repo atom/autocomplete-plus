@@ -32,6 +32,7 @@ describe 'Autocomplete', ->
 
       runs ->
         editorView = atom.views.getView(editor)
+        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
 
     describe 'when autocomplete is triggered', ->
       it 'it hides the suggestion list when the user keeps typing', ->

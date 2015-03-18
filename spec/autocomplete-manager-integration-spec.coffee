@@ -253,6 +253,27 @@ describe 'Autocomplete Manager', ->
           atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+    describe 'when auto-activation is disabled', ->
+      beforeEach ->
+        atom.config.set('autocomplete-plus.enableAutoActivation', false)
+
+      it 'does not show suggestions after a delay', ->
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      it 'shows suggestions when explicitly triggered', ->
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
   describe 'when opening a file without a path', ->
     beforeEach ->
       waitsForPromise ->
@@ -310,7 +331,10 @@ describe 'Autocomplete Manager', ->
         mainModule = a.mainModule
         autocompleteManager = mainModule.autocompleteManager
 
-    describe 'when fuzzyprovider is disabled', ->
+      runs ->
+        advanceClock(autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
+
+    describe 'when fuzzyProvider is disabled', ->
       it 'should not show the suggestion list', ->
         atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -762,34 +786,3 @@ describe 'Autocomplete Manager', ->
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.scrollWidth).toBe(suggestionListView.offsetWidth)
-
-  describe 'when auto-activation is disabled', ->
-    beforeEach ->
-      runs ->
-        atom.config.set('autocomplete-plus.enableAutoActivation', false)
-
-      waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
-        editor = e
-        editorView = atom.views.getView(e)
-
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        mainModule = a.mainModule
-        autocompleteManager = mainModule.autocompleteManager
-
-    it 'does not show suggestions after a delay', ->
-      triggerAutocompletion(editor)
-
-      runs ->
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-    it 'shows suggestions when explicitly triggered', ->
-      triggerAutocompletion(editor)
-
-      runs ->
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-        atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
-        waitForAutocomplete()
-
-      runs ->
-        expect(editorView.querySelector('.autocomplete-plus')).toExist()

@@ -31,6 +31,7 @@ describe 'Autocomplete', ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->
+        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
         editorView = atom.views.getView(editor)
 
     describe 'where many cursors are defined', ->

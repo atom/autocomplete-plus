@@ -33,6 +33,7 @@ describe 'Autocomplete', ->
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager
+        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
 
     it 'it adds words hyphens to the wordlist', ->
       runs ->

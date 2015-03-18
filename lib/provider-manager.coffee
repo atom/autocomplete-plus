@@ -34,7 +34,7 @@ class ProviderManager
     @providers = null
 
   providersForScopeDescriptor: (scopeDescriptor) =>
-    scopeChain = scopeDescriptor?.getScopeChain?() or scopeDescriptor
+    scopeChain = scopeChainForScopeDescriptor(scopeDescriptor)
     return [] unless scopeChain
     return [] if @globalBlacklistSelectors? and selectorsMatchScopeChain(@globalBlacklistSelectors, scopeChain)
 
@@ -169,3 +169,14 @@ class ProviderManager
         disposable.dispose()
 
     disposable
+
+scopeChainForScopeDescriptor = (scopeDescriptor) ->
+  type = typeof scopeDescriptor
+  if type is 'string'
+    scopeDescriptor
+  else if type is 'object' and scopeDescriptor?.getScopeChain?
+    scopeDescriptor.getScopeChain()
+  else
+    json = JSON.stringify(scopeDescriptor)
+    console.log scopeDescriptor, json
+    throw new Error("ScopeChain is not correct type: #{type}; #{json}")

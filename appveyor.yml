@@ -3,15 +3,14 @@ version: "{build}"
 os: Windows Server 2012 R2
 
 install:
-  - appveyor DownloadFile https://atom.io/download/windows -FileName AtomSetup.exe
-  - AtomSetup.exe /silent
+  - choco install atom
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - "%LOCALAPPDATA%/atom/bin/apm clean"
+  - "%LOCALAPPDATA%/atom/bin/apm install"
 
 build_script:
   - cd %APPVEYOR_BUILD_FOLDER%
-  - SET PATH=%LOCALAPPDATA%\atom\bin;%PATH%
-  - apm clean
-  - apm install
-  - apm test
+  - "%LOCALAPPDATA%/atom/bin/apm test --path %LOCALAPPDATA%/atom/bin/atom.cmd"
 
 test: off
 

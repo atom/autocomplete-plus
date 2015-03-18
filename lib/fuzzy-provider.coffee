@@ -57,7 +57,7 @@ class FuzzyProvider
     return unless editor?
 
     # No prefix? Don't autocomplete!
-    return unless prefix.length
+    return unless prefix.trim().length
 
     suggestions = @findSuggestionsForWord(prefix)
 

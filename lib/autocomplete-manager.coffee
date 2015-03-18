@@ -357,9 +357,15 @@ class AutocompleteManager
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    # TODO: Can we avoid bracket-matcher causing a 2-character change in the buffer changed event (can we get each character separately)?
-    wouldAutoActivate = (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs) or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs))
-
+    wouldAutoActivate = false
+    if newText?.length
+      # Activate on space, a non-whitespace character, or a bracket-matcher pair
+      wouldAutoActivate = newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs
+    else if oldText?.length
+      # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
+      # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
+      wouldAutoActivate = (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
+    
     if autoActivationEnabled and wouldAutoActivate
       @cancelHideSuggestionListRequest()
       @requestNewSuggestions()

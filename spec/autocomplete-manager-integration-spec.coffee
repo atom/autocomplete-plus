@@ -361,7 +361,7 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
-          editor.insertText(' ')
+          editor.insertText('\r')
           waitForAutocomplete()
 
         runs ->
@@ -396,7 +396,7 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
-          editor.insertText(' ')
+          editor.insertText('\r')
           waitForAutocomplete()
 
         runs ->
@@ -484,7 +484,7 @@ describe 'Autocomplete Manager', ->
           editor.moveToBottom()
           editor.insertText('f')
           editor.insertText('u')
-          editor.insertText(' ')
+          editor.insertText('\r')
 
           waitForAutocomplete()
 

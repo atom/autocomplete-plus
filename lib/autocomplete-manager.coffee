@@ -364,14 +364,14 @@ class AutocompleteManager
     autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
     shouldActivate = false
 
-    if @suggestionList.isActive() or autoActivationEnabled
+    if autoActivationEnabled or @suggestionList.isActive()
       if newText?.length
         # Activate on space, a non-whitespace character, or a bracket-matcher pair
         shouldActivate = newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs
-      else if oldText?.length
+      else if oldText?.length and (@backspaceTriggersAutocomplete or @suggestionList.isActive())
         # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
         # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
-        shouldActivate = (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
+        shouldActivate = oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs
 
     if shouldActivate
       @cancelHideSuggestionListRequest()

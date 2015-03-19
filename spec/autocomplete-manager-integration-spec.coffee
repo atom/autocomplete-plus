@@ -328,6 +328,23 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
+      it "stays open when typing", ->
+        triggerAutocompletion(editor, false, 'a')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          editor.insertText('b')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
     describe "when the replacementPrefix doesnt match the actual prefix", ->
       describe "when snippets are not used", ->
         beforeEach ->

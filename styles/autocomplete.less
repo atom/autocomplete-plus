@@ -12,19 +12,51 @@ autocomplete-suggestion-list.select-list.popover-list {
     opacity: 0.00;
   }
 
+  overflow-y: auto;
+
   ol.list-group {
-    overflow-y: auto;
     margin-top: 0;
+    display: table;
 
     li {
+      display: table-row;
       color: @text-color;
+
+      > span {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
       &:after {
         clear: both;
         display: block;
         content: ' ';
       }
+      .left-label {
+        text-align: right;
+        padding-left: @component-padding / 2;
+        padding-right: @component-padding;
+
+        font-size: .9em;
+        color: @text-color-subtle;
+
+        &:empty {
+          padding: 0 0 0 @component-padding 0;
+        }
+      }
+      .right-label {
+        float: right;
+        padding-left: @component-padding;
+        padding-right: @component-padding / 2;
+
+        font-size: .9em;
+        color: @text-color-subtle;
+
+        &:empty {
+          padding: 0 @component-padding / 2 0 0;
+        }
+      }
       .word {
-        float: left;
       }
       .character-match {
         font-weight: bold;
@@ -32,11 +64,6 @@ autocomplete-suggestion-list.select-list.popover-list {
       }
       .snippet-completion {
         color: @text-color-subtle;
-      }
-      .completion-label {
-        float: right;
-        padding-right: 6px;
-        padding-left: 6px;
       }
       &.selected {
         .character-match {

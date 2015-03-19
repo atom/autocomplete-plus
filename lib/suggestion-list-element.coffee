@@ -2,6 +2,7 @@
 _ = require 'underscore-plus'
 
 ItemTemplate = """
+  <span class="icon-container"><i class="icon"></i></span>
   <span class="left-label"></span>
   <span class="word-container">
     <span class="word"></span>
@@ -124,7 +125,7 @@ class SuggestionListElement extends HTMLElement
     li.remove() while li = @ol.childNodes[items.length]
     @selectedLi?.scrollIntoView(false)
 
-  renderItem: ({snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
+  renderItem: ({icon, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
     unless li
       li = document.createElement('li')
@@ -136,6 +137,14 @@ class SuggestionListElement extends HTMLElement
     li.classList.add(className) if className
     li.classList.add('selected') if index is @selectedIndex
     @selectedLi = li if index is @selectedIndex
+
+    typeIcon = li.querySelector('.icon-container').childNodes[0]
+    typeIcon.className = 'icon'
+    typeIcon.classList.add(type) if type
+    if iconHTML = (icon ? (type ? '')[0])
+      typeIcon.innerHTML = iconHTML
+    else
+      typeIcon.innerHTML = ''
 
     wordSpan = li.querySelector('.word')
     wordSpan.innerHTML = @getHighlightedHTML(text, snippet, replacementPrefix)

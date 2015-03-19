@@ -1,22 +1,27 @@
 @import "ui-variables";
+@import "octicon-mixins";
+
+@type-icon-font-size: @font-size + 1px;
+
 atom-overlay.autocomplete-plus {
-    z-index: 5;
+  z-index: 5;
 }
+
 autocomplete-suggestion-list.select-list.popover-list {
   width: auto;
   display: inline-block;
   min-width: 200px;
+  overflow-y: auto;
 
   input {
     position: absolute;
     opacity: 0.00;
   }
 
-  overflow-y: auto;
-
   ol.list-group {
     margin-top: 0;
     display: table;
+    width: 100%;
 
     li {
       display: table-row;
@@ -32,46 +37,7 @@ autocomplete-suggestion-list.select-list.popover-list {
         display: block;
         content: ' ';
       }
-      .left-label {
-        text-align: right;
-        padding-left: @component-padding / 2;
-        padding-right: @component-padding;
 
-        font-size: .9em;
-        color: @text-color-subtle;
-
-        &:empty {
-          padding: 0 0 0 @component-padding 0;
-        }
-      }
-      .right-label {
-        float: right;
-        padding-left: @component-padding;
-        padding-right: @component-padding / 2;
-
-        font-size: .9em;
-        color: @text-color-subtle;
-
-        &:empty {
-          padding: 0 @component-padding / 2 0 0;
-        }
-      }
-      .word {
-        // TODO: The 600px is arbitrary. We need to make it butt up against the
-        // right of the window.
-        float: left;
-        max-width: 600px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .character-match {
-        font-weight: bold;
-        color: @text-color-highlight;
-      }
-      .snippet-completion {
-        color: @text-color-subtle;
-      }
       &.selected {
         .character-match {
           color: @text-color-selected;
@@ -81,5 +47,92 @@ autocomplete-suggestion-list.select-list.popover-list {
         }
       }
     }
+  }
+}
+
+autocomplete-suggestion-list {
+  .icon-container {
+    padding-left: @component-padding / 2;
+    padding-right: @component-padding;
+    &:empty {
+      padding: 0 0 0 @component-padding / 2;
+    }
+  }
+
+  .icon {
+    display: block;
+    border-radius: @component-border-radius - 1px;
+    height: @type-icon-font-size + 6px;
+    width: @type-icon-font-size + 6px;
+    line-height: @type-icon-font-size + 4px;
+    padding: 0;
+    text-align: center;
+    font-style: normal;
+    font-weight: normal;
+    font-size: @font-size;
+    vertical-align: middle;
+
+    background: #69c;
+    color: white;
+
+    &:empty { display: none; }
+    &::before {
+      text-align: center;
+      margin: 0;
+    }
+
+    > *::before {
+      font-size: @type-icon-font-size;
+      width: @type-icon-font-size;
+      height: @type-icon-font-size;
+    }
+  }
+
+  .snippet.icon {
+    background: #c69;
+  }
+
+  .left-label {
+    text-align: right;
+    padding-right: @component-padding;
+
+    font-size: .9em;
+    color: @text-color-subtle;
+
+    &:empty {
+      padding: 0;
+    }
+  }
+
+  .right-label {
+    float: right;
+    padding-left: @component-padding;
+    padding-right: @component-padding / 2;
+
+    font-size: .9em;
+    color: @text-color-subtle;
+
+    &:empty {
+      padding: 0 @component-padding / 2 0 0;
+    }
+  }
+
+  .word {
+    // TODO: The 600px is arbitrary. We need to make it butt up against the
+    // right of the window.
+    float: left;
+    max-width: 600px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .character-match {
+    font-weight: bold;
+    color: @text-color-highlight;
+  }
+
+  .snippet-completion {
+    color: @text-color-subtle;
   }
 }

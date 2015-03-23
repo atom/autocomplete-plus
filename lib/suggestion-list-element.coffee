@@ -10,6 +10,8 @@ ItemTemplate = """
   </span>
 """
 
+IconTemplate = '<i class="icon"></i>'
+
 class SuggestionListElement extends HTMLElement
   maxItems: 200
   snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
@@ -138,13 +140,13 @@ class SuggestionListElement extends HTMLElement
     li.classList.add('selected') if index is @selectedIndex
     @selectedLi = li if index is @selectedIndex
 
-    typeIcon = li.querySelector('.icon-container').childNodes[0]
-    typeIcon.className = 'icon'
-    typeIcon.classList.add(type) if type
+    typeIconContainer = li.querySelector('.icon-container')
+    typeIconContainer.innerHTML = ''
     if iconHTML = (icon ? (type ? '')[0])
+      typeIconContainer.innerHTML = IconTemplate
+      typeIcon = typeIconContainer.childNodes[0]
       typeIcon.innerHTML = iconHTML
-    else
-      typeIcon.innerHTML = ''
+      typeIcon.classList.add(type) if type
 
     wordSpan = li.querySelector('.word')
     wordSpan.innerHTML = @getHighlightedHTML(text, snippet, replacementPrefix)

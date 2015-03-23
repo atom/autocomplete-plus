@@ -1,7 +1,21 @@
-@import "ui-variables";
-@import "octicon-mixins";
+@syntax-color-variable: #DF6A73;
+@syntax-color-constant: #DF6A73;
+@syntax-color-property: #DF6A73;
+@syntax-color-value: #D29B67;
+@syntax-color-method: #61AEEF;
+@syntax-color-function: #61AEEF;
+@syntax-color-class: #E5C17C;
+@syntax-color-keyword: #555;
+@syntax-color-tag: #555;
+@syntax-color-snippet: #97C378;
 
-@type-icon-font-size: @font-size + 1px;
+@import "ui-variables";
+@import "syntax-variables";
+
+@type-icon-font-size: @font-size + 2px;
+@type-icon-offset: 0px;
+@type-icon-size: @component-line-height - @type-icon-offset * 2;
+@type-icon-border-radius: 0px;
 
 atom-overlay.autocomplete-plus {
   z-index: 5;
@@ -12,6 +26,7 @@ autocomplete-suggestion-list.select-list.popover-list {
   display: inline-block;
   min-width: 200px;
   overflow-y: auto;
+  padding: 0;
 
   input {
     position: absolute;
@@ -52,7 +67,7 @@ autocomplete-suggestion-list.select-list.popover-list {
 
 autocomplete-suggestion-list {
   .icon-container {
-    padding-left: @component-padding / 2;
+    padding-left: @type-icon-offset;
     padding-right: @component-padding;
     &:empty {
       padding: 0 0 0 @component-padding / 2;
@@ -61,35 +76,23 @@ autocomplete-suggestion-list {
 
   .icon {
     display: block;
-    border-radius: @component-border-radius - 1px;
-    height: @type-icon-font-size + 6px;
-    width: @type-icon-font-size + 6px;
-    line-height: @type-icon-font-size + 4px;
-    padding: 0;
+    width: @type-icon-size;
+    height: @type-icon-size;
+    line-height: @type-icon-size - 2px;
+    border-radius: @type-icon-border-radius;
+    display: block;
     text-align: center;
     font-style: normal;
-    font-weight: normal;
-    font-size: @font-size;
+    font-weight: bold;
+    font-size: @type-icon-font-size;
     vertical-align: middle;
 
-    background: #69c;
-    color: white;
-
     &:empty { display: none; }
-    &::before {
-      text-align: center;
-      margin: 0;
-    }
-
     > *::before {
       font-size: @type-icon-font-size;
       width: @type-icon-font-size;
       height: @type-icon-font-size;
     }
-  }
-
-  .snippet.icon {
-    background: #c69;
   }
 
   .left-label {
@@ -134,5 +137,24 @@ autocomplete-suggestion-list {
 
   .snippet-completion {
     color: @text-color-subtle;
+  }
+
+  .make-type-icon(variable, @syntax-color-variable);
+  .make-type-icon(constant, @syntax-color-constant);
+  .make-type-icon(property, @syntax-color-property);
+  .make-type-icon(value, @syntax-color-value);
+  .make-type-icon(method, @syntax-color-method);
+  .make-type-icon(function, @syntax-color-function);
+  .make-type-icon(class, @syntax-color-class);
+  .make-type-icon(keyword, @syntax-color-keyword);
+  .make-type-icon(keyword, @syntax-color-keyword);
+  .make-type-icon(tag, @syntax-color-tag);
+  .make-type-icon(snippet, @syntax-color-snippet);
+}
+
+.make-type-icon(@type, @color) {
+  .icon.@{type} {
+    color: @color;
+    background: fadeout(@color, 80%)
   }
 }

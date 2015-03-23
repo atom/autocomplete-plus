@@ -122,7 +122,6 @@ class SymbolProvider
 
     for word in words
       word.replacementPrefix = options.prefix
-      word.rightLabel = word.type
 
     return words
 

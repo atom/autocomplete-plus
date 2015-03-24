@@ -292,28 +292,41 @@ class AutocompleteManager
   # Private: Replaces the current prefix with the given match.
   #
   # match - The match to replace the current prefix with
-  replaceTextWithMatch: (match) =>
+  replaceTextWithMatch: (suggestion) =>
     return unless @editor?
     newSelectedBufferRanges = []
 
     cursors = @editor.getCursors()
     return unless cursors?
-    return unless match.replacementPrefix?.length > 0
+    return unless suggestion.replacementPrefix?.length > 0
 
     @editor.transact =>
       for cursor in cursors
         endPosition = cursor.getBufferPosition()
-        beginningPosition = [endPosition.row, endPosition.column - match.replacementPrefix.length]
+        beginningPosition = [endPosition.row, endPosition.column - suggestion.replacementPrefix.length]
 
-        if @editor.getTextInRange([beginningPosition, endPosition]) is match.replacementPrefix
-          selection = cursor.selection
-          selection.selectLeft(match.replacementPrefix.length)
+        if @editor.getTextInRange([beginningPosition, endPosition]) is suggestion.replacementPrefix
+          suffix = @getSuffix(@editor, endPosition, suggestion)
+          cursor.moveRight(suffix.length) if suffix.length
+          cursor.selection.selectLeft(suggestion.replacementPrefix.length + suffix.length)
 
-          if match.snippet? and @snippetsManager?
-            @snippetsManager.insertSnippet(match.snippet, @editor, cursor)
+          if suggestion.snippet? and @snippetsManager?
+            @snippetsManager.insertSnippet(suggestion.snippet, @editor, cursor)
           else
-            selection.insertText(match.text ? match.snippet)
+            cursor.selection.insertText(suggestion.text ? suggestion.snippet)
       return
+
+  getSuffix: (editor, bufferPosition, suggestion) ->
+    # This just chews through the suggestion and tries to match the suggestion
+    # substring with the lineText starting at the cursor. There is probably a
+    # more efficient way to do this.
+    suffix = (suggestion.snippet ? suggestion.text)
+    endPosition = [bufferPosition.row, suffix.length]
+    endOfLineText = editor.getTextInRange([bufferPosition, endPosition])
+    while suffix
+      return suffix if endOfLineText.startsWith(suffix)
+      suffix = suffix.slice(1)
+    ''
 
   # Private: Checks whether the current file is blacklisted.
   #

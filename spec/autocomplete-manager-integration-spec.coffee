@@ -374,6 +374,38 @@ describe 'Autocomplete Manager', ->
             atom.keymaps.handleKeyboardEvent(key)
             expect(editor.getText()).toBe 'ok then a '
 
+      describe "when the cursor suffix matches the replacement", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            [text: 'oneomgtwo', replacementPrefix: 'one']
+
+        it 'replaces the suffix with the replacement', ->
+          editor.setText('ontwothree')
+          editor.setCursorBufferPosition([0, 2])
+          triggerAutocompletion(editor, false, 'e')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe 'oneomgtwothree'
+
+      describe "when the cursor suffix does not match the replacement", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            [text: 'oneomgTwo', replacementPrefix: 'one']
+
+        it 'replaces the suffix with the replacement', ->
+          editor.setText('ontwothree')
+          editor.setCursorBufferPosition([0, 2])
+          triggerAutocompletion(editor, false, 'e')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe 'oneomgTwotwothree'
+
     describe 'when auto-activation is disabled', ->
       beforeEach ->
         atom.config.set('autocomplete-plus.enableAutoActivation', false)

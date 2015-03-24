@@ -62,7 +62,7 @@ describe 'Autocomplete Manager', ->
         expect(triggerPosition).toEqual [0, 1]
         expect(suggestion.text).toBe 'ab'
 
-    fdescribe "suppression for editorView classes", ->
+    describe "suppression for editorView classes", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.suppressActivationForEditorClasses', ['vim-mode.command-mode', 'vim-mode . visual-mode', ' vim-mode.operator-pending-mode ', ' '])
 
@@ -201,7 +201,7 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
-          expect(editorView.querySelector('.autocomplete-plus .list-group').style['max-height']).toBe("#{2 * 25}px")
+          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list').style['max-height']).toBe("#{2 * 25}px")
 
     describe "when match.snippet is used", ->
       beforeEach ->
@@ -1121,7 +1121,7 @@ describe 'Autocomplete Manager', ->
           item.dispatchEvent(mouse)
 
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-          expect(editor.getBuffer().getLastLine()).toEqual(item.innerText)
+          expect(editor.getBuffer().getLastLine()).toEqual(item.textContent.trim())
 
     describe '.cancel()', ->
       it 'unbinds autocomplete event handlers for move-up and move-down', ->

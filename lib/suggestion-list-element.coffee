@@ -127,7 +127,7 @@ class SuggestionListElement extends HTMLElement
     li.remove() while li = @ol.childNodes[items.length]
     @selectedLi?.scrollIntoView(false)
 
-  renderItem: ({icon, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
+  renderItem: ({iconHTML, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
     unless li
       li = document.createElement('li')
@@ -142,7 +142,7 @@ class SuggestionListElement extends HTMLElement
 
     typeIconContainer = li.querySelector('.icon-container')
     typeIconContainer.innerHTML = ''
-    if iconHTML = (icon ? (type ? '')[0])
+    if iconHTML = (iconHTML ? (type ? '')[0])
       typeIconContainer.innerHTML = IconTemplate
       typeIcon = typeIconContainer.childNodes[0]
       typeIcon.innerHTML = iconHTML

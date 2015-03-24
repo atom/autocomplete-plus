@@ -788,6 +788,89 @@ describe 'Autocomplete Manager', ->
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
           expect(items[0]).toHaveClass('selected')
 
+    describe "label rendering", ->
+      describe "when no labels are specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            leftLabel = editorView.querySelector('.autocomplete-plus li .right-label')
+            rightLabel = editorView.querySelector('.autocomplete-plus li .right-label')
+
+            expect(iconContainer.childNodes).toHaveLength 0
+            expect(leftLabel.childNodes).toHaveLength 0
+            expect(rightLabel.childNodes).toHaveLength 0
+
+      describe "when `type` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'omg']
+
+        it "displays an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
+            expect(icon.innerHTML).toBe('o')
+
+      describe "when `iconHTML` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', iconHTML: '<i class="omg"></i>']
+
+        it "displays an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon .omg')
+            expect(icon).toExist()
+
+      describe "when `rightLabel` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', rightLabel: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .right-label')
+            expect(label).toHaveText('<i class="something">sometext</i>')
+
+      describe "when `rightLabelHTML` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', rightLabelHTML: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .right-label .something')
+            expect(label).toHaveText('sometext')
+
+      describe "when `leftLabel` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', leftLabel: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .left-label')
+            expect(label).toHaveText('<i class="something">sometext</i>')
+
+      describe "when `leftLabelHTML` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', leftLabelHTML: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .left-label .something')
+            expect(label).toHaveText('sometext')
+
   describe 'when opening a file without a path', ->
     beforeEach ->
       waitsForPromise ->

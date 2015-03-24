@@ -328,6 +328,59 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
+      it "stays open when typing", ->
+        triggerAutocompletion(editor, false, 'a')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          editor.insertText('b')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+      it 'accepts the suggestion if there is one', ->
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          [text: 'omgok']
+
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          expect(editor.getText()).toBe 'omgok'
+
+      it 'does not auto-accept a single suggestion when filtering', ->
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+          list = _.filter ['a', 'abc'], (word) -> word.indexOf(prefix) is 0
+          ({text: t} for t in list)
+
+        editor.insertText('a')
+        atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 2
+
+          editor.insertText('b')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 1
+
+
     describe "when the replacementPrefix doesnt match the actual prefix", ->
       describe "when snippets are not used", ->
         beforeEach ->

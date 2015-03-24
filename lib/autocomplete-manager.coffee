@@ -96,6 +96,7 @@ class AutocompleteManager
     # Watch config values
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
@@ -105,11 +106,11 @@ class AutocompleteManager
     @subscriptions.add atom.commands.add 'atom-text-editor',
       'autocomplete-plus:activate': =>
         @shouldDisplaySuggestions = true
-        @findSuggestions()
+        @findSuggestions(true)
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
-  findSuggestions: =>
+  findSuggestions: (activatedManually) =>
     return if @disposed
     return unless @providerManager? and @editor? and @buffer?
     return if @isCurrentFileBlackListed()
@@ -120,9 +121,9 @@ class AutocompleteManager
     scopeDescriptor = cursor.getScopeDescriptor()
     prefix = @getPrefix(@editor, bufferPosition)
 
-    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix})
+    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix}, activatedManually)
 
-  getSuggestionsFromProviders: (options) =>
+  getSuggestionsFromProviders: (options, activatedManually) =>
     providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)
 
     providerPromises = []
@@ -173,7 +174,11 @@ class AutocompleteManager
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
       .then(@mergeSuggestionsFromProviders)
       .then (suggestions) =>
-        if @currentSuggestionsPromise is suggestionsPromise
+        return unless @currentSuggestionsPromise is suggestionsPromise
+        if activatedManually and @shouldDisplaySuggestions and suggestions.length is 1
+          # When there is one suggestion in manual mode, just confirm it
+          @confirm(suggestions[0])
+        else
           @displaySuggestions(suggestions, options)
 
   # providerSuggestions - array of arrays of suggestions provided by all called providers
@@ -361,19 +366,18 @@ class AutocompleteManager
   bufferChanged: ({newText, oldText}) =>
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
-    autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    wouldAutoActivate = false
+    shouldActivate = false
 
-    if autoActivationEnabled
+    if @autoActivationEnabled or @suggestionList.isActive()
       if newText?.length
         # Activate on space, a non-whitespace character, or a bracket-matcher pair
-        wouldAutoActivate = newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs
-      else if oldText?.length
+        shouldActivate = newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs
+      else if oldText?.length and (@backspaceTriggersAutocomplete or @suggestionList.isActive())
         # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
         # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
-        wouldAutoActivate = (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
+        shouldActivate = oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs
 
-    if autoActivationEnabled and wouldAutoActivate
+    if shouldActivate
       @cancelHideSuggestionListRequest()
       @requestNewSuggestions()
     else

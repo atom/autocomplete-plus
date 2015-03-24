@@ -828,6 +828,17 @@ describe 'Autocomplete Manager', ->
             console.log editorView.querySelector('.autocomplete-plus li .icon-container .icon').innerHTML
             expect(icon).toHaveClass('icon-move-right')
 
+      describe "when `type` is an empty string", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: '']
+
+        it "does not display an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            expect(iconContainer.childNodes).toHaveLength 0
+
       describe "when `iconHTML` is specified", ->
         beforeEach ->
           spyOn(provider, 'getSuggestions').andCallFake (options) ->
@@ -845,6 +856,28 @@ describe 'Autocomplete Manager', ->
             [text: 'ok', type: 'something', iconHTML: false]
 
         it "does not display an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            expect(iconContainer.childNodes).toHaveLength 0
+
+      describe "when `iconHTML` is not a string and a `type` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'something', iconHTML: true]
+
+        it "displays the default icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
+            expect(icon.innerHTML).toBe('s')
+
+      describe "when `iconHTML` is not a string and no type is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', iconHTML: true]
+
+        it "it does not display an icon", ->
           triggerAutocompletion(editor)
           runs ->
             iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')

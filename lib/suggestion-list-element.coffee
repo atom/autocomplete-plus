@@ -145,11 +145,14 @@ class SuggestionListElement extends HTMLElement
 
     typeIconContainer = li.querySelector('.icon-container')
     typeIconContainer.innerHTML = ''
-    if (iconHTML? or type?) and iconHTML isnt false
-      iconHTML = DefaultSuggestionTypeIconHTML[type] ? type[0] if type? and not iconHTML?
+
+    sanitizedType = (if _.isString(type) then type else '')
+    sanitizedIconHTML = if _.isString(iconHTML) then iconHTML else undefined
+    defaultIconHTML = DefaultSuggestionTypeIconHTML[sanitizedType] ? sanitizedType[0]
+    if (sanitizedIconHTML or defaultIconHTML) and iconHTML isnt false
       typeIconContainer.innerHTML = IconTemplate
       typeIcon = typeIconContainer.childNodes[0]
-      typeIcon.innerHTML = iconHTML
+      typeIcon.innerHTML = sanitizedIconHTML ? defaultIconHTML
       typeIcon.classList.add(type) if type
 
     wordSpan = li.querySelector('.word')

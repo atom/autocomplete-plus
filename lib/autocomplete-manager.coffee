@@ -28,6 +28,7 @@ class AutocompleteManager
   suggestionDelay: 50
   suggestionList: null
   shouldDisplaySuggestions: false
+  manualActivationStrictPrefixes: null
   prefixRegex:/\b((\w+[\w-]*)|([.:;[{(< ]+))$/g
 
   constructor: ->
@@ -167,6 +168,7 @@ class AutocompleteManager
         for suggestion in providerSuggestions
           suggestion.replacementPrefix ?= options.prefix
           suggestion.provider = provider
+          @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if activatedManually
 
         providerSuggestions
 
@@ -175,6 +177,7 @@ class AutocompleteManager
       .then(@mergeSuggestionsFromProviders)
       .then (suggestions) =>
         return unless @currentSuggestionsPromise is suggestionsPromise
+        suggestions = @filterForManualActivationStrictPrefix(suggestions)
         if activatedManually and @shouldDisplaySuggestions and suggestions.length is 1
           # When there is one suggestion in manual mode, just confirm it
           @confirm(suggestions[0])
@@ -279,6 +282,7 @@ class AutocompleteManager
 
   hideSuggestionList: =>
     return if @disposed
+    @clearManualActivationStrictPrefixes()
     @suggestionList.hide()
     @shouldDisplaySuggestions = false
 
@@ -395,3 +399,24 @@ class AutocompleteManager
     @subscriptions = null
     @suggestionList = null
     @providerManager = null
+
+  clearManualActivationStrictPrefixes: ->
+    @manualActivationStrictPrefixes = null
+
+  addManualActivationStrictPrefix: (provider, prefix) ->
+    return if @manualActivationStrictPrefixes?.has(provider) or not prefix?
+    @manualActivationStrictPrefixes ?= new WeakMap
+    @manualActivationStrictPrefixes.set(provider, prefix.toLowerCase())
+
+  filterForManualActivationStrictPrefix: (suggestions) ->
+    return suggestions unless @manualActivationStrictPrefixes?
+
+    results = []
+    for suggestion in suggestions
+      lowercaseText = (suggestion.snippet ? suggestion.text).toLowerCase()
+      if lowercaseText[0] is suggestion.replacementPrefix.toLowerCase()[0]
+        strictPrefix = @manualActivationStrictPrefixes.get(suggestion.provider)
+        results.push(suggestion) if strictPrefix? and lowercaseText.startsWith(strictPrefix)
+      else
+        results.push(suggestion)
+    results

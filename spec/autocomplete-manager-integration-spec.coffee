@@ -816,6 +816,18 @@ describe 'Autocomplete Manager', ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
             expect(icon.innerHTML).toBe('o')
 
+      describe "when the `type` specified has a default icon", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'snippet']
+
+        it "displays the default icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon i')
+            console.log editorView.querySelector('.autocomplete-plus li .icon-container .icon').innerHTML
+            expect(icon).toHaveClass('icon-move-right')
+
       describe "when `iconHTML` is specified", ->
         beforeEach ->
           spyOn(provider, 'getSuggestions').andCallFake (options) ->
@@ -826,6 +838,17 @@ describe 'Autocomplete Manager', ->
           runs ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon .omg')
             expect(icon).toExist()
+
+      describe "when `iconHTML` is false", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'something', iconHTML: false]
+
+        it "does not display an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            expect(iconContainer.childNodes).toHaveLength 0
 
       describe "when `rightLabel` is specified", ->
         beforeEach ->

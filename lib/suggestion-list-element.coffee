@@ -12,6 +12,9 @@ ItemTemplate = """
 
 IconTemplate = '<i class="icon"></i>'
 
+DefaultSuggestionTypeIconHTML =
+  'snippet': '<i class="icon-move-right"></i>'
+
 class SuggestionListElement extends HTMLElement
   maxItems: 200
   snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
@@ -142,7 +145,8 @@ class SuggestionListElement extends HTMLElement
 
     typeIconContainer = li.querySelector('.icon-container')
     typeIconContainer.innerHTML = ''
-    if iconHTML = (iconHTML ? (type ? '')[0])
+    if (iconHTML? or type?) and iconHTML isnt false
+      iconHTML = DefaultSuggestionTypeIconHTML[type] ? type[0] if type? and not iconHTML?
       typeIconContainer.innerHTML = IconTemplate
       typeIcon = typeIconContainer.childNodes[0]
       typeIcon.innerHTML = iconHTML

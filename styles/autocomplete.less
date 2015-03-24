@@ -87,6 +87,9 @@ autocomplete-suggestion-list {
     font-size: @type-icon-font-size;
     vertical-align: middle;
 
+    color: @text-color-subtle;
+    background: fadeout(@text-color, 90%);
+
     &:empty { display: none; }
     > *::before {
       font-size: @type-icon-font-size;

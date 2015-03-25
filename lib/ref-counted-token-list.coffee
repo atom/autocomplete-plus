@@ -32,12 +32,11 @@ class RefCountedTokenList
       @references[tokenKey] ?= {token, count: 0}
       @addTokenToList(token)
 
-    if @references[tokenKey]?
-      @references[tokenKey].count += increment
+    @references[tokenKey].count += increment if @references[tokenKey]?
 
-      if @references[tokenKey].count <= 0
-        delete @references[tokenKey]
-        @removeTokenFromList(token)
+    if @references[tokenKey]?.count <= 0
+      delete @references[tokenKey]
+      @removeTokenFromList(token)
 
   addTokenToList: (token) ->
     @tokens.push(token)

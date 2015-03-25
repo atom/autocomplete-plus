@@ -29,7 +29,6 @@ describe 'SymbolProvider', ->
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
 
-
   afterEach ->
     atom.config.set('autocomplete-plus.defaultProvider', 'Fuzzy')
 
@@ -46,13 +45,8 @@ describe 'SymbolProvider', ->
           atom.packages.activatePackage("autocomplete-plus").then (a) ->
             mainModule = a.mainModule
 
-      waitsFor ->
-        mainModule.autocompleteManager?.ready
-
       runs ->
         autocompleteManager = mainModule.autocompleteManager
-
-      runs ->
         advanceClock 1
         editorView = atom.views.getView(editor)
 
@@ -86,13 +80,8 @@ describe 'SymbolProvider', ->
           atom.packages.activatePackage("autocomplete-plus").then (a) ->
             mainModule = a.mainModule
 
-      waitsFor ->
-        mainModule.autocompleteManager?.ready
-
       runs ->
         autocompleteManager = mainModule.autocompleteManager
-
-      runs ->
         advanceClock 1
         editorView = atom.views.getView(editor)
 

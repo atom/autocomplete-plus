@@ -130,7 +130,7 @@ class FuzzyProvider
   #
   # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (prefix) =>
-    return unless @wordList?
+    return unless @wordList.getLength()
 
     # Merge the scope specific words into the default word list
     symbols = @wordList.getSymbols()

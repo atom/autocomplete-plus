@@ -43,6 +43,19 @@ describe 'Autocomplete', ->
       editor.insertText('somethingNew')
       expect(provider.wordList.getSymbol('somethingNew')).toBe 'somethingNew'
 
+    it 'removes words that are no longer in the buffer', ->
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
+      provider = autocompleteManager.providerManager.fuzzyProvider
+
+      expect(provider.wordList.getSymbol('somethingNew')).toBeUndefined()
+      editor.insertText('somethingNew')
+      expect(provider.wordList.getSymbol('somethingNew')).toBe 'somethingNew'
+
+      editor.backspace()
+      expect(provider.wordList.getSymbol('somethingNew')).toBe undefined
+      expect(provider.wordList.getSymbol('somethingNe')).toBe 'somethingNe'
+
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->
       provider = autocompleteManager.providerManager.fuzzyProvider

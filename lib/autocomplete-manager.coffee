@@ -311,7 +311,6 @@ class AutocompleteManager
 
         if @editor.getTextInBufferRange([beginningPosition, endPosition]) is suggestion.replacementPrefix
           suffix = @getSuffix(@editor, endPosition, suggestion)
-          console.log suffix, suffix.length
           cursor.moveRight(suffix.length) if suffix.length
           cursor.selection.selectLeft(suggestion.replacementPrefix.length + suffix.length)
 

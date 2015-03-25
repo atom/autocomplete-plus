@@ -305,8 +305,9 @@ class AutocompleteManager
         endPosition = cursor.getBufferPosition()
         beginningPosition = [endPosition.row, endPosition.column - suggestion.replacementPrefix.length]
 
-        if @editor.getTextInRange([beginningPosition, endPosition]) is suggestion.replacementPrefix
+        if @editor.getTextInBufferRange([beginningPosition, endPosition]) is suggestion.replacementPrefix
           suffix = @getSuffix(@editor, endPosition, suggestion)
+          console.log suffix, suffix.length
           cursor.moveRight(suffix.length) if suffix.length
           cursor.selection.selectLeft(suggestion.replacementPrefix.length + suffix.length)
 
@@ -321,8 +322,8 @@ class AutocompleteManager
     # substring with the lineText starting at the cursor. There is probably a
     # more efficient way to do this.
     suffix = (suggestion.snippet ? suggestion.text)
-    endPosition = [bufferPosition.row, suffix.length]
-    endOfLineText = editor.getTextInRange([bufferPosition, endPosition])
+    endPosition = [bufferPosition.row, bufferPosition.column + suffix.length]
+    endOfLineText = editor.getTextInBufferRange([bufferPosition, endPosition])
     while suffix
       return suffix if endOfLineText.startsWith(suffix)
       suffix = suffix.slice(1)

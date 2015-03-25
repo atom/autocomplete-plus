@@ -302,7 +302,6 @@ class AutocompleteManager
 
     cursors = @editor.getCursors()
     return unless cursors?
-    return unless suggestion.replacementPrefix?.length > 0
 
     @editor.transact =>
       for cursor in cursors

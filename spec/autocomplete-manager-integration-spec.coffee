@@ -324,6 +324,21 @@ describe 'Autocomplete Manager', ->
 
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+      describe "when the replacementPrefix is empty", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            [text: 'someMethod()', replacementPrefix: '']
+
+        it "will insert the text without replacing anything", ->
+          editor.insertText('a')
+          triggerAutocompletion(editor, false, '.')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe 'ok then a.someMethod()'
+
       describe 'when tab is used to accept suggestions', ->
         beforeEach ->
           atom.config.set('autocomplete-plus.confirmCompletion', 'tab')

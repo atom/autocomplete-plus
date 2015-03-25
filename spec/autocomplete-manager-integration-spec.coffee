@@ -380,6 +380,77 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 1
 
+      describe "strict matching of prefix when explicitly triggered", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+            [{text: 'abcOk'}, {text: 'aabcOk'}]
+
+        it 'strict matches, and confirms the suggestion with the strict match', ->
+          editor.insertText 'ok ab'
+          editor.setCursorBufferPosition([0, 1000])
+          triggerAutocompletion(editor, false, 'c')
+
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+            atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+            waitForAutocomplete()
+
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+            expect(editor.getText()).toBe 'ok abcOk'
+
+        describe "when a provider uses its own prefix scheme", ->
+          beforeEach ->
+            specialProvider =
+              selector: '*'
+              getSuggestions: ({prefix}) ->
+                replacementPrefix = "self #{prefix}"
+                [{text: '[self abcOk]', replacementPrefix}, {text: '[self aabcOk]', replacementPrefix}]
+            mainModule.consumeProvider(specialProvider)
+
+          it 'ignores the suggestions with their own prefix scheme', ->
+            editor.insertText 'yeah ab'
+            editor.setCursorBufferPosition([0, 1000])
+            triggerAutocompletion(editor, false, 'c')
+
+            runs ->
+              expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+              atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+              waitForAutocomplete()
+
+            runs ->
+              expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+              items = editorView.querySelectorAll('.autocomplete-plus li')
+              expect(items).toHaveLength 3
+              expect(items[0].textContent).toBe 'abcOk'
+              expect(items[1].textContent).toBe '[self abcOk]'
+              expect(items[2].textContent).toBe '[self aabcOk]'
+
+          it 'resets the strict match on subsequent opens', ->
+            editor.insertText 'yeah ab'
+            editor.setCursorBufferPosition([0, 1000])
+            triggerAutocompletion(editor, false, 'c')
+
+            runs ->
+              atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+              waitForAutocomplete()
+
+            runs ->
+              expect(editorView.querySelector('.autocomplete-plus')).toExist()
+              expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 3
+
+              editor.setText 'yeah '
+              editor.setCursorBufferPosition([0, 1000])
+              triggerAutocompletion(editor, false, 'a')
+
+            runs ->
+              atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+              waitForAutocomplete()
+
+            runs ->
+              expect(editorView.querySelector('.autocomplete-plus')).toExist()
+              expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
 
     describe "when the replacementPrefix doesnt match the actual prefix", ->
       describe "when snippets are not used", ->

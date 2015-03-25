@@ -1,7 +1,7 @@
 _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 {TextEditor, CompositeDisposable}  = require 'atom'
-RefCountedSymbolList = require './ref-counted-symbol-list'
+RefCountedTokenList = require './ref-counted-token-list'
 BufferPatchHelpers = require './buffer-patch-helpers'
 
 module.exports =
@@ -10,7 +10,7 @@ class FuzzyProvider
   updateBuildWordListTimeout: null
   updateCurrentEditorTimeout: null
   wordRegex: /\b\w+[\w-]*\b/g
-  wordList: new RefCountedSymbolList()
+  tokenList: new RefCountedTokenList()
   editor: null
   buffer: null
 
@@ -100,7 +100,7 @@ class FuzzyProvider
   buildWordList: =>
     return unless @editor?
 
-    @wordList.clear()
+    @tokenList.clear()
 
     if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
       editors = atom.workspace.getEditors()
@@ -116,13 +116,13 @@ class FuzzyProvider
     return unless matches?
     for match in matches
       if (minimumWordLength and match.length >= minimumWordLength) or not minimumWordLength
-        @wordList.addSymbol(match)
+        @tokenList.addToken(match)
 
   removeWordsForText: (text) ->
     matches = text.match(@wordRegex)
     return unless matches?
     for match in matches
-      @wordList.removeSymbol(match)
+      @tokenList.removeToken(match)
 
   # Private: Finds possible matches for the given string / prefix
   #
@@ -130,17 +130,17 @@ class FuzzyProvider
   #
   # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (prefix) =>
-    return unless @wordList.getLength() and @editor?
+    return unless @tokenList.getLength() and @editor?
 
     # Merge the scope specific words into the default word list
-    symbols = @wordList.getSymbols()
-    symbols = symbols.concat(@getCompletionsForCursorScope())
+    tokens = @tokenList.getTokens()
+    tokens = tokens.concat(@getCompletionsForCursorScope())
 
     words =
       if atom.config.get('autocomplete-plus.strictMatching')
-        symbols.filter((word) -> word?.indexOf(prefix) is 0)
+        tokens.filter((word) -> word?.indexOf(prefix) is 0)
       else
-        fuzzaldrin.filter(symbols, prefix)
+        fuzzaldrin.filter(tokens, prefix)
 
     results = []
 

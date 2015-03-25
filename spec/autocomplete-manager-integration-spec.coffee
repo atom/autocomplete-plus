@@ -40,7 +40,7 @@ describe 'Autocomplete Manager', ->
         provider =
           selector: '*'
           getSuggestions: ({prefix}) ->
-            list = ['a', 'ab', 'abc', 'abcd', 'abcde']
+            list = ['ab', 'abc', 'abcd', 'abcde']
             ({text, replacementPrefix: prefix} for text in list)
         mainModule.consumeProvider(provider)
 
@@ -58,7 +58,7 @@ describe 'Autocomplete Manager', ->
         {editor, triggerPosition, suggestion} = provider.onDidInsertSuggestion.mostRecentCall.args[0]
         expect(editor).toBe editor
         expect(triggerPosition).toEqual [0, 1]
-        expect(suggestion.text).toBe 'a'
+        expect(suggestion.text).toBe 'ab'
 
     describe "prefix passed to getSuggestions", ->
       prefix = null
@@ -123,7 +123,7 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
-          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 5
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
           expect(editorView.querySelector('.autocomplete-plus .list-group').style['max-height']).toBe("#{2 * 25}px")
 
     describe "when match.snippet is used", ->
@@ -306,6 +306,105 @@ describe 'Autocomplete Manager', ->
 
           atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+    describe 'accepting suggestions', ->
+      beforeEach ->
+        editor.setText('ok then ')
+        editor.setCursorBufferPosition([0, 20])
+
+      it 'hides the suggestions list when a suggestion is confirmed', ->
+        triggerAutocompletion(editor, false, 'a')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          # Accept suggestion
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      describe 'when tab is used to accept suggestions', ->
+        beforeEach ->
+          atom.config.set('autocomplete-plus.confirmCompletion', 'tab')
+
+        it 'inserts the word and moves the cursor to the end of the word', ->
+          triggerAutocompletion(editor, false, 'a')
+
+          runs ->
+            key = atom.keymaps.constructor.buildKeydownEvent('tab', {target: document.activeElement})
+            atom.keymaps.handleKeyboardEvent(key)
+
+            expect(editor.getText()).toBe 'ok then ab'
+
+            bufferPosition = editor.getCursorBufferPosition()
+            expect(bufferPosition.row).toEqual(0)
+            expect(bufferPosition.column).toEqual(10)
+
+        it 'does not insert the word when enter completion not enabled', ->
+          triggerAutocompletion(editor, false, 'a')
+
+          runs ->
+            key = atom.keymaps.constructor.buildKeydownEvent('enter', {keyCode: 13, target: document.activeElement})
+            atom.keymaps.handleKeyboardEvent(key)
+            expect(editor.getText()).toBe 'ok then a\n'
+
+      describe 'when enter is used to accept suggestions', ->
+        beforeEach ->
+          atom.config.set('autocomplete-plus.confirmCompletion', 'enter')
+
+        it 'inserts the word and moves the cursor to the end of the word', ->
+          triggerAutocompletion(editor, false, 'a')
+
+          runs ->
+            key = atom.keymaps.constructor.buildKeydownEvent('enter', {target: document.activeElement})
+            atom.keymaps.handleKeyboardEvent(key)
+
+            expect(editor.getText()).toBe 'ok then ab'
+
+            bufferPosition = editor.getCursorBufferPosition()
+            expect(bufferPosition.row).toEqual(0)
+            expect(bufferPosition.column).toEqual(10)
+
+        it 'does not insert the word when tab completion not enabled', ->
+          triggerAutocompletion(editor, false, 'a')
+
+          runs ->
+            key = atom.keymaps.constructor.buildKeydownEvent('tab', {keyCode: 13, target: document.activeElement})
+            atom.keymaps.handleKeyboardEvent(key)
+            expect(editor.getText()).toBe 'ok then a '
+
+      describe "when the cursor suffix matches the replacement", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            [text: 'oneomgtwo', replacementPrefix: 'one']
+
+        it 'replaces the suffix with the replacement', ->
+          editor.setText('ontwothree')
+          editor.setCursorBufferPosition([0, 2])
+          triggerAutocompletion(editor, false, 'e')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe 'oneomgtwothree'
+
+      describe "when the cursor suffix does not match the replacement", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            [text: 'oneomgTwo', replacementPrefix: 'one']
+
+        it 'replaces the suffix with the replacement', ->
+          editor.setText('ontwothree')
+          editor.setCursorBufferPosition([0, 2])
+          triggerAutocompletion(editor, false, 'e')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe 'oneomgTwotwothree'
 
     describe 'when auto-activation is disabled', ->
       beforeEach ->
@@ -742,101 +841,6 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-    describe 'accepting suggestions', ->
-      it 'hides the suggestions list when a suggestion is confirmed', ->
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-        # Trigger an autocompletion
-        editor.moveToBottom()
-        editor.moveToBeginningOfLine()
-        editor.insertText('f')
-
-        waitForAutocomplete()
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
-
-          # Accept suggestion
-          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
-
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-      describe 'when tab is used to accept suggestions', ->
-        beforeEach ->
-          atom.config.set('autocomplete-plus.confirmCompletion', 'tab')
-
-        it 'inserts the word and moves the cursor to the end of the word', ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-          # Trigger an autocompletion
-          triggerAutocompletion(editor)
-
-          runs ->
-            # Accept suggestion
-            key = atom.keymaps.constructor.buildKeydownEvent('tab', {target: document.activeElement})
-            atom.keymaps.handleKeyboardEvent(key)
-
-            # Check for result
-            expect(editor.getBuffer().getLastLine()).toEqual('function')
-
-            # Check for cursor position
-            bufferPosition = editor.getCursorBufferPosition()
-            expect(bufferPosition.row).toEqual(13)
-            expect(bufferPosition.column).toEqual(8)
-
-        it 'does not insert the word when enter completion not enabled', ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-          # Trigger an autocompletion
-          triggerAutocompletion(editor)
-
-          runs ->
-            # Accept suggestion
-            key = atom.keymaps.constructor.buildKeydownEvent('enter', {keyCode: 13, target: document.activeElement})
-            atom.keymaps.handleKeyboardEvent(key)
-
-            # Check for result
-            expect(editor.getBuffer().getLastLine()).toEqual('')
-
-      describe 'when enter is used to accept suggestions', ->
-        beforeEach ->
-          atom.config.set('autocomplete-plus.confirmCompletion', 'enter')
-
-        it 'inserts the word and moves the cursor to the end of the word', ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-          # Trigger an autocompletion
-          triggerAutocompletion(editor)
-
-          runs ->
-
-            # Accept suggestion
-            key = atom.keymaps.constructor.buildKeydownEvent('enter', {target: document.activeElement})
-            atom.keymaps.handleKeyboardEvent(key)
-
-            # Check for result
-            expect(editor.getBuffer().getLastLine()).toEqual('function')
-
-            # Check for cursor position
-            bufferPosition = editor.getCursorBufferPosition()
-            expect(bufferPosition.row).toEqual(13)
-            expect(bufferPosition.column).toEqual(8)
-
-        it 'does not insert the word when tab completion not enabled', ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-          # Trigger an autocompletion
-          triggerAutocompletion(editor)
-
-          runs ->
-            # Accept suggestion
-            key = atom.keymaps.constructor.buildKeydownEvent('tab', {target: document.activeElement})
-            atom.keymaps.handleKeyboardEvent(key)
-
-            # Check for result
-            expect(editor.getBuffer().getLastLine()).toEqual('f ')
 
     describe 'select-previous event', ->
       it 'selects the previous item in the list', ->

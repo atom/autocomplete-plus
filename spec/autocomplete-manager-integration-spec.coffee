@@ -39,6 +39,8 @@ describe 'Autocomplete Manager', ->
       runs ->
         provider =
           selector: '*'
+          inclusionPriority: 2
+          excludeLowerPriority: true
           getSuggestions: ({prefix}) ->
             list = ['ab', 'abc', 'abcd', 'abcde']
             ({text, replacementPrefix: prefix} for text in list)
@@ -592,6 +594,7 @@ describe 'Autocomplete Manager', ->
           beforeEach ->
             specialProvider =
               selector: '*'
+              inclusionPriority: 2
               getSuggestions: ({prefix}) ->
                 replacementPrefix = "self #{prefix}"
                 [{text: '[self abcOk]', replacementPrefix}, {text: '[self aabcOk]', replacementPrefix}]
@@ -690,6 +693,100 @@ describe 'Autocomplete Manager', ->
             aok(omg) aok(omg)
             defm
             """
+
+    describe 'select-previous event', ->
+      it 'selects the previous item in the list', ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [{text: 'ab'}, {text: 'abc'}, {text: 'abcd'}]
+
+        triggerAutocompletion(editor, false, 'a')
+
+        runs ->
+          items = editorView.querySelectorAll('.autocomplete-plus li')
+          expect(items[0]).toHaveClass('selected')
+          expect(items[1]).not.toHaveClass('selected')
+          expect(items[2]).not.toHaveClass('selected')
+
+          # Select previous item
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-previous')
+
+          items = editorView.querySelectorAll('.autocomplete-plus li')
+          expect(items[0]).not.toHaveClass('selected')
+          expect(items[1]).not.toHaveClass('selected')
+          expect(items[2]).toHaveClass('selected')
+
+      it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [{text: 'quicksort'}]
+
+        triggerAutocompletion(editor, false, 'q')
+
+        runs ->
+          # Accept suggestion
+          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
+
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).not.toExist()
+
+      it 'closes the autocomplete when up arrow while up,down navigation not selected', ->
+        atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
+        triggerAutocompletion(editor, false, 'a')
+
+        runs ->
+          # Accept suggestion
+          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
+
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).not.toExist()
+
+    describe 'select-next event', ->
+      it 'selects the next item in the list', ->
+        triggerAutocompletion(editor, false, 'a')
+
+        runs ->
+          items = editorView.querySelectorAll('.autocomplete-plus li')
+          expect(items[0]).toHaveClass('selected')
+          expect(items[1]).not.toHaveClass('selected')
+          expect(items[2]).not.toHaveClass('selected')
+
+          # Select next item
+
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+
+          items = editorView.querySelectorAll('.autocomplete-plus li')
+          expect(items[0]).not.toHaveClass('selected')
+          expect(items[1]).toHaveClass('selected')
+          expect(items[2]).not.toHaveClass('selected')
+
+      it 'wraps to the first item when triggered at the end of the list', ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [{text: 'ab'}, {text: 'abc'}, {text: 'abcd'}]
+
+        triggerAutocompletion(editor, false, 'a')
+
+        runs ->
+          items = editorView.querySelectorAll('.autocomplete-plus li')
+          expect(items[0]).toHaveClass('selected')
+          expect(items[1]).not.toHaveClass('selected')
+          expect(items[2]).not.toHaveClass('selected')
+
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          items = editorView.querySelectorAll('.autocomplete-plus li')
+
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+          expect(items[1]).toHaveClass('selected')
+
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+          expect(items[2]).toHaveClass('selected')
+
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+          expect(items[0]).toHaveClass('selected')
 
   describe 'when opening a file without a path', ->
     beforeEach ->
@@ -922,118 +1019,6 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-    describe 'select-previous event', ->
-      it 'selects the previous item in the list', ->
-
-        triggerAutocompletion(editor, false, 'a')
-
-        runs ->
-          items = editorView.querySelectorAll('.autocomplete-plus li')
-          expect(items[0]).toHaveClass('selected')
-          expect(items[1]).not.toHaveClass('selected')
-          expect(items[2]).not.toHaveClass('selected')
-
-          # Select previous item
-          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-previous')
-
-          items = editorView.querySelectorAll('.autocomplete-plus li')
-          expect(items[0]).not.toHaveClass('selected')
-          expect(items[1]).not.toHaveClass('selected')
-          expect(items[2]).toHaveClass('selected')
-
-      it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
-        triggerAutocompletion(editor, false, 'q')
-
-        runs ->
-          # Accept suggestion
-          key = atom.keymaps.constructor.buildKeydownEvent('down', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
-          advanceClock(1)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).not.toExist()
-
-      it 'does not close the autocomplete when down arrow pressed when many items', ->
-        triggerAutocompletion(editor)
-
-        runs ->
-          # Accept suggestion
-          key = atom.keymaps.constructor.buildKeydownEvent('down', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).toExist()
-
-      it 'does close the autocomplete when down arrow while up,down navigation not selected', ->
-        atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
-        triggerAutocompletion(editor, false)
-
-        runs ->
-          # Accept suggestion
-          key = atom.keymaps.constructor.buildKeydownEvent('down', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
-          advanceClock(1)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).not.toExist()
-
-    describe 'select-next event', ->
-      it 'selects the next item in the list', ->
-        triggerAutocompletion(editor, false, 'a')
-
-        runs ->
-          items = editorView.querySelectorAll('.autocomplete-plus li')
-          expect(items[0]).toHaveClass('selected')
-          expect(items[1]).not.toHaveClass('selected')
-          expect(items[2]).not.toHaveClass('selected')
-
-          # Select next item
-
-          suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
-
-          items = editorView.querySelectorAll('.autocomplete-plus li')
-          expect(items[0]).not.toHaveClass('selected')
-          expect(items[1]).toHaveClass('selected')
-          expect(items[2]).not.toHaveClass('selected')
-
-      it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
-        triggerAutocompletion(editor, false, 'q')
-
-        runs ->
-          # Accept suggestion
-          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
-          advanceClock(1)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).not.toExist()
-
-      it 'does not close the autocomplete when up arrow pressed when many items', ->
-        triggerAutocompletion(editor)
-
-        runs ->
-          # Accept suggestion
-          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).toExist()
-
-      it 'does close the autocomplete when up arrow while up,down navigation not selected', ->
-        atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
-        triggerAutocompletion(editor)
-
-        runs ->
-          # Accept suggestion
-          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
-          advanceClock(1)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).not.toExist()
 
     describe 'when a suggestion is clicked', ->
       it 'should select the item and confirm the selection', ->

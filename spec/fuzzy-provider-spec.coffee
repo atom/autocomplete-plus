@@ -39,44 +39,44 @@ describe 'Autocomplete', ->
       editor.moveToBeginningOfLine()
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.getToken('somethingNew')).toBeUndefined()
+      expect(provider.tokenList.getToken('somethingNew')).toBeUndefined()
       editor.insertText('somethingNew')
-      expect(provider.wordList.getToken('somethingNew')).toBe 'somethingNew'
+      expect(provider.tokenList.getToken('somethingNew')).toBe 'somethingNew'
 
     it 'removes words that are no longer in the buffer', ->
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.getToken('somethingNew')).toBeUndefined()
+      expect(provider.tokenList.getToken('somethingNew')).toBeUndefined()
       editor.insertText('somethingNew')
-      expect(provider.wordList.getToken('somethingNew')).toBe 'somethingNew'
+      expect(provider.tokenList.getToken('somethingNew')).toBe 'somethingNew'
 
       editor.backspace()
-      expect(provider.wordList.getToken('somethingNew')).toBe undefined
-      expect(provider.wordList.getToken('somethingNe')).toBe 'somethingNe'
+      expect(provider.tokenList.getToken('somethingNew')).toBe undefined
+      expect(provider.tokenList.getToken('somethingNe')).toBe 'somethingNe'
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.indexOf('somēthingNew')).toEqual(-1)
+      expect(provider.tokenList.indexOf('somēthingNew')).toEqual(-1)
       editor.insertText('somēthingNew')
       editor.insertText(' ')
-      expect(provider.wordList.indexOf('somēthingNew')).not.toEqual(-1)
+      expect(provider.tokenList.indexOf('somēthingNew')).not.toEqual(-1)
 
     # Fixing This Fixes #196
     xit 'removes words from the wordlist when they no longer exist in any open buffers', ->
       # Not sure we should fix this; could have a significant performance impacts
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.indexOf('bogos')).toEqual(-1)
+      expect(provider.tokenList.indexOf('bogos')).toEqual(-1)
       editor.insertText('bogos = 1')
       editor.insertText(' ')
-      expect(provider.wordList.indexOf('bogos')).not.toEqual(-1)
-      expect(provider.wordList.indexOf('bogus')).toEqual(-1)
+      expect(provider.tokenList.indexOf('bogos')).not.toEqual(-1)
+      expect(provider.tokenList.indexOf('bogus')).toEqual(-1)
       editor.backspace() for [1..7]
       editor.insertText('us = 1')
       editor.insertText(' ')
-      expect(provider.wordList.indexOf('bogus')).not.toEqual(-1)
-      expect(provider.wordList.indexOf('bogos')).toEqual(-1)
+      expect(provider.tokenList.indexOf('bogus')).not.toEqual(-1)
+      expect(provider.tokenList.indexOf('bogos')).toEqual(-1)

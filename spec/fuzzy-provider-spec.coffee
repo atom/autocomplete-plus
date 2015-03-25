@@ -29,23 +29,19 @@ describe 'Autocomplete', ->
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
 
-      waitsFor ->
-        mainModule.autocompleteManager?.ready
-
       runs ->
         autocompleteManager = mainModule.autocompleteManager
-
-      runs ->
         advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
         editorView = atom.views.getView(editor)
 
     it 'adds words to the wordlist after they have been written', ->
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.wordList.indexOf('somethingNew')).toEqual(-1)
+      expect(provider.wordList.getSymbol('somethingNew')).toBeUndefined()
       editor.insertText('somethingNew')
-      editor.insertText(' ')
-      expect(provider.wordList.indexOf('somethingNew')).not.toEqual(-1)
+      expect(provider.wordList.getSymbol('somethingNew')).toBe 'somethingNew'
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->

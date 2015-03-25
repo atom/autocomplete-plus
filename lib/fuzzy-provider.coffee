@@ -1,6 +1,8 @@
 _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 {TextEditor, CompositeDisposable}  = require 'atom'
+RefCountedSymbolList = require './ref-counted-symbol-list'
+BufferPatchHelpers = require './buffer-patch-helpers'
 
 module.exports =
 class FuzzyProvider
@@ -8,7 +10,7 @@ class FuzzyProvider
   updateBuildWordListTimeout: null
   updateCurrentEditorTimeout: null
   wordRegex: /\b\w+[\w-]*\b/g
-  wordList: null
+  wordList: new RefCountedSymbolList()
   editor: null
   buffer: null
 
@@ -84,44 +86,10 @@ class FuzzyProvider
 
   # Private: Gets called when the buffer's text has been changed. Checks if the
   # user has potentially finished a word and adds the new word to the word list.
-  #
-  # e - The change {Event}
-  bufferChanged: (e) =>
-    wordChars = 'ąàáäâãåæăćęèéëêìíïîłńòóöôõøśșțùúüûñçżź' +
-      'abcdefghijklmnopqrstuvwxyz1234567890'
-    if wordChars.indexOf(e.newText.toLowerCase()) is -1
-      newline = e.newText is '\n'
-      @addLastWordToList(e.newRange.start.row, e.newRange.start.column, newline)
-
-  # Private: Adds the last typed word to the wordList
-  #
-  # newLine - {Boolean} Has a new line been typed?
-  addLastWordToList: (row, column, newline) =>
-    lastWord = @lastTypedWord(row, column, newline)
-    return unless lastWord
-
-    if @wordList.indexOf(lastWord) < 0
-      @wordList.push(lastWord)
-
-  # Private: Finds the last typed word. If newLine is set to true, it looks
-  # for the last word in the previous line.
-  #
-  # newLine - {Boolean} Has a new line been typed?
-  #
-  # Returns {String} the last typed word
-  lastTypedWord: (row, column, newline) =>
-    # The user pressed enter, check everything until the end
-    if newline
-      maxColumn = column - 1 unless column = 0
-    else
-      maxColumn = column
-
-    lineRange = [[row, 0], [row, column]]
-
-    lastWord = null
-    @buffer.scanInRange(@wordRegex, lineRange, ({match, range, stop}) -> lastWord = match[0])
-
-    return lastWord
+  bufferChanged: (bufferPatch) =>
+    {oldLines, newLines} = BufferPatchHelpers.composeChangedLines(@editor, bufferPatch)
+    @removeWordsForText(oldLines)
+    @addWordsForText(newLines)
 
   debouncedBuildWordList: ->
     clearTimeout(@updateBuildWordListTimeout)
@@ -129,32 +97,32 @@ class FuzzyProvider
       @buildWordList()
     , @deferBuildWordListInterval
 
-  # Private: Generates the word list from the editor buffer(s)
   buildWordList: =>
     return unless @editor?
 
-    # Abuse the Hash as a Set
-    wordList = []
+    @wordList.clear()
 
-    # Do we want autocompletions from all open buffers?
     if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
       editors = atom.workspace.getEditors()
     else
       editors = [@editor]
 
-    # Collect words from all buffers using the regular expression
-    matches = []
-    matches.push(editor.getText().match(@wordRegex)) for editor in editors
+    for editor in editors
+      @addWordsForText(editor.getText())
 
-    # Flatten the matches, make it an unique array
-    wordList = _.uniq(_.flatten(matches))
-
-    # Filter words by length
+  addWordsForText: (text) ->
     minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
-    if minimumWordLength
-      wordList = wordList.filter((word) -> word?.length >= minimumWordLength)
+    matches = text.match(@wordRegex)
+    return unless matches?
+    for match in matches
+      if (minimumWordLength and match.length >= minimumWordLength) or not minimumWordLength
+        @wordList.addSymbol(match)
 
-    @wordList = wordList
+  removeWordsForText: (text) ->
+    matches = text.match(@wordRegex)
+    return unless matches?
+    for match in matches
+      @wordList.removeSymbol(match)
 
   # Private: Finds possible matches for the given string / prefix
   #
@@ -163,14 +131,16 @@ class FuzzyProvider
   # Returns an {Array} of Suggestion instances
   findSuggestionsForWord: (prefix) =>
     return unless @wordList?
+
     # Merge the scope specific words into the default word list
-    wordList = @wordList.concat(@getCompletionsForCursorScope())
+    symbols = @wordList.getSymbols()
+    symbols = symbols.concat(@getCompletionsForCursorScope())
 
     words =
       if atom.config.get('autocomplete-plus.strictMatching')
-        wordList.filter((word) -> word?.indexOf(prefix) is 0)
+        symbols.filter((word) -> word?.indexOf(prefix) is 0)
       else
-        fuzzaldrin.filter(wordList, prefix)
+        fuzzaldrin.filter(symbols, prefix)
 
     results = []
 

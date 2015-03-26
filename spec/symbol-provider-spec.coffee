@@ -2,15 +2,8 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
 _ = require 'underscore-plus'
 
-indexOfWord = (suggestionList, word) ->
-  for suggestion, i in suggestionList
-    return i if suggestion.text is word
-  -1
-
 suggestionForWord = (suggestionList, word) ->
-  for suggestion in suggestionList
-    return suggestion if suggestion.text is word
-  null
+  suggestionList.getToken(word)
 
 describe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
@@ -87,16 +80,31 @@ describe 'SymbolProvider', ->
 
     it "runs a completion ", ->
       provider = autocompleteManager.providerManager.fuzzyProvider
-      expect(indexOfWord(provider.symbolList, 'quicksort')).not.toEqual(-1)
+      expect(suggestionForWord(provider.symbolList, 'quicksort')).toBeTruthy()
 
     it "adds words to the symbol list after they have been written", ->
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(indexOfWord(provider.symbolList, 'aNewFunction')).toEqual(-1)
+      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
       editor.insertText('function aNewFunction(){};')
       editor.insertText(' ')
       advanceClock provider.changeUpdateDelay
-      expect(indexOfWord(provider.symbolList, 'aNewFunction')).not.toEqual(-1)
+      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeTruthy()
+
+    it "removes words from the symbol list when they do not exist in the buffer", ->
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
+      provider = autocompleteManager.providerManager.fuzzyProvider
+
+      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
+      editor.insertText('function aNewFunction(){};')
+      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeTruthy()
+
+      editor.setCursorBufferPosition([13, 21])
+      editor.backspace()
+
+      expect(suggestionForWord(provider.symbolList, 'aNewFunctio')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
 
     describe "when includeCompletionsFromAllBuffers is enabled", ->
       beforeEach ->
@@ -136,7 +144,7 @@ describe 'SymbolProvider', ->
     xit 'adds words to the wordlist with unicode characters', ->
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-      expect(provider.symbolList.indexOf('somēthingNew')).toEqual(-1)
+      expect(provider.symbolList.indexOf('somēthingNew')).toBeFalsy()
       editor.insertText('somēthingNew')
       editor.insertText(' ')
-      expect(provider.symbolList.indexOf('somēthingNew')).not.toEqual(-1)
+      expect(provider.symbolList.indexOf('somēthingNew')).toBeTruthy()

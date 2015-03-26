@@ -29,26 +29,50 @@ describe 'RefCountedTokenList', ->
       expect(list.getTokens()).toEqual []
 
   describe "when object tokens are added to and removed from the list", ->
-    it "maintains the token in the list until there are no more references", ->
-      expect(list.getTokens()).toEqual []
+    describe "when the same tokens are used", ->
+      it "maintains the token in the list until there are no more references", ->
+        expect(list.getTokens()).toEqual []
 
-      abcToken = {text: 'abc'}
-      defToken = {text: 'def'}
-      list.addToken(abcToken, 'text')
-      expect(list.getTokens()).toEqual [abcToken]
+        abcToken = {text: 'abc'}
+        defToken = {text: 'def'}
+        list.addToken(abcToken, 'text')
+        expect(list.getTokens()).toEqual [abcToken]
 
-      list.addToken(abcToken, 'text')
-      list.addToken(defToken, 'text')
-      expect(list.getTokens()).toEqual [abcToken, defToken]
+        list.addToken(abcToken, 'text')
+        list.addToken(defToken, 'text')
+        expect(list.getTokens()).toEqual [abcToken, defToken]
 
-      list.removeToken(abcToken, 'text')
-      expect(list.getTokens()).toEqual [abcToken, defToken]
+        list.removeToken(abcToken, 'text')
+        expect(list.getTokens()).toEqual [abcToken, defToken]
 
-      list.removeToken(defToken, 'text')
-      expect(list.getTokens()).toEqual [abcToken]
+        list.removeToken(defToken, 'text')
+        expect(list.getTokens()).toEqual [abcToken]
 
-      list.removeToken(abcToken, 'text')
-      expect(list.getTokens()).toEqual []
+        list.removeToken(abcToken, 'text')
+        expect(list.getTokens()).toEqual []
 
-      list.removeToken(abcToken, 'text')
-      expect(list.getTokens()).toEqual []
+        list.removeToken(abcToken, 'text')
+        expect(list.getTokens()).toEqual []
+
+    describe "when tokens with the same key are used", ->
+      it "maintains the token in the list until there are no more references", ->
+        expect(list.getTokens()).toEqual []
+
+        list.addToken({text: 'abc'}, 'text')
+        expect(list.getTokens()).toEqual [{text: 'abc'}]
+
+        list.addToken({text: 'abc'}, 'text')
+        list.addToken({text: 'def'}, 'text')
+        expect(list.getTokens()).toEqual [{text: 'abc'}, {text: 'def'}]
+
+        list.removeToken({text: 'abc'}, 'text')
+        expect(list.getTokens()).toEqual [{text: 'abc'}, {text: 'def'}]
+
+        list.removeToken('def')
+        expect(list.getTokens()).toEqual [{text: 'abc'}]
+
+        list.removeToken('abc')
+        expect(list.getTokens()).toEqual []
+
+        list.removeToken('abc')
+        expect(list.getTokens()).toEqual []

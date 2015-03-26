@@ -21,6 +21,7 @@ class RefCountedTokenList
 
   removeToken: (token, textKey) ->
     tokenKey = @getTokenKey(token, textKey)
+    token = @references[tokenKey]?.token
     @updateRefCount(tokenKey, token, -1)
 
   ###

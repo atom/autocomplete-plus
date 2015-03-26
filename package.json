@@ -5,7 +5,7 @@
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/atom-community/autocomplete-plus",
   "engines": {
-    "atom": ">=0.183.0 <2.0.0"
+    "atom": ">=0.189.0 <2.0.0"
   },
   "dependencies": {
     "atom-slick": "^2.0.0",

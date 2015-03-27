@@ -88,6 +88,23 @@ class SymbolProvider
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
 
+  # Buffer change handling. The goal is to remove symbols from the `symbolList`
+  # that were removed from the buffer, and add symbols that were added.
+  #
+  # 1. Use onWillChange, and onDidChange events to build an XOR list of tokens
+  #    to add and remove from the `symbolList`. This XOR list is
+  #    `realtimeUpdateTokenStore`
+  # 2. Trigger an async update to the `symbolList`
+  #
+  # In `updateChangedTokens` will add and remove necessary tokens from `symbolList`
+  #
+  # Why do it this way?
+  #
+  # * Reading of the tokens must happen synchonously in the event handlers as
+  #   thats the only time the buffer will have the tokens matching the change events.
+  # * The slow part is the token scope selector matching to bucket tokens
+  #   by type. So we try to minimize the amount of selector matching that
+  #   happens, and group as much as possible into one event.
   bufferWillChange: ({oldRange}) =>
     tokenizedLines = @getTokenizedLines(@editor)[oldRange.start.row..oldRange.end.row]
     bufferRowBase = oldRange.start.row
@@ -95,7 +112,7 @@ class SymbolProvider
       bufferRow = bufferRowBase + bufferRowIndex
       for token in tokens
         @realtimeUpdateTokenStore.remove(token, @editor.getPath(), bufferRow)
-    @debouncedUpdateChangedTokens()
+    return
 
   bufferDidChange: ({newRange}) =>
     tokenizedLines = @getTokenizedLines(@editor)[newRange.start.row..newRange.end.row]

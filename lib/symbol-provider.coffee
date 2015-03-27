@@ -33,7 +33,7 @@ class SymbolProvider
       selector: '.variable'
       priority: 2
     '':
-      selector: '.comment, .string'
+      selector: '.source'
       priority: 1
 
   constructor: ->

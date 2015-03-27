@@ -7,22 +7,38 @@ class RefCountedTokenList
     @references = {}
     @tokens = []
 
-  getTokens: -> @tokens
-
   getLength: -> @tokens.length
 
-  getToken: (tokenText) ->
-    tokenKey = @getTokenKey(tokenText)
-    @references[tokenKey]?.token
+  getTokens: -> @tokens
 
-  addToken: (token, textKey) ->
-    tokenKey = @getTokenKey(token, textKey)
+  getTokenWrappers: ->
+    (tokenWrapper for key, tokenWrapper of @references)
+
+  getToken: (tokenKey) ->
+    @getTokenWrapper(tokenKey)?.token
+
+  getTokenWrapper: (tokenKey) ->
+    tokenKey = @getTokenKey(tokenKey)
+    @references[tokenKey]
+
+  refCountForToken: (tokenKey) ->
+    tokenKey = @getTokenKey(tokenKey)
+    @references[tokenKey]?.count ? 0
+
+  addToken: (token, tokenKey) ->
+    tokenKey = @getTokenKey(token, tokenKey)
     @updateRefCount(tokenKey, token, 1)
 
-  removeToken: (token, textKey) ->
-    tokenKey = @getTokenKey(token, textKey)
-    token = @references[tokenKey]?.token
-    @updateRefCount(tokenKey, token, -1)
+  # Returns true when the token was removed
+  # Returns false when the token was not present and thus not removed
+  removeToken: (token, tokenKey) ->
+    tokenKey = @getTokenKey(token, tokenKey)
+    if @references[tokenKey]?
+      token = @references[tokenKey].token
+      @updateRefCount(tokenKey, token, -1)
+      true
+    else
+      false
 
   ###
   Private Methods
@@ -30,7 +46,7 @@ class RefCountedTokenList
 
   updateRefCount: (tokenKey, token, increment) ->
     if increment > 0 and not @references[tokenKey]?
-      @references[tokenKey] ?= {token, count: 0}
+      @references[tokenKey] ?= {tokenKey, token, count: 0}
       @addTokenToList(token)
 
     @references[tokenKey].count += increment if @references[tokenKey]?
@@ -46,8 +62,6 @@ class RefCountedTokenList
     index = @tokens.indexOf(token)
     @tokens.splice(index, 1) if index > -1
 
-  getTokenKey: (token, textKey) ->
-    tokenText = token
-    tokenText = token[textKey] if textKey?
+  getTokenKey: (token, tokenKey) ->
     # some words are reserved, like 'constructor' :/
-    tokenText + '$$'
+    (tokenKey ? token) + '$$'

@@ -6,7 +6,7 @@ suggestionForWord = (suggestionList, word) ->
   suggestionList.getToken(word)
 
 describe 'SymbolProvider', ->
-  [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
+  [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
 
   beforeEach ->
     runs ->
@@ -42,14 +42,13 @@ describe 'SymbolProvider', ->
         autocompleteManager = mainModule.autocompleteManager
         advanceClock 1
         editorView = atom.views.getView(editor)
+        provider = autocompleteManager.providerManager.fuzzyProvider
 
     it "properly swaps a lower priority type for a higher priority type", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
       suggestion = suggestionForWord(provider.symbolList, 'SomeModule')
       expect(suggestion.type).toEqual 'class'
 
     it "does not output suggestions from the other buffer", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
       results = null
       waitsForPromise ->
         promise = provider.getSuggestions({editor, prefix: 'item', bufferPosition: new Point(7, 0)})
@@ -77,14 +76,12 @@ describe 'SymbolProvider', ->
         autocompleteManager = mainModule.autocompleteManager
         advanceClock 1
         editorView = atom.views.getView(editor)
+        provider = autocompleteManager.providerManager.fuzzyProvider
 
     it "runs a completion ", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
       expect(suggestionForWord(provider.symbolList, 'quicksort')).toBeTruthy()
 
     it "adds words to the symbol list after they have been written", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
-
       expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
       editor.insertText('function aNewFunction(){};')
       editor.insertText(' ')
@@ -94,17 +91,63 @@ describe 'SymbolProvider', ->
     it "removes words from the symbol list when they do not exist in the buffer", ->
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
-      provider = autocompleteManager.providerManager.fuzzyProvider
 
       expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
       editor.insertText('function aNewFunction(){};')
+      advanceClock provider.changeUpdateDelay
       expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeTruthy()
 
       editor.setCursorBufferPosition([13, 21])
       editor.backspace()
+      advanceClock provider.changeUpdateDelay
 
       expect(suggestionForWord(provider.symbolList, 'aNewFunctio')).toBeTruthy()
       expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
+
+    it "correctly tracks the buffer row associated with symbols as they change", ->
+      editor.setText('')
+      advanceClock(provider.changeUpdateDelay)
+
+      editor.setText('function abc(){}\nfunction abc(){}')
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolList, 'abc')
+      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [0, 1]
+
+      editor.setCursorBufferPosition([2, 100])
+      editor.insertText('\n\nfunction omg(){}; function omg(){}')
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolList, 'omg')
+      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [3, 3]
+
+      editor.selectLeft(16)
+      editor.backspace()
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolList, 'omg')
+      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [3]
+
+      editor.insertText('\nfunction omg(){}')
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolList, 'omg')
+      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [4, 3]
+
+      editor.setText('')
+      advanceClock(provider.changeUpdateDelay)
+
+      expect(suggestionForWord(provider.symbolList, 'abc')).toBeUndefined()
+      expect(suggestionForWord(provider.symbolList, 'omg')).toBeUndefined()
+
+      editor.setText('function abc(){}\nfunction abc(){}')
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('\n')
+      editor.setCursorBufferPosition([2, 100])
+      editor.insertText('\nfunction abc(){}')
+      advanceClock(provider.changeUpdateDelay)
+
+      # This is kind of a mess right now. it does not correctly track buffer
+      # rows when there are several changes before the change delay is
+      # triggered. So we're just making sure the row is in there.
+      suggestion = suggestionForWord(provider.symbolList, 'abc')
+      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toContain 3
 
     describe "when includeCompletionsFromAllBuffers is enabled", ->
       beforeEach ->
@@ -115,11 +158,13 @@ describe 'SymbolProvider', ->
             atom.workspace.open("sample.coffee").then (e) ->
               editor = e
 
+        runs ->
+          provider = autocompleteManager.providerManager.fuzzyProvider
+
       afterEach ->
         atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false)
 
       it "outputs unique suggestions", ->
-        provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
           promise = provider.getSuggestions({editor, prefix: 'qu', bufferPosition: new Point(7, 0)})
@@ -130,7 +175,6 @@ describe 'SymbolProvider', ->
           expect(results).toHaveLength 1
 
       it "outputs suggestions from the other buffer", ->
-        provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
           promise = provider.getSuggestions({editor, prefix: 'item', bufferPosition: new Point(7, 0)})
@@ -142,8 +186,6 @@ describe 'SymbolProvider', ->
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
-
       expect(provider.symbolList.indexOf('somēthingNew')).toBeFalsy()
       editor.insertText('somēthingNew')
       editor.insertText(' ')

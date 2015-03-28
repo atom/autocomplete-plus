@@ -3,7 +3,7 @@ RefCountedTokenList = require './ref-counted-token-list'
 class Symbol
   count: 0
   metadataByPath: null
-  configCache: null
+  cachedConfig: null
 
   type: null
 
@@ -47,15 +47,14 @@ class Symbol
     @type = null if @cachedConfig isnt config
 
     unless @type?
-      cachedTypePriority = 0
+      typePriority = 0
       for type, options of config
         for selector in options.selectors
           for filePath, {scopes} of @metadataByPath
             for scopeDescriptorString, __ of scopes
-              if (!@type or options.priority > cachedTypePriority) and selector.matches(scopeDescriptorString)
+              if (!@type or options.priority > typePriority) and selector.matches(scopeDescriptorString)
                 @type = type
-                cachedTypePriority = options.priority
-
+                typePriority = options.priority
       @cachedConfig = config
 
     @type?

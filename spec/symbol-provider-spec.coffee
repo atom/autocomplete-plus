@@ -3,7 +3,7 @@
 _ = require 'underscore-plus'
 
 suggestionForWord = (suggestionList, word) ->
-  suggestionList.getToken(word)
+  suggestionList.getSymbol(word)
 
 describe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
@@ -44,10 +44,6 @@ describe 'SymbolProvider', ->
         editorView = atom.views.getView(editor)
         provider = autocompleteManager.providerManager.fuzzyProvider
 
-    it "properly swaps a lower priority type for a higher priority type", ->
-      suggestion = suggestionForWord(provider.symbolList, 'SomeModule')
-      expect(suggestion.type).toEqual 'class'
-
     it "does not output suggestions from the other buffer", ->
       results = null
       waitsForPromise ->
@@ -79,30 +75,30 @@ describe 'SymbolProvider', ->
         provider = autocompleteManager.providerManager.fuzzyProvider
 
     it "runs a completion ", ->
-      expect(suggestionForWord(provider.symbolList, 'quicksort')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
 
     it "adds words to the symbol list after they have been written", ->
-      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
       editor.insertText('function aNewFunction(){};')
       editor.insertText(' ')
       advanceClock provider.changeUpdateDelay
-      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
 
     it "removes words from the symbol list when they do not exist in the buffer", ->
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
 
-      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
       editor.insertText('function aNewFunction(){};')
       advanceClock provider.changeUpdateDelay
-      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
 
       editor.setCursorBufferPosition([13, 21])
       editor.backspace()
       advanceClock provider.changeUpdateDelay
 
-      expect(suggestionForWord(provider.symbolList, 'aNewFunctio')).toBeTruthy()
-      expect(suggestionForWord(provider.symbolList, 'aNewFunction')).toBeFalsy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunctio')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
 
     it "correctly tracks the buffer row associated with symbols as they change", ->
       editor.setText('')
@@ -110,31 +106,31 @@ describe 'SymbolProvider', ->
 
       editor.setText('function abc(){}\nfunction abc(){}')
       advanceClock(provider.changeUpdateDelay)
-      suggestion = suggestionForWord(provider.symbolList, 'abc')
-      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [0, 1]
+      suggestion = suggestionForWord(provider.symbolStore, 'abc')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [0, 1]
 
       editor.setCursorBufferPosition([2, 100])
       editor.insertText('\n\nfunction omg(){}; function omg(){}')
       advanceClock(provider.changeUpdateDelay)
-      suggestion = suggestionForWord(provider.symbolList, 'omg')
-      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [3, 3]
+      suggestion = suggestionForWord(provider.symbolStore, 'omg')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 3]
 
       editor.selectLeft(16)
       editor.backspace()
       advanceClock(provider.changeUpdateDelay)
-      suggestion = suggestionForWord(provider.symbolList, 'omg')
-      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [3]
+      suggestion = suggestionForWord(provider.symbolStore, 'omg')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3]
 
       editor.insertText('\nfunction omg(){}')
       advanceClock(provider.changeUpdateDelay)
-      suggestion = suggestionForWord(provider.symbolList, 'omg')
-      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toEqual [4, 3]
+      suggestion = suggestionForWord(provider.symbolStore, 'omg')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 4]
 
       editor.setText('')
       advanceClock(provider.changeUpdateDelay)
 
-      expect(suggestionForWord(provider.symbolList, 'abc')).toBeUndefined()
-      expect(suggestionForWord(provider.symbolList, 'omg')).toBeUndefined()
+      expect(suggestionForWord(provider.symbolStore, 'abc')).toBeUndefined()
+      expect(suggestionForWord(provider.symbolStore, 'omg')).toBeUndefined()
 
       editor.setText('function abc(){}\nfunction abc(){}')
       editor.setCursorBufferPosition([0, 0])
@@ -146,8 +142,8 @@ describe 'SymbolProvider', ->
       # This is kind of a mess right now. it does not correctly track buffer
       # rows when there are several changes before the change delay is
       # triggered. So we're just making sure the row is in there.
-      suggestion = suggestionForWord(provider.symbolList, 'abc')
-      expect(suggestion.bufferRowsForEditorPath[editor.getPath()]).toContain 3
+      suggestion = suggestionForWord(provider.symbolStore, 'abc')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toContain 3
 
     describe "when includeCompletionsFromAllBuffers is enabled", ->
       beforeEach ->
@@ -186,7 +182,7 @@ describe 'SymbolProvider', ->
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->
-      expect(provider.symbolList.indexOf('somēthingNew')).toBeFalsy()
+      expect(provider.symbolStore.indexOf('somēthingNew')).toBeFalsy()
       editor.insertText('somēthingNew')
       editor.insertText(' ')
-      expect(provider.symbolList.indexOf('somēthingNew')).toBeTruthy()
+      expect(provider.symbolStore.indexOf('somēthingNew')).toBeTruthy()

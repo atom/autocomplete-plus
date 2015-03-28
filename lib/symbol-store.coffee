@@ -2,19 +2,27 @@ RefCountedTokenList = require './ref-counted-token-list'
 
 class Symbol
   count: 0
-  metadataByPath: {}
+  metadataByPath: null
+  configCache: null
+
+  type: null
 
   constructor: (@text) ->
-    console.log @text
+    @metadataByPath = {}
 
   getCount: -> @count
+
+  bufferRowsForEditorPath: (editorPath) ->
+    @metadataByPath[editorPath]?.bufferRows
 
   addInstance: (editorPath, bufferRow, scopes) ->
     @metadataByPath[editorPath] ?= {}
     @metadataByPath[editorPath].bufferRows ?= []
     @metadataByPath[editorPath].bufferRows.push bufferRow
     @metadataByPath[editorPath].scopes ?= {}
-    @metadataByPath[editorPath].scopes[scopes] ?= 0
+    unless @metadataByPath[editorPath].scopes[scopes]?
+      @type = null
+      @metadataByPath[editorPath].scopes[scopes] = 0
     @metadataByPath[editorPath].scopes[scopes] += 1
     @count += 1
 
@@ -30,9 +38,27 @@ class Symbol
 
       if @metadataByPath[editorPath].scopes[scopes] is 0
         delete @metadataByPath[editorPath].scopes[scopes]
+        @type = null
 
       if getObjectLength(@metadataByPath[editorPath].scopes) is 0
         delete @metadataByPath[editorPath]
+
+  appliesToConfig: (config) ->
+    @type = null if @cachedConfig isnt config
+
+    unless @type?
+      cachedTypePriority = 0
+      for type, options of config
+        for selector in options.selectors
+          for filePath, {scopes} of @metadataByPath
+            for scopeDescriptorString, __ of scopes
+              if (!@type or options.priority > cachedTypePriority) and selector.matches(scopeDescriptorString)
+                @type = type
+                cachedTypePriority = options.priority
+
+      @cachedConfig = config
+
+    @type?
 
 module.exports =
 class SymbolStore
@@ -48,6 +74,12 @@ class SymbolStore
   getSymbol: (symbolKey) ->
     symbolKey = @getKey(symbolKey)
     @symbolMap[symbolKey]
+
+  symbolsForConfig: (config) ->
+    symbols = []
+    for symbol in @symbols
+      symbols.push(symbol) if symbol.appliesToConfig(config)
+    symbols
 
   addToken: (token, editorPath, bufferRow) =>
     # This could be made async...
@@ -99,7 +131,9 @@ class SymbolStore
     symbol = @symbolMap[symbolKey]
     if symbol?
       symbol.removeInstance(editorPath, bufferRow, scopes)
-      delete @symbolMap[symbolKey] if symbol.getCount() is 0
+      if symbol.getCount() is 0
+        delete @symbolMap[symbolKey]
+        @removeSymbolFromList(symbol)
 
   addSymbolToList: (symbol) ->
     @symbols.push(symbol)

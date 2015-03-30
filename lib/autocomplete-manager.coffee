@@ -103,7 +103,7 @@ class AutocompleteManager
       unless value?.length
         @suppressForClasses = []
         return
-      @suppressForClasses = _.chain(value).map((s) -> s?.trim().split('.')).compact().value()
+      @suppressForClasses = _.chain(value).map((classNames) -> classNames?.trim().split('.')).compact().value()
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))

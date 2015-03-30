@@ -27,6 +27,7 @@ class AutocompleteManager
   subscriptions: null
   suggestionDelay: 50
   suggestionList: null
+  suppressForClasses: []
   shouldDisplaySuggestions: false
   manualActivationStrictPrefixes: null
   prefixRegex:/\b((\w+[\w-]*)|([.:;[{(< ]+))$/g
@@ -98,6 +99,11 @@ class AutocompleteManager
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
+    @subscriptions.add atom.config.observe 'autocomplete-plus.suppressActivationForEditorClasses', (value) =>
+      unless value?.length
+        @suppressForClasses = []
+        return
+      @suppressForClasses = _.chain(value).reject((s) -> s.trim() is '').map((s) -> s.trim()).map((s) -> s.split('.')).value()
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
@@ -392,6 +398,11 @@ class AutocompleteManager
         # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
         # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
         shouldActivate = oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs
+
+      # Suppress activation if the editorView has classes that match the suppression list
+      if shouldActivate and editorView?.classList? and atom.config.get('autocomplete-plus.suppressActivationForEditorClasses')?.length
+        for item in @suppressForClasses
+          shouldActivate = false if _.intersection(editorView.classList, item)?.length
 
     if shouldActivate
       @cancelHideSuggestionListRequest()

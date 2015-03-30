@@ -99,6 +99,14 @@ module.exports =
       default: 'Fuzzy'
       enum: ['Fuzzy', 'Symbol']
       order: 15
+    suppressActivationForEditorClasses:
+      title: 'Suppress Activation For Editor Classes'
+      description: 'Don\'t auto-activate when any of these classes are present in the editor.'
+      type: 'array'
+      default: ['vim-mode.insert-mode']
+      items:
+        type: 'string'
+      order: 16
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->

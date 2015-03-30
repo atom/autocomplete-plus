@@ -702,6 +702,38 @@ describe 'Autocomplete Manager', ->
           for item, index in editorView.querySelectorAll('.autocomplete-plus li span.word')
             expect(item.innerText).toEqual(suggestions[index])
 
+      it 'should show the suggestion list when the suppression list does not match', ->
+        runs ->
+          editorView.classList.add('vim-mode')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+          # Trigger an autocompletion
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          # Check suggestions
+          suggestions = ['function', 'if', 'left', 'shift']
+          for item, index in editorView.querySelectorAll('.autocomplete-plus li span.word')
+            expect(item.innerText).toEqual(suggestions[index])
+
+      it 'should not show the suggestion list when the suppression list does match', ->
+        runs ->
+          editorView.classList.add('vim-mode')
+          editorView.classList.add('insert-mode')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+          # Trigger an autocompletion
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
       it 'should not show the suggestion list when no suggestions are found', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 

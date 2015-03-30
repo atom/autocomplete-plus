@@ -400,9 +400,9 @@ class AutocompleteManager
         shouldActivate = oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs
 
       # Suppress activation if the editorView has classes that match the suppression list
-      if shouldActivate and editorView?.classList? and atom.config.get('autocomplete-plus.suppressActivationForEditorClasses')?.length
+      if shouldActivate and @editorView?.classList? and @suppressForClasses?.length
         for item in @suppressForClasses
-          shouldActivate = false if _.intersection(editorView.classList, item)?.length is item.length
+          shouldActivate = false if _.intersection(@editorView.classList, item)?.length is item.length
 
     if shouldActivate
       @cancelHideSuggestionListRequest()

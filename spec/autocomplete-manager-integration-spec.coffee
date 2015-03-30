@@ -60,11 +60,15 @@ describe 'Autocomplete Manager', ->
         expect(triggerPosition).toEqual [0, 1]
         expect(suggestion.text).toBe 'ab'
 
-    describe "suppression for editorView classes", ->
+    fdescribe "suppression for editorView classes", ->
       beforeEach ->
-        editorView.classList.add('vim-mode')
+        atom.config.set('autocomplete-plus.suppressActivationForEditorClasses', ['vim-mode.command-mode', 'vim-mode . visual-mode', ' vim-mode.operator-pending-mode ', ' '])
 
       it 'should show the suggestion list when the suppression list does not match', ->
+        runs ->
+          editorView.classList.add('vim-mode')
+          editorView.classList.add('insert-mode')
+
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
           triggerAutocompletion(editor)
@@ -74,6 +78,7 @@ describe 'Autocomplete Manager', ->
 
       it 'should not show the suggestion list when the suppression list does match', ->
         runs ->
+          editorView.classList.add('vim-mode')
           editorView.classList.add('command-mode')
 
         runs ->
@@ -82,6 +87,53 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      it 'should not show the suggestion list when the suppression list does match', ->
+        runs ->
+          editorView.classList.add('vim-mode')
+          editorView.classList.add('operator-pending-mode')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      it 'should not show the suggestion list when the suppression list does match', ->
+        runs ->
+          editorView.classList.add('vim-mode')
+          editorView.classList.add('visual-mode')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      it 'should show the suggestion list when the suppression list does not match', ->
+        runs ->
+          editorView.classList.add('vim-mode')
+          editorView.classList.add('some-unforeseen-mode')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+      it 'should show the suggestion list when the suppression list does not match', ->
+        runs ->
+          editorView.classList.add('command-mode')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
     describe "prefix passed to getSuggestions", ->
       prefix = null

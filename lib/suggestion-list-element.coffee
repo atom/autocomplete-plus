@@ -2,7 +2,7 @@
 _ = require 'underscore-plus'
 
 ItemTemplate = """
-  <span class="icon-container"><i class="icon"></i></span>
+  <span class="icon-container"></span>
   <span class="left-label"></span>
   <span class="word-container">
     <span class="word"></span>
@@ -146,7 +146,7 @@ class SuggestionListElement extends HTMLElement
     typeIconContainer = li.querySelector('.icon-container')
     typeIconContainer.innerHTML = ''
 
-    sanitizedType = (if _.isString(type) then type else '')
+    sanitizedType = if _.isString(type) then type else ''
     sanitizedIconHTML = if _.isString(iconHTML) then iconHTML else undefined
     defaultIconHTML = DefaultSuggestionTypeIconHTML[sanitizedType] ? sanitizedType[0]
     if (sanitizedIconHTML or defaultIconHTML) and iconHTML isnt false

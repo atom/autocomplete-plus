@@ -2,7 +2,6 @@ _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 {TextEditor, CompositeDisposable}  = require 'atom'
 RefCountedTokenList = require './ref-counted-token-list'
-BufferPatchHelpers = require './buffer-patch-helpers'
 
 module.exports =
 class FuzzyProvider
@@ -11,6 +10,7 @@ class FuzzyProvider
   updateCurrentEditorTimeout: null
   wordRegex: /\b\w+[\w-]*\b/g
   tokenList: new RefCountedTokenList()
+  currentEditorSubscriptions: null
   editor: null
   buffer: null
 
@@ -38,8 +38,7 @@ class FuzzyProvider
     return if currentPaneItem is @editor
 
     # Stop listening to buffer events
-    @bufferSavedSubscription?.dispose()
-    @bufferChangedSubscription?.dispose()
+    @currentEditorSubscriptions?.dispose()
 
     @editor = null
     @buffer = null
@@ -51,8 +50,10 @@ class FuzzyProvider
     @buffer = @editor.getBuffer()
 
     # Subscribe to buffer events:
-    @bufferSavedSubscription = @buffer.onDidSave(@bufferSaved)
-    @bufferChangedSubscription = @buffer.onDidChange(@bufferChanged)
+    @currentEditorSubscriptions = new CompositeDisposable
+    @currentEditorSubscriptions.add @buffer.onDidSave(@bufferSaved)
+    @currentEditorSubscriptions.add @buffer.onWillChange(@bufferWillChange)
+    @currentEditorSubscriptions.add @buffer.onDidChange(@bufferDidChange)
     @buildWordList()
 
   paneItemIsValid: (paneItem) ->
@@ -84,11 +85,12 @@ class FuzzyProvider
   bufferSaved: =>
     @buildWordList()
 
-  # Private: Gets called when the buffer's text has been changed. Checks if the
-  # user has potentially finished a word and adds the new word to the word list.
-  bufferChanged: (bufferPatch) =>
-    {oldLines, newLines} = BufferPatchHelpers.composeChangedLines(@editor, bufferPatch)
+  bufferWillChange: ({oldRange}) =>
+    oldLines = @editor.getTextInBufferRange([[oldRange.start.row, 0], [oldRange.end.row, Infinity]])
     @removeWordsForText(oldLines)
+
+  bufferDidChange: ({newRange}) =>
+    newLines = @editor.getTextInBufferRange([[newRange.start.row, 0], [newRange.end.row, Infinity]])
     @addWordsForText(newLines)
 
   debouncedBuildWordList: ->
@@ -171,6 +173,5 @@ class FuzzyProvider
   dispose: =>
     clearTimeout(@updateBuildWordListTimeout)
     clearTimeout(@updateCurrentEditorTimeout)
-    @bufferSavedSubscription?.dispose()
-    @bufferChangedSubscription?.dispose()
+    @currentEditorSubscriptions?.dispose()
     @subscriptions.dispose()

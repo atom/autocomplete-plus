@@ -61,14 +61,15 @@ class Symbol
 
 module.exports =
 class SymbolStore
+  count: 0
+
   constructor: (@wordRegex) ->
     @clear()
 
   clear: ->
     @symbolMap = {}
-    @symbols = []
 
-  getLength: -> @symbols.length
+  getLength: -> @count
 
   getSymbol: (symbolKey) ->
     symbolKey = @getKey(symbolKey)
@@ -76,7 +77,7 @@ class SymbolStore
 
   symbolsForConfig: (config) ->
     symbols = []
-    for symbol in @symbols
+    for symbolKey, symbol of @symbolMap
       symbols.push(symbol) if symbol.appliesToConfig(config)
     symbols
 
@@ -121,7 +122,7 @@ class SymbolStore
     symbol = @symbolMap[symbolKey]
     unless symbol?
       @symbolMap[symbolKey] = symbol = new Symbol(symbolText)
-      @addSymbolToList(symbol)
+      @count += 1
 
     symbol.addInstance(editorPath, bufferRow, scopes)
 
@@ -132,14 +133,7 @@ class SymbolStore
       symbol.removeInstance(editorPath, bufferRow, scopes)
       if symbol.getCount() is 0
         delete @symbolMap[symbolKey]
-        @removeSymbolFromList(symbol)
-
-  addSymbolToList: (symbol) ->
-    @symbols.push(symbol)
-
-  removeSymbolFromList: (symbol) ->
-    index = @symbols.indexOf(symbol)
-    @symbols.splice(index, 1) if index > -1
+        @count -= 1
 
   getTokenizedLines: (editor) ->
     # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not

@@ -103,7 +103,7 @@ module.exports =
       title: 'Suppress Activation For Editor Classes'
       description: 'Don\'t auto-activate when any of these classes are present in the editor.'
       type: 'array'
-      default: ['vim-mode.insert-mode']
+      default: ['vim-mode.command-mode', 'vim-mode.visual-mode', 'vim-mode.operator-pending-mode']
       items:
         type: 'string'
       order: 16

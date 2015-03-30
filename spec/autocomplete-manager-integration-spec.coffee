@@ -60,6 +60,29 @@ describe 'Autocomplete Manager', ->
         expect(triggerPosition).toEqual [0, 1]
         expect(suggestion.text).toBe 'ab'
 
+    describe "suppression for editorView classes", ->
+      beforeEach ->
+        editorView.classList.add('vim-mode')
+
+      it 'should show the suggestion list when the suppression list does not match', ->
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+      it 'should not show the suggestion list when the suppression list does match', ->
+        runs ->
+          editorView.classList.add('command-mode')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
     describe "prefix passed to getSuggestions", ->
       prefix = null
       beforeEach ->
@@ -680,8 +703,6 @@ describe 'Autocomplete Manager', ->
       it 'should not show the suggestion list', ->
         atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-        # Trigger an autocompletion
         triggerAutocompletion(editor)
 
         runs ->
@@ -690,8 +711,6 @@ describe 'Autocomplete Manager', ->
     describe 'when the buffer changes', ->
       it 'should show the suggestion list when suggestions are found', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-        # Trigger an autocompletion
         triggerAutocompletion(editor)
 
         runs ->
@@ -702,42 +721,9 @@ describe 'Autocomplete Manager', ->
           for item, index in editorView.querySelectorAll('.autocomplete-plus li span.word')
             expect(item.innerText).toEqual(suggestions[index])
 
-      it 'should show the suggestion list when the suppression list does not match', ->
-        runs ->
-          editorView.classList.add('vim-mode')
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-          # Trigger an autocompletion
-          triggerAutocompletion(editor)
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
-
-          # Check suggestions
-          suggestions = ['function', 'if', 'left', 'shift']
-          for item, index in editorView.querySelectorAll('.autocomplete-plus li span.word')
-            expect(item.innerText).toEqual(suggestions[index])
-
-      it 'should not show the suggestion list when the suppression list does match', ->
-        runs ->
-          editorView.classList.add('vim-mode')
-          editorView.classList.add('insert-mode')
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-          # Trigger an autocompletion
-          triggerAutocompletion(editor)
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
       it 'should not show the suggestion list when no suggestions are found', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        # Trigger an autocompletion
         editor.moveToBottom()
         editor.insertText('x')
 
@@ -750,7 +736,6 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-          # Trigger an autocompletion
           editor.moveToBottom()
           editor.insertText('f')
           editor.insertText('u')
@@ -785,7 +770,6 @@ describe 'Autocomplete Manager', ->
           atom.config.set('autocomplete-plus.backspaceTriggersAutocomplete', false)
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-          # Trigger an autocompletion
           editor.moveToBottom()
           editor.insertText('f')
           editor.insertText('u')
@@ -818,7 +802,6 @@ describe 'Autocomplete Manager', ->
       it "keeps the suggestion list open when it's already open on backspace", ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        # Trigger an autocompletion
         editor.moveToBottom()
         editor.insertText('f')
         editor.insertText('u')
@@ -841,7 +824,6 @@ describe 'Autocomplete Manager', ->
         atom.config.set('autocomplete-plus.backspaceTriggersAutocomplete', false)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        # Trigger an autocompletion
         editor.setCursorBufferPosition([2, 39]) # at the end of `items`
 
         runs ->
@@ -892,7 +874,6 @@ describe 'Autocomplete Manager', ->
     describe 'select-previous event', ->
       it 'selects the previous item in the list', ->
 
-        # Trigger an autocompletion
         triggerAutocompletion(editor, false, 'a')
 
         runs ->
@@ -911,7 +892,6 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
-        # Trigger an autocompletion
         triggerAutocompletion(editor, false, 'q')
 
         runs ->
@@ -924,7 +904,6 @@ describe 'Autocomplete Manager', ->
           expect(autocomplete).not.toExist()
 
       it 'does not close the autocomplete when down arrow pressed when many items', ->
-        # Trigger an autocompletion
         triggerAutocompletion(editor)
 
         runs ->
@@ -937,7 +916,6 @@ describe 'Autocomplete Manager', ->
 
       it 'does close the autocomplete when down arrow while up,down navigation not selected', ->
         atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
-        # Trigger an autocompletion
         triggerAutocompletion(editor, false)
 
         runs ->
@@ -951,7 +929,6 @@ describe 'Autocomplete Manager', ->
 
     describe 'select-next event', ->
       it 'selects the next item in the list', ->
-        # Trigger an autocompletion
         triggerAutocompletion(editor, false, 'a')
 
         runs ->
@@ -971,7 +948,6 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).not.toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
-        # Trigger an autocompletion
         triggerAutocompletion(editor, false, 'q')
 
         runs ->
@@ -984,7 +960,6 @@ describe 'Autocomplete Manager', ->
           expect(autocomplete).not.toExist()
 
       it 'does not close the autocomplete when up arrow pressed when many items', ->
-        # Trigger an autocompletion
         triggerAutocompletion(editor)
 
         runs ->
@@ -997,7 +972,6 @@ describe 'Autocomplete Manager', ->
 
       it 'does close the autocomplete when up arrow while up,down navigation not selected', ->
         atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
-        # Trigger an autocompletion
         triggerAutocompletion(editor)
 
         runs ->
@@ -1011,7 +985,6 @@ describe 'Autocomplete Manager', ->
 
     describe 'when a suggestion is clicked', ->
       it 'should select the item and confirm the selection', ->
-        # Trigger an autocompletion
         triggerAutocompletion(editor, true, 'a')
 
         runs ->

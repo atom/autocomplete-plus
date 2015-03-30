@@ -401,8 +401,8 @@ class AutocompleteManager
 
       # Suppress activation if the editorView has classes that match the suppression list
       if shouldActivate
-        for item in @suppressForClasses
-          shouldActivate = false if _.intersection(@editorView.classList, item)?.length is item.length
+        for classNames in @suppressForClasses
+          shouldActivate = false if _.intersection(@editorView.classList, classNames)?.length is classNames.length
 
     if shouldActivate
       @cancelHideSuggestionListRequest()

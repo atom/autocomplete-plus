@@ -174,10 +174,8 @@ class FuzzyProvider
 
     results = []
 
+    # dont show matches that are the same as the prefix
     for word in words when word isnt prefix
-      # dont show matches that are the same as the prefix
-      continue if word is prefix
-
       # must match the first char!
       continue unless prefix[0].toLowerCase() is word[0].toLowerCase()
 

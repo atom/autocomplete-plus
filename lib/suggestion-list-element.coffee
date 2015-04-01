@@ -61,10 +61,19 @@ class SuggestionListElement extends HTMLElement
       event.stopPropagation()
       @confirmSelection()
 
+  updateDoc: ->
+    if @visibleItems()[@selectedIndex]['description']?
+      @docDiv.style.display = 'block'
+      @docSpan.textContent = @visibleItems()[@selectedIndex]['description']
+    else
+      @docDiv.style.display = 'none'
+
   itemsChanged: ->
     @selectedIndex = 0
     atom.views.pollAfterNextUpdate?()
-    atom.views.updateDocument => @renderItems()
+    atom.views.updateDocument =>
+      @renderItems()
+      @updateDoc()
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
@@ -89,6 +98,7 @@ class SuggestionListElement extends HTMLElement
   setSelectedIndex: (index) ->
     @selectedIndex = index
     @renderItems()
+    @updateDoc()
 
   visibleItems: ->
     @model?.items?.slice(0, @maxItems)
@@ -110,9 +120,22 @@ class SuggestionListElement extends HTMLElement
       @model.cancel()
 
   renderList: ->
+    @mainDiv = document.createElement('div')
+
     @ol = document.createElement('ol')
-    @appendChild(@ol)
     @ol.className = 'list-group'
+    @mainDiv.appendChild(@ol)
+
+    @docDiv = document.createElement('div')
+    @docDiv.className = 'docstring'
+    ruler = document.createElement('hr')
+    @docDiv.appendChild(ruler)
+    @docSpan = document.createElement('span')
+    @docSpan.className = 'docstring'
+    @docDiv.appendChild(@docSpan)
+
+    @mainDiv.appendChild(@docDiv)
+    @appendChild(@mainDiv)
 
   calculateMaxListHeight: ->
     maxVisibleItems = atom.config.get('autocomplete-plus.maxVisibleSuggestions')

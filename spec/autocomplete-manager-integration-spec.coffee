@@ -62,7 +62,7 @@ describe 'Autocomplete Manager', ->
         expect(triggerPosition).toEqual [0, 1]
         expect(suggestion.text).toBe 'ab'
 
-    fdescribe "suppression for editorView classes", ->
+    describe "suppression for editorView classes", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.suppressActivationForEditorClasses', ['vim-mode.command-mode', 'vim-mode . visual-mode', ' vim-mode.operator-pending-mode ', ' '])
 
@@ -201,7 +201,7 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
-          expect(editorView.querySelector('.autocomplete-plus .list-group').style['max-height']).toBe("#{2 * 25}px")
+          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list').style['max-height']).toBe("#{2 * 25}px")
 
     describe "when match.snippet is used", ->
       beforeEach ->
@@ -615,9 +615,9 @@ describe 'Autocomplete Manager', ->
 
               items = editorView.querySelectorAll('.autocomplete-plus li')
               expect(items).toHaveLength 3
-              expect(items[0].textContent).toBe 'abcOk'
-              expect(items[1].textContent).toBe '[self abcOk]'
-              expect(items[2].textContent).toBe '[self aabcOk]'
+              expect(items[0].textContent).toContain 'abcOk'
+              expect(items[1].textContent).toContain '[self abcOk]'
+              expect(items[2].textContent).toContain '[self aabcOk]'
 
           it 'resets the strict match on subsequent opens', ->
             editor.insertText 'yeah ab'
@@ -787,6 +787,145 @@ describe 'Autocomplete Manager', ->
 
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
           expect(items[0]).toHaveClass('selected')
+
+    describe "label rendering", ->
+      describe "when no labels are specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            leftLabel = editorView.querySelector('.autocomplete-plus li .right-label')
+            rightLabel = editorView.querySelector('.autocomplete-plus li .right-label')
+
+            expect(iconContainer.childNodes).toHaveLength 0
+            expect(leftLabel.childNodes).toHaveLength 0
+            expect(rightLabel.childNodes).toHaveLength 0
+
+      describe "when `type` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'omg']
+
+        it "displays an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
+            expect(icon.innerHTML).toBe('o')
+
+      describe "when the `type` specified has a default icon", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'snippet']
+
+        it "displays the default icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon i')
+            console.log editorView.querySelector('.autocomplete-plus li .icon-container .icon').innerHTML
+            expect(icon).toHaveClass('icon-move-right')
+
+      describe "when `type` is an empty string", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: '']
+
+        it "does not display an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            expect(iconContainer.childNodes).toHaveLength 0
+
+      describe "when `iconHTML` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', iconHTML: '<i class="omg"></i>']
+
+        it "displays an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon .omg')
+            expect(icon).toExist()
+
+      describe "when `iconHTML` is false", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'something', iconHTML: false]
+
+        it "does not display an icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            expect(iconContainer.childNodes).toHaveLength 0
+
+      describe "when `iconHTML` is not a string and a `type` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', type: 'something', iconHTML: true]
+
+        it "displays the default icon in the icon-container", ->
+          triggerAutocompletion(editor)
+          runs ->
+            icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
+            expect(icon.innerHTML).toBe('s')
+
+      describe "when `iconHTML` is not a string and no type is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', iconHTML: true]
+
+        it "it does not display an icon", ->
+          triggerAutocompletion(editor)
+          runs ->
+            iconContainer = editorView.querySelector('.autocomplete-plus li .icon-container')
+            expect(iconContainer.childNodes).toHaveLength 0
+
+      describe "when `rightLabel` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', rightLabel: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .right-label')
+            expect(label).toHaveText('<i class="something">sometext</i>')
+
+      describe "when `rightLabelHTML` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', rightLabelHTML: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .right-label .something')
+            expect(label).toHaveText('sometext')
+
+      describe "when `leftLabel` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', leftLabel: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .left-label')
+            expect(label).toHaveText('<i class="something">sometext</i>')
+
+      describe "when `leftLabelHTML` is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake (options) ->
+            [text: 'ok', leftLabelHTML: '<i class="something">sometext</i>']
+
+        it "displays the text in the suggestion", ->
+          triggerAutocompletion(editor)
+          runs ->
+            label = editorView.querySelector('.autocomplete-plus li .left-label .something')
+            expect(label).toHaveText('sometext')
 
   describe 'when opening a file without a path', ->
     beforeEach ->
@@ -1038,7 +1177,7 @@ describe 'Autocomplete Manager', ->
           item.dispatchEvent(mouse)
 
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-          expect(editor.getBuffer().getLastLine()).toEqual(item.innerText)
+          expect(editor.getBuffer().getLastLine()).toEqual(item.textContent.trim())
 
     describe '.cancel()', ->
       it 'unbinds autocomplete event handlers for move-up and move-down', ->

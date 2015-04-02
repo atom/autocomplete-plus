@@ -21,7 +21,7 @@ class SymbolProvider
   config: null
   defaultConfig:
     class:
-      selector: '.class.name, .inherited-class'
+      selector: '.class.name, .inherited-class, .instance.type'
       priority: 4
     function:
       selector: '.function.name'
@@ -122,7 +122,6 @@ class SymbolProvider
 
     for word in words
       word.replacementPrefix = options.prefix
-      word.rightLabel = word.type
 
     return words
 

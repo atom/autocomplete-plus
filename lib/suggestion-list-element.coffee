@@ -1,6 +1,20 @@
 {CompositeDisposable} = require 'atom'
 _ = require 'underscore-plus'
 
+ItemTemplate = """
+  <span class="icon-container"></span>
+  <span class="left-label"></span>
+  <span class="word-container">
+    <span class="word"></span>
+    <span class="right-label"></span>
+  </span>
+"""
+
+IconTemplate = '<i class="icon"></i>'
+
+DefaultSuggestionTypeIconHTML =
+  'snippet': '<i class="icon-move-right"></i>'
+
 class SuggestionListElement extends HTMLElement
   maxItems: 200
   snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
@@ -106,7 +120,8 @@ class SuggestionListElement extends HTMLElement
     li.textContent = 'test'
     @ol.appendChild(li)
     itemHeight = li.offsetHeight
-    @ol.style['max-height'] = "#{maxVisibleItems * itemHeight}px"
+    paddingHeight = parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom']) ? 0
+    @style['max-height'] = "#{maxVisibleItems * itemHeight + paddingHeight}px"
     li.remove()
 
   renderItems: ->
@@ -115,40 +130,49 @@ class SuggestionListElement extends HTMLElement
     li.remove() while li = @ol.childNodes[items.length]
     @selectedLi?.scrollIntoView(false)
 
-  renderItem: ({snippet, text, rightLabel, rightLabelHTML, className, replacementPrefix}, index) ->
+  renderItem: ({iconHTML, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
     unless li
       li = document.createElement('li')
-      @ol.appendChild(li)
+      li.innerHTML = ItemTemplate
       li.dataset.index = index
+      @ol.appendChild(li)
 
     li.className = ''
     li.classList.add(className) if className
     li.classList.add('selected') if index is @selectedIndex
     @selectedLi = li if index is @selectedIndex
 
-    wordSpan = li.childNodes[0]
-    unless wordSpan
-      wordSpan = document.createElement('span')
-      li.appendChild(wordSpan)
-      wordSpan.className = 'word'
+    typeIconContainer = li.querySelector('.icon-container')
+    typeIconContainer.innerHTML = ''
 
+    sanitizedType = if _.isString(type) then type else ''
+    sanitizedIconHTML = if _.isString(iconHTML) then iconHTML else undefined
+    defaultIconHTML = DefaultSuggestionTypeIconHTML[sanitizedType] ? sanitizedType[0]
+    if (sanitizedIconHTML or defaultIconHTML) and iconHTML isnt false
+      typeIconContainer.innerHTML = IconTemplate
+      typeIcon = typeIconContainer.childNodes[0]
+      typeIcon.innerHTML = sanitizedIconHTML ? defaultIconHTML
+      typeIcon.classList.add(type) if type
+
+    wordSpan = li.querySelector('.word')
     wordSpan.innerHTML = @getHighlightedHTML(text, snippet, replacementPrefix)
 
-    labelSpan = li.childNodes[1]
-    hasRightLabel = rightLabel or rightLabelHTML
-    if hasRightLabel
-      unless labelSpan
-        labelSpan = document.createElement('span')
-        li.appendChild(labelSpan) if hasRightLabel
-        labelSpan.className = 'completion-label text-smaller text-subtle'
-
-      if rightLabelHTML?
-        labelSpan.innerHTML = rightLabelHTML
-      else
-        labelSpan.textContent = rightLabel
+    leftLabelSpan = li.querySelector('.left-label')
+    if leftLabelHTML?
+      leftLabelSpan.innerHTML = leftLabelHTML
+    else if leftLabel?
+      leftLabelSpan.textContent = leftLabel
     else
-      labelSpan?.remove()
+      leftLabelSpan.textContent = ''
+
+    rightLabelSpan = li.querySelector('.right-label')
+    if rightLabelHTML?
+      rightLabelSpan.innerHTML = rightLabelHTML
+    else if rightLabel?
+      rightLabelSpan.textContent = rightLabel
+    else
+      rightLabelSpan.textContent = ''
 
   getHighlightedHTML: (text, snippet, replacementPrefix) ->
     # 1. Pull the snippets out, replacing with placeholder

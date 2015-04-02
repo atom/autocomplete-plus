@@ -42,8 +42,6 @@ describe 'Autocomplete', ->
         waitForAutocomplete()
 
         runs ->
-
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
-
           suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-          expect(suggestionListView.querySelector('li')).toHaveText('bla-foo--bar')
+          expect(suggestionListView.querySelector('li').textContent).toContain 'bla-foo--bar'

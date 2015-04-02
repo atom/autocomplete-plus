@@ -189,7 +189,7 @@ describe 'Provider API Legacy', ->
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
 
-        expect(suggestionListView.querySelector('li .completion-label')).toHaveHtml('<span style="color: red">ohai</span>')
+        expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
         expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
 
     it 'should dispose a provider registration correctly', ->

@@ -379,7 +379,8 @@ describe 'Autocomplete Manager', ->
           expect(overlayElement).toExist()
 
           left = editorView.pixelPositionForBufferPosition([0, 2]).left
-          expect(overlayElement.style.left).toBe "#{left}px"
+          gutterWidth = editorView.shadowRoot.querySelector('.gutter').offsetWidth
+          expect(overlayElement.style.left).toBe "#{left + gutterWidth}px"
 
           atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

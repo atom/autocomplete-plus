@@ -163,6 +163,7 @@ class AutocompleteManager
               snippet: suggestion.snippet
               replacementPrefix: suggestion.replacementPrefix ? suggestion.prefix
               className: suggestion.className
+              type: suggestion.type
             newSuggestion.rightLabelHTML = suggestion.label if not newSuggestion.rightLabelHTML? and suggestion.renderLabelAsHtml
             newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
             newSuggestion

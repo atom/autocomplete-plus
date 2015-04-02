@@ -615,9 +615,9 @@ describe 'Autocomplete Manager', ->
 
               items = editorView.querySelectorAll('.autocomplete-plus li')
               expect(items).toHaveLength 3
-              expect(items[0].textContent).toBe 'abcOk'
-              expect(items[1].textContent).toBe '[self abcOk]'
-              expect(items[2].textContent).toBe '[self aabcOk]'
+              expect(items[0].textContent).toContain 'abcOk'
+              expect(items[1].textContent).toContain '[self abcOk]'
+              expect(items[2].textContent).toContain '[self aabcOk]'
 
           it 'resets the strict match on subsequent opens', ->
             editor.insertText 'yeah ab'

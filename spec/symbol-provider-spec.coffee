@@ -2,18 +2,11 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
 _ = require 'underscore-plus'
 
-indexOfWord = (suggestionList, word) ->
-  for suggestion, i in suggestionList
-    return i if suggestion.text is word
-  -1
-
 suggestionForWord = (suggestionList, word) ->
-  for suggestion in suggestionList
-    return suggestion if suggestion.text is word
-  null
+  suggestionList.getSymbol(word)
 
 describe 'SymbolProvider', ->
-  [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
+  [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
 
   beforeEach ->
     runs ->
@@ -28,7 +21,6 @@ describe 'SymbolProvider', ->
 
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
-
 
   afterEach ->
     atom.config.set('autocomplete-plus.defaultProvider', 'Fuzzy')
@@ -46,23 +38,13 @@ describe 'SymbolProvider', ->
           atom.packages.activatePackage("autocomplete-plus").then (a) ->
             mainModule = a.mainModule
 
-      waitsFor ->
-        mainModule.autocompleteManager?.ready
-
       runs ->
         autocompleteManager = mainModule.autocompleteManager
-
-      runs ->
         advanceClock 1
         editorView = atom.views.getView(editor)
-
-    it "properly swaps a lower priority type for a higher priority type", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
-      suggestion = suggestionForWord(provider.symbolList, 'SomeModule')
-      expect(suggestion.type).toEqual 'class'
+        provider = autocompleteManager.providerManager.fuzzyProvider
 
     it "does not output suggestions from the other buffer", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
       results = null
       waitsForPromise ->
         promise = provider.getSuggestions({editor, prefix: 'item', bufferPosition: new Point(7, 0)})
@@ -86,28 +68,82 @@ describe 'SymbolProvider', ->
           atom.packages.activatePackage("autocomplete-plus").then (a) ->
             mainModule = a.mainModule
 
-      waitsFor ->
-        mainModule.autocompleteManager?.ready
-
       runs ->
         autocompleteManager = mainModule.autocompleteManager
-
-      runs ->
         advanceClock 1
         editorView = atom.views.getView(editor)
+        provider = autocompleteManager.providerManager.fuzzyProvider
 
     it "runs a completion ", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
-      expect(indexOfWord(provider.symbolList, 'quicksort')).not.toEqual(-1)
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
 
     it "adds words to the symbol list after they have been written", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
-
-      expect(indexOfWord(provider.symbolList, 'aNewFunction')).toEqual(-1)
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
       editor.insertText('function aNewFunction(){};')
       editor.insertText(' ')
       advanceClock provider.changeUpdateDelay
-      expect(indexOfWord(provider.symbolList, 'aNewFunction')).not.toEqual(-1)
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+
+    it "removes words from the symbol list when they do not exist in the buffer", ->
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
+
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      editor.insertText('function aNewFunction(){};')
+      advanceClock provider.changeUpdateDelay
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+
+      editor.setCursorBufferPosition([13, 21])
+      editor.backspace()
+      advanceClock provider.changeUpdateDelay
+
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunctio')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+
+    it "correctly tracks the buffer row associated with symbols as they change", ->
+      editor.setText('')
+      advanceClock(provider.changeUpdateDelay)
+
+      editor.setText('function abc(){}\nfunction abc(){}')
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolStore, 'abc')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [0, 1]
+
+      editor.setCursorBufferPosition([2, 100])
+      editor.insertText('\n\nfunction omg(){}; function omg(){}')
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolStore, 'omg')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 3]
+
+      editor.selectLeft(16)
+      editor.backspace()
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolStore, 'omg')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3]
+
+      editor.insertText('\nfunction omg(){}')
+      advanceClock(provider.changeUpdateDelay)
+      suggestion = suggestionForWord(provider.symbolStore, 'omg')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 4]
+
+      editor.setText('')
+      advanceClock(provider.changeUpdateDelay)
+
+      expect(suggestionForWord(provider.symbolStore, 'abc')).toBeUndefined()
+      expect(suggestionForWord(provider.symbolStore, 'omg')).toBeUndefined()
+
+      editor.setText('function abc(){}\nfunction abc(){}')
+      editor.setCursorBufferPosition([0, 0])
+      editor.insertText('\n')
+      editor.setCursorBufferPosition([2, 100])
+      editor.insertText('\nfunction abc(){}')
+      advanceClock(provider.changeUpdateDelay)
+
+      # This is kind of a mess right now. it does not correctly track buffer
+      # rows when there are several changes before the change delay is
+      # triggered. So we're just making sure the row is in there.
+      suggestion = suggestionForWord(provider.symbolStore, 'abc')
+      expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toContain 3
 
     describe "when includeCompletionsFromAllBuffers is enabled", ->
       beforeEach ->
@@ -118,11 +154,13 @@ describe 'SymbolProvider', ->
             atom.workspace.open("sample.coffee").then (e) ->
               editor = e
 
+        runs ->
+          provider = autocompleteManager.providerManager.fuzzyProvider
+
       afterEach ->
         atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false)
 
       it "outputs unique suggestions", ->
-        provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
           promise = provider.getSuggestions({editor, prefix: 'qu', bufferPosition: new Point(7, 0)})
@@ -133,7 +171,6 @@ describe 'SymbolProvider', ->
           expect(results).toHaveLength 1
 
       it "outputs suggestions from the other buffer", ->
-        provider = autocompleteManager.providerManager.fuzzyProvider
         results = null
         waitsForPromise ->
           promise = provider.getSuggestions({editor, prefix: 'item', bufferPosition: new Point(7, 0)})
@@ -145,9 +182,7 @@ describe 'SymbolProvider', ->
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
-
-      expect(provider.symbolList.indexOf('somēthingNew')).toEqual(-1)
+      expect(provider.symbolStore.indexOf('somēthingNew')).toBeFalsy()
       editor.insertText('somēthingNew')
       editor.insertText(' ')
-      expect(provider.symbolList.indexOf('somēthingNew')).not.toEqual(-1)
+      expect(provider.symbolStore.indexOf('somēthingNew')).toBeTruthy()

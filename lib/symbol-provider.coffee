@@ -4,11 +4,12 @@ _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 {TextEditor, CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
+SymbolStore = require './symbol-store'
 
 module.exports =
 class SymbolProvider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
-  symbolList: null
+  symbolStore: null
   editor: null
   buffer: null
   changeUpdateDelay: 300
@@ -29,10 +30,11 @@ class SymbolProvider
       selector: '.variable'
       priority: 2
     '':
-      selector: '.comment, .string'
+      selector: '.source'
       priority: 1
 
   constructor: ->
+    @symbolStore = new SymbolStore(@wordRegex)
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
@@ -57,7 +59,8 @@ class SymbolProvider
 
     @editorSubscriptions.add @editor.displayBuffer.onDidTokenize(@buildWordListOnNextTick)
     @editorSubscriptions.add @buffer.onDidSave(@buildWordListOnNextTick)
-    @editorSubscriptions.add @buffer.onDidChange(@bufferChanged)
+    @editorSubscriptions.add @buffer.onWillChange(@bufferWillChange)
+    @editorSubscriptions.add @buffer.onDidChange(@bufferDidChange)
 
     @buildConfig()
     @buildWordListOnNextTick()
@@ -83,19 +86,16 @@ class SymbolProvider
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
 
-  bufferChanged: ({newRange}) =>
-    @changeUpdateRange ?=
-      start: newRange.start.row
-      end: newRange.end.row
+  # Notes on change updates:
+  #
+  # * Reading of the tokens must happen synchonously in the event handlers as
+  #   thats the only time the buffer will have the tokens matching the change events.
+  # * The slow part is the token scope selector matching to bucket tokens by type.
+  bufferWillChange: ({oldRange}) =>
+    @symbolStore.removeTokensInBufferRange(@editor, oldRange)
 
-    @changeUpdateRange.start = Math.min(@changeUpdateRange.start, newRange.start.row)
-    @changeUpdateRange.end = Math.max(@changeUpdateRange.end, newRange.end.row)
-
-    clearTimeout(@changeUpdateTimeout)
-    @changeUpdateTimeout = setTimeout =>
-      @updateSymbolListForRange(@editor, @changeUpdateRange.start, @changeUpdateRange.end)
-      @changeUpdateRange = null
-    , @changeUpdateDelay
+  bufferDidChange: ({newRange}) =>
+    @symbolStore.addTokensInBufferRange(@editor, newRange)
 
   ###
   Section: Suggesting Completions
@@ -110,15 +110,15 @@ class SymbolProvider
       resolve(suggestions)
 
   findSuggestionsForWord: (options) =>
-    return unless @symbolList?
+    return unless @symbolStore.getLength()
     # Merge the scope specific words into the default word list
-    symbolList = @symbolList.concat(@builtinCompletionsForCursorScope())
+    symbolList = @symbolStore.symbolsForConfig(@config).concat(@builtinCompletionsForCursorScope())
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
         symbolList.filter((match) -> match.text?.indexOf(options.prefix) is 0)
       else
-        @fuzzyFilter(symbolList, options)
+        @fuzzyFilter(symbolList, @editor.getPath(), options)
 
     for word in words
       word.replacementPrefix = options.prefix
@@ -126,35 +126,30 @@ class SymbolProvider
 
     return words
 
-  fuzzyFilter: (symbolList, {bufferPosition, prefix}) ->
+  fuzzyFilter: (symbolList, editorPath, {bufferPosition, prefix}) ->
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
       continue if symbol.text is prefix
       continue unless prefix[0].toLowerCase() is symbol.text[0].toLowerCase() # must match the first char!
       score = fuzzaldrin.score(symbol.text, prefix)
-      score *= @getLocalityScore(symbol, bufferPosition) if symbol.path is @editor.getPath()
+      score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForEditorPath?(editorPath))
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
     candidates.sort(@symbolSortReverseIterator)
 
-    # Just get the first unique 20
-    wordsSeen = {}
     results = []
-    for {symbol, score, locality, rowDifference}, i in candidates
-      break if results.length is 20
-      # console.log 'match', symbol.text, score, locality, rowDifference
-      key = @getSymbolKey(symbol.text)
-      results.push(symbol) unless wordsSeen[key]
-      wordsSeen[key] = true
+    for {symbol, score, locality, rowDifference}, index in candidates
+      break if index is 20
+      results.push(symbol)
     results
 
   symbolSortReverseIterator: (a, b) -> b.score - a.score
 
-  getLocalityScore: (symbol, bufferPosition) ->
-    if symbol.bufferRows?
+  getLocalityScore: (bufferPosition, bufferRowsContainingSymbol) ->
+    if bufferRowsContainingSymbol?
       rowDifference = Number.MAX_VALUE
-      rowDifference = Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in symbol.bufferRows
+      rowDifference = Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in bufferRowsContainingSymbol
       locality = @computeLocalityModifier(rowDifference)
       locality
     else
@@ -191,70 +186,28 @@ class SymbolProvider
   buildSymbolList: =>
     return unless @editor?
 
-    minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
-    symbolList = @getSymbolsFromEditor(@editor, minimumWordLength)
+    @symbolStore.clear()
 
-    # Do we want autocompletions from all open buffers?
+    minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
+    @cacheSymbolsFromEditor(@editor, minimumWordLength)
+
     if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
       for editor in atom.workspace.getTextEditors()
         # FIXME: downside is that some of these editors will not be tokenized :/
-        symbolList = symbolList.concat @getSymbolsFromEditor(editor, minimumWordLength)
+        @cacheSymbolsFromEditor(editor, minimumWordLength)
+    return
 
-    @symbolList = symbolList
-
-  updateSymbolListForRange: (editor, startBufferRow, endBufferRow) ->
-    tokenizedLines = @getTokenizedLines(editor)[startBufferRow..endBufferRow]
-    minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
-    symbolList = @getSymbolsFromEditor(editor, minimumWordLength, tokenizedLines)
-    @symbolList = @symbolList.concat(symbolList)
-
-  getSymbolsFromEditor: (editor, minimumWordLength, tokenizedLines) ->
+  cacheSymbolsFromEditor: (editor, minimumWordLength, tokenizedLines) ->
     tokenizedLines ?= @getTokenizedLines(editor)
-    symbols = {}
 
-    # Handle the case where a symbol is a variable in some cases and, say, a
-    # class in others. We want all symbols of the same name to have the same type. e.g.
-    #
-    # ```coffee
-    # SomeModule = require 'some-module' # This line parses SomeModule as a var
-    # class MyClass extends SomeModule # This line parses SomeModule as a class
-    # ```
-    # `class` types are higher priority than `variables`
-    cacheSymbol = (text, type, bufferRow, scopes) =>
-      key = @getSymbolKey(text)
-      cachedSymbol = symbols[key]
-      if cachedSymbol?
-        currentTypePriority = @config[type].priority
-        cachedTypePriority = @config[cachedSymbol.type].priority
-        cachedSymbol.type = type if currentTypePriority > cachedTypePriority
-        cachedSymbol.bufferRows.push(bufferRow)
-        cachedSymbol.scopes.push(scopes)
-      else
-        symbols[key] = {text, type, bufferRows: [bufferRow], scopes: [scopes], path: editor.getPath()}
-
+    editorPath = editor.getPath()
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
-        scopes = @cssSelectorFromScopes(token.scopes)
-        for type, options of @config
-          for selector in options.selectors
-            if selector.matches(scopes) and matches = token.value.match(options.wordRegex)
-              for matchText in matches
-                if matchText.length >= minimumWordLength
-                  cacheSymbol(matchText, type, bufferRow, scopes)
-              break
-
-    (symbol for key, symbol of symbols)
-
-  # some words are reserved, like 'constructor' :/
-  getSymbolKey: (symbolText) -> symbolText + '$$'
+        @symbolStore.addToken(token, editorPath, bufferRow, minimumWordLength)
+    return
 
   getTokenizedLines: (editor) ->
     # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not
     # copy into your own package. If you do, be prepared to have it break
     # without warning.
     editor.displayBuffer.tokenizedBuffer.tokenizedLines
-
-  cssSelectorFromScopes: (scopes) ->
-    selector = ''
-    selector += ' .' + scope for scope in scopes
-    selector

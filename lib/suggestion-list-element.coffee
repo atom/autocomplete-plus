@@ -49,7 +49,8 @@ class SuggestionListElement extends HTMLElement
 
   itemsChanged: ->
     @selectedIndex = 0
-    @renderItems()
+    atom.views.pollAfterNextUpdate?()
+    atom.views.updateDocument => @renderItems()
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())

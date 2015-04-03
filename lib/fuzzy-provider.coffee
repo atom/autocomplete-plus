@@ -105,7 +105,7 @@ class FuzzyProvider
     @tokenList.clear()
 
     if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
-      editors = atom.workspace.getEditors()
+      editors = atom.workspace.getTextEditors()
     else
       editors = [@editor]
 

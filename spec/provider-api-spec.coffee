@@ -83,6 +83,7 @@ describe 'Provider API', ->
             text: 'ohai',
             replacementPrefix: 'o',
             rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
           ]
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
@@ -92,3 +93,4 @@ describe 'Provider API', ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
         expect(suggestionListView.querySelector('span.word')).toHaveText('ohai')
+        expect(suggestionListView.querySelector('span.docstring').toHaveText('There be documentation'))

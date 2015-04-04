@@ -10,6 +10,14 @@ ItemTemplate = """
   </span>
 """
 
+ListTemplate = """
+  <ol class="list-group"></ol>
+  <div class="suggestion-description">
+    <hr />
+    <span class="suggestion-description"></span>
+  </div>
+"""
+
 IconTemplate = '<i class="icon"></i>'
 
 DefaultSuggestionTypeIconHTML =
@@ -62,7 +70,7 @@ class SuggestionListElement extends HTMLElement
       @confirmSelection()
 
   updateDoc: ->
-    if @visibleItems()[@selectedIndex]['description']?
+    if @visibleItems()[@selectedIndex]['description']? and @visibleItems()[@selectedIndex]['description'].length > 0
       @docDiv.style.display = 'block'
       @docSpan.textContent = @visibleItems()[@selectedIndex]['description']
     else
@@ -121,20 +129,13 @@ class SuggestionListElement extends HTMLElement
 
   renderList: ->
     @mainDiv = document.createElement('div')
+    @mainDiv.innerHTML = ListTemplate
 
-    @ol = document.createElement('ol')
-    @ol.className = 'list-group'
-    @mainDiv.appendChild(@ol)
+    @ol = @mainDiv.getElementsByClassName("list-group")[0]
 
-    @docDiv = document.createElement('div')
-    @docDiv.className = 'suggestion-description'
-    ruler = document.createElement('hr')
-    @docDiv.appendChild(ruler)
-    @docSpan = document.createElement('span')
-    @docSpan.className = 'suggestion-description'
-    @docDiv.appendChild(@docSpan)
+    @docDiv = @mainDiv.querySelector('div.suggestion-description')
+    @docSpan = @mainDiv.querySelector('span.suggestion-description')
 
-    @mainDiv.appendChild(@docDiv)
     @appendChild(@mainDiv)
 
   calculateMaxListHeight: ->

@@ -134,11 +134,11 @@ class SuggestionListElement extends HTMLElement
     @mainDiv.appendChild(@ol)
 
     @docDiv = document.createElement('div')
-    @docDiv.className = 'docstring'
+    @docDiv.className = 'suggestion-description'
     ruler = document.createElement('hr')
     @docDiv.appendChild(ruler)
     @docSpan = document.createElement('span')
-    @docSpan.className = 'docstring'
+    @docSpan.className = 'suggestion-description'
     @docDiv.appendChild(@docSpan)
 
     @mainDiv.appendChild(@docDiv)

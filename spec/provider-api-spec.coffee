@@ -93,4 +93,4 @@ describe 'Provider API', ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
         expect(suggestionListView.querySelector('span.word')).toHaveText('ohai')
-        expect(suggestionListView.querySelector('span.docstring').toHaveText('There be documentation'))
+        expect(suggestionListView.querySelector('span.suggestion-description').toHaveText('There be documentation'))

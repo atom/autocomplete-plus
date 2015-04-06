@@ -243,9 +243,24 @@ class AutocompleteManager
       """
     hasDeprecations
 
+  sortSuggestions: (suggestions, {prefix}) =>
+    pattern = prefix.replace(/[^a-zA-Z0-9]+/g, '')
+    pattern = new RegExp('^' + pattern, 'i')
+
+    # Sort the most likely (startswith) candidates first
+    startswith = []
+    remainder = []
+    for item in suggestions
+      if (item.text || item.snippet).match(pattern)
+        startswith.push(item)
+      else
+        remainder.push(item)
+    startswith.concat(remainder)
+
   displaySuggestions: (suggestions, options) =>
     suggestions = _.uniq(suggestions, (s) -> s.text + s.snippet)
     if @shouldDisplaySuggestions and suggestions.length
+      suggestions = @sortSuggestions(suggestions, options)
       @showSuggestionList(suggestions)
     else
       @hideSuggestionList()

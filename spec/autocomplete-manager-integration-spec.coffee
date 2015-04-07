@@ -200,8 +200,9 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
-          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list').style['max-height']).toBe("#{2 * 25}px")
+          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list').style['max-height']).toBe("#{2 * itemHeight}px")
 
     describe "when match.snippet is used", ->
       beforeEach ->
@@ -905,7 +906,7 @@ describe 'Autocomplete Manager', ->
           triggerAutocompletion(editor)
           runs ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
-            expect(icon.innerHTML).toBe('o')
+            expect(icon.textContent).toBe('o')
 
       describe "when the `type` specified has a default icon", ->
         beforeEach ->
@@ -961,7 +962,7 @@ describe 'Autocomplete Manager', ->
           triggerAutocompletion(editor)
           runs ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
-            expect(icon.innerHTML).toBe('s')
+            expect(icon.textContent).toBe('s')
 
       describe "when `iconHTML` is not a string and no type is specified", ->
         beforeEach ->

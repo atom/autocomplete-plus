@@ -364,8 +364,7 @@ describe 'Autocomplete Manager', ->
 
     describe "when autocomplete-plus.suggestionListFollows is 'Word'", ->
       requiresGutter = ->
-        parentTag = editorView.querySelector('.autocomplete-plus').parentNode.tagName
-        parentTag is 'ATOM-TEXT-EDITOR'
+        editorView.component?.overlayManager?
 
       pixelLeftForBufferPosition = (bufferPosition) ->
         left = editorView.pixelPositionForBufferPosition(bufferPosition).left

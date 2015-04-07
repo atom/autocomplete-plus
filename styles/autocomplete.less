@@ -1,10 +1,9 @@
 @import "ui-variables";
 @import "syntax-variables";
 
-@type-icon-font-size: @font-size + 2px;
-@type-icon-offset: 0px;
-@type-icon-size: @component-line-height - @type-icon-offset * 2;
-@type-icon-border-radius: 0px;
+@type-icon-font-size: 1em;
+@type-letter-icon-font-size: .9em;
+@row-line-height: 2em;
 
 atom-overlay.autocomplete-plus {
   z-index: 5;
@@ -30,6 +29,7 @@ autocomplete-suggestion-list.select-list.popover-list {
     li {
       display: table-row;
       color: @text-color;
+      line-height: @row-line-height;
 
       > span {
         display: table-cell;
@@ -56,8 +56,8 @@ autocomplete-suggestion-list.select-list.popover-list {
 
 autocomplete-suggestion-list {
   .icon-container {
-    width: @type-icon-size;
-    padding-left: @type-icon-offset;
+    width: @row-line-height;
+    padding-left: 0;
     padding-right: @component-padding;
     &:empty {
       width: 0;
@@ -67,16 +67,11 @@ autocomplete-suggestion-list {
 
   .icon {
     display: block;
-    width: @type-icon-size;
-    height: @type-icon-size;
-    line-height: @type-icon-size - 2px;
-    border-radius: @type-icon-border-radius;
-    display: block;
+    width: @row-line-height;
+    line-height: @row-line-height;
     text-align: center;
     font-style: normal;
     font-weight: bold;
-    font-size: @type-icon-font-size;
-    vertical-align: middle;
 
     color: @text-color-subtle;
     background: fadeout(@text-color, 90%);
@@ -87,11 +82,20 @@ autocomplete-suggestion-list {
       width: @type-icon-font-size;
       height: @type-icon-font-size;
     }
+
+    .icon-letter {
+      // I'm failing to vert center these letters. So shift them up...
+      position: relative;
+      top: -.2em;
+      font-size: @type-letter-icon-font-size;
+      line-height: @type-letter-icon-font-size;
+    }
   }
 
   .left-label {
     text-align: right;
     padding-right: @component-padding;
+    vertical-align: middle;
 
     font-size: .9em;
     color: @text-color-subtle;

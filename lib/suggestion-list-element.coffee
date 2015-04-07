@@ -154,7 +154,8 @@ class SuggestionListElement extends HTMLElement
 
     sanitizedType = if _.isString(type) then type else ''
     sanitizedIconHTML = if _.isString(iconHTML) then iconHTML else undefined
-    defaultIconHTML = DefaultSuggestionTypeIconHTML[sanitizedType] ? sanitizedType[0]
+    defaultLetterIconHTML = if sanitizedType then "<span class=\"icon-letter\">#{sanitizedType[0]}</span>" else ''
+    defaultIconHTML = DefaultSuggestionTypeIconHTML[sanitizedType] ? defaultLetterIconHTML
     if (sanitizedIconHTML or defaultIconHTML) and iconHTML isnt false
       typeIconContainer.innerHTML = IconTemplate
       typeIcon = typeIconContainer.childNodes[0]

@@ -43,11 +43,14 @@ class SuggestionListElement extends HTMLElement
 
   initialize: (@model) ->
     return unless model?
-    @subscriptions.add(@model.onDidChangeItems(@itemsChanged.bind(this)))
-    @subscriptions.add(@model.onDidSelectNext(@moveSelectionDown.bind(this)))
-    @subscriptions.add(@model.onDidSelectPrevious(@moveSelectionUp.bind(this)))
-    @subscriptions.add(@model.onDidConfirmSelection(@confirmSelection.bind(this)))
-    @subscriptions.add(@model.onDidDispose(@dispose.bind(this)))
+    @subscriptions.add @model.onDidChangeItems(@itemsChanged.bind(this))
+    @subscriptions.add @model.onDidSelectNext(@moveSelectionDown.bind(this))
+    @subscriptions.add @model.onDidSelectPrevious(@moveSelectionUp.bind(this))
+    @subscriptions.add @model.onDidConfirmSelection(@confirmSelection.bind(this))
+    @subscriptions.add @model.onDidDispose(@dispose.bind(this))
+
+    @subscriptions.add atom.config.observe 'autocomplete-plus.suggestionListFollows', (@suggestionListFollows) =>
+    @subscriptions.add atom.config.observe 'autocomplete-plus.maxVisibleSuggestions', (@maxVisibleSuggestions) =>
     this
 
   # This should be unnecessary but the events we need to override
@@ -119,13 +122,12 @@ class SuggestionListElement extends HTMLElement
     @ol.className = 'list-group'
 
   calculateMaxListHeight: ->
-    maxVisibleItems = atom.config.get('autocomplete-plus.maxVisibleSuggestions')
     li = document.createElement('li')
     li.textContent = 'test'
     @ol.appendChild(li)
     itemHeight = li.offsetHeight
     paddingHeight = parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom']) ? 0
-    @style['max-height'] = "#{maxVisibleItems * itemHeight + paddingHeight}px"
+    @style['max-height'] = "#{@maxVisibleSuggestions * itemHeight + paddingHeight}px"
     li.remove()
 
   renderItems: ->
@@ -134,11 +136,12 @@ class SuggestionListElement extends HTMLElement
     li.remove() while li = @ol.childNodes[items.length]
     @selectedLi?.scrollIntoView(false)
 
-    firstChild = @ol.childNodes[0]
-    wordContainer = firstChild?.querySelector('.word-container')
-    marginLeft = 0
-    marginLeft = -wordContainer.offsetLeft if wordContainer?
-    @style['margin-left'] = "#{marginLeft}px"
+    if @suggestionListFollows is 'Word'
+      firstChild = @ol.childNodes[0]
+      wordContainer = firstChild?.querySelector('.word-container')
+      marginLeft = 0
+      marginLeft = -wordContainer.offsetLeft if wordContainer?
+      @style['margin-left'] = "#{marginLeft}px"
 
   renderItem: ({iconHTML, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]

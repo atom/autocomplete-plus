@@ -383,8 +383,17 @@ describe 'Autocomplete Manager', ->
           left = editorView.pixelPositionForBufferPosition([0, 2]).left
           expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
 
-          atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      it "displays the suggestion list with a negative margin to align the prefix with the word-container", ->
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          [{text: 'ab', leftLabel: 'void'}, {text: 'abc', leftLabel: 'void'}]
+
+        editor.insertText('omghey ab')
+        triggerAutocompletion(editor, false, 'c')
+
+        runs ->
+          suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          wordContainer = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .word-container')
+          expect(suggestionList.style['margin-left']).toBe "-#{wordContainer.offsetLeft}px"
 
       it "keeps the suggestion list planted at the beginning of the prefix when typing", ->
         overlayElement = null

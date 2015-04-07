@@ -2,6 +2,8 @@
 
 module.exports =
 class SuggestionList
+  wordPrefixRegex: /^[\w-]/
+
   constructor: ->
     @active = false
     @emitter = new Emitter
@@ -73,23 +75,38 @@ class SuggestionList
   isActive: ->
     @active
 
-  show: (editor) =>
-    return if @active
+  show: (editor, options) =>
+    if atom.config.get('autocomplete-plus.suggestionListFollows') is 'Cursor'
+      @showAtCursorPosition(editor, options)
+    else
+      @showAtBeginningOfPrefix(editor, options)
+
+  showAtBeginningOfPrefix: (editor, {prefix}) =>
     return unless editor?
+
+    bufferPosition = editor.getCursorBufferPosition()
+    bufferPosition = bufferPosition.translate([0, -prefix.length]) if @wordPrefixRegex.test(prefix)
+
+    if @active
+      unless bufferPosition.isEqual(@displayBufferPosition)
+        @displayBufferPosition = bufferPosition
+        @suggestionMarker?.setBufferRange([bufferPosition, bufferPosition])
+    else
+      @destroyOverlay()
+      @displayBufferPosition = bufferPosition
+      marker = @suggestionMarker = editor.markBufferRange([bufferPosition, bufferPosition])
+      @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this, position: 'tail'})
+      @addKeyboardInteraction()
+      @active = true
+
+  showAtCursorPosition: (editor) =>
+    return if @active or not editor?
     @destroyOverlay()
 
-    if atom.config.get('autocomplete-plus.suggestionListFollows') is 'Cursor'
-      marker = editor.getLastCursor()?.getMarker()
-      return unless marker?
-    else
-      cursor = editor.getLastCursor()
-      return unless cursor?
-      position = cursor.getBeginningOfCurrentWordBufferPosition()
-      marker = @suggestionMarker = editor.markBufferPosition(position)
-
-    @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
-    @addKeyboardInteraction()
-    @active = true
+    if marker = editor.getLastCursor()?.getMarker()
+      @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
+      @addKeyboardInteraction()
+      @active = true
 
   hide: =>
     return unless @active

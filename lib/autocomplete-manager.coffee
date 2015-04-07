@@ -163,6 +163,7 @@ class AutocompleteManager
               snippet: suggestion.snippet
               replacementPrefix: suggestion.replacementPrefix ? suggestion.prefix
               className: suggestion.className
+              type: suggestion.type
             newSuggestion.rightLabelHTML = suggestion.label if not newSuggestion.rightLabelHTML? and suggestion.renderLabelAsHtml
             newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
             newSuggestion
@@ -246,7 +247,7 @@ class AutocompleteManager
   displaySuggestions: (suggestions, options) =>
     suggestions = _.uniq(suggestions, (s) -> s.text + s.snippet)
     if @shouldDisplaySuggestions and suggestions.length
-      @showSuggestionList(suggestions)
+      @showSuggestionList(suggestions, options)
     else
       @hideSuggestionList()
 
@@ -278,10 +279,10 @@ class AutocompleteManager
     else
       suggestion.onDidConfirm?()
 
-  showSuggestionList: (suggestions) ->
+  showSuggestionList: (suggestions, options) ->
     return if @disposed
     @suggestionList.changeItems(suggestions)
-    @suggestionList.show(@editor)
+    @suggestionList.show(@editor, options)
 
   hideSuggestionList: =>
     return if @disposed

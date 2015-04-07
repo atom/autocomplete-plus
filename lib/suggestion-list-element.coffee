@@ -130,6 +130,12 @@ class SuggestionListElement extends HTMLElement
     li.remove() while li = @ol.childNodes[items.length]
     @selectedLi?.scrollIntoView(false)
 
+    firstChild = @ol.childNodes[0]
+    wordContainer = firstChild?.querySelector('.word-container')
+    marginLeft = 0
+    marginLeft = -wordContainer.offsetLeft if wordContainer?
+    @style['margin-left'] = "#{marginLeft}px"
+
   renderItem: ({iconHTML, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
     unless li

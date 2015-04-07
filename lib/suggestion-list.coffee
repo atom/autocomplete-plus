@@ -94,17 +94,8 @@ class SuggestionList
     else
       @destroyOverlay()
       @displayBufferPosition = bufferPosition
-      marker = @suggestionMarker = editor.markBufferPosition(bufferPosition)
-
-      # HACK: When the marker is at the cursor position, it will move with the
-      # cursor, but we want it planted to the buffer position at the beginning
-      # of the prefix. When the marker moves forward, this callback will move it
-      # back to the correct position.
-      marker.onDidChange ({newHeadBufferPosition}) =>
-        if newHeadBufferPosition.column > @displayBufferPosition.column
-          marker.setBufferRange([@displayBufferPosition, @displayBufferPosition])
-
-      @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
+      marker = @suggestionMarker = editor.markBufferRange([bufferPosition, bufferPosition])
+      @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this, position: 'tail'})
       @addKeyboardInteraction()
       @active = true
 

@@ -363,7 +363,9 @@ describe 'Autocomplete Manager', ->
           expect(editor.getText()).toBe 'something'
 
     describe "when autocomplete-plus.suggestionListFollows is 'Word'", ->
+      [gutterWidth] = []
       beforeEach ->
+        gutterWidth = editorView.shadowRoot.querySelector('.gutter').offsetWidth
         atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
 
       afterEach ->
@@ -379,11 +381,92 @@ describe 'Autocomplete Manager', ->
           expect(overlayElement).toExist()
 
           left = editorView.pixelPositionForBufferPosition([0, 2]).left
-          gutterWidth = editorView.shadowRoot.querySelector('.gutter').offsetWidth
-          expect(overlayElement.style.left).toBe "#{left + gutterWidth}px"
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
 
           atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      it "keeps the suggestion list planted at the beginning of the prefix when typing", ->
+        overlayElement = null
+        editor.insertText('x')
+        editor.insertText(' ')
+        waitForAutocomplete()
+
+        runs ->
+          overlayElement = editorView.querySelector('.autocomplete-plus')
+
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+          editor.insertText('a')
+          waitForAutocomplete()
+
+        runs ->
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+          editor.insertText('b')
+          waitForAutocomplete()
+
+        runs ->
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+          editor.backspace()
+          editor.backspace()
+          waitForAutocomplete()
+
+        runs ->
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+          editor.backspace()
+          waitForAutocomplete()
+
+        runs ->
+          left = editorView.pixelPositionForBufferPosition([0, 0]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+          editor.insertText(' ')
+          editor.insertText('a')
+          editor.insertText('b')
+          editor.insertText('c')
+          waitForAutocomplete()
+
+        runs ->
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+      it "when broken by a non-word character, the suggestion list is positioned at the beginning of the new word", ->
+        overlayElement = null
+        editor.insertText('x')
+        editor.insertText(' abc')
+        editor.insertText('d')
+        waitForAutocomplete()
+
+        runs ->
+          overlayElement = editorView.querySelector('.autocomplete-plus')
+
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+          editor.insertText(' ')
+          editor.insertText('a')
+          editor.insertText('b')
+          waitForAutocomplete()
+
+        runs ->
+          left = editorView.pixelPositionForBufferPosition([0, 7]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
+
+          editor.backspace()
+          editor.backspace()
+          editor.backspace()
+          waitForAutocomplete()
+
+        runs ->
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          expect(overlayElement.style.left).toBe "#{gutterWidth + left}px"
 
     describe 'accepting suggestions', ->
       beforeEach ->

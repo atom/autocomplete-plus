@@ -14,6 +14,10 @@ IconTemplate = '<i class="icon"></i>'
 
 DefaultSuggestionTypeIconHTML =
   'snippet': '<i class="icon-move-right"></i>'
+  'import': '<i class="icon-package"></i>'
+  'require': '<i class="icon-package"></i>'
+  'module': '<i class="icon-package"></i>'
+  'package': '<i class="icon-package"></i>'
 
 class SuggestionListElement extends HTMLElement
   maxItems: 200

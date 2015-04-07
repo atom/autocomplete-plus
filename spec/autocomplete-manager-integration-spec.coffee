@@ -5,9 +5,10 @@ _ = require 'underscore-plus'
 NodeTypeText = 3
 
 describe 'Autocomplete Manager', ->
-  [workspaceElement, completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule] = []
+  [workspaceElement, completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule, gutterWidth] = []
 
   beforeEach ->
+    gutterWidth = null
     runs ->
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
@@ -363,22 +364,28 @@ describe 'Autocomplete Manager', ->
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
           expect(editor.getText()).toBe 'something'
 
-    describe "when autocomplete-plus.suggestionListFollows is 'Word'", ->
-      requiresGutter = ->
-        editorView.component?.overlayManager?
-
-      pixelLeftForBufferPosition = (bufferPosition) ->
-        left = editorView.pixelPositionForBufferPosition(bufferPosition).left
-        left = gutterWidth + left if requiresGutter()
-        "#{left}px"
-
-      [gutterWidth] = []
+    describe "when autocomplete-plus.suggestionListFollows is 'Cursor'", ->
       beforeEach ->
-        gutterWidth = editorView.shadowRoot.querySelector('.gutter').offsetWidth
-        atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
-
-      afterEach ->
         atom.config.set('autocomplete-plus.suggestionListFollows', 'Cursor')
+
+      it "places the suggestion list at the cursor", ->
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          [{text: 'ab', leftLabel: 'void'}, {text: 'abc', leftLabel: 'void'}]
+
+        editor.insertText('omghey ab')
+        triggerAutocompletion(editor, false, 'c')
+
+        runs ->
+          overlayElement = editorView.querySelector('.autocomplete-plus')
+          expect(overlayElement).toExist()
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 10])
+
+          suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          expect(suggestionList.style['margin-left']).toBeFalsy()
+
+    describe "when autocomplete-plus.suggestionListFollows is 'Word'", ->
+      beforeEach ->
+        atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
 
       it "opens to the correct position, and correctly closes on cancel", ->
         editor.insertText('x ab')
@@ -1306,3 +1313,12 @@ describe 'Autocomplete Manager', ->
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.scrollWidth).toBe(suggestionListView.offsetWidth)
+
+  requiresGutter = ->
+    editorView.component?.overlayManager?
+
+  pixelLeftForBufferPosition = (bufferPosition) ->
+    gutterWidth ?= editorView.shadowRoot.querySelector('.gutter').offsetWidth
+    left = editorView.pixelPositionForBufferPosition(bufferPosition).left
+    left = gutterWidth + left if requiresGutter()
+    "#{left}px"

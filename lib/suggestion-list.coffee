@@ -112,8 +112,7 @@ class SuggestionList
     return if @active or not editor?
     @destroyOverlay()
 
-    marker = editor.getLastCursor()?.getMarker()
-    if marker?
+    if marker = editor.getLastCursor()?.getMarker()
       @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
       @addKeyboardInteraction()
       @active = true

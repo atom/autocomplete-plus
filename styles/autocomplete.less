@@ -5,6 +5,7 @@
 @type-letter-icon-font-size: .9em;
 @row-line-height: 2em;
 @item-padding: .75em;
+@item-side-padding: .6em;
 
 atom-overlay.autocomplete-plus {
   z-index: 5;
@@ -61,8 +62,8 @@ autocomplete-suggestion-list {
     padding-left: 0;
     padding-right: @item-padding;
     &:empty {
-      width: 0;
-      padding: 0 0 0 @item-padding / 2;
+      width: @item-side-padding;
+      padding: 0;
     }
   }
 
@@ -109,13 +110,14 @@ autocomplete-suggestion-list {
   .right-label {
     float: right;
     padding-left: @item-padding;
-    padding-right: @item-padding / 2;
+    padding-right: @item-side-padding;
 
     font-size: .9em;
     color: @text-color-subtle;
 
     &:empty {
-      padding: 0 @item-padding / 2 0 0;
+      width: @item-side-padding;
+      padding: 0;
     }
   }
 

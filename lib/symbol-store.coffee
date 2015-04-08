@@ -1,4 +1,5 @@
 RefCountedTokenList = require './ref-counted-token-list'
+{selectorsMatchScopeChain} = require './scope-helpers'
 
 class Symbol
   count: 0
@@ -15,32 +16,32 @@ class Symbol
   bufferRowsForEditorPath: (editorPath) ->
     @metadataByPath[editorPath]?.bufferRows
 
-  addInstance: (editorPath, bufferRow, scopes) ->
+  addInstance: (editorPath, bufferRow, scopeChain) ->
     @metadataByPath[editorPath] ?= {}
     @metadataByPath[editorPath].bufferRows ?= []
     @metadataByPath[editorPath].bufferRows.push bufferRow
-    @metadataByPath[editorPath].scopes ?= {}
-    unless @metadataByPath[editorPath].scopes[scopes]?
+    @metadataByPath[editorPath].scopeChains ?= {}
+    unless @metadataByPath[editorPath].scopeChains[scopeChain]?
       @type = null
-      @metadataByPath[editorPath].scopes[scopes] = 0
-    @metadataByPath[editorPath].scopes[scopes] += 1
+      @metadataByPath[editorPath].scopeChains[scopeChain] = 0
+    @metadataByPath[editorPath].scopeChains[scopeChain] += 1
     @count += 1
 
-  removeInstance: (editorPath, bufferRow, scopes) ->
+  removeInstance: (editorPath, bufferRow, scopeChain) ->
     return unless @metadataByPath[editorPath]?
 
     bufferRows = @metadataByPath[editorPath].bufferRows
     removeItemFromArray(bufferRows, bufferRow) if bufferRows?
 
-    if @metadataByPath[editorPath].scopes[scopes]?
+    if @metadataByPath[editorPath].scopeChains[scopeChain]?
       @count -= 1
-      @metadataByPath[editorPath].scopes[scopes] -= 1
+      @metadataByPath[editorPath].scopeChains[scopeChain] -= 1
 
-      if @metadataByPath[editorPath].scopes[scopes] is 0
-        delete @metadataByPath[editorPath].scopes[scopes]
+      if @metadataByPath[editorPath].scopeChains[scopeChain] is 0
+        delete @metadataByPath[editorPath].scopeChains[scopeChain]
         @type = null
 
-      if getObjectLength(@metadataByPath[editorPath].scopes) is 0
+      if getObjectLength(@metadataByPath[editorPath].scopeChains) is 0
         delete @metadataByPath[editorPath]
 
   appliesToConfig: (config) ->
@@ -49,12 +50,11 @@ class Symbol
     unless @type?
       typePriority = 0
       for type, options of config
-        for selector in options.selectors
-          for filePath, {scopes} of @metadataByPath
-            for scopeDescriptorString, __ of scopes
-              if (!@type or options.priority > typePriority) and selector.matches(scopeDescriptorString)
-                @type = type
-                typePriority = options.priority
+        for filePath, {scopeChains} of @metadataByPath
+          for scopeChain, __ of scopeChains
+            if (!@type or options.priority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
+              @type = type
+              typePriority = options.priority
       @cachedConfig = config
 
     @type?
@@ -84,19 +84,19 @@ class SymbolStore
   addToken: (token, editorPath, bufferRow) =>
     # This could be made async...
     text = @getTokenText(token)
-    scopes = @getTokenScopes(token)
+    scopeChain = @getTokenScopeChain(token)
     matches = text.match(@wordRegex)
     if matches?
-      @addSymbol(symbolText, editorPath, bufferRow, scopes) for symbolText in matches
+      @addSymbol(symbolText, editorPath, bufferRow, scopeChain) for symbolText in matches
     return
 
   removeToken: (token, editorPath, bufferRow) =>
     # This could be made async...
     text = @getTokenText(token)
-    scopes = @getTokenScopes(token)
+    scopeChain = @getTokenScopeChain(token)
     matches = text.match(@wordRegex)
     if matches?
-      @removeSymbol(symbolText, editorPath, bufferRow, scopes) for symbolText in matches
+      @removeSymbol(symbolText, editorPath, bufferRow, scopeChain) for symbolText in matches
     return
 
   addTokensInBufferRange: (editor, bufferRange) ->
@@ -112,25 +112,26 @@ class SymbolStore
       bufferRow = bufferRowBase + bufferRowIndex
       for token in tokens
         operatorFunc(token, editor.getPath(), bufferRow)
+    return
 
   ###
   Private Methods
   ###
 
-  addSymbol: (symbolText, editorPath, bufferRow, scopes) ->
+  addSymbol: (symbolText, editorPath, bufferRow, scopeChain) ->
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     unless symbol?
       @symbolMap[symbolKey] = symbol = new Symbol(symbolText)
       @count += 1
 
-    symbol.addInstance(editorPath, bufferRow, scopes)
+    symbol.addInstance(editorPath, bufferRow, scopeChain)
 
-  removeSymbol: (symbolText, editorPath, bufferRow, scopes) =>
+  removeSymbol: (symbolText, editorPath, bufferRow, scopeChain) =>
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     if symbol?
-      symbol.removeInstance(editorPath, bufferRow, scopes)
+      symbol.removeInstance(editorPath, bufferRow, scopeChain)
       if symbol.getCount() is 0
         delete @symbolMap[symbolKey]
         @count -= 1
@@ -143,10 +144,10 @@ class SymbolStore
 
   getTokenText: (token) -> token.value
 
-  getTokenScopes: (token) ->
-    selector = ''
-    selector += ' .' + scope for scope in token.scopes
-    selector
+  getTokenScopeChain: (token) ->
+    scopeChain = ''
+    scopeChain += ' .' + scope for scope in token.scopes
+    scopeChain
 
   getKey: (value) ->
     # some words are reserved, like 'constructor' :/

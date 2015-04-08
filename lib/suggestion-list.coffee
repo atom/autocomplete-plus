@@ -22,25 +22,47 @@ class SuggestionList
       'escape': 'autocomplete-plus:cancel'
 
     completionKey = atom.config.get('autocomplete-plus.confirmCompletion') or ''
-    navigationKey = atom.config.get('autocomplete-plus.navigateCompletions') or ''
 
     keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     keys['enter'] = 'autocomplete-plus:confirm' if completionKey.indexOf('enter') > -1
 
-    if @items?.length > 1 and navigationKey is 'up,down'
+    @addKeyboardSelectionInteraction()
+
+    @keymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
+    @subscriptions.add(@keymaps)
+
+  removeKeyboardInteraction: ->
+    @removeKeyboardSelectionInteraction()
+    @keymaps?.dispose()
+    @keymaps = null
+    @subscriptions.remove(@keymaps)
+
+  updateKeyboardSelectionInteraction: ->
+    return unless @items?
+    if @selectionInteractionKeymaps? and @items.length isnt @previousItemsLength
+      @addKeyboardSelectionInteraction()
+
+  addKeyboardSelectionInteraction: ->
+    return unless @items?
+    @removeKeyboardSelectionInteraction()
+    navigationKey = atom.config.get('autocomplete-plus.navigateCompletions')
+
+    keys = {}
+    if @items.length > 1 and navigationKey is 'up,down'
       keys['up'] =  'autocomplete-plus:select-previous'
       keys['down'] = 'autocomplete-plus:select-next'
     else
       keys['ctrl-n'] = 'autocomplete-plus:select-next'
       keys['ctrl-p'] = 'autocomplete-plus:select-previous'
 
-    @keymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
+    @previousItemsLength = @items.length
+    @selectionInteractionKeymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
+    @subscriptions.add(@selectionInteractionKeymaps)
 
-    @subscriptions.add(@keymaps)
-
-  removeKeyboardInteraction: ->
-    @keymaps?.dispose()
-    @subscriptions.remove(@keymaps)
+  removeKeyboardSelectionInteraction: ->
+    @selectionInteractionKeymaps?.dispose()
+    @selectionInteractionKeymaps = null
+    @subscriptions.remove(@selectionInteractionKeymaps)
 
   confirmSelection: =>
     @emitter.emit('did-confirm-selection')
@@ -80,6 +102,7 @@ class SuggestionList
       @showAtCursorPosition(editor, options)
     else
       @showAtBeginningOfPrefix(editor, options)
+    @updateKeyboardSelectionInteraction()
 
   showAtBeginningOfPrefix: (editor, {prefix}) =>
     return unless editor?

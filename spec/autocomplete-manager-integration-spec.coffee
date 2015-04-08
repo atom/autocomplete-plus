@@ -816,19 +816,56 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
-        spyOn(provider, 'getSuggestions').andCallFake ->
-          [{text: 'quicksort'}]
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+          [{text: 'quicksort'}, {text: 'quack'}].filter (val) ->
+            val.text.startsWith(prefix)
 
-        triggerAutocompletion(editor, false, 'q')
+        editor.insertText('q')
+        editor.insertText('u')
+        waitForAutocomplete()
 
         runs ->
-          # Accept suggestion
+          # two items displayed, should not close
+          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
+
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).toExist()
+
+          editor.insertText('a')
+          waitForAutocomplete()
+
+        runs ->
+          # one item displayed, should close
           key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
           atom.keymaps.handleKeyboardEvent(key)
           advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).not.toExist()
+
+      it 'does not close the autocomplete when up arrow pressed with multiple items displayed but triggered on one item', ->
+        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+          [{text: 'quicksort'}, {text: 'quack'}].filter (val) ->
+            val.text.startsWith(prefix)
+
+        editor.insertText('q')
+        editor.insertText('u')
+        editor.insertText('a')
+        waitForAutocomplete()
+
+        runs ->
+          editor.backspace()
+          waitForAutocomplete()
+
+        runs ->
+          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
+          advanceClock(1)
+
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).toExist()
 
       it 'closes the autocomplete when up arrow while up,down navigation not selected', ->
         atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')

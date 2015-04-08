@@ -90,8 +90,8 @@ module.exports =
       title: 'Suggestions List Follows'
       description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appears at the beginning of the word that\'s being completed.'
       type: 'string'
-      default: 'Cursor'
-      enum: ['Cursor', 'Word']
+      default: 'Word'
+      enum: ['Word', 'Cursor']
       order: 14
     defaultProvider:
       description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'

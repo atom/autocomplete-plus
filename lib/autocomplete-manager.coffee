@@ -169,9 +169,12 @@ class AutocompleteManager
             newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
             newSuggestion
 
+        cursor = @editor.getLastCursor()
+        replacementPrefix = @getPrefix(@editor, cursor.getBufferPosition()) if cursor?
+
         # FIXME: Cycling through the suggestions again is not ideal :/
         for suggestion in providerSuggestions
-          suggestion.replacementPrefix ?= @getDefaultReplacementPrefix(options.prefix)
+          suggestion.replacementPrefix ?= @getDefaultReplacementPrefix(replacementPrefix ? options.prefix)
           suggestion.provider = provider
           @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if activatedManually
 

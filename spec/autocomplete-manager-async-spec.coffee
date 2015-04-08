@@ -64,22 +64,51 @@ describe 'Async providers', ->
         expect(suggestionListView.querySelector('li .right-label')).toHaveText('asyncProvided')
 
   describe 'when a provider takes a long time to provide suggestions', ->
+    [testAsyncProvider] = []
+
     beforeEach ->
       testAsyncProvider =
         selector: '.source.js'
+        signal: null
         getSuggestions: (options) ->
-          return new Promise((resolve) ->
-            setTimeout ->
+          return new Promise((resolve) =>
+            @signal = =>
+              @signal = null
               resolve(
                 [{
-                  text: 'asyncProvided',
-                  replacementPrefix: 'asyncProvided',
+                  text: 'sort',
                   rightLabel: 'asyncProvided'
                 }]
               )
-            , 1000
             )
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testAsyncProvider)
+
+    it 'has the most up-to-date prefix when it completes', ->
+      runs ->
+        editor.moveToBottom()
+        editor.insertText('s')
+        # Waiting will kick off the suggestion request
+        advanceClock(autocompleteManager.suggestionDelay * 2)
+
+      waits(0)
+
+      runs ->
+        editor.moveToBottom()
+        # The provider has not returned at this point, cause the race condition.
+        editor.insertText('o')
+
+      waits(0)
+
+      runs ->
+        expect(testAsyncProvider.signal).not.toBeNull()
+        testAsyncProvider.signal()
+
+      waits(0)
+
+      runs ->
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        console.log suggestionListView
+        expect(suggestionListView.querySelectorAll('li .character-match').length).toBe(2)
 
     it 'does not show the suggestion list when it is triggered then no longer needed', ->
       runs ->
@@ -102,7 +131,8 @@ describe 'Async providers', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
         # Wait til the longass provider comes back
-        advanceClock(1000)
+        expect(testAsyncProvider.signal).not.toBeNull()
+        testAsyncProvider.signal()
 
       waits(0)
 

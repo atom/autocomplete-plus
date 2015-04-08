@@ -364,6 +364,19 @@ describe 'Autocomplete Manager', ->
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
           expect(editor.getText()).toBe 'something'
 
+      it "does not replace non-word prefixes with the chosen suggestion", ->
+        editor.insertText('abc')
+        editor.insertText('.')
+        waitForAutocomplete()
+
+        expect(editor.getText()).toBe 'abc.'
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+          expect(editor.getText()).toBe 'abc.something'
+
     describe "when autocomplete-plus.suggestionListFollows is 'Cursor'", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.suggestionListFollows', 'Cursor')

@@ -30,7 +30,8 @@ class AutocompleteManager
   suppressForClasses: []
   shouldDisplaySuggestions: false
   manualActivationStrictPrefixes: null
-  prefixRegex:/\b((\w+[\w-]*)|([.:;[{(< ]+))$/g
+  prefixRegex: /\b((\w+[\w-]*)|([.:;[{(< ]+))$/g
+  wordPrefixRegex: /^\w+[\w-]*$/
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -170,7 +171,7 @@ class AutocompleteManager
 
         # FIXME: Cycling through the suggestions again is not ideal :/
         for suggestion in providerSuggestions
-          suggestion.replacementPrefix ?= options.prefix
+          suggestion.replacementPrefix ?= @getDefaultReplacementPrefix(options.prefix)
           suggestion.provider = provider
           @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if activatedManually
 
@@ -254,6 +255,12 @@ class AutocompleteManager
   getPrefix: (editor, bufferPosition) ->
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
     line.match(@prefixRegex)?[0] or ''
+
+  getDefaultReplacementPrefix: (prefix) ->
+    if @wordPrefixRegex.test(prefix)
+      prefix
+    else
+      ''
 
   # Private: Gets called when the user successfully confirms a suggestion
   #

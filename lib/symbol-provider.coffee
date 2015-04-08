@@ -62,17 +62,21 @@ class SymbolProvider
     @editorSubscriptions.add @buffer.onWillChange(@bufferWillChange)
     @editorSubscriptions.add @buffer.onDidChange(@bufferDidChange)
 
-    @buildConfig()
     @buildWordListOnNextTick()
 
-  buildConfig: ->
+  buildConfigIfScopeChanged: ({editor, scopeDescriptor}) ->
+    unless @scopeDescriptorsEqual(@configScopeDescriptor, scopeDescriptor)
+      @buildConfig(scopeDescriptor)
+      @configScopeDescriptor = scopeDescriptor
+
+  buildConfig: (scopeDescriptor) ->
     @config = {}
 
-    allConfig = @settingsForScopeDescriptor(@editor.getRootScopeDescriptor(), 'editor.completionSymbols')
-    allConfig.push @defaultConfig unless allConfig.length
+    allConfig = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completionConfig')
+    allConfig.push {value: @defaultConfig} unless allConfig.length
 
-    for config in allConfig
-      for type, options of config
+    for {value} in allConfig
+      for type, options of value
         @config[type] = _.clone(options)
         @config[type].selectors = Selector.create(options.selector) if options.selector?
         @config[type].selectors ?= []
@@ -111,6 +115,9 @@ class SymbolProvider
 
   findSuggestionsForWord: (options) =>
     return unless @symbolStore.getLength()
+
+    @buildConfigIfScopeChanged(options)
+
     # Merge the scope specific words into the default word list
     symbolList = @symbolStore.symbolsForConfig(@config).concat(@builtinCompletionsForCursorScope())
 
@@ -210,3 +217,17 @@ class SymbolProvider
     # copy into your own package. If you do, be prepared to have it break
     # without warning.
     editor.displayBuffer.tokenizedBuffer.tokenizedLines
+
+  # FIXME: this should go in the core ScopeDescriptor class
+  scopeDescriptorsEqual: (a, b) ->
+    return true if a is b
+    return false unless a? and b?
+
+    arrayA = a.getScopesArray()
+    arrayB = b.getScopesArray()
+
+    return false if arrayA.length isnt arrayB.length
+
+    for scope, i in arrayA
+      return false if scope isnt arrayB[i]
+    true

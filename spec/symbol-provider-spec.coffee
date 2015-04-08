@@ -5,9 +5,14 @@ _ = require 'underscore-plus'
 suggestionForWord = (suggestionList, word) ->
   suggestionList.getSymbol(word)
 
-suggestionsForPrefix = (provider, editor, prefix) ->
+suggestionsForPrefix = (provider, editor, prefix, options) ->
   bufferPosition = editor.getCursorBufferPosition()
-  (sug.text for sug in provider.findSuggestionsForWord({editor, bufferPosition, prefix}))
+  scopeDescriptor = editor.getLastCursor().getScopeDescriptor()
+  suggestions = provider.findSuggestionsForWord({editor, bufferPosition, prefix, scopeDescriptor})
+  if options?.raw
+    suggestions
+  else
+    (sug.text for sug in suggestions)
 
 describe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
@@ -168,6 +173,47 @@ describe 'SymbolProvider', ->
 
       runs ->
         expect(results[0].text).toBe 'items'
+
+  describe "when the completionConfig changes between scopes", ->
+    beforeEach ->
+      editor.setText '''
+        // in-a-comment
+        invar = "in-a-string"
+      '''
+
+      commentConfig =
+        incomment:
+          selector: '.comment'
+
+      stringConfig =
+        instring:
+          selector: '.string'
+
+      atom.config.set('editor.completionConfig', commentConfig, scopeSelector: '.source.js .comment')
+      atom.config.set('editor.completionConfig', stringConfig, scopeSelector: '.source.js .string')
+
+    it "uses the config for the scope under the cursor", ->
+      # Using the comment config
+      editor.setCursorBufferPosition([0, 2])
+      suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
+      expect(suggestions).toHaveLength 1
+      expect(suggestions[0].text).toBe 'in-a-comment'
+      expect(suggestions[0].type).toBe 'incomment'
+
+      # Using the string config
+      editor.setCursorBufferPosition([1, 20])
+      suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
+      expect(suggestions).toHaveLength 1
+      expect(suggestions[0].text).toBe 'in-a-string'
+      expect(suggestions[0].type).toBe 'instring'
+
+      # Using the default config
+      editor.setCursorBufferPosition([1, 5])
+      suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
+      console.log suggestions
+      expect(suggestions).toHaveLength 3
+      expect(suggestions[0].text).toBe 'invar'
+      expect(suggestions[0].type).toBe '' # the js grammar sucks :(
 
   # Fixing This Fixes #76
   xit 'adds words to the wordlist with unicode characters', ->

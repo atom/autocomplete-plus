@@ -5,6 +5,10 @@ _ = require 'underscore-plus'
 suggestionForWord = (suggestionList, word) ->
   suggestionList.getSymbol(word)
 
+suggestionsForPrefix = (provider, editor, prefix) ->
+  bufferPosition = editor.getCursorBufferPosition()
+  (sug.text for sug in provider.findSuggestionsForWord({editor, bufferPosition, prefix}))
+
 describe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
 
@@ -21,9 +25,6 @@ describe 'SymbolProvider', ->
 
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
-
-  afterEach ->
-    atom.config.set('autocomplete-plus.defaultProvider', 'Fuzzy')
 
   describe "when completing with the default configuration", ->
     beforeEach ->
@@ -78,27 +79,39 @@ describe 'SymbolProvider', ->
       expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
 
     it "adds words to the symbol list after they have been written", ->
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
+
       editor.insertText('function aNewFunction(){};')
       editor.insertText(' ')
       advanceClock provider.changeUpdateDelay
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
+
+    it "adds words after they have been added to a ", ->
+      expect(suggestionsForPrefix(provider, editor, 'some')).not.toContain 'somestring'
+
+      editor.insertText('abc = "somestring"')
+      editor.insertText(' ')
+      advanceClock provider.changeUpdateDelay
+
+      expect(suggestionsForPrefix(provider, editor, 'some')).toContain 'somestring'
 
     it "removes words from the symbol list when they do not exist in the buffer", ->
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
 
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
+
       editor.insertText('function aNewFunction(){};')
       advanceClock provider.changeUpdateDelay
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 
       editor.setCursorBufferPosition([13, 21])
       editor.backspace()
       advanceClock provider.changeUpdateDelay
 
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunctio')).toBeTruthy()
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunctio'
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
 
     it "correctly tracks the buffer row associated with symbols as they change", ->
       editor.setText('')

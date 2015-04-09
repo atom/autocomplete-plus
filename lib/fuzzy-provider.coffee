@@ -161,11 +161,9 @@ class FuzzyProvider
   # Returns an {Array} of strings
   getCompletionsForCursorScope: (scopeDescriptor) ->
     completions = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
-    console.log completions
     resultCompletions = []
     for {value} in completions
       resultCompletions = resultCompletions.concat(value) if Array.isArray(value)
-    console.log resultCompletions
     _.uniq(resultCompletions)
 
   # Public: Clean up, stop listening to events

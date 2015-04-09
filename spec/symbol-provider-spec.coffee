@@ -43,19 +43,6 @@ describe 'SymbolProvider', ->
       editorView = atom.views.getView(editor)
       provider = autocompleteManager.providerManager.fuzzyProvider
 
-  it "does not output suggestions from the other buffer", ->
-    [results, coffeeEditor] = []
-
-    waitsForPromise ->
-      Promise.all [
-        atom.packages.activatePackage("language-coffee-script")
-        atom.workspace.open("sample.coffee").then (e) -> coffeeEditor = e
-      ]
-
-    runs ->
-      advanceClock 1 # build the new wordlist
-      expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength 0
-
   it "runs a completion ", ->
     expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
 
@@ -138,6 +125,19 @@ describe 'SymbolProvider', ->
     # triggered. So we're just making sure the row is in there.
     suggestion = suggestionForWord(provider.symbolStore, 'abc')
     expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toContain 3
+
+  it "does not output suggestions from the other buffer", ->
+    [results, coffeeEditor] = []
+
+    waitsForPromise ->
+      Promise.all [
+        atom.packages.activatePackage("language-coffee-script")
+        atom.workspace.open("sample.coffee").then (e) -> coffeeEditor = e
+      ]
+
+    runs ->
+      advanceClock 1 # build the new wordlist
+      expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength 0
 
   describe "when includeCompletionsFromAllBuffers is enabled", ->
     beforeEach ->

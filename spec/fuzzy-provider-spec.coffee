@@ -1,33 +1,30 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
 _ = require 'underscore-plus'
 
-describe 'Autocomplete', ->
+describe 'FuzzyProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
-    runs ->
-      # Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    # Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
 
-      # Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 # Rendering delaya\
+    # Set the completion delay
+    completionDelay = 100
+    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
+    completionDelay += 100 # Rendering delaya\
 
-      workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
+    workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
   describe 'when auto-activation is enabled', ->
     beforeEach ->
-      runs ->
-        atom.config.set('autocomplete-plus.enableAutoActivation', true)
-
-      waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
-        editor = e
-
-      # Activate the package
-      waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-        mainModule = a.mainModule
+      waitsForPromise ->
+        Promise.all [
+          atom.packages.activatePackage("language-javascript")
+          atom.workspace.open('sample.js').then (e) -> editor = e
+          atom.packages.activatePackage('autocomplete-plus').then (a) ->
+            mainModule = a.mainModule
+        ]
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager
@@ -55,6 +52,20 @@ describe 'Autocomplete', ->
       editor.backspace()
       expect(provider.tokenList.getToken('somethingNew')).toBe undefined
       expect(provider.tokenList.getToken('somethingNe')).toBe 'somethingNe'
+
+    it "adds completions from settings", ->
+      provider = autocompleteManager.providerManager.fuzzyProvider
+      atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], scopeSelector: '.source.js')
+
+      editor.moveToBottom()
+      editor.insertText('ab')
+
+      bufferPosition = editor.getLastCursor().getBufferPosition()
+      scopeDescriptor = editor.getRootScopeDescriptor()
+      prefix = 'ab'
+
+      results = provider.getSuggestions({editor, bufferPosition, scopeDescriptor, prefix})
+      expect(results[0].text).toBe 'abcd'
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->

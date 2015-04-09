@@ -45,7 +45,7 @@ describe 'SymbolStore', ->
       config =
         function:
           selectors: Selector.create('.function')
-          priority: 1
+          typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
       expect(store.getLength()).toBe 3
@@ -58,15 +58,15 @@ describe 'SymbolStore', ->
 
     it "updates the symbol types as new tokens come in", ->
       config =
-        class:
-          selectors: Selector.create('.class.name')
-          priority: 4
-        function:
-          selectors: Selector.create('.function')
-          priority: 3
         variable:
           selectors: Selector.create('.variable')
-          priority: 2
+          typePriority: 2
+        function:
+          selectors: Selector.create('.function')
+          typePriority: 3
+        class:
+          selectors: Selector.create('.class.name')
+          typePriority: 4
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
       symbols = store.symbolsForConfig(config)
@@ -91,7 +91,7 @@ describe 'SymbolStore', ->
       config =
         '':
           selectors: Selector.create('.function')
-          priority: 1
+          typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
       symbols = store.symbolsForConfig(config)
@@ -104,7 +104,7 @@ describe 'SymbolStore', ->
       config =
         'function':
           selectors: Selector.create('.function')
-          priority: 1
+          typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
       symbols = store.symbolsForConfig(config)
@@ -116,7 +116,7 @@ describe 'SymbolStore', ->
       config =
         'newtype':
           selectors: Selector.create('.function')
-          priority: 1
+          typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
       symbols = store.symbolsForConfig(config)

@@ -23,16 +23,16 @@ class SymbolProvider
   defaultConfig:
     class:
       selector: '.class.name, .inherited-class, .instance.type'
-      priority: 4
+      typePriority: 4
     function:
       selector: '.function.name'
-      priority: 3
+      typePriority: 3
     variable:
       selector: '.variable'
-      priority: 2
+      typePriority: 2
     '':
       selector: '.source'
-      priority: 1
+      typePriority: 1
 
   constructor: ->
     @symbolStore = new SymbolStore(@wordRegex)
@@ -81,7 +81,7 @@ class SymbolProvider
         @config[type] = _.clone(options)
         @config[type].selectors = Selector.create(options.selector) if options.selector?
         @config[type].selectors ?= []
-        @config[type].priority ?= 1
+        @config[type].typePriority ?= 1
         @config[type].wordRegex ?= @wordRegex
 
     return

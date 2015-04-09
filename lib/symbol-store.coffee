@@ -55,9 +55,9 @@ class Symbol
       for type, options of config
         for filePath, {scopeChains} of @metadataByPath
           for scopeChain, __ of scopeChains
-            if (!@type or options.priority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
+            if (!@type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
               @type = type
-              typePriority = options.priority
+              typePriority = options.typePriority
       @cachedConfig = config
 
     @type?

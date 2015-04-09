@@ -78,20 +78,30 @@ class SymbolProvider
 
     for {value} in allConfig
       for type, options of value
-        @config[type] = _.clone(options)
+        @config[type] ?= {}
         @config[type].selectors = Selector.create(options.selector) if options.selector?
-        @config[type].typePriority ?= 1
+        @config[type].typePriority = options.typePriority ? 1
         @config[type].wordRegex = @wordRegex
 
-        suggestions = @config[type].suggestions
-        if suggestions? and Array.isArray(suggestions)
-          if typeof suggestions[0] is 'string'
-            @config[type].suggestions = ({text, type} for text in suggestions)
-        else
-          @config[type].suggestions = null
+        suggestions = @sanitizeSuggestionsFromConfig(options.suggestions, type)
+        @config[type].suggestions = suggestions if suggestions? and suggestions.length
 
     if builtinSuggestions = @legacyCompletionsForScopeDescriptor(scopeDescriptor)
       @config.builtin = {suggestions: builtinSuggestions}
+
+  sanitizeSuggestionsFromConfig: (suggestions, type) ->
+    if suggestions? and Array.isArray(suggestions)
+      sanitizedSuggestions = []
+      for suggestion in suggestions
+        if typeof suggestion is 'string'
+          sanitizedSuggestions.push({text: suggestion, type})
+        else if typeof suggestions[0] is 'object' and (suggestion.text? or suggestion.snippet?)
+          suggestion = _.clone(suggestion)
+          suggestion.type ?= type
+          sanitizedSuggestions.push(suggestion)
+      sanitizedSuggestions
+    else
+      null
 
   legacyCompletionsForScopeDescriptor: (scopeDescriptor) ->
     completions = @settingsForScopeDescriptor(scopeDescriptor, "editor.completions")

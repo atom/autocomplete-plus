@@ -224,7 +224,6 @@ describe 'SymbolProvider', ->
       # Using the default config
       editor.setCursorBufferPosition([1, 5])
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
-      console.log suggestions
       expect(suggestions).toHaveLength 3
       expect(suggestions[0].text).toBe 'invar'
       expect(suggestions[0].type).toBe '' # the js grammar sucks :(
@@ -250,6 +249,23 @@ describe 'SymbolProvider', ->
       expect(suggestions).toHaveLength 4
       expect(suggestions[0].text).toBe 'abcomment'
       expect(suggestions[0].type).toBe 'comment'
+      expect(suggestions[1].text).toBe 'abcd'
+      expect(suggestions[1].type).toBe 'builtin'
+
+  describe "when the legacy completions array is used", ->
+    beforeEach ->
+      editor.setText '''
+        // abcomment
+      '''
+      atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], scopeSelector: '.source.js .comment')
+
+    it "uses the config for the scope under the cursor", ->
+      # Using the comment config
+      editor.setCursorBufferPosition([0, 2])
+      suggestions = suggestionsForPrefix(provider, editor, 'ab', raw: true)
+      expect(suggestions).toHaveLength 4
+      expect(suggestions[0].text).toBe 'abcomment'
+      expect(suggestions[0].type).toBe ''
       expect(suggestions[1].text).toBe 'abcd'
       expect(suggestions[1].type).toBe 'builtin'
 

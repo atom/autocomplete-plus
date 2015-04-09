@@ -144,35 +144,25 @@ describe 'SymbolProvider', ->
       atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', true)
 
       waitsForPromise ->
-        atom.packages.activatePackage("language-coffee-script").then ->
-          atom.workspace.open("sample.coffee").then (e) ->
-            editor = e
+        Promise.all [
+          atom.packages.activatePackage("language-coffee-script")
+          atom.workspace.open("sample.coffee").then (e) -> editor = e
+        ]
 
-      runs ->
-        provider = autocompleteManager.providerManager.fuzzyProvider
+      runs -> advanceClock 1
 
     afterEach ->
       atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false)
 
     it "outputs unique suggestions", ->
-      results = null
-      waitsForPromise ->
-        promise = provider.getSuggestions({editor, prefix: 'qu', bufferPosition: new Point(7, 0)})
-        advanceClock 1
-        promise.then (r) -> results = r
-
-      runs ->
-        expect(results).toHaveLength 1
+      editor.setCursorBufferPosition([7, 0])
+      results = suggestionsForPrefix(provider, editor, 'qu')
+      expect(results).toHaveLength 1
 
     it "outputs suggestions from the other buffer", ->
-      results = null
-      waitsForPromise ->
-        promise = provider.getSuggestions({editor, prefix: 'item', bufferPosition: new Point(7, 0)})
-        advanceClock 1
-        promise.then (r) -> results = r
-
-      runs ->
-        expect(results[0].text).toBe 'items'
+      editor.setCursorBufferPosition([7, 0])
+      results = suggestionsForPrefix(provider, editor, 'item')
+      expect(results[0]).toBe 'items'
 
   describe "when the completionConfig changes between scopes", ->
     beforeEach ->

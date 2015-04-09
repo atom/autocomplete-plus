@@ -72,22 +72,34 @@ class SymbolProvider
 
   buildConfig: (scopeDescriptor) ->
     @config = {}
+    allConfigEntries = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
 
-    allConfig = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completionConfig')
-    allConfig.push {value: @defaultConfig} unless allConfig.length
+    addedConfigEntry = false
+    for {value} in allConfigEntries
+      if Array.isArray(value)
+        @addLegacyConfigEntry(value) if value.length
+      else if typeof value is 'object'
+        @addConfigEntry(value)
+        addedConfigEntry = true
 
-    for {value} in allConfig
-      for type, options of value
-        @config[type] ?= {}
-        @config[type].selectors = Selector.create(options.selector) if options.selector?
-        @config[type].typePriority = options.typePriority ? 1
-        @config[type].wordRegex = @wordRegex
+    @addConfigEntry(@defaultConfig) unless addedConfigEntry
+    @config.builtin.suggestions = _.uniq(@config.builtin.suggestions, @uniqueFilter) if @config.builtin?.suggestions?
 
-        suggestions = @sanitizeSuggestionsFromConfig(options.suggestions, type)
-        @config[type].suggestions = suggestions if suggestions? and suggestions.length
+  addLegacyConfigEntry: (suggestions) ->
+    suggestions = ({text: suggestion, type: 'builtin'} for suggestion in suggestions)
+    @config.builtin ?= {suggestions: []}
+    @config.builtin.suggestions = @config.builtin.suggestions.concat(suggestions)
 
-    if builtinSuggestions = @legacyCompletionsForScopeDescriptor(scopeDescriptor)
-      @config.builtin = {suggestions: builtinSuggestions}
+  addConfigEntry: (config) ->
+    for type, options of config
+      @config[type] ?= {}
+      @config[type].selectors = Selector.create(options.selector) if options.selector?
+      @config[type].typePriority = options.typePriority ? 1
+      @config[type].wordRegex = @wordRegex
+
+      suggestions = @sanitizeSuggestionsFromConfig(options.suggestions, type)
+      @config[type].suggestions = suggestions if suggestions? and suggestions.length
+    return
 
   sanitizeSuggestionsFromConfig: (suggestions, type) ->
     if suggestions? and Array.isArray(suggestions)
@@ -102,18 +114,6 @@ class SymbolProvider
       sanitizedSuggestions
     else
       null
-
-  legacyCompletionsForScopeDescriptor: (scopeDescriptor) ->
-    completions = @settingsForScopeDescriptor(scopeDescriptor, "editor.completions")
-    scopedCompletions = null
-    for {value} in completions
-      for suggestion in value when value?
-        scopedCompletions ?= []
-        scopedCompletions.push
-          text: suggestion
-          type: 'builtin'
-    scopedCompletions = _.uniq(scopedCompletions, @uniqueFilter) if scopedCompletions?
-    scopedCompletions
 
   uniqueFilter: (completion) -> completion.text
 

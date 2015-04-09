@@ -188,7 +188,7 @@ describe 'SymbolProvider', ->
       results = suggestionsForPrefix(provider, editor, 'item')
       expect(results[0]).toBe 'items'
 
-  describe "when the completionConfig changes between scopes", ->
+  describe "when the completions changes between scopes", ->
     beforeEach ->
       editor.setText '''
         // in-a-comment
@@ -203,8 +203,8 @@ describe 'SymbolProvider', ->
         instring:
           selector: '.string'
 
-      atom.config.set('editor.completionConfig', commentConfig, scopeSelector: '.source.js .comment')
-      atom.config.set('editor.completionConfig', stringConfig, scopeSelector: '.source.js .string')
+      atom.config.set('editor.completions', commentConfig, scopeSelector: '.source.js .comment')
+      atom.config.set('editor.completions', stringConfig, scopeSelector: '.source.js .string')
 
     it "uses the config for the scope under the cursor", ->
       # Using the comment config
@@ -228,7 +228,7 @@ describe 'SymbolProvider', ->
       expect(suggestions[0].text).toBe 'invar'
       expect(suggestions[0].type).toBe '' # the js grammar sucks :(
 
-  describe "when the completionConfig contains a list of suggestion strings", ->
+  describe "when the completions contains a list of suggestion strings", ->
     beforeEach ->
       editor.setText '// abcomment'
       commentConfig =
@@ -236,7 +236,7 @@ describe 'SymbolProvider', ->
         builtin:
           suggestions: ['abcd', 'abcde', 'abcdef']
 
-      atom.config.set('editor.completionConfig', commentConfig, scopeSelector: '.source.js .comment')
+      atom.config.set('editor.completions', commentConfig, scopeSelector: '.source.js .comment')
 
     it "adds the suggestions to the results", ->
       # Using the comment config
@@ -248,7 +248,7 @@ describe 'SymbolProvider', ->
       expect(suggestions[1].text).toBe 'abcd'
       expect(suggestions[1].type).toBe 'builtin'
 
-  describe "when the completionConfig contains a list of suggestion objects", ->
+  describe "when the completions contains a list of suggestion objects", ->
     beforeEach ->
       editor.setText '// abcomment'
       commentConfig =
@@ -259,7 +259,7 @@ describe 'SymbolProvider', ->
             {text: 'abcd', rightLabel: 'one', type: 'function'}
             []
           ]
-      atom.config.set('editor.completionConfig', commentConfig, scopeSelector: '.source.js .comment')
+      atom.config.set('editor.completions', commentConfig, scopeSelector: '.source.js .comment')
 
     it "adds the suggestion objects to the results", ->
       # Using the comment config

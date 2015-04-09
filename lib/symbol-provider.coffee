@@ -80,9 +80,15 @@ class SymbolProvider
       for type, options of value
         @config[type] = _.clone(options)
         @config[type].selectors = Selector.create(options.selector) if options.selector?
-        @config[type].selectors ?= []
         @config[type].typePriority ?= 1
-        @config[type].wordRegex ?= @wordRegex
+        @config[type].wordRegex = @wordRegex
+
+        suggestions = @config[type].suggestions
+        if suggestions? and Array.isArray(suggestions)
+          if typeof suggestions[0] is 'string'
+            @config[type].suggestions = ({text, type} for text in suggestions)
+        else
+          @config[type].suggestions = null
 
     return
 

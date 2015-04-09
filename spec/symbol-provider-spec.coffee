@@ -229,6 +229,30 @@ describe 'SymbolProvider', ->
       expect(suggestions[0].text).toBe 'invar'
       expect(suggestions[0].type).toBe '' # the js grammar sucks :(
 
+  describe "when the completionConfig contains a list of completions", ->
+    beforeEach ->
+      editor.setText '''
+        // abcomment
+      '''
+
+      commentConfig =
+        comment:
+          selector: '.comment'
+        builtin:
+          suggestions: ['abcd', 'abcde', 'abcdef']
+
+      atom.config.set('editor.completionConfig', commentConfig, scopeSelector: '.source.js .comment')
+
+    it "uses the config for the scope under the cursor", ->
+      # Using the comment config
+      editor.setCursorBufferPosition([0, 2])
+      suggestions = suggestionsForPrefix(provider, editor, 'ab', raw: true)
+      expect(suggestions).toHaveLength 4
+      expect(suggestions[0].text).toBe 'abcomment'
+      expect(suggestions[0].type).toBe 'comment'
+      expect(suggestions[1].text).toBe 'abcd'
+      expect(suggestions[1].type).toBe 'builtin'
+
   # Fixing This Fixes #76
   xit 'adds words to the wordlist with unicode characters', ->
     expect(provider.symbolStore.indexOf('somēthingNew')).toBeFalsy()

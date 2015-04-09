@@ -44,6 +44,9 @@ class Symbol
       if getObjectLength(@metadataByPath[editorPath].scopeChains) is 0
         delete @metadataByPath[editorPath]
 
+  isSingleInstanceOf: (word) ->
+    @text is word and @count is 1
+
   appliesToConfig: (config) ->
     @type = null if @cachedConfig isnt config
 
@@ -75,10 +78,10 @@ class SymbolStore
     symbolKey = @getKey(symbolKey)
     @symbolMap[symbolKey]
 
-  symbolsForConfig: (config) ->
+  symbolsForConfig: (config, wordUnderCursor) ->
     symbols = []
     for symbolKey, symbol of @symbolMap
-      symbols.push(symbol) if symbol.appliesToConfig(config)
+      symbols.push(symbol) if symbol.appliesToConfig(config) and not symbol.isSingleInstanceOf(wordUnderCursor)
     symbols
 
   addToken: (token, editorPath, bufferRow) =>

@@ -9,6 +9,7 @@ SymbolStore = require './symbol-store'
 module.exports =
 class SymbolProvider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
+  beginningOfLineWordRegex: /^\w*[a-zA-Z_-]+\w*\b/g
   symbolStore: null
   editor: null
   buffer: null
@@ -112,11 +113,11 @@ class SymbolProvider
 
   findSuggestionsForWord: (options) =>
     return unless @symbolStore.getLength()
-
+    wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
 
     # Merge the scope specific words into the default word list
-    symbolList = @symbolStore.symbolsForConfig(@config).concat(@builtinCompletionsForCursorScope())
+    symbolList = @symbolStore.symbolsForConfig(@config, wordUnderCursor).concat(@builtinCompletionsForCursorScope())
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
@@ -129,11 +130,15 @@ class SymbolProvider
 
     return words
 
+  wordAtBufferPosition: ({editor, prefix, bufferPosition}) ->
+    lineFromPosition = editor.getTextInRange([bufferPosition, [bufferPosition.row, Infinity]])
+    suffix = lineFromPosition.match(@beginningOfLineWordRegex)?[0] or ''
+    prefix + suffix
+
   fuzzyFilter: (symbolList, editorPath, {bufferPosition, prefix}) ->
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
-      continue if symbol.text is prefix
       continue unless prefix[0].toLowerCase() is symbol.text[0].toLowerCase() # must match the first char!
       score = fuzzaldrin.score(symbol.text, prefix)
       score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForEditorPath?(editorPath))

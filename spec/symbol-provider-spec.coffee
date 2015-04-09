@@ -81,6 +81,30 @@ describe 'SymbolProvider', ->
     expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunctio'
     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
 
+  it "does not return the word under the cursor when there is only a prefix", ->
+    editor.moveToBottom()
+    editor.insertText('qu')
+    expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain 'qu'
+
+    editor.insertText(' qu')
+    expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'qu'
+
+  it "does not return the word under the cursor when there is a suffix only one instance of the word", ->
+    editor.moveToBottom()
+    editor.insertText('catscats')
+    editor.moveToBeginningOfLine()
+    editor.insertText('omg')
+    expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain 'omg'
+    expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain 'omgcatscats'
+
+  it "returns the word under the cursor when there is a suffix and there are multiple instances of the word", ->
+    editor.moveToBottom()
+    editor.insertText('icksort')
+    editor.moveToBeginningOfLine()
+    editor.insertText('qu')
+    expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain 'qu'
+    expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
+
   it "correctly tracks the buffer row associated with symbols as they change", ->
     editor.setText('')
     advanceClock(provider.changeUpdateDelay)

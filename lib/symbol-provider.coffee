@@ -108,10 +108,7 @@ class SymbolProvider
   getSuggestions: (options) =>
     # No prefix? Don't autocomplete!
     return unless options.prefix.trim().length
-
-    new Promise (resolve) =>
-      suggestions = @findSuggestionsForWord(options)
-      resolve(suggestions)
+    @findSuggestionsForWord(options)
 
   findSuggestionsForWord: (options) =>
     return unless @symbolStore.getLength()

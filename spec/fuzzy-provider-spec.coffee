@@ -53,7 +53,7 @@ describe 'FuzzyProvider', ->
       expect(provider.tokenList.getToken('somethingNew')).toBe undefined
       expect(provider.tokenList.getToken('somethingNe')).toBe 'somethingNe'
 
-    it "adds completions from settings", ->
+    it "adds completions from editor.completions", ->
       provider = autocompleteManager.providerManager.fuzzyProvider
       atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], scopeSelector: '.source.js')
 
@@ -66,6 +66,20 @@ describe 'FuzzyProvider', ->
 
       results = provider.getSuggestions({editor, bufferPosition, scopeDescriptor, prefix})
       expect(results[0].text).toBe 'abcd'
+
+    it "adds completions from settings", ->
+      provider = autocompleteManager.providerManager.fuzzyProvider
+      atom.config.set('editor.completions', {builtin: suggestions: ['nope']}, scopeSelector: '.source.js')
+
+      editor.moveToBottom()
+      editor.insertText('ab')
+
+      bufferPosition = editor.getLastCursor().getBufferPosition()
+      scopeDescriptor = editor.getRootScopeDescriptor()
+      prefix = 'ab'
+
+      results = provider.getSuggestions({editor, bufferPosition, scopeDescriptor, prefix})
+      expect(results).toBeUndefined()
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->

@@ -68,7 +68,7 @@ describe 'SymbolProvider', ->
 
     expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 
-  it "adds words after they have been added to a ", ->
+  it "adds words after they have been added to a scope that is not a direct match for the selector", ->
     expect(suggestionsForPrefix(provider, editor, 'some')).not.toContain 'somestring'
 
     editor.insertText('abc = "somestring"')

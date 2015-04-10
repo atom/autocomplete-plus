@@ -8,13 +8,9 @@ class SuggestionList
     @active = false
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
-    # Allow keyboard navigation of the suggestion list
-    @subscriptions.add(atom.commands.add 'atom-text-editor.autocomplete-active',
+    @subscriptions.add atom.commands.add 'atom-text-editor.autocomplete-active',
       'autocomplete-plus:confirm': @confirmSelection,
-      'autocomplete-plus:select-next': @selectNext,
-      'autocomplete-plus:select-previous': @selectPrevious,
       'autocomplete-plus:cancel': @cancel
-    )
 
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
@@ -39,25 +35,17 @@ class SuggestionList
 
   updateKeyboardSelectionInteraction: ->
     return unless @items?
-    if @selectionInteractionKeymaps? and @items.length isnt @previousItemsLength
+    if @items.length isnt @previousItemsLength
       @addKeyboardSelectionInteraction()
 
   addKeyboardSelectionInteraction: ->
     return unless @items?
     @removeKeyboardSelectionInteraction()
-    navigationKey = atom.config.get('autocomplete-plus.navigateCompletions')
-
-    keys = {}
-    if @items.length > 1 and navigationKey is 'up,down'
-      keys['up'] =  'autocomplete-plus:select-previous'
-      keys['down'] = 'autocomplete-plus:select-next'
-    else
-      keys['ctrl-n'] = 'autocomplete-plus:select-next'
-      keys['ctrl-p'] = 'autocomplete-plus:select-previous'
-
+    if @items.length > 1
+      commands = {'core:move-down': @selectNext, 'core:move-up': @selectPrevious}
+      @selectionInteractionKeymaps = atom.commands.add('atom-text-editor.autocomplete-active', commands)
+      @subscriptions.add(@selectionInteractionKeymaps)
     @previousItemsLength = @items.length
-    @selectionInteractionKeymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
-    @subscriptions.add(@selectionInteractionKeymaps)
 
   removeKeyboardSelectionInteraction: ->
     @selectionInteractionKeymaps?.dispose()
@@ -76,14 +64,16 @@ class SuggestionList
   onDidConfirm: (fn) ->
     @emitter.on('did-confirm', fn)
 
-  selectNext: =>
+  selectNext: (e) =>
     @emitter.emit('did-select-next')
+    e.stopImmediatePropagation()
 
   onDidSelectNext: (fn) ->
     @emitter.on('did-select-next', fn)
 
-  selectPrevious: =>
+  selectPrevious: (e) =>
     @emitter.emit('did-select-previous')
+    e.stopImmediatePropagation()
 
   onDidSelectPrevious: (fn) ->
     @emitter.on('did-select-previous', fn)

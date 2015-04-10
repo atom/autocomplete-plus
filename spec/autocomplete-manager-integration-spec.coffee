@@ -192,6 +192,19 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(prefix).toBe '.'
 
+    describe "when the character entered is not at the cursor position", ->
+      beforeEach ->
+        editor.setText 'some text ok'
+        editor.setCursorBufferPosition([0, 7])
+
+      it "does not show the suggestion list", ->
+        buffer = editor.getBuffer()
+        buffer.setTextInRange([[0, 0], [0, 0]], "s")
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)

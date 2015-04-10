@@ -390,16 +390,17 @@ class AutocompleteManager
   # character with a single keystroke. (= pasting)
   #
   # event - The change {Event}
-  bufferChanged: ({newText, oldText}) =>
+  bufferChanged: ({newText, newRange, oldText, oldRange}) =>
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     shouldActivate = false
+    cursorBufferPosition = @editor.getLastCursor().getBufferPosition()
 
     if @autoActivationEnabled or @suggestionList.isActive()
-      if newText?.length
+      if newText?.length and newRange.containsPoint(cursorBufferPosition)
         # Activate on space, a non-whitespace character, or a bracket-matcher pair
         shouldActivate = newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs
-      else if oldText?.length and (@backspaceTriggersAutocomplete or @suggestionList.isActive())
+      else if oldText?.length and (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldRange.containsPoint(cursorBufferPosition)
         # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
         # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
         shouldActivate = oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs

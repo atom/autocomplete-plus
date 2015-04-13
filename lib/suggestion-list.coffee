@@ -11,6 +11,14 @@ class SuggestionList
     @subscriptions.add atom.commands.add 'atom-text-editor.autocomplete-active',
       'autocomplete-plus:confirm': @confirmSelection,
       'autocomplete-plus:cancel': @cancel
+      'core:move-up': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectPrevious()
+          event.stopImmediatePropagation()
+      'core:move-down': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectNext()
+          event.stopImmediatePropagation()
 
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
@@ -22,35 +30,13 @@ class SuggestionList
     keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     keys['enter'] = 'autocomplete-plus:confirm' if completionKey.indexOf('enter') > -1
 
-    @addKeyboardSelectionInteraction()
-
     @keymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
     @subscriptions.add(@keymaps)
 
   removeKeyboardInteraction: ->
-    @removeKeyboardSelectionInteraction()
     @keymaps?.dispose()
     @keymaps = null
     @subscriptions.remove(@keymaps)
-
-  updateKeyboardSelectionInteraction: ->
-    return unless @items?
-    if @items.length isnt @previousItemsLength
-      @addKeyboardSelectionInteraction()
-
-  addKeyboardSelectionInteraction: ->
-    return unless @items?
-    @removeKeyboardSelectionInteraction()
-    if @items.length > 1
-      commands = {'core:move-down': @selectNext, 'core:move-up': @selectPrevious}
-      @selectionInteractionKeymaps = atom.commands.add('atom-text-editor.autocomplete-active', commands)
-      @subscriptions.add(@selectionInteractionKeymaps)
-    @previousItemsLength = @items.length
-
-  removeKeyboardSelectionInteraction: ->
-    @selectionInteractionKeymaps?.dispose()
-    @selectionInteractionKeymaps = null
-    @subscriptions.remove(@selectionInteractionKeymaps)
 
   confirmSelection: =>
     @emitter.emit('did-confirm-selection')
@@ -64,16 +50,14 @@ class SuggestionList
   onDidConfirm: (fn) ->
     @emitter.on('did-confirm', fn)
 
-  selectNext: (e) =>
+  selectNext: ->
     @emitter.emit('did-select-next')
-    e.stopImmediatePropagation()
 
   onDidSelectNext: (fn) ->
     @emitter.on('did-select-next', fn)
 
-  selectPrevious: (e) =>
+  selectPrevious: ->
     @emitter.emit('did-select-previous')
-    e.stopImmediatePropagation()
 
   onDidSelectPrevious: (fn) ->
     @emitter.on('did-select-previous', fn)
@@ -92,7 +76,6 @@ class SuggestionList
       @showAtCursorPosition(editor, options)
     else
       @showAtBeginningOfPrefix(editor, options)
-    @updateKeyboardSelectionInteraction()
 
   showAtBeginningOfPrefix: (editor, {prefix}) =>
     return unless editor?

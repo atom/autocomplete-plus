@@ -861,9 +861,6 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          waitForAutocomplete()
-
-        runs ->
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).toExist()
 

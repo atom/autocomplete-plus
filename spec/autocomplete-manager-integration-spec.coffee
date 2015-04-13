@@ -1098,6 +1098,46 @@ describe 'Autocomplete Manager', ->
             label = editorView.querySelector('.autocomplete-plus li .left-label .something')
             expect(label).toHaveText('sometext')
 
+    describe 'when clicking in the suggestion list', ->
+      beforeEach ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          list = ['ab', 'abc', 'abcd', 'abcde']
+          ({text, description: "#{text} yeah ok"} for text in list)
+
+      it 'will select the item and confirm the selection', ->
+        triggerAutocompletion(editor, true, 'a')
+
+        runs ->
+          # Get the second item
+          item = editorView.querySelectorAll('.autocomplete-plus li')[1]
+
+          # Click the item, expect list to be hidden and text to be added
+          mouse = document.createEvent('MouseEvents')
+          mouse.initMouseEvent('mousedown', true, true, window)
+          item.dispatchEvent(mouse)
+          mouse = document.createEvent('MouseEvents')
+          mouse.initMouseEvent('mouseup', true, true, window)
+          item.dispatchEvent(mouse)
+
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          expect(editor.getBuffer().getLastLine()).toEqual(item.textContent.trim())
+
+      it 'will not close the list when the description is clicked', ->
+        triggerAutocompletion(editor, true, 'a')
+
+        runs ->
+          description = editorView.querySelector('.autocomplete-plus .suggestion-description-content')
+
+          # Click the description, expect list to still show
+          mouse = document.createEvent('MouseEvents')
+          mouse.initMouseEvent('mousedown', true, true, window)
+          description.dispatchEvent(mouse)
+          mouse = document.createEvent('MouseEvents')
+          mouse.initMouseEvent('mouseup', true, true, window)
+          description.dispatchEvent(mouse)
+
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
   describe 'when opening a file without a path', ->
     beforeEach ->
       waitsForPromise ->
@@ -1329,26 +1369,6 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
-    describe 'when a suggestion is clicked', ->
-      it 'should select the item and confirm the selection', ->
-        triggerAutocompletion(editor, true, 'a')
-
-        runs ->
-          # Get the second item
-          item = editorView.querySelectorAll('.autocomplete-plus li')[1]
-
-          # Click the item, expect list to be hidden and
-          # text to be added
-          mouse = document.createEvent('MouseEvents')
-          mouse.initMouseEvent('mousedown', true, true, window)
-          item.dispatchEvent(mouse)
-          mouse = document.createEvent('MouseEvents')
-          mouse.initMouseEvent('mouseup', true, true, window)
-          item.dispatchEvent(mouse)
-
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-          expect(editor.getBuffer().getLastLine()).toEqual(item.textContent.trim())
 
     describe '.cancel()', ->
       it 'unbinds autocomplete event handlers for move-up and move-down', ->

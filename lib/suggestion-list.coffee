@@ -8,13 +8,17 @@ class SuggestionList
     @active = false
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
-    # Allow keyboard navigation of the suggestion list
-    @subscriptions.add(atom.commands.add 'atom-text-editor.autocomplete-active',
+    @subscriptions.add atom.commands.add 'atom-text-editor.autocomplete-active',
       'autocomplete-plus:confirm': @confirmSelection,
-      'autocomplete-plus:select-next': @selectNext,
-      'autocomplete-plus:select-previous': @selectPrevious,
       'autocomplete-plus:cancel': @cancel
-    )
+      'core:move-up': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectPrevious()
+          event.stopImmediatePropagation()
+      'core:move-down': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectNext()
+          event.stopImmediatePropagation()
 
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
@@ -26,43 +30,13 @@ class SuggestionList
     keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     keys['enter'] = 'autocomplete-plus:confirm' if completionKey.indexOf('enter') > -1
 
-    @addKeyboardSelectionInteraction()
-
     @keymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
     @subscriptions.add(@keymaps)
 
   removeKeyboardInteraction: ->
-    @removeKeyboardSelectionInteraction()
     @keymaps?.dispose()
     @keymaps = null
     @subscriptions.remove(@keymaps)
-
-  updateKeyboardSelectionInteraction: ->
-    return unless @items?
-    if @selectionInteractionKeymaps? and @items.length isnt @previousItemsLength
-      @addKeyboardSelectionInteraction()
-
-  addKeyboardSelectionInteraction: ->
-    return unless @items?
-    @removeKeyboardSelectionInteraction()
-    navigationKey = atom.config.get('autocomplete-plus.navigateCompletions')
-
-    keys = {}
-    if @items.length > 1 and navigationKey is 'up,down'
-      keys['up'] =  'autocomplete-plus:select-previous'
-      keys['down'] = 'autocomplete-plus:select-next'
-    else
-      keys['ctrl-n'] = 'autocomplete-plus:select-next'
-      keys['ctrl-p'] = 'autocomplete-plus:select-previous'
-
-    @previousItemsLength = @items.length
-    @selectionInteractionKeymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
-    @subscriptions.add(@selectionInteractionKeymaps)
-
-  removeKeyboardSelectionInteraction: ->
-    @selectionInteractionKeymaps?.dispose()
-    @selectionInteractionKeymaps = null
-    @subscriptions.remove(@selectionInteractionKeymaps)
 
   confirmSelection: =>
     @emitter.emit('did-confirm-selection')
@@ -76,13 +50,13 @@ class SuggestionList
   onDidConfirm: (fn) ->
     @emitter.on('did-confirm', fn)
 
-  selectNext: =>
+  selectNext: ->
     @emitter.emit('did-select-next')
 
   onDidSelectNext: (fn) ->
     @emitter.on('did-select-next', fn)
 
-  selectPrevious: =>
+  selectPrevious: ->
     @emitter.emit('did-select-previous')
 
   onDidSelectPrevious: (fn) ->
@@ -102,7 +76,6 @@ class SuggestionList
       @showAtCursorPosition(editor, options)
     else
       @showAtBeginningOfPrefix(editor, options)
-    @updateKeyboardSelectionInteraction()
 
   showAtBeginningOfPrefix: (editor, {prefix}) =>
     return unless editor?

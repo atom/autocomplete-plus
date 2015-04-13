@@ -833,8 +833,7 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).not.toHaveClass('selected')
 
           # Select previous item
-          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-previous')
+          atom.commands.dispatch(editorView, 'core:move-up')
 
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).not.toHaveClass('selected')
@@ -852,8 +851,7 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           # two items displayed, should not close
-          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
+          atom.commands.dispatch(editorView, 'core:move-up')
           advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -863,9 +861,11 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).toExist()
+
           # one item displayed, should close
-          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
+          atom.commands.dispatch(editorView, 'core:move-up')
           advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
@@ -886,25 +886,14 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).toExist()
+
+          atom.commands.dispatch(editorView, 'core:move-up')
           advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).toExist()
-
-      it 'closes the autocomplete when up arrow while up,down navigation not selected', ->
-        atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
-        triggerAutocompletion(editor, false, 'a')
-
-        runs ->
-          # Accept suggestion
-          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
-          atom.keymaps.handleKeyboardEvent(key)
-          advanceClock(1)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).not.toExist()
 
     describe 'select-next event', ->
       it 'selects the next item in the list', ->
@@ -917,9 +906,7 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).not.toHaveClass('selected')
 
           # Select next item
-
-          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+          atom.commands.dispatch(editorView, 'core:move-down')
 
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).not.toHaveClass('selected')
@@ -941,13 +928,13 @@ describe 'Autocomplete Manager', ->
           suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
           items = editorView.querySelectorAll('.autocomplete-plus li')
 
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+          atom.commands.dispatch(suggestionListView, 'core:move-down')
           expect(items[1]).toHaveClass('selected')
 
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+          atom.commands.dispatch(suggestionListView, 'core:move-down')
           expect(items[2]).toHaveClass('selected')
 
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
+          atom.commands.dispatch(suggestionListView, 'core:move-down')
           expect(items[0]).toHaveClass('selected')
 
     describe "label rendering", ->

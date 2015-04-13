@@ -10,6 +10,14 @@ ItemTemplate = """
   </span>
 """
 
+ListTemplate = """
+  <ol class="list-group"></ol>
+  <div class="suggestion-description">
+    <hr />
+    <span class="suggestion-description"></span>
+  </div>
+"""
+
 IconTemplate = '<i class="icon"></i>'
 
 DefaultSuggestionTypeIconHTML =
@@ -68,10 +76,19 @@ class SuggestionListElement extends HTMLElement
       event.stopPropagation()
       @confirmSelection()
 
+  updateDoc: ->
+    if @visibleItems()[@selectedIndex]['description']? and @visibleItems()[@selectedIndex]['description'].length > 0
+      @docDiv.style.display = 'block'
+      @docSpan.textContent = @visibleItems()[@selectedIndex]['description']
+    else
+      @docDiv.style.display = 'none'
+
   itemsChanged: ->
     @selectedIndex = 0
     atom.views.pollAfterNextUpdate?()
-    atom.views.updateDocument => @renderItems()
+    atom.views.updateDocument =>
+      @renderItems()
+      @updateDoc()
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
@@ -96,6 +113,7 @@ class SuggestionListElement extends HTMLElement
   setSelectedIndex: (index) ->
     @selectedIndex = index
     @renderItems()
+    @updateDoc()
 
   visibleItems: ->
     @model?.items?.slice(0, @maxItems)
@@ -117,9 +135,15 @@ class SuggestionListElement extends HTMLElement
       @model.cancel()
 
   renderList: ->
-    @ol = document.createElement('ol')
-    @appendChild(@ol)
-    @ol.className = 'list-group'
+    @mainDiv = document.createElement('div')
+    @mainDiv.innerHTML = ListTemplate
+
+    @ol = @mainDiv.getElementsByClassName("list-group")[0]
+
+    @docDiv = @mainDiv.querySelector('div.suggestion-description')
+    @docSpan = @mainDiv.querySelector('span.suggestion-description')
+
+    @appendChild(@mainDiv)
 
   calculateMaxListHeight: ->
     li = document.createElement('li')

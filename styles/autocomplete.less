@@ -17,6 +17,20 @@ autocomplete-suggestion-list.select-list.popover-list {
   min-width: 200px;
   overflow-y: auto;
   padding: 0;
+  max-width: 700px;
+
+  .suggestion-description {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  hr {
+    margin: 4px;
+    height: 1px;
+    background-color: @text-color-subtle;
+    color: @text-color-subtle;
+  }
 
   input {
     position: absolute;

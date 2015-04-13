@@ -59,7 +59,7 @@ module.exports =
     minimumWordLength:
       description: "Only autocomplete when you've typed at least this many characters."
       type: 'integer'
-      default: 1
+      default: 3
       order: 9
     enableBuiltinProvider:
       title: 'Enable Built-In Provider'

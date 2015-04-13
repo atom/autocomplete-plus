@@ -209,14 +209,36 @@ describe 'Autocomplete Manager', ->
       beforeEach ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
 
-      it "only shows the maxVisibleSuggestions in the suggestion popup", ->
-        triggerAutocompletion(editor, true, 'a')
+      describe "when a suggestion description is not specified", ->
+        it "only shows the maxVisibleSuggestions in the suggestion popup", ->
+          triggerAutocompletion(editor, true, 'a')
 
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
-          itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
-          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
-          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+            itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
+            expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
+
+            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList.offsetHeight).toBe(2 * itemHeight)
+            expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
+
+      describe "when a suggestion description is specified", ->
+        beforeEach ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            list = ['ab', 'abc', 'abcd', 'abcde']
+            ({text, description: "#{text} yeah ok"} for text in list)
+
+        it "shows the maxVisibleSuggestions in the suggestion popup, but with extra height for the description", ->
+          triggerAutocompletion(editor, true, 'a')
+
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+            itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
+            expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
+
+            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList.offsetHeight).toBe(3 * itemHeight)
+            expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
 
     describe "when match.snippet is used", ->
       beforeEach ->

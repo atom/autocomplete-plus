@@ -16,6 +16,7 @@ ListTemplate = """
   </div>
   <div class="suggestion-description">
     <span class="suggestion-description-content"></span>
+    <a class="suggestion-description-more-link" href="#">More..</a>
   </div>
 """
 
@@ -82,6 +83,12 @@ class SuggestionListElement extends HTMLElement
     if item.description? and item.description.length > 0
       @descriptionContainer.style.display = 'block'
       @descriptionContent.textContent = item.description
+      if item.descriptionMoreURL? and item.descriptionMoreURL.length?
+        @descriptionMoreLink.style.display = 'inline'
+        @descriptionMoreLink.setAttribute('href', item.descriptionMoreURL)
+      else
+        @descriptionMoreLink.style.display = 'none'
+        @descriptionMoreLink.setAttribute('href', '#')
     else
       @descriptionContainer.style.display = 'none'
 
@@ -142,6 +149,7 @@ class SuggestionListElement extends HTMLElement
     @scroller = @querySelector('.suggestion-list-scroller')
     @descriptionContainer = @querySelector('.suggestion-description')
     @descriptionContent = @querySelector('.suggestion-description-content')
+    @descriptionMoreLink = @querySelector('.suggestion-description-more-link')
 
   calculateMaxListHeight: ->
     li = document.createElement('li')

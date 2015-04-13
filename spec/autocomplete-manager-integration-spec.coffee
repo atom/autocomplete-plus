@@ -216,7 +216,7 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
-          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list').style['max-height']).toBe("#{2 * itemHeight}px")
+          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
 
     describe "when match.snippet is used", ->
       beforeEach ->

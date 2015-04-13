@@ -11,10 +11,11 @@ ItemTemplate = """
 """
 
 ListTemplate = """
-  <ol class="list-group"></ol>
+  <div class="suggestion-list-scroller">
+    <ol class="list-group"></ol>
+  </div>
   <div class="suggestion-description">
-    <hr />
-    <span class="suggestion-description"></span>
+    <span class="suggestion-description-content"></span>
   </div>
 """
 
@@ -76,19 +77,20 @@ class SuggestionListElement extends HTMLElement
       event.stopPropagation()
       @confirmSelection()
 
-  updateDoc: ->
-    if @visibleItems()[@selectedIndex]['description']? and @visibleItems()[@selectedIndex]['description'].length > 0
-      @docDiv.style.display = 'block'
-      @docSpan.textContent = @visibleItems()[@selectedIndex]['description']
+  updateDescription: ->
+    item = @visibleItems()[@selectedIndex]
+    if item.description? and item.description.length > 0
+      @descriptionContainer.style.display = 'block'
+      @descriptionContent.textContent = item.description
     else
-      @docDiv.style.display = 'none'
+      @descriptionContainer.style.display = 'none'
 
   itemsChanged: ->
     @selectedIndex = 0
     atom.views.pollAfterNextUpdate?()
     atom.views.updateDocument =>
       @renderItems()
-      @updateDoc()
+      @updateDescription()
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
@@ -113,7 +115,7 @@ class SuggestionListElement extends HTMLElement
   setSelectedIndex: (index) ->
     @selectedIndex = index
     @renderItems()
-    @updateDoc()
+    @updateDescription()
 
   visibleItems: ->
     @model?.items?.slice(0, @maxItems)
@@ -135,15 +137,11 @@ class SuggestionListElement extends HTMLElement
       @model.cancel()
 
   renderList: ->
-    @mainDiv = document.createElement('div')
-    @mainDiv.innerHTML = ListTemplate
-
-    @ol = @mainDiv.getElementsByClassName("list-group")[0]
-
-    @docDiv = @mainDiv.querySelector('div.suggestion-description')
-    @docSpan = @mainDiv.querySelector('span.suggestion-description')
-
-    @appendChild(@mainDiv)
+    @innerHTML = ListTemplate
+    @ol = @querySelector('.list-group')
+    @scroller = @querySelector('.suggestion-list-scroller')
+    @descriptionContainer = @querySelector('.suggestion-description')
+    @descriptionContent = @querySelector('.suggestion-description-content')
 
   calculateMaxListHeight: ->
     li = document.createElement('li')
@@ -151,7 +149,7 @@ class SuggestionListElement extends HTMLElement
     @ol.appendChild(li)
     itemHeight = li.offsetHeight
     paddingHeight = parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom']) ? 0
-    @style['max-height'] = "#{@maxVisibleSuggestions * itemHeight + paddingHeight}px"
+    @scroller.style['max-height'] = "#{@maxVisibleSuggestions * itemHeight + paddingHeight}px"
     li.remove()
 
   renderItems: ->

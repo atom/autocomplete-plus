@@ -24,21 +24,19 @@ autocomplete-suggestion-list.select-list.popover-list {
   }
 
   .suggestion-description {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-
+    padding: 5px 0;
     padding-left: @item-side-padding;
     padding-right: @item-side-padding;
-    line-height: @row-line-height;
-    height: @row-line-height;
+    min-height: @row-line-height;
+    line-height: 1.3;
 
     background: darken(@overlay-background-color, 5%);
     border-radius: 0 0 @component-border-radius @component-border-radius;
   }
 
   .suggestion-description-content {
-    font-size: @font-size-small;
+    font-size: @font-size + 1px;
+    font-family: @font-family;
   }
 
   input {

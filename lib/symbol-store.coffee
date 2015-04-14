@@ -16,10 +16,16 @@ class Symbol
   bufferRowsForEditorPath: (editorPath) ->
     @metadataByPath[editorPath]?.bufferRows
 
+  adjustBufferRows: (editorPath, adjustmentStartRow, adjustmentDelta) ->
+    bufferRows = @metadataByPath[editorPath].bufferRows
+    return unless bufferRows?
+    for bufferRow, index in bufferRows
+      bufferRows[index] += adjustmentDelta if bufferRow >= adjustmentStartRow
+    return
+
   addInstance: (editorPath, bufferRow, scopeChain) ->
     @metadataByPath[editorPath] ?= {}
-    @metadataByPath[editorPath].bufferRows ?= []
-    @metadataByPath[editorPath].bufferRows.push bufferRow
+    @addBufferRow(editorPath, bufferRow)
     @metadataByPath[editorPath].scopeChains ?= {}
     unless @metadataByPath[editorPath].scopeChains[scopeChain]?
       @type = null
@@ -30,8 +36,7 @@ class Symbol
   removeInstance: (editorPath, bufferRow, scopeChain) ->
     return unless @metadataByPath[editorPath]?
 
-    bufferRows = @metadataByPath[editorPath].bufferRows
-    removeItemFromArray(bufferRows, bufferRow) if bufferRows?
+    @removeBufferRow(editorPath, bufferRow)
 
     if @metadataByPath[editorPath].scopeChains[scopeChain]?
       @count -= 1
@@ -43,6 +48,18 @@ class Symbol
 
       if getObjectLength(@metadataByPath[editorPath].scopeChains) is 0
         delete @metadataByPath[editorPath]
+
+  addBufferRow: (editorPath, row) ->
+    @metadataByPath[editorPath].bufferRows ?= []
+    bufferRows = @metadataByPath[editorPath].bufferRows
+    index = binaryIndexOf(bufferRows, row)
+    bufferRows.splice(index, 0, row)
+
+  removeBufferRow: (editorPath, row) ->
+    bufferRows = @metadataByPath[editorPath].bufferRows
+    return unless bufferRows
+    index = binaryIndexOf(bufferRows, row)
+    bufferRows.splice(index, 1) if bufferRows[index] is row
 
   isSingleInstanceOf: (word) ->
     @text is word and @count is 1
@@ -86,6 +103,14 @@ class SymbolStore
     for type, options of config
       symbols = symbols.concat(options.suggestions) if options.suggestions
     symbols
+
+  adjustBufferRows: (editor, oldRange, newRange) ->
+    adjustmentStartRow = oldRange.end.row + 1
+    adjustmentDelta = newRange.getRowCount() - oldRange.getRowCount()
+    for key, symbol of @symbolMap
+      symbol.adjustBufferRows(editor.getPath(), adjustmentStartRow, adjustmentDelta)
+    return
+
 
   addToken: (token, editorPath, bufferRow) =>
     # This could be made async...
@@ -159,11 +184,24 @@ class SymbolStore
     # some words are reserved, like 'constructor' :/
     value + '$$'
 
-removeItemFromArray = (array, item) ->
-  index = array.indexOf(item)
-  array.splice(index, 1) if index > -1
-
 getObjectLength = (object) ->
   count = 0
   count += 1 for k, v of object
   count
+
+binaryIndexOf = (array, searchElement) ->
+  minIndex = 0
+  maxIndex = array.length - 1
+
+  while minIndex <= maxIndex
+    currentIndex = (minIndex + maxIndex) / 2 | 0
+    currentElement = array[currentIndex]
+
+    if currentElement < searchElement
+      minIndex = currentIndex + 1
+    else if (currentElement > searchElement)
+      maxIndex = currentIndex - 1
+    else
+      return currentIndex
+
+  minIndex

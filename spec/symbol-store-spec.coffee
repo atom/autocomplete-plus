@@ -16,8 +16,9 @@ describe 'SymbolStore', ->
 
       editor.setText('')
       buffer = editor.getBuffer()
-      buffer.onWillChange ({oldRange}) ->
+      buffer.onWillChange ({oldRange, newRange}) ->
         store.removeTokensInBufferRange(editor, oldRange)
+        store.adjustBufferRows(editor, oldRange, newRange)
       buffer.onDidChange ({newRange}) ->
         store.addTokensInBufferRange(editor, newRange)
 
@@ -39,6 +40,43 @@ describe 'SymbolStore', ->
     editor.setText('\n\nabc = ->')
     expect(store.getLength()).toBe 1
     expect(store.getSymbol('abc').getCount()).toBe 1
+
+  it "keeps track of token buffer rows after changes to the buffer", ->
+    getSymbolBufferRows = (symbol) ->
+      store.getSymbol(symbol).bufferRowsForEditorPath(editor.getPath())
+
+    editor.setText('\n\nabc = ->')
+    expect(getSymbolBufferRows('abc')).toEqual [2]
+
+    editor.setCursorBufferPosition([0, 0])
+    editor.insertNewline()
+    expect(getSymbolBufferRows('abc')).toEqual [3]
+
+    editor.setText """
+      abc: ->
+        onetwo = [one, two]
+        multipleLines = 'multipleLines'
+        yeah = 'ok'
+        multipleLines += 'ok'
+    """
+    expect(getSymbolBufferRows('abc')).toEqual [0]
+    expect(getSymbolBufferRows('onetwo')).toEqual [1]
+    expect(getSymbolBufferRows('one')).toEqual [1]
+    expect(getSymbolBufferRows('two')).toEqual [1]
+    expect(getSymbolBufferRows('multipleLines')).toEqual [2, 2, 4]
+    expect(getSymbolBufferRows('yeah')).toEqual [3]
+    expect(getSymbolBufferRows('ok')).toEqual [3, 4]
+
+    editor.setSelectedBufferRange([[2, 18], [3, 13]])
+    editor.insertText("'ok'")
+
+    expect(getSymbolBufferRows('abc')).toEqual [0]
+    expect(getSymbolBufferRows('onetwo')).toEqual [1]
+    expect(getSymbolBufferRows('one')).toEqual [1]
+    expect(getSymbolBufferRows('two')).toEqual [1]
+    expect(getSymbolBufferRows('multipleLines')).toEqual [2, 3]
+    expect(store.getSymbol('yeah')).toBeUndefined()
+    expect(getSymbolBufferRows('ok')).toEqual [2, 3]
 
   describe "::symbolsForConfig(config)", ->
     it "gets a list of symbols matching the passed in configuration", ->

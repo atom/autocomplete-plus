@@ -32,9 +32,6 @@ DefaultSuggestionTypeIconHTML =
 class SuggestionListElement extends HTMLElement
   maxItems: 200
   emptySnippetGroupRegex: /(\$\{\d+\:\})|(\$\{\d+\})|(\$\d+)/ig
-  snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
-  snippetMarkerChar: '|'
-  snippetMarkerRegex: /\|/g
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable

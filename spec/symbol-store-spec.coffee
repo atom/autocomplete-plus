@@ -78,6 +78,16 @@ describe 'SymbolStore', ->
     expect(store.getSymbol('yeah')).toBeUndefined()
     expect(getSymbolBufferRows('ok')).toEqual [2, 3]
 
+    editor.insertText("\n\nomg = 'ok'; multipleLines += 'wow'\n\n")
+
+    expect(getSymbolBufferRows('abc')).toEqual [0]
+    expect(getSymbolBufferRows('onetwo')).toEqual [1]
+    expect(getSymbolBufferRows('one')).toEqual [1]
+    expect(getSymbolBufferRows('two')).toEqual [1]
+    expect(getSymbolBufferRows('wow')).toEqual [4]
+    expect(getSymbolBufferRows('multipleLines')).toEqual [2, 4, 7]
+    expect(getSymbolBufferRows('ok')).toEqual [2, 4, 7]
+
   describe "::symbolsForConfig(config)", ->
     it "gets a list of symbols matching the passed in configuration", ->
       config =

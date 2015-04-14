@@ -10,6 +10,16 @@ ItemTemplate = """
   </span>
 """
 
+ListTemplate = """
+  <div class="suggestion-list-scroller">
+    <ol class="list-group"></ol>
+  </div>
+  <div class="suggestion-description">
+    <span class="suggestion-description-content"></span>
+    <a class="suggestion-description-more-link" href="#">More..</a>
+  </div>
+"""
+
 IconTemplate = '<i class="icon"></i>'
 
 DefaultSuggestionTypeIconHTML =
@@ -59,19 +69,42 @@ class SuggestionListElement extends HTMLElement
   registerMouseHandling: ->
     @onmousewheel = (event) -> event.stopPropagation()
     @onmousedown = (event) ->
-      item = event.target
-      item = item.parentNode while not (item.dataset?.index) and item isnt this
-      @selectedIndex = item.dataset?.index
-      event.stopPropagation()
+      item = @findItem(event)
+      if item?.dataset.index?
+        @selectedIndex = item.dataset.index
+        event.stopPropagation()
 
     @onmouseup = (event) ->
-      event.stopPropagation()
-      @confirmSelection()
+      item = @findItem(event)
+      if item?.dataset.index?
+        event.stopPropagation()
+        @confirmSelection()
+
+  findItem: (event) ->
+    item = event.target
+    item = item.parentNode while item.tagName isnt 'LI' and item isnt this
+    item if item.tagName is 'LI'
+
+  updateDescription: ->
+    item = @visibleItems()[@selectedIndex]
+    if item.description? and item.description.length > 0
+      @descriptionContainer.style.display = 'block'
+      @descriptionContent.textContent = item.description
+      if item.descriptionMoreURL? and item.descriptionMoreURL.length?
+        @descriptionMoreLink.style.display = 'inline'
+        @descriptionMoreLink.setAttribute('href', item.descriptionMoreURL)
+      else
+        @descriptionMoreLink.style.display = 'none'
+        @descriptionMoreLink.setAttribute('href', '#')
+    else
+      @descriptionContainer.style.display = 'none'
 
   itemsChanged: ->
     @selectedIndex = 0
     atom.views.pollAfterNextUpdate?()
-    atom.views.updateDocument => @renderItems()
+    atom.views.updateDocument =>
+      @renderItems()
+      @updateDescription()
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
@@ -96,6 +129,7 @@ class SuggestionListElement extends HTMLElement
   setSelectedIndex: (index) ->
     @selectedIndex = index
     @renderItems()
+    @updateDescription()
 
   visibleItems: ->
     @model?.items?.slice(0, @maxItems)
@@ -117,9 +151,12 @@ class SuggestionListElement extends HTMLElement
       @model.cancel()
 
   renderList: ->
-    @ol = document.createElement('ol')
-    @appendChild(@ol)
-    @ol.className = 'list-group'
+    @innerHTML = ListTemplate
+    @ol = @querySelector('.list-group')
+    @scroller = @querySelector('.suggestion-list-scroller')
+    @descriptionContainer = @querySelector('.suggestion-description')
+    @descriptionContent = @querySelector('.suggestion-description-content')
+    @descriptionMoreLink = @querySelector('.suggestion-description-more-link')
 
   calculateMaxListHeight: ->
     li = document.createElement('li')
@@ -127,7 +164,7 @@ class SuggestionListElement extends HTMLElement
     @ol.appendChild(li)
     itemHeight = li.offsetHeight
     paddingHeight = parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom']) ? 0
-    @style['max-height'] = "#{@maxVisibleSuggestions * itemHeight + paddingHeight}px"
+    @scroller.style['max-height'] = "#{@maxVisibleSuggestions * itemHeight + paddingHeight}px"
     li.remove()
 
   renderItems: ->

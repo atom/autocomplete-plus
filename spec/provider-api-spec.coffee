@@ -83,6 +83,7 @@ describe 'Provider API', ->
             text: 'ohai',
             replacementPrefix: 'o',
             rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
           ]
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
@@ -91,4 +92,30 @@ describe 'Provider API', ->
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.querySelector('span.word')).toHaveText('ohai')
+        expect(suggestionListView.querySelector('.word')).toHaveText('ohai')
+        expect(suggestionListView.querySelector('.suggestion-description-content')).toHaveText('There be documentation')
+        expect(suggestionListView.querySelector('.suggestion-description-more-link').style.display).toBe 'none'
+
+    it 'correctly displays the suggestion description and More link', ->
+      testProvider =
+        selector: '.source.js, .source.coffee'
+        getSuggestions: (options) ->
+          [
+            text: 'ohai',
+            replacementPrefix: 'o',
+            rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
+            descriptionMoreURL: 'http://google.com'
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        content = suggestionListView.querySelector('.suggestion-description-content')
+        moreLink = suggestionListView.querySelector('.suggestion-description-more-link')
+        expect(content).toHaveText('There be documentation')
+        expect(moreLink).toHaveText('More..')
+        expect(moreLink.style.display).toBe 'inline'
+        expect(moreLink.getAttribute('href')).toBe 'http://google.com'

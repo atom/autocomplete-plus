@@ -19,8 +19,11 @@ class Symbol
   adjustBufferRows: (editorPath, adjustmentStartRow, adjustmentDelta) ->
     bufferRows = @metadataByPath[editorPath].bufferRows
     return unless bufferRows?
-    for bufferRow, index in bufferRows
-      bufferRows[index] += adjustmentDelta if bufferRow >= adjustmentStartRow
+    index = binaryIndexOf(bufferRows, adjustmentStartRow)
+    length = bufferRows.length
+    while index < length
+      bufferRows[index] += adjustmentDelta
+      index++
     return
 
   addInstance: (editorPath, bufferRow, scopeChain) ->

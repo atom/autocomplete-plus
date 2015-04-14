@@ -223,7 +223,7 @@ class SuggestionListElement extends HTMLElement
     else
       rightLabelSpan.textContent = ''
 
-  getHighlightedHTML: (text, snippet, replacementPrefix) =>
+  getHighlightedHTML: (text, snippet, replacementPrefix) ->
     # 1. Highlight relevant characters
     # 2. Remove / replace snippet metadata to enhance readability
 
@@ -256,7 +256,7 @@ class SuggestionListElement extends HTMLElement
     highlightedHTML = @enhanceSnippet(highlightedHTML) if _.isString(snippet)
     highlightedHTML
 
-  enhanceSnippet: (text) =>
+  enhanceSnippet: (text) ->
     return text unless text.length > 0 and text.indexOf('$') isnt -1 # Not a snippet
 
     # Remove all occurrences of $0 or ${0} or ${0:}
@@ -347,7 +347,7 @@ class SuggestionListElement extends HTMLElement
         text += char
         continue
 
-    return text
+    text
 
   dispose: ->
     @subscriptions.dispose()

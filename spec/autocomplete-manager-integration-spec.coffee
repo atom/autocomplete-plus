@@ -337,7 +337,6 @@ describe 'Autocomplete Manager', ->
 
             characterMatches = editorView.querySelectorAll('.autocomplete-plus li span.word .character-match')
             text = editorView.querySelector('.autocomplete-plus li span.word').textContent
-            console.log characterMatches
             expect(characterMatches).toHaveLength 0
             expect(text).toBe 'omgnope'
 
@@ -358,7 +357,7 @@ describe 'Autocomplete Manager', ->
               charMatch = editorView.querySelector('.autocomplete-plus li span.word .character-match')
               expect(word.textContent).toBe 'ab(c)c'
               expect(charMatch.textContent).toBe 'c'
-              expect(charMatch.parentNode).toHaveClass 'word'
+              expect(charMatch.parentNode.parentNode).toHaveClass 'word'
 
           it "does not highlight the snippet html when highlight beginning of the word", ->
             spyOn(provider, 'getSuggestions').andCallFake ->
@@ -380,7 +379,7 @@ describe 'Autocomplete Manager', ->
               expect(charMatches[1].textContent).toBe 'e'
               expect(charMatches[1].parentNode).toHaveClass 'word'
               expect(charMatches[2].textContent).toBe 'f'
-              expect(charMatches[2].parentNode).toHaveClass 'word'
+              expect(charMatches[2].parentNode.parentNode).toHaveClass 'word'
 
     describe "when a replacementPrefix is not specified", ->
       beforeEach ->
@@ -996,7 +995,6 @@ describe 'Autocomplete Manager', ->
           triggerAutocompletion(editor)
           runs ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon i')
-            console.log editorView.querySelector('.autocomplete-plus li .icon-container .icon').innerHTML
             expect(icon).toHaveClass('icon-move-right')
 
       describe "when `type` is an empty string", ->

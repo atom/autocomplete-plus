@@ -46,7 +46,6 @@ describe 'Autocomplete', ->
 
         runs ->
           editorView = atom.views.getView(editor)
-          console.log editorView.classList
           autocompleteManager = mainModule.autocompleteManager
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 

@@ -31,6 +31,7 @@ DefaultSuggestionTypeIconHTML =
 
 class SuggestionListElement extends HTMLElement
   maxItems: 200
+  emptySnippetGroupRegex: /(\$\{\d+\:\})|(\$\{\d+\})|(\$\d+)/ig
   snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
   snippetMarkerChar: '|'
   snippetMarkerRegex: /\|/g
@@ -225,24 +226,17 @@ class SuggestionListElement extends HTMLElement
     else
       rightLabelSpan.textContent = ''
 
-  getHighlightedHTML: (text, snippet, replacementPrefix) ->
-    # 1. Pull the snippets out, replacing with placeholder
-    # 2. Highlight relevant characters
-    # 3. Place snippet HTML back at the placeholders
+  getHighlightedHTML: (text, snippet, replacementPrefix) =>
+    # 1. Highlight relevant characters
+    # 2. Remove / replace snippet metadata to enhance readability
 
-    # Pull out snippet
-    # e.g. replacementPrefix: 'a', snippet: 'abc(${d}, ${e})f'
-    # ->   replacement: 'abc(|, |)f'
     replacement = text
-    snippetCompletions = []
-    if _.isString(snippet)
-      replacement = snippet.replace @snippetRegex, (match, snippetText) =>
-        snippetCompletions.push "<span class=\"snippet-completion\">#{snippetText}</span>"
-        @snippetMarkerChar
+    replacement = snippet if _.isString(snippet)
+    return replacement unless replacement.length > 0
 
     # Add spans for replacement prefix
-    # e.g. replacement: 'abc(|, |)f'
-    # ->   highlightedHTML: '<span class="character-match">a</span>bc(|, |)f'
+    # e.g. replacement: 'abc(${d}, ${e})f'
+    # ->   highlightedHTML: '<span class="character-match">a</span>bc(${d}, ${e})f'
     highlightedHTML = ''
     wordIndex = 0
     lastWordIndex = 0
@@ -259,15 +253,104 @@ class SuggestionListElement extends HTMLElement
 
     highlightedHTML += replacement.substring(lastWordIndex)
 
-    # Place the snippets back at the placeholders
-    # e.g. highlightedHTML: '<span class="character-match">a</span>bc(|, |)f'
+    # Remove / replace snippet metadata to make it more readable
+    # e.g. highlightedHTML: '<span class="character-match">a</span>bc(${d}, ${e})f'
     # ->   highlightedHTML: '<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f'
-    if snippetCompletions.length
-      completionIndex = 0
-      highlightedHTML = highlightedHTML.replace @snippetMarkerRegex, (match, snippetText) ->
-        snippetCompletions[completionIndex++]
-
+    highlightedHTML = @enhanceSnippet(highlightedHTML) if _.isString(snippet)
     highlightedHTML
+
+  enhanceSnippet: (text) =>
+    return text unless text.length > 0 and text.indexOf('$') isnt -1 # Not a snippet
+
+    # Remove all occurrences of $0 or ${0} or ${0:}
+    text = text.replace(@emptySnippetGroupRegex, '')
+    return text unless text.indexOf('${') isnt -1 # No snippets left
+
+    # Enhance snippet group(s) with metadata, and make their display more friendly
+    oldText = text
+    text = ''
+    inSnippet = false
+    inSnippetBody = false
+    snippetStartIndex = -1
+    snippetEndIndex = -1
+    bodyStartIndex = -1
+    bodyEndIndex = -1
+    skipIndices = []
+
+    # We're not using a regex because escaped right braces cannot be tracked without lookbehind,
+    # which doesn't exist yet for javascript; consequently we need to iterate through each character.
+    # This might feel ugly, but it's necessary.
+    for char, index in oldText.split('')
+      continue if skipIndices.indexOf(index) isnt -1
+
+      if inSnippet and snippetEndIndex is index
+        text += '</span>'
+        inSnippet = false
+        inSnippetBody = false
+        snippetStartIndex = -1
+        snippetEndIndex = -1
+        bodyStartIndex = -1
+        bodyEndIndex = -1
+        continue
+
+      inSnippetBody = true if inSnippet and index >= bodyStartIndex and index <= bodyEndIndex
+      inSnippetBody = false if inSnippet and (index > bodyEndIndex or index < bodyStartIndex)
+      inSnippetBody = false if bodyStartIndex is -1 or bodyEndIndex is -1
+      continue if inSnippet and not inSnippetBody
+
+      if inSnippet and inSnippetBody
+        text += char
+        continue
+
+      # Determine if we've found a new snippet
+      if not inSnippet and oldText.indexOf('${', index) is index
+        # Find index of colon
+        colonIndex = oldText.indexOf(':', index + 3)
+        if colonIndex isnt -1
+          # Disqualify snippet unless the text between '${' and ':' are digits
+          groupStart = index + 2
+          groupEnd = colonIndex - 1
+          if groupEnd >= groupStart
+            for i in [groupStart...groupEnd]
+              colonIndex = -1 if isNaN(parseInt(oldText.charAt(i)))
+          else
+            colonIndex = -1
+
+        # Find index of '}'
+        rightBraceIndex = -1
+        if colonIndex isnt -1
+          i = index + 4
+          loop
+            rightBraceIndex = oldText.indexOf('}', i)
+            break if rightBraceIndex is -1
+            if oldText.charAt(rightBraceIndex - 2) is '\\' and oldText.charAt(rightBraceIndex - 1) is '\\'
+              skipIndices.push(rightBraceIndex - 1, rightBraceIndex - 2)
+            else
+              break
+            i = rightBraceIndex + 1
+
+        if colonIndex isnt -1 and rightBraceIndex isnt -1 and colonIndex < rightBraceIndex
+          inSnippet = true
+          inSnippetBody = false
+          snippetStartIndex = index
+          snippetEndIndex = rightBraceIndex
+          bodyStartIndex = colonIndex + 1
+          bodyEndIndex = rightBraceIndex - 1
+          text += '<span class="snippet-completion">'
+          continue
+        else
+          inSnippet = false
+          inSnippetBody = false
+          snippetStartIndex = -1
+          snippetEndIndex = -1
+          bodyStartIndex = -1
+          bodyEndIndex = -1
+
+      unless (inSnippet or inSnippetBody)
+        text += char
+        continue
+
+    return text
 
   dispose: ->
     @subscriptions.dispose()

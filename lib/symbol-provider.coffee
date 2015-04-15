@@ -57,6 +57,7 @@ class SymbolProvider
       index = @getWatchedEditorIndex(editor)
       editors = @watchedBuffers[editor.getPath()]?.editors
       editors.splice(index, 1) if index > -1
+      editorSubscriptions.destroy()
 
     if @watchedBuffers[bufferPath]?
       @watchedBuffers[bufferPath].editors.push(editor)

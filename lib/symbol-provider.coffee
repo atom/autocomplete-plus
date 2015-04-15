@@ -180,8 +180,8 @@ class SymbolProvider
     wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
 
-    editorPath = if @includeCompletionsFromAllBuffers then null else @editor.getPath()
-    symbolList = @symbolStore.symbolsForConfig(@config, editorPath, wordUnderCursor)
+    bufferPath = if @includeCompletionsFromAllBuffers then null else @editor.getPath()
+    symbolList = @symbolStore.symbolsForConfig(@config, bufferPath, wordUnderCursor)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
@@ -199,13 +199,13 @@ class SymbolProvider
     suffix = lineFromPosition.match(@beginningOfLineWordRegex)?[0] or ''
     prefix + suffix
 
-  fuzzyFilter: (symbolList, editorPath, {bufferPosition, prefix}) ->
+  fuzzyFilter: (symbolList, bufferPath, {bufferPosition, prefix}) ->
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
       continue unless prefix[0].toLowerCase() is symbol.text[0].toLowerCase() # must match the first char!
       score = fuzzaldrin.score(symbol.text, prefix)
-      score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForEditorPath?(editorPath))
+      score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBufferPath?(bufferPath))
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
     candidates.sort(@symbolSortReverseIterator)
@@ -250,10 +250,10 @@ class SymbolProvider
   cacheSymbolsFromEditor: (editor, tokenizedLines) ->
     tokenizedLines ?= @getTokenizedLines(editor)
 
-    editorPath = editor.getPath()
+    bufferPath = editor.getPath()
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
-        @symbolStore.addToken(token, editorPath, bufferRow, @minimumWordLength)
+        @symbolStore.addToken(token, bufferPath, bufferRow, @minimumWordLength)
     return
 
   getTokenizedLines: (editor) ->

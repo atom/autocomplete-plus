@@ -112,24 +112,24 @@ describe 'SymbolProvider', ->
     editor.setText('function abc(){}\nfunction abc(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [0, 1]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [0, 1]
 
     editor.setCursorBufferPosition([2, 100])
     editor.insertText('\n\nfunction omg(){}; function omg(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 3]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3, 3]
 
     editor.selectLeft(16)
     editor.backspace()
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3]
 
     editor.insertText('\nfunction omg(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 4]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3, 4]
 
     editor.setText('')
     advanceClock(provider.changeUpdateDelay)
@@ -148,7 +148,7 @@ describe 'SymbolProvider', ->
     # rows when there are several changes before the change delay is
     # triggered. So we're just making sure the row is in there.
     suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toContain 3
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toContain 3
 
   it "does not output suggestions from the other buffer", ->
     [results, coffeeEditor] = []

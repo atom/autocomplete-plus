@@ -43,7 +43,7 @@ describe 'SymbolStore', ->
 
   it "keeps track of token buffer rows after changes to the buffer", ->
     getSymbolBufferRows = (symbol) ->
-      store.getSymbol(symbol).bufferRowsForEditorPath(editor.getPath())
+      store.getSymbol(symbol).bufferRowsForBufferPath(editor.getPath())
 
     editor.setText('\n\nabc = ->')
     expect(getSymbolBufferRows('abc')).toEqual [2]
@@ -196,7 +196,7 @@ describe 'SymbolStore', ->
         expect(symbols[2].text).toBe 'wow'
 
     describe "::clear()", ->
-      describe "when an editorPaths is specified", ->
+      describe "when an bufferPaths is specified", ->
         it "removes only the path specified", ->
           config =
             stuff:

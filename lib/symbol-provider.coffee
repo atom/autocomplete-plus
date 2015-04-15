@@ -146,7 +146,7 @@ class SymbolProvider
     return unless @symbolStore.getLength()
     wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
-    symbolList = @symbolStore.symbolsForConfig(@config)
+    symbolList = @symbolStore.symbolsForConfig(@config, wordUnderCursor)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")

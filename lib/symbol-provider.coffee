@@ -57,7 +57,7 @@ class SymbolProvider
       index = @getWatchedEditorIndex(editor)
       editors = @watchedBuffers[editor.getPath()]?.editors
       editors.splice(index, 1) if index > -1
-      editorSubscriptions.destroy()
+      editorSubscriptions.dispose()
 
     if @watchedBuffers[bufferPath]?
       @watchedBuffers[bufferPath].editors.push(editor)
@@ -74,6 +74,13 @@ class SymbolProvider
         bufferPath = buffer.getPath()
         editor = @watchedBuffers[bufferPath].editors[0]
         @symbolStore.addTokensInBufferRange(editor, newRange)
+
+      bufferSubscriptions.add buffer.onDidChangePath =>
+        oldBufferPath = bufferPath
+        bufferPath = buffer.getPath()
+        @watchedBuffers[bufferPath] = @watchedBuffers[oldBufferPath]
+        @symbolStore.updateForPathChange(oldBufferPath, bufferPath)
+        delete @watchedBuffers[oldBufferPath]
 
       bufferSubscriptions.add buffer.onDidDestroy =>
         bufferPath = buffer.getPath()

@@ -163,6 +163,26 @@ describe 'SymbolProvider', ->
       advanceClock 1 # build the new wordlist
       expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength 0
 
+  describe "when the editor's path changes", ->
+    it "continues to track changes on the new path", ->
+      buffer = editor.getBuffer()
+
+      expect(provider.isWatchingEditor(editor)).toBe true
+      expect(provider.isWatchingBuffer(buffer)).toBe true
+      expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
+
+      buffer.setPath('cats.js')
+
+      expect(provider.isWatchingEditor(editor)).toBe true
+      expect(provider.isWatchingBuffer(buffer)).toBe true
+
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
+      expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
+      editor.insertText('function aNewFunction(){};')
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
+
   describe "when multiple editors track the same buffer", ->
     [leftPane, rightPane, rightEditor] = []
     beforeEach ->

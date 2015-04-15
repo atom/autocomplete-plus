@@ -29,6 +29,10 @@ class Symbol
       @count -= editorPathCount
       delete @metadataByPath[editorPath]
 
+  updateForPathChange: (oldPath, newPath) ->
+    @metadataByPath[newPath] = @metadataByPath[oldPath]
+    delete @metadataByPath[oldPath]
+
   adjustBufferRows: (editorPath, adjustmentStartRow, adjustmentDelta) ->
     bufferRows = @metadataByPath[editorPath]?.bufferRows
     return unless bufferRows?
@@ -134,6 +138,11 @@ class SymbolStore
     adjustmentDelta = newRange.getRowCount() - oldRange.getRowCount()
     for key, symbol of @symbolMap
       symbol.adjustBufferRows(editor.getPath(), adjustmentStartRow, adjustmentDelta)
+    return
+
+  updateForPathChange: (oldPath, newPath) ->
+    for key, symbol of @symbolMap
+      symbol.updateForPathChange(oldPath, newPath)
     return
 
   addToken: (token, editorPath, bufferRow) =>

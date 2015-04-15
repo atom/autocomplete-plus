@@ -27,7 +27,7 @@ class Symbol
     editorPathCount = @countForEditorPath(editorPath)
     if editorPathCount > 0
       @count -= editorPathCount
-      @metadataByPath[editorPath] = null
+      delete @metadataByPath[editorPath]
 
   adjustBufferRows: (editorPath, adjustmentStartRow, adjustmentDelta) ->
     bufferRows = @metadataByPath[editorPath]?.bufferRows

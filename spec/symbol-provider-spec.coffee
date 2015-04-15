@@ -163,6 +163,54 @@ describe 'SymbolProvider', ->
       advanceClock 1 # build the new wordlist
       expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength 0
 
+  describe "when multiple editors track the same buffer", ->
+    [leftPane, rightPane, rightEditor] = []
+    beforeEach ->
+      pane = atom.workspace.paneForItem(editor)
+      rightPane = pane.splitRight(copyActiveItem: true)
+      rightEditor = rightPane.getItems()[0]
+
+      expect(provider.isWatchingEditor(editor)).toBe true
+      expect(provider.isWatchingEditor(rightEditor)).toBe true
+
+    it "watches the both the old and new editor for changes", ->
+      rightEditor.moveToBottom()
+      rightEditor.moveToBeginningOfLine()
+
+      expect(suggestionsForPrefix(provider, rightEditor, 'anew')).not.toContain 'aNewFunction'
+      rightEditor.insertText('function aNewFunction(){};')
+      expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain 'aNewFunction'
+
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
+
+      expect(suggestionsForPrefix(provider, editor, 'somenew')).not.toContain 'someNewFunction'
+      editor.insertText('function someNewFunction(){};')
+      expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain 'someNewFunction'
+
+    it "stops watching editors and removes content from symbol store as they are destroyed", ->
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+
+      buffer = editor.getBuffer()
+      editor.destroy()
+      expect(provider.isWatchingBuffer(buffer)).toBe true
+      expect(provider.isWatchingEditor(editor)).toBe false
+      expect(provider.isWatchingEditor(rightEditor)).toBe true
+
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+
+      rightEditor.insertText('function aNewFunction(){};')
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+
+      rightPane.destroy()
+      expect(provider.isWatchingBuffer(buffer)).toBe false
+      expect(provider.isWatchingEditor(editor)).toBe false
+      expect(provider.isWatchingEditor(rightEditor)).toBe false
+
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeFalsy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+
   describe "when includeCompletionsFromAllBuffers is enabled", ->
     beforeEach ->
       atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', true)

@@ -19,7 +19,7 @@ class SymbolProvider
   inclusionPriority: 0
   suggestionPriority: 0
 
-  watchedEditors: null
+  watchedBuffers: null
 
   config: null
   defaultConfig:
@@ -37,7 +37,7 @@ class SymbolProvider
       typePriority: 1
 
   constructor: ->
-    @watchedEditors = {}
+    @watchedBuffers = {}
     @symbolStore = new SymbolStore(@wordRegex)
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
@@ -49,28 +49,52 @@ class SymbolProvider
     @subscriptions.dispose()
 
   watchTextEditor: (editor) =>
-    editorPath = editor.getPath()
-    return if @watchedEditors[editorPath]?
-
-    buffer = editor.getBuffer()
+    bufferPath = editor.getPath()
     editorSubscriptions = new CompositeDisposable
-
     editorSubscriptions.add editor.displayBuffer.onDidTokenize =>
       @buildWordListOnNextTick(editor)
+    editorSubscriptions.add editor.onDidDestroy =>
+      index = @getWatchedEditorIndex(editor)
+      editors = @watchedBuffers[editor.getPath()]?.editors
+      editors.splice(index, 1) if index > -1
 
-    editorSubscriptions.add buffer.onWillChange ({oldRange, newRange}) =>
-      @symbolStore.removeTokensInBufferRange(editor, oldRange)
-      @symbolStore.adjustBufferRows(editor, oldRange, newRange)
+    if @watchedBuffers[bufferPath]?
+      @watchedBuffers[bufferPath].editors.push(editor)
+    else
+      buffer = editor.getBuffer()
+      bufferSubscriptions = new CompositeDisposable
+      bufferSubscriptions.add buffer.onWillChange ({oldRange, newRange}) =>
+        bufferPath = buffer.getPath()
+        editor = @watchedBuffers[bufferPath].editors[0]
+        @symbolStore.removeTokensInBufferRange(editor, oldRange)
+        @symbolStore.adjustBufferRows(editor, oldRange, newRange)
 
-    editorSubscriptions.add buffer.onDidChange ({newRange}) =>
-      @symbolStore.addTokensInBufferRange(editor, newRange)
+      bufferSubscriptions.add buffer.onDidChange ({newRange}) =>
+        bufferPath = buffer.getPath()
+        editor = @watchedBuffers[bufferPath].editors[0]
+        @symbolStore.addTokensInBufferRange(editor, newRange)
 
-    editorSubscriptions.add buffer.onDidDestroy =>
-      @symbolStore.clear(editorPath)
-      delete @watchedEditors[editorPath]
-      editorSubscriptions.dispose()
+      bufferSubscriptions.add buffer.onDidDestroy =>
+        bufferPath = buffer.getPath()
+        @symbolStore.clear(bufferPath)
+        bufferSubscriptions.dispose()
+        delete @watchedBuffers[bufferPath]
 
-    @buildWordListOnNextTick(editor)
+      @watchedBuffers[bufferPath] = editors: [editor]
+      @buildWordListOnNextTick(editor)
+
+  isWatchingEditor: (editor) ->
+    @getWatchedEditorIndex(editor) > -1
+
+  isWatchingBuffer: (buffer) ->
+    @watchedBuffers[buffer.getPath()]?
+
+  getWatchedEditorIndex: (editor) ->
+    editors = @watchedBuffers[editor.getPath()]?.editors
+    if editors?
+      editors.indexOf(editor)
+    else
+      -1
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?

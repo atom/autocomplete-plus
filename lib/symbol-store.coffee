@@ -16,8 +16,17 @@ class Symbol
   bufferRowsForEditorPath: (editorPath) ->
     @metadataByPath[editorPath]?.bufferRows
 
+  clearForEditorPath: (editorPath) ->
+    metadata = @metadataByPath[editorPath]
+    return unless metadata?
+    editorPathCount = 0
+    editorPathCount += scopeCount for scopeChain, scopeCount of metadata.scopeChains
+    if editorPathCount > 0
+      @count -= editorPathCount
+      @metadataByPath[editorPath] = null
+
   adjustBufferRows: (editorPath, adjustmentStartRow, adjustmentDelta) ->
-    bufferRows = @metadataByPath[editorPath].bufferRows
+    bufferRows = @metadataByPath[editorPath]?.bufferRows
     return unless bufferRows?
     index = binaryIndexOf(bufferRows, adjustmentStartRow)
     length = bufferRows.length
@@ -90,8 +99,14 @@ class SymbolStore
   constructor: (@wordRegex) ->
     @clear()
 
-  clear: ->
-    @symbolMap = {}
+  clear: (editorPath) ->
+    if editorPath?
+      for symbolKey, symbol of @symbolMap
+        symbol.clearForEditorPath(editorPath)
+        delete @symbolMap[symbolKey] if symbol.getCount() is 0
+    else
+      @symbolMap = {}
+    return
 
   getLength: -> @count
 
@@ -113,7 +128,6 @@ class SymbolStore
     for key, symbol of @symbolMap
       symbol.adjustBufferRows(editor.getPath(), adjustmentStartRow, adjustmentDelta)
     return
-
 
   addToken: (token, editorPath, bufferRow) =>
     # This could be made async...

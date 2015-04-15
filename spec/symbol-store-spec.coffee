@@ -172,3 +172,45 @@ describe 'SymbolStore', ->
       expect(symbols.length).toBe 1
       expect(symbols[0].text).toBe 'abc'
       expect(symbols[0].type).toBe 'newtype'
+
+  describe "::clear()", ->
+    describe "when an editorPaths is specified", ->
+      beforeEach ->
+        store.addToken({value: 'one', scopes: ['source.coffee']}, 'one.txt', 1)
+        store.addToken({value: 'ok', scopes: ['source.coffee']}, 'one.txt', 1)
+        store.addToken({value: 'wow', scopes: ['source.coffee']}, 'one.txt', 2)
+        store.addToken({value: 'wow', scopes: ['source.coffee']}, 'one.txt', 2)
+
+        store.addToken({value: 'two', scopes: ['source.coffee']}, 'two.txt', 1)
+        store.addToken({value: 'ok', scopes: ['source.coffee']}, 'two.txt', 1)
+        store.addToken({value: 'wow', scopes: ['source.coffee']}, 'two.txt', 2)
+
+      it "removes only the path specified", ->
+        config =
+          stuff:
+            selectors: Selector.create('.source')
+            priority: 1
+
+        symbols = store.symbolsForConfig(config)
+        expect(symbols).toHaveLength 4
+        expect(symbols[0].text).toBe 'one'
+        expect(symbols[1].text).toBe 'ok'
+        expect(symbols[2].text).toBe 'wow'
+        expect(symbols[3].text).toBe 'two'
+
+        expect(store.getSymbol('one').getCount()).toBe 1
+        expect(store.getSymbol('two').getCount()).toBe 1
+        expect(store.getSymbol('ok').getCount()).toBe 2
+        expect(store.getSymbol('wow').getCount()).toBe 3
+
+        store.clear('one.txt')
+        symbols = store.symbolsForConfig(config)
+        expect(symbols).toHaveLength 3
+        expect(symbols[0].text).toBe 'ok'
+        expect(symbols[1].text).toBe 'wow'
+        expect(symbols[2].text).toBe 'two'
+
+        expect(store.getSymbol('one')).toBeUndefined()
+        expect(store.getSymbol('two').getCount()).toBe 1
+        expect(store.getSymbol('ok').getCount()).toBe 1
+        expect(store.getSymbol('wow').getCount()).toBe 1

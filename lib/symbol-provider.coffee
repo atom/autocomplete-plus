@@ -43,12 +43,12 @@ class SymbolProvider
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
-    @subscriptions.add(atom.workspace.observeTextEditors(@watchTextEditor))
+    @subscriptions.add(atom.workspace.observeTextEditors(@watchEditor))
 
   dispose: =>
     @subscriptions.dispose()
 
-  watchTextEditor: (editor) =>
+  watchEditor: (editor) =>
     bufferPath = editor.getPath()
     editorSubscriptions = new CompositeDisposable
     editorSubscriptions.add editor.displayBuffer.onDidTokenize =>
@@ -98,8 +98,7 @@ class SymbolProvider
     @watchedBuffers[buffer.getPath()]?
 
   getWatchedEditorIndex: (editor) ->
-    editors = @watchedBuffers[editor.getPath()]?.editors
-    if editors?
+    if editors = @watchedBuffers[editor.getPath()]?.editors
       editors.indexOf(editor)
     else
       -1

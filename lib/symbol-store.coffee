@@ -16,11 +16,15 @@ class Symbol
   bufferRowsForEditorPath: (editorPath) ->
     @metadataByPath[editorPath]?.bufferRows
 
-  clearForEditorPath: (editorPath) ->
+  countForEditorPath: (editorPath) ->
     metadata = @metadataByPath[editorPath]
-    return unless metadata?
     editorPathCount = 0
-    editorPathCount += scopeCount for scopeChain, scopeCount of metadata.scopeChains
+    if metadata?
+      editorPathCount += scopeCount for scopeChain, scopeCount of metadata.scopeChains
+    editorPathCount
+
+  clearForEditorPath: (editorPath) ->
+    editorPathCount = @countForEditorPath(editorPath)
     if editorPathCount > 0
       @count -= editorPathCount
       @metadataByPath[editorPath] = null
@@ -76,7 +80,7 @@ class Symbol
   isSingleInstanceOf: (word) ->
     @text is word and @count is 1
 
-  appliesToConfig: (config) ->
+  appliesToConfig: (config, editorPath) ->
     @type = null if @cachedConfig isnt config
 
     unless @type?
@@ -90,7 +94,10 @@ class Symbol
               typePriority = options.typePriority
       @cachedConfig = config
 
-    @type?
+    if editorPath?
+      @type? and @countForEditorPath(editorPath) > 0
+    else
+      @type?
 
 module.exports =
 class SymbolStore
@@ -114,10 +121,10 @@ class SymbolStore
     symbolKey = @getKey(symbolKey)
     @symbolMap[symbolKey]
 
-  symbolsForConfig: (config, wordUnderCursor) ->
+  symbolsForConfig: (config, editorPath, wordUnderCursor) ->
     symbols = []
     for symbolKey, symbol of @symbolMap
-      symbols.push(symbol) if symbol.appliesToConfig(config) and not symbol.isSingleInstanceOf(wordUnderCursor)
+      symbols.push(symbol) if symbol.appliesToConfig(config, editorPath) and not symbol.isSingleInstanceOf(wordUnderCursor)
     for type, options of config
       symbols = symbols.concat(options.suggestions) if options.suggestions
     symbols

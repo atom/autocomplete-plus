@@ -19,6 +19,8 @@ class SymbolProvider
   inclusionPriority: 0
   suggestionPriority: 0
 
+  watchedEditors: null
+
   config: null
   defaultConfig:
     class:
@@ -35,35 +37,46 @@ class SymbolProvider
       typePriority: 1
 
   constructor: ->
+    @watchedEditors = {}
     @symbolStore = new SymbolStore(@wordRegex)
     @subscriptions = new CompositeDisposable
+    @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
+    @subscriptions.add(atom.workspace.observeTextEditors(@watchTextEditor))
 
   dispose: =>
-    @editorSubscriptions?.dispose()
     @subscriptions.dispose()
+
+  watchTextEditor: (editor) =>
+    editorPath = editor.getPath()
+    return if @watchedEditors[editorPath]?
+
+    buffer = editor.getBuffer()
+    editorSubscriptions = new CompositeDisposable
+
+    editorSubscriptions.add editor.displayBuffer.onDidTokenize =>
+      @buildWordListOnNextTick(editor)
+
+    editorSubscriptions.add buffer.onWillChange ({oldRange, newRange}) =>
+      @symbolStore.removeTokensInBufferRange(editor, oldRange)
+      @symbolStore.adjustBufferRows(editor, oldRange, newRange)
+
+    editorSubscriptions.add buffer.onDidChange ({newRange}) =>
+      @symbolStore.addTokensInBufferRange(editor, newRange)
+
+    editorSubscriptions.add buffer.onDidDestroy =>
+      @symbolStore.clear(editorPath)
+      delete @watchedEditors[editorPath]
+      editorSubscriptions.dispose()
+
+    @buildWordListOnNextTick(editor)
 
   updateCurrentEditor: (currentPaneItem) =>
     return unless currentPaneItem?
     return if currentPaneItem is @editor
-
-    @editorSubscriptions?.dispose()
-    @editorSubscriptions = new CompositeDisposable
-
     @editor = null
-    @buffer = null
-
-    return unless @paneItemIsValid(currentPaneItem)
-
-    @editor = currentPaneItem
-    @buffer = @editor.getBuffer()
-
-    @editorSubscriptions.add @editor.displayBuffer.onDidTokenize(@buildWordListOnNextTick)
-    @editorSubscriptions.add @buffer.onDidSave(@buildWordListOnNextTick)
-    @editorSubscriptions.add @buffer.onWillChange(@bufferWillChange)
-    @editorSubscriptions.add @buffer.onDidChange(@bufferDidChange)
-
-    @buildWordListOnNextTick()
+    @editor = currentPaneItem if @paneItemIsValid(currentPaneItem)
 
   buildConfigIfScopeChanged: ({editor, scopeDescriptor}) ->
     unless @scopeDescriptorsEqual(@configScopeDescriptor, scopeDescriptor)
@@ -122,17 +135,6 @@ class SymbolProvider
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
     return paneItem instanceof TextEditor
 
-  # Notes on change updates:
-  #
-  # * Reading of the tokens must happen synchonously in the event handlers as
-  #   thats the only time the buffer will have the tokens matching the change events.
-  # * The slow part is the token scope selector matching to bucket tokens by type.
-  bufferWillChange: ({oldRange}) =>
-    @symbolStore.removeTokensInBufferRange(@editor, oldRange)
-
-  bufferDidChange: ({newRange}) =>
-    @symbolStore.addTokensInBufferRange(@editor, newRange)
-
   ###
   Section: Suggesting Completions
   ###
@@ -146,7 +148,9 @@ class SymbolProvider
     return unless @symbolStore.getLength()
     wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
-    symbolList = @symbolStore.symbolsForConfig(@config, wordUnderCursor)
+
+    editorPath = if @includeCompletionsFromAllBuffers then null else @editor.getPath()
+    symbolList = @symbolStore.symbolsForConfig(@config, editorPath, wordUnderCursor)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
@@ -204,30 +208,21 @@ class SymbolProvider
   Section: Word List Building
   ###
 
-  buildWordListOnNextTick: =>
-    _.defer => @buildSymbolList()
+  buildWordListOnNextTick: (editor) =>
+    _.defer => @buildSymbolList(editor)
 
-  buildSymbolList: =>
-    return unless @editor?
+  buildSymbolList: (editor) =>
+    return unless editor?
+    @symbolStore.clear(editor.getPath())
+    @cacheSymbolsFromEditor(editor)
 
-    @symbolStore.clear()
-
-    minimumWordLength = atom.config.get('autocomplete-plus.minimumWordLength')
-    @cacheSymbolsFromEditor(@editor, minimumWordLength)
-
-    if atom.config.get('autocomplete-plus.includeCompletionsFromAllBuffers')
-      for editor in atom.workspace.getTextEditors()
-        # FIXME: downside is that some of these editors will not be tokenized :/
-        @cacheSymbolsFromEditor(editor, minimumWordLength)
-    return
-
-  cacheSymbolsFromEditor: (editor, minimumWordLength, tokenizedLines) ->
+  cacheSymbolsFromEditor: (editor, tokenizedLines) ->
     tokenizedLines ?= @getTokenizedLines(editor)
 
     editorPath = editor.getPath()
     for {tokens}, bufferRow in tokenizedLines
       for token in tokens
-        @symbolStore.addToken(token, editorPath, bufferRow, minimumWordLength)
+        @symbolStore.addToken(token, editorPath, bufferRow, @minimumWordLength)
     return
 
   getTokenizedLines: (editor) ->

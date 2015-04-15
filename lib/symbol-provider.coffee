@@ -23,16 +23,16 @@ class SymbolProvider
   defaultConfig:
     class:
       selector: '.class.name, .inherited-class, .instance.type'
-      priority: 4
+      typePriority: 4
     function:
       selector: '.function.name'
-      priority: 3
+      typePriority: 3
     variable:
       selector: '.variable'
-      priority: 2
+      typePriority: 2
     '':
       selector: '.source'
-      priority: 1
+      typePriority: 1
 
   constructor: ->
     @symbolStore = new SymbolStore(@wordRegex)
@@ -72,19 +72,50 @@ class SymbolProvider
 
   buildConfig: (scopeDescriptor) ->
     @config = {}
+    allConfigEntries = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
 
-    allConfig = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completionConfig')
-    allConfig.push {value: @defaultConfig} unless allConfig.length
+    addedConfigEntry = false
+    for {value} in allConfigEntries
+      if Array.isArray(value)
+        @addLegacyConfigEntry(value) if value.length
+      else if typeof value is 'object'
+        @addConfigEntry(value)
+        addedConfigEntry = true
 
-    for {value} in allConfig
-      for type, options of value
-        @config[type] = _.clone(options)
-        @config[type].selectors = Selector.create(options.selector) if options.selector?
-        @config[type].selectors ?= []
-        @config[type].priority ?= 1
-        @config[type].wordRegex ?= @wordRegex
+    @addConfigEntry(@defaultConfig) unless addedConfigEntry
+    @config.builtin.suggestions = _.uniq(@config.builtin.suggestions, @uniqueFilter) if @config.builtin?.suggestions?
 
+  addLegacyConfigEntry: (suggestions) ->
+    suggestions = ({text: suggestion, type: 'builtin'} for suggestion in suggestions)
+    @config.builtin ?= {suggestions: []}
+    @config.builtin.suggestions = @config.builtin.suggestions.concat(suggestions)
+
+  addConfigEntry: (config) ->
+    for type, options of config
+      @config[type] ?= {}
+      @config[type].selectors = Selector.create(options.selector) if options.selector?
+      @config[type].typePriority = options.typePriority ? 1
+      @config[type].wordRegex = @wordRegex
+
+      suggestions = @sanitizeSuggestionsFromConfig(options.suggestions, type)
+      @config[type].suggestions = suggestions if suggestions? and suggestions.length
     return
+
+  sanitizeSuggestionsFromConfig: (suggestions, type) ->
+    if suggestions? and Array.isArray(suggestions)
+      sanitizedSuggestions = []
+      for suggestion in suggestions
+        if typeof suggestion is 'string'
+          sanitizedSuggestions.push({text: suggestion, type})
+        else if typeof suggestions[0] is 'object' and (suggestion.text? or suggestion.snippet?)
+          suggestion = _.clone(suggestion)
+          suggestion.type ?= type
+          sanitizedSuggestions.push(suggestion)
+      sanitizedSuggestions
+    else
+      null
+
+  uniqueFilter: (completion) -> completion.text
 
   paneItemIsValid: (paneItem) ->
     return false unless paneItem?
@@ -115,9 +146,7 @@ class SymbolProvider
     return unless @symbolStore.getLength()
     wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
-
-    # Merge the scope specific words into the default word list
-    symbolList = @symbolStore.symbolsForConfig(@config, wordUnderCursor).concat(@builtinCompletionsForCursorScope())
+    symbolList = @symbolStore.symbolsForConfig(@config, wordUnderCursor)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
@@ -170,19 +199,6 @@ class SymbolProvider
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     atom.config.getAll(keyPath, scope: scopeDescriptor)
-
-  builtinCompletionsForCursorScope: =>
-    cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
-    completions = @settingsForScopeDescriptor(cursorScope, "editor.completions")
-    scopedCompletions = []
-    for properties in completions
-      if suggestions = _.valueForKeyPath(properties, "editor.completions")
-        for suggestion in suggestions
-          scopedCompletions.push
-            text: suggestion
-            type: 'builtin'
-
-    _.uniq scopedCompletions, (completion) -> completion.text
 
   ###
   Section: Word List Building

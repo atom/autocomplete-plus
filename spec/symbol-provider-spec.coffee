@@ -188,7 +188,7 @@ describe 'SymbolProvider', ->
       results = suggestionsForPrefix(provider, editor, 'item')
       expect(results[0]).toBe 'items'
 
-  describe "when the completionConfig changes between scopes", ->
+  describe "when the completions changes between scopes", ->
     beforeEach ->
       editor.setText '''
         // in-a-comment
@@ -203,8 +203,8 @@ describe 'SymbolProvider', ->
         instring:
           selector: '.string'
 
-      atom.config.set('editor.completionConfig', commentConfig, scopeSelector: '.source.js .comment')
-      atom.config.set('editor.completionConfig', stringConfig, scopeSelector: '.source.js .string')
+      atom.config.set('editor.completions', commentConfig, scopeSelector: '.source.js .comment')
+      atom.config.set('editor.completions', stringConfig, scopeSelector: '.source.js .string')
 
     it "uses the config for the scope under the cursor", ->
       # Using the comment config
@@ -224,10 +224,68 @@ describe 'SymbolProvider', ->
       # Using the default config
       editor.setCursorBufferPosition([1, 5])
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
-      console.log suggestions
       expect(suggestions).toHaveLength 3
       expect(suggestions[0].text).toBe 'invar'
       expect(suggestions[0].type).toBe '' # the js grammar sucks :(
+
+  describe "when the completions contains a list of suggestion strings", ->
+    beforeEach ->
+      editor.setText '// abcomment'
+      commentConfig =
+        comment: selector: '.comment'
+        builtin:
+          suggestions: ['abcd', 'abcde', 'abcdef']
+
+      atom.config.set('editor.completions', commentConfig, scopeSelector: '.source.js .comment')
+
+    it "adds the suggestions to the results", ->
+      # Using the comment config
+      editor.setCursorBufferPosition([0, 2])
+      suggestions = suggestionsForPrefix(provider, editor, 'ab', raw: true)
+      expect(suggestions).toHaveLength 4
+      expect(suggestions[0].text).toBe 'abcomment'
+      expect(suggestions[0].type).toBe 'comment'
+      expect(suggestions[1].text).toBe 'abcd'
+      expect(suggestions[1].type).toBe 'builtin'
+
+  describe "when the completions contains a list of suggestion objects", ->
+    beforeEach ->
+      editor.setText '// abcomment'
+      commentConfig =
+        comment: selector: '.comment'
+        builtin:
+          suggestions: [
+            {nope: 'nope1', rightLabel: 'will not be added to the suggestions'}
+            {text: 'abcd', rightLabel: 'one', type: 'function'}
+            []
+          ]
+      atom.config.set('editor.completions', commentConfig, scopeSelector: '.source.js .comment')
+
+    it "adds the suggestion objects to the results", ->
+      # Using the comment config
+      editor.setCursorBufferPosition([0, 2])
+      suggestions = suggestionsForPrefix(provider, editor, 'ab', raw: true)
+      expect(suggestions).toHaveLength 2
+      expect(suggestions[0].text).toBe 'abcomment'
+      expect(suggestions[0].type).toBe 'comment'
+      expect(suggestions[1].text).toBe 'abcd'
+      expect(suggestions[1].type).toBe 'function'
+      expect(suggestions[1].rightLabel).toBe 'one'
+
+  describe "when the legacy completions array is used", ->
+    beforeEach ->
+      editor.setText '// abcomment'
+      atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], scopeSelector: '.source.js .comment')
+
+    it "uses the config for the scope under the cursor", ->
+      # Using the comment config
+      editor.setCursorBufferPosition([0, 2])
+      suggestions = suggestionsForPrefix(provider, editor, 'ab', raw: true)
+      expect(suggestions).toHaveLength 4
+      expect(suggestions[0].text).toBe 'abcomment'
+      expect(suggestions[0].type).toBe ''
+      expect(suggestions[1].text).toBe 'abcd'
+      expect(suggestions[1].type).toBe 'builtin'
 
   # Fixing This Fixes #76
   xit 'adds words to the wordlist with unicode characters', ->

@@ -66,13 +66,13 @@ class FuzzyProvider
   # suggestions, the suggestions will be the only ones that are displayed.
   #
   # Returns an {Array} of Suggestion instances
-  getSuggestions: ({editor, prefix}) =>
+  getSuggestions: ({editor, prefix, scopeDescriptor}) =>
     return unless editor?
 
     # No prefix? Don't autocomplete!
     return unless prefix.trim().length
 
-    suggestions = @findSuggestionsForWord(prefix)
+    suggestions = @findSuggestionsForWord(prefix, scopeDescriptor)
 
     # No suggestions? Don't autocomplete!
     return unless suggestions?.length
@@ -131,12 +131,12 @@ class FuzzyProvider
   # prefix - {String} The prefix
   #
   # Returns an {Array} of Suggestion instances
-  findSuggestionsForWord: (prefix) =>
+  findSuggestionsForWord: (prefix, scopeDescriptor) =>
     return unless @tokenList.getLength() and @editor?
 
     # Merge the scope specific words into the default word list
     tokens = @tokenList.getTokens()
-    tokens = tokens.concat(@getCompletionsForCursorScope())
+    tokens = tokens.concat(@getCompletionsForCursorScope(scopeDescriptor))
 
     words =
       if atom.config.get('autocomplete-plus.strictMatching')
@@ -150,24 +150,21 @@ class FuzzyProvider
     for word in words when word isnt prefix
       # must match the first char!
       continue unless prefix[0].toLowerCase() is word[0].toLowerCase()
-
       results.push {text: word, replacementPrefix: prefix}
-
     results
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
-    return [] unless atom?.config? and scopeDescriptor? and keyPath?
-    entries = atom.config.getAll(null, {scope: scopeDescriptor})
-    value for {value} in entries when _.valueForKeyPath(value, keyPath)?
+    atom.config.getAll(keyPath, scope: scopeDescriptor)
 
   # Private: Finds autocompletions in the current syntax scope (e.g. css values)
   #
   # Returns an {Array} of strings
-  getCompletionsForCursorScope: =>
-    cursorScope = @editor.scopeDescriptorForBufferPosition(@editor.getCursorBufferPosition())
-    completions = @settingsForScopeDescriptor(cursorScope?.getScopesArray(), 'editor.completions')
-    completions = completions.map((properties) -> _.valueForKeyPath(properties, 'editor.completions'))
-    return _.uniq(_.flatten(completions))
+  getCompletionsForCursorScope: (scopeDescriptor) ->
+    completions = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
+    resultCompletions = []
+    for {value} in completions
+      resultCompletions = resultCompletions.concat(value) if Array.isArray(value)
+    _.uniq(resultCompletions)
 
   # Public: Clean up, stop listening to events
   dispose: =>

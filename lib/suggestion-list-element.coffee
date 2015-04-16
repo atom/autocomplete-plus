@@ -205,7 +205,7 @@ class SuggestionListElement extends HTMLElement
       typeIcon.classList.add(type) if type
 
     wordSpan = li.querySelector('.word')
-    wordSpan.innerHTML = @getHighlightedHTML(text, snippet, replacementPrefix)
+    wordSpan.innerHTML = @getDisplayHTML(text, snippet, replacementPrefix)
 
     leftLabelSpan = li.querySelector('.left-label')
     if leftLabelHTML?
@@ -223,78 +223,67 @@ class SuggestionListElement extends HTMLElement
     else
       rightLabelSpan.textContent = ''
 
-  getHighlightedHTML: (text, snippet, replacementPrefix) ->
+  getDisplayHTML: (text, snippet, replacementPrefix) ->
     # 1. Highlight relevant characters
     # 2. Remove snippet metadata and wrap snippets for context
 
-    replacement = text
-    replacement = @removeEmptySnippets(snippet) if _.isString(snippet)
+    replacement = if _.isString(snippet) then @removeEmptySnippets(snippet) else text
     return replacement unless replacement?.length
 
-    snippets = []
-    snippets = @findSnippets(replacement) if _.isString(snippet)
-    snippetStarts = []
-    snippetEnds = []
-    skipChars = []
-    for snippet in snippets
-      snippetStarts.push(snippet.snippetStart)
-      snippetEnds.push(snippet.snippetEnd)
-      skipChars = skipChars.concat([snippet.snippetStart...snippet.bodyStart])
-      skipChars = skipChars.concat([snippet.bodyEnd + 1..snippet.snippetEnd])
-      skipChars = skipChars.concat(snippet.skipChars) if snippet.skipChars.length
+    snippets = if _.isString(snippet) then @findSnippets(replacement) else {}
+    replacementText = if _.isString(snippet) then @removeSnippetsFromText(snippets, replacement) else replacement
+    characterMatches = @findCharacterMatches(replacementText, replacementPrefix, snippets)
 
-    characterMatches = @findCharacterMatches(replacement, replacementPrefix, snippets)
+    displayHTML = ''
+    offset = 0
+    i = 0
+    loop
+      if snippets["#{i}"] is 'start' or snippets["#{i}"] is 'end' or snippets["#{i}"] is 'skip'
+        displayHTML += '<span class="snippet-completion">' if snippets["#{i}"] is 'start'
+        displayHTML += '</span>' if snippets["#{i}"] is 'end'
+        offset += 1
+      else
+        if i - offset >= 0 and characterMatches["#{i - offset}"]?
+          displayHTML += '<span class="character-match">' + replacement[i] + '</span>'
+        else
+          displayHTML += replacement[i]
 
-    highlightedHTML = ''
+      i += 1
+      break if i >= replacement.length
 
-    for i in [0...replacement.length]
-      if snippets.length?
-        if snippetStarts.indexOf(i) isnt -1
-          highlightedHTML += '<span class="snippet-completion">'
-          continue
-
-        if snippetEnds.indexOf(i) isnt -1
-          highlightedHTML += '</span>'
-          continue
-
-        continue if skipChars.indexOf(i) isnt -1
-
-      if characterMatches.indexOf(i) is -1
-        highlightedHTML += replacement[i]
-        continue
-
-      highlightedHTML += '<span class="character-match">' + replacement[i] + '</span>'
-
-    highlightedHTML
+    displayHTML
 
   removeEmptySnippets: (text) ->
     return text unless text?.length and text.indexOf('$') isnt -1 # No snippets
     text.replace(@emptySnippetGroupRegex, '') # Remove all occurrences of $0 or ${0} or ${0:}
 
-  findCharacterMatches: (text, replacementPrefix, snippets) ->
-    return [] unless text?.length and replacementPrefix?.length
-    skipChars = []
-    if snippets?.length
-      for snippet in snippets
-        skipChars = skipChars.concat(snippet.skipChars) if snippet.skipChars.length
-        skipChars = skipChars.concat([snippet.snippetStart...snippet.bodyStart])
-        skipChars = skipChars.concat([(snippet.bodyEnd + 1)..snippet.snippetEnd])
+  removeSnippetsFromText: (snippets, text) ->
+    return text unless text.length > 0 and text.indexOf('$') isnt -1 and snippets? # No snippets
+    result = ''
+    i = 0
+    loop
+      result += text[i] unless snippets["#{i}"] is 'skip' or snippets["#{i}"] is 'start' or snippets["#{i}"] is 'end'
+      break if i >= text.length
+      i += 1
 
-    matches = []
+    result
+
+  findCharacterMatches: (text, replacementPrefix) ->
+    return {} unless text?.length and replacementPrefix?.length
+    matches = {}
     wordIndex = 0
     for ch, i in replacementPrefix
       while wordIndex < text.length and text[wordIndex].toLowerCase() isnt ch.toLowerCase()
         wordIndex += 1
       break if wordIndex >= text.length
-      continue if skipChars.indexOf(wordIndex) isnt -1
-      matches.push(wordIndex)
+      matches[wordIndex] = true
       wordIndex += 1
 
     matches
 
   findSnippets: (text) ->
-    return [] unless text.length > 0 and text.indexOf('$') isnt -1 # No snippets
-    snippets = []
+    return {} unless text.length > 0 and text.indexOf('$') isnt -1 # No snippets
+    snippets = {}
 
     inSnippet = false
     inSnippetBody = false
@@ -302,27 +291,24 @@ class SuggestionListElement extends HTMLElement
     snippetEnd = -1
     bodyStart = -1
     bodyEnd = -1
-    skipChars = []
 
     # We're not using a regex because escaped right braces cannot be tracked without lookbehind,
     # which doesn't exist yet for javascript; consequently we need to iterate through each character.
     # This might feel ugly, but it's necessary.
     for char, index in text.split('')
       if inSnippet and snippetEnd is index
-        snippet =
-          snippetStart: snippetStart
-          snippetEnd: snippetEnd
-          bodyStart: bodyStart
-          bodyEnd: bodyEnd
-          skipChars: skipChars
-        snippets.push(snippet)
+        snippets["#{snippetStart}"] = 'start'
+        for i in [snippetStart + 1...bodyStart]
+          snippets["#{i}"] = 'skip'
+        snippets["#{bodyStart}"] = 'bodystart'
+        snippets["#{bodyEnd}"] = 'bodyend'
+        snippets["#{snippetEnd}"] = 'end'
         inSnippet = false
         inBody = false
         snippetStart = -1
         snippetEnd = -1
         bodyStart = -1
         bodyEnd = -1
-        skipChars = []
         continue
 
       inBody = true if inSnippet and index >= bodyStart and index <= bodyEnd
@@ -354,7 +340,8 @@ class SuggestionListElement extends HTMLElement
             rightBraceIndex = text.indexOf('}', i)
             break if rightBraceIndex is -1
             if text.charAt(rightBraceIndex - 2) is '\\' and text.charAt(rightBraceIndex - 1) is '\\'
-              skipChars.push(rightBraceIndex - 2, rightBraceIndex - 1)
+              snippets["#{rightBraceIndex - 2}"] = 'skip'
+              snippets["#{rightBraceIndex - 1}"] = 'skip'
             else
               break
             i = rightBraceIndex + 1
@@ -374,7 +361,6 @@ class SuggestionListElement extends HTMLElement
           snippetEnd = -1
           bodyStart = -1
           bodyEnd = -1
-          skipChars = []
 
     snippets
 

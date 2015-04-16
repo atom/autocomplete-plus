@@ -271,18 +271,6 @@ class SuggestionListElement extends HTMLElement
     return text unless text?.length and text.indexOf('$') isnt -1 # No snippets
     text.replace(@emptySnippetGroupRegex, '') # Remove all occurrences of $0 or ${0} or ${0:}
 
-  removeAllSnippets: (text) ->
-    return text unless text.length > 0 and text.indexOf('$') isnt -1 # No snippets
-    text.replace(@emptySnippetGroupRegex, '') # Remove all occurrences of $0 or ${0} or ${0:}
-    snippets = @findSnippets(text)
-    return text unless snippets.length
-    delta = 0
-    for snippet in snippets
-      text = text.substring(0, snippet.snippetStart - delta) + text.substring(snippet.bodyStart - delta, snippet.bodyEnd + 1 - delta) + text.substring(snippet.snippetEnd + 1 - delta, text.length)
-      delta += (snippet.bodyStart - snippet.snippetStart) + (snippet.snippetEnd - snippet.bodyEnd)
-
-    text
-
   findCharacterMatches: (text, replacementPrefix, snippets) ->
     return [] unless text?.length and replacementPrefix?.length
     skipChars = []

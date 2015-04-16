@@ -170,22 +170,23 @@ autocomplete-suggestion-list {
     color: @text-color-subtle;
   }
 
-  .make-type-icon(variable, @syntax-color-variable);
-  .make-type-icon(constant, @syntax-color-constant);
-  .make-type-icon(property, @syntax-color-property);
-  .make-type-icon(value, @syntax-color-value);
-  .make-type-icon(method, @syntax-color-method);
-  .make-type-icon(function, @syntax-color-function);
-  .make-type-icon(class, @syntax-color-class);
-  .make-type-icon(type, @syntax-color-class);
-  .make-type-icon(keyword, @syntax-color-keyword);
   .make-type-icon(builtin, @syntax-color-keyword);
-  .make-type-icon(tag, @syntax-color-tag);
+  .make-type-icon(class, @syntax-color-class);
+  .make-type-icon(constant, @syntax-color-constant);
+  .make-type-icon(function, @syntax-color-function);
   .make-type-icon(import, @syntax-color-import);
-  .make-type-icon(require, @syntax-color-import);
+  .make-type-icon(keyword, @syntax-color-keyword);
+  .make-type-icon(method, @syntax-color-method);
   .make-type-icon(module, @syntax-color-import);
+  .make-type-icon(mixin, @syntax-color-class);
   .make-type-icon(package, @syntax-color-import);
+  .make-type-icon(property, @syntax-color-property);
+  .make-type-icon(require, @syntax-color-import);
   .make-type-icon(snippet, @syntax-color-snippet);
+  .make-type-icon(tag, @syntax-color-tag);
+  .make-type-icon(type, @syntax-color-class);
+  .make-type-icon(value, @syntax-color-value);
+  .make-type-icon(variable, @syntax-color-variable);
 }
 
 .make-type-icon(@type, @color) {

@@ -339,8 +339,7 @@ class SuggestionListElement extends HTMLElement
           loop
             rightBraceIndex = text.indexOf('}', i)
             break if rightBraceIndex is -1
-            if text.charAt(rightBraceIndex - 2) is '\\' and text.charAt(rightBraceIndex - 1) is '\\'
-              snippets["#{rightBraceIndex - 2}"] = 'skip'
+            if text.charAt(rightBraceIndex - 1) is '\\'
               snippets["#{rightBraceIndex - 1}"] = 'skip'
             else
               break

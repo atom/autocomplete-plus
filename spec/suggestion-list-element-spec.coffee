@@ -20,7 +20,7 @@ describe 'Suggestion List Element', ->
 
     it 'replaces a snippet with escaped right braces', ->
       text = ''
-      snippet = 'abc(${1:d}, ${2:e})f ${3:interface{\\\\}}'
+      snippet = 'abc(${1:d}, ${2:e})f ${3:interface{\\}}'
       replacementPrefix = 'a'
       expect(suggestionListElement.getDisplayHTML(text, snippet, replacementPrefix)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f <span class="snippet-completion">interface{}</span>')
 
@@ -81,13 +81,13 @@ describe 'Suggestion List Element', ->
       expect(suggestionListElement.findSnippets('${0:hello}')['9']).toEqual('end')
 
       # With escaped right brace
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}')).toBeDefined()
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}')['0']).toEqual('start')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}')['13']).toEqual('end')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}')['4']).toEqual('bodystart')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}')['12']).toEqual('bodyend')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}')['10']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}')['11']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}')).toBeDefined()
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}')['0']).toEqual('start')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}')['13']).toEqual('end')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}')['4']).toEqual('bodystart')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}')['12']).toEqual('bodyend')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}')['10']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}')['11']).toEqual('skip')
 
     it 'identifies a snippet surrounded by text', ->
       # Without escaped right brace
@@ -108,27 +108,27 @@ describe 'Suggestion List Element', ->
       expect(suggestionListElement.findSnippets('hello${0:hello}hello')['13']).toEqual('bodyend')
 
       # With escaped right brace
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}')).toBeDefined()
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}')['5']).toEqual('start')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}')['18']).toEqual('end')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}')['9']).toEqual('bodystart')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}')['17']).toEqual('bodyend')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}')['15']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}')['16']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}hello')).toBeDefined()
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}hello')['0']).toEqual('start')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}hello')['13']).toEqual('end')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}hello')['4']).toEqual('bodystart')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}hello')['12']).toEqual('bodyend')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}hello')['10']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}hello')['11']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}hello')).toBeDefined()
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}hello')['5']).toEqual('start')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}hello')['18']).toEqual('end')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}hello')['9']).toEqual('bodystart')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}hello')['17']).toEqual('bodyend')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}hello')['15']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('hello${0:hello{\\\\}}hello')['16']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}')).toBeDefined()
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}')['5']).toEqual('start')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}')['18']).toEqual('end')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}')['9']).toEqual('bodystart')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}')['17']).toEqual('bodyend')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}')['15']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}')['16']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}hello')).toBeDefined()
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}hello')['0']).toEqual('start')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}hello')['13']).toEqual('end')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}hello')['4']).toEqual('bodystart')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}hello')['12']).toEqual('bodyend')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}hello')['10']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}hello')['11']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}hello')).toBeDefined()
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}hello')['5']).toEqual('start')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}hello')['18']).toEqual('end')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}hello')['9']).toEqual('bodystart')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}hello')['17']).toEqual('bodyend')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}hello')['15']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('hello${0:hello{\\}}hello')['16']).toEqual('skip')
 
     it 'identifies multiple snippets', ->
       # Without escaped right brace
@@ -143,17 +143,17 @@ describe 'Suggestion List Element', ->
       expect(suggestionListElement.findSnippets('${0:hello}${1:world}')['18']).toEqual('bodyend')
 
       # With escaped right brace
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')).toBeDefined()
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['0']).toEqual('start')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['13']).toEqual('end')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['4']).toEqual('bodystart')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['12']).toEqual('bodyend')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['10']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['11']).toEqual('skip')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['14']).toEqual('start')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['23']).toEqual('end')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['18']).toEqual('bodystart')
-      expect(suggestionListElement.findSnippets('${0:hello{\\\\}}${1:world}')['22']).toEqual('bodyend')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')).toBeDefined()
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['0']).toEqual('start')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['13']).toEqual('end')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['4']).toEqual('bodystart')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['12']).toEqual('bodyend')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['10']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['11']).toEqual('skip')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['14']).toEqual('start')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['23']).toEqual('end')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['18']).toEqual('bodystart')
+      expect(suggestionListElement.findSnippets('${0:hello{\\}}${1:world}')['22']).toEqual('bodyend')
 
     it 'identifies multiple snippets surrounded by text', ->
       expect(suggestionListElement.findSnippets('hello${0:hello}${1:world}')).toBeDefined()

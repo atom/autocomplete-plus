@@ -254,6 +254,12 @@ class SuggestionListElement extends HTMLElement
     return text unless text?.length and text.indexOf('$') isnt -1 # No snippets
     text.replace(@emptySnippetGroupRegex, '') # Remove all occurrences of $0 or ${0} or ${0:}
 
+  # Will convert 'abc(${1:d}, ${2:e})f' => 'abc(d, e)f'
+  #
+  # * `snippets` {Array} from `SnippetParser.findSnippets`
+  # * `text` {String} to remove snippets from
+  #
+  # Returns {String}
   removeSnippetsFromText: (snippets, text) ->
     return text unless text.length and snippets?.length
     index = 0
@@ -264,6 +270,17 @@ class SuggestionListElement extends HTMLElement
     result += text.slice(index, text.length) if index isnt text.length
     result
 
+
+  # Computes the indices of snippets in the resulting string from
+  # `removeSnippetsFromText`.
+  #
+  # * `snippets` {Array} from `SnippetParser.findSnippets`
+  #
+  # e.g. A replacement of 'abc(${1:d})e' is replaced to 'abc(d)e' will result in
+  #
+  # `{4: SnippetStartAndEnd}`
+  #
+  # Returns {Object} of {index: SnippetStart|End|StartAndEnd}
   findSnippetIndices: (snippets) ->
     return unless snippets?
     indices = {}
@@ -280,9 +297,15 @@ class SuggestionListElement extends HTMLElement
       else
         indices[startIndex] = SnippetStart
         indices[endIndex] = SnippetEnd
-
     indices
 
+  # Finds the indices of the chars in text that are matched by replacementPrefix
+  #
+  # e.g. text = 'abcde', replacementPrefix = 'acd' Will result in
+  #
+  # {0: true, 2: true, 3: true}
+  #
+  # Returns an {Object}
   findCharacterMatcheIndices: (text, replacementPrefix) ->
     return unless text?.length and replacementPrefix?.length
     matches = {}

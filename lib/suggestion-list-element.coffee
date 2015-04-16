@@ -31,9 +31,7 @@ DefaultSuggestionTypeIconHTML =
 
 class SuggestionListElement extends HTMLElement
   maxItems: 200
-  snippetRegex: /\$\{[0-9]+:([^}]+)\}/g
-  snippetMarkerChar: '|'
-  snippetMarkerRegex: /\|/g
+  emptySnippetGroupRegex: /(\$\{\d+\:\})|(\$\{\d+\})|(\$\d+)/ig
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
@@ -207,7 +205,7 @@ class SuggestionListElement extends HTMLElement
       typeIcon.classList.add(type) if type
 
     wordSpan = li.querySelector('.word')
-    wordSpan.innerHTML = @getHighlightedHTML(text, snippet, replacementPrefix)
+    wordSpan.innerHTML = @getDisplayHTML(text, snippet, replacementPrefix)
 
     leftLabelSpan = li.querySelector('.left-label')
     if leftLabelHTML?
@@ -225,49 +223,145 @@ class SuggestionListElement extends HTMLElement
     else
       rightLabelSpan.textContent = ''
 
-  getHighlightedHTML: (text, snippet, replacementPrefix) ->
-    # 1. Pull the snippets out, replacing with placeholder
-    # 2. Highlight relevant characters
-    # 3. Place snippet HTML back at the placeholders
+  getDisplayHTML: (text, snippet, replacementPrefix) ->
+    # 1. Highlight relevant characters
+    # 2. Remove snippet metadata and wrap snippets for context
 
-    # Pull out snippet
-    # e.g. replacementPrefix: 'a', snippet: 'abc(${d}, ${e})f'
-    # ->   replacement: 'abc(|, |)f'
-    replacement = text
-    snippetCompletions = []
-    if _.isString(snippet)
-      replacement = snippet.replace @snippetRegex, (match, snippetText) =>
-        snippetCompletions.push "<span class=\"snippet-completion\">#{snippetText}</span>"
-        @snippetMarkerChar
+    replacement = if _.isString(snippet) then @removeEmptySnippets(snippet) else text
+    return replacement unless replacement?.length
 
-    # Add spans for replacement prefix
-    # e.g. replacement: 'abc(|, |)f'
-    # ->   highlightedHTML: '<span class="character-match">a</span>bc(|, |)f'
-    highlightedHTML = ''
+    snippets = if _.isString(snippet) then @findSnippets(replacement) else {}
+    replacementText = if _.isString(snippet) then @removeSnippetsFromText(snippets, replacement) else replacement
+    characterMatches = @findCharacterMatches(replacementText, replacementPrefix, snippets)
+
+    displayHTML = ''
+    offset = 0
+    i = 0
+    loop
+      if snippets["#{i}"] is 'start' or snippets["#{i}"] is 'end' or snippets["#{i}"] is 'skip'
+        displayHTML += '<span class="snippet-completion">' if snippets["#{i}"] is 'start'
+        displayHTML += '</span>' if snippets["#{i}"] is 'end'
+        offset += 1
+      else
+        if i - offset >= 0 and characterMatches["#{i - offset}"]?
+          displayHTML += '<span class="character-match">' + replacement[i] + '</span>'
+        else
+          displayHTML += replacement[i]
+
+      i += 1
+      break if i >= replacement.length
+
+    displayHTML
+
+  removeEmptySnippets: (text) ->
+    return text unless text?.length and text.indexOf('$') isnt -1 # No snippets
+    text.replace(@emptySnippetGroupRegex, '') # Remove all occurrences of $0 or ${0} or ${0:}
+
+  removeSnippetsFromText: (snippets, text) ->
+    return text unless text.length > 0 and text.indexOf('$') isnt -1 and snippets? # No snippets
+    result = ''
+    i = 0
+    loop
+      result += text[i] unless snippets["#{i}"] is 'skip' or snippets["#{i}"] is 'start' or snippets["#{i}"] is 'end'
+      break if i >= text.length
+      i += 1
+
+    result
+
+  findCharacterMatches: (text, replacementPrefix) ->
+    return {} unless text?.length and replacementPrefix?.length
+    matches = {}
     wordIndex = 0
-    lastWordIndex = 0
     for ch, i in replacementPrefix
-      while wordIndex < replacement.length and replacement[wordIndex].toLowerCase() isnt ch.toLowerCase()
+      while wordIndex < text.length and text[wordIndex].toLowerCase() isnt ch.toLowerCase()
         wordIndex += 1
-
-      break if wordIndex >= replacement.length
-      preChar = replacement.substring(lastWordIndex, wordIndex)
-      highlightedChar = "<span class=\"character-match\">#{replacement[wordIndex]}</span>"
-      highlightedHTML = "#{highlightedHTML}#{preChar}#{highlightedChar}"
+      break if wordIndex >= text.length
+      matches[wordIndex] = true
       wordIndex += 1
-      lastWordIndex = wordIndex
 
-    highlightedHTML += replacement.substring(lastWordIndex)
+    matches
 
-    # Place the snippets back at the placeholders
-    # e.g. highlightedHTML: '<span class="character-match">a</span>bc(|, |)f'
-    # ->   highlightedHTML: '<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f'
-    if snippetCompletions.length
-      completionIndex = 0
-      highlightedHTML = highlightedHTML.replace @snippetMarkerRegex, (match, snippetText) ->
-        snippetCompletions[completionIndex++]
+  findSnippets: (text) ->
+    return {} unless text.length > 0 and text.indexOf('$') isnt -1 # No snippets
+    snippets = {}
 
-    highlightedHTML
+    inSnippet = false
+    inSnippetBody = false
+    snippetStart = -1
+    snippetEnd = -1
+    bodyStart = -1
+    bodyEnd = -1
+
+    # We're not using a regex because escaped right braces cannot be tracked without lookbehind,
+    # which doesn't exist yet for javascript; consequently we need to iterate through each character.
+    # This might feel ugly, but it's necessary.
+    for char, index in text.split('')
+      if inSnippet and snippetEnd is index
+        snippets["#{snippetStart}"] = 'start'
+        for i in [snippetStart + 1...bodyStart]
+          snippets["#{i}"] = 'skip'
+        snippets["#{bodyStart}"] = 'bodystart'
+        snippets["#{bodyEnd}"] = 'bodyend'
+        snippets["#{snippetEnd}"] = 'end'
+        inSnippet = false
+        inBody = false
+        snippetStart = -1
+        snippetEnd = -1
+        bodyStart = -1
+        bodyEnd = -1
+        continue
+
+      inBody = true if inSnippet and index >= bodyStart and index <= bodyEnd
+      inBody = false if inSnippet and (index > bodyEnd or index < bodyStart)
+      inBody = false if bodyStart is -1 or bodyEnd is -1
+      continue if inSnippet and not inBody
+
+      continue if inSnippet and inBody
+
+      # Determine if we've found a new snippet
+      if not inSnippet and text.indexOf('${', index) is index
+        # Find index of colon
+        colonIndex = text.indexOf(':', index + 3)
+        if colonIndex isnt -1
+          # Disqualify snippet unless the text between '${' and ':' are digits
+          groupStart = index + 2
+          groupEnd = colonIndex - 1
+          if groupEnd >= groupStart
+            for i in [groupStart...groupEnd]
+              colonIndex = -1 if isNaN(parseInt(text.charAt(i)))
+          else
+            colonIndex = -1
+
+        # Find index of '}'
+        rightBraceIndex = -1
+        if colonIndex isnt -1
+          i = index + 4
+          loop
+            rightBraceIndex = text.indexOf('}', i)
+            break if rightBraceIndex is -1
+            if text.charAt(rightBraceIndex - 1) is '\\'
+              snippets["#{rightBraceIndex - 1}"] = 'skip'
+            else
+              break
+            i = rightBraceIndex + 1
+
+        if colonIndex isnt -1 and rightBraceIndex isnt -1 and colonIndex < rightBraceIndex
+          inSnippet = true
+          inBody = false
+          snippetStart = index
+          snippetEnd = rightBraceIndex
+          bodyStart = colonIndex + 1
+          bodyEnd = rightBraceIndex - 1
+          continue
+        else
+          inSnippet = false
+          inBody = false
+          snippetStart = -1
+          snippetEnd = -1
+          bodyStart = -1
+          bodyEnd = -1
+
+    snippets
 
   dispose: ->
     @subscriptions.dispose()

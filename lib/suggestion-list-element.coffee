@@ -254,6 +254,16 @@ class SuggestionListElement extends HTMLElement
     return text unless text?.length and text.indexOf('$') isnt -1 # No snippets
     text.replace(@emptySnippetGroupRegex, '') # Remove all occurrences of $0 or ${0} or ${0:}
 
+  removeSnippetsFromText: (snippets, text) ->
+    return text unless text.length and snippets?.length
+    index = 0
+    result = ''
+    for {snippetStart, snippetEnd, body} in snippets
+      result += text.slice(index, snippetStart) + body
+      index = snippetEnd + 1
+    result += text.slice(index, text.length) if index isnt text.length
+    result
+
   findSnippetIndices: (snippets) ->
     return unless snippets?
     indices = {}
@@ -272,16 +282,6 @@ class SuggestionListElement extends HTMLElement
         indices[endIndex] = SnippetEnd
 
     indices
-
-  removeSnippetsFromText: (snippets, text) ->
-    return text unless text.length and snippets?.length
-    index = 0
-    result = ''
-    for {snippetStart, snippetEnd, body} in snippets
-      result += text.slice(index, snippetStart) + body
-      index = snippetEnd + 1
-    result += text.slice(index, text.length) if index isnt text.length
-    result
 
   findCharacterMatcheIndices: (text, replacementPrefix) ->
     return unless text?.length and replacementPrefix?.length

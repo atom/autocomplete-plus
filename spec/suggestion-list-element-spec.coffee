@@ -30,26 +30,26 @@ describe 'Suggestion List Element', ->
       replacementPrefix = 'a'
       expect(suggestionListElement.getHighlightedHTML(text, snippet, replacementPrefix)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f')
 
+  describe 'findCharacterMatches', ->
+    it 'finds matches when no snippets exist', ->
+      expect(suggestionListElement.findCharacterMatches('hello', 'h', [])).toEqual([0])
+      expect(suggestionListElement.findCharacterMatches('hello', 'hl', [])).toEqual([0,2])
+      expect(suggestionListElement.findCharacterMatches('hello', 'hlo', [])).toEqual([0,2,4])
+
+    it 'finds matches when snippets exist', ->
+      expect(suggestionListElement.findCharacterMatches('${0:hello}', 'h', suggestionListElement.findSnippets('${0:hello}'))).toEqual([4])
+      expect(suggestionListElement.findCharacterMatches('${0:hello}', 'hl', suggestionListElement.findSnippets('${0:hello}'))).toEqual([4,6])
+      expect(suggestionListElement.findCharacterMatches('${0:hello}', 'hlo', suggestionListElement.findSnippets('${0:hello}'))).toEqual([4,6,8])
+      expect(suggestionListElement.findCharacterMatches('${0:hello}world', 'hw', suggestionListElement.findSnippets('${0:hello}world'))).toEqual([4,10])
+      expect(suggestionListElement.findCharacterMatches('${0:hello}world', 'hlw', suggestionListElement.findSnippets('${0:hello}world'))).toEqual([4,6,10])
+      expect(suggestionListElement.findCharacterMatches('${0:hello}world', 'hlow', suggestionListElement.findSnippets('${0:hello}world'))).toEqual([4,6,8,10])
+      expect(suggestionListElement.findCharacterMatches('hello${0:world}', 'hw', suggestionListElement.findSnippets('hello${0:world}'))).toEqual([0,9])
+      expect(suggestionListElement.findCharacterMatches('hello${0:world}', 'hlw', suggestionListElement.findSnippets('hello${0:world}'))).toEqual([0,2,9])
+      expect(suggestionListElement.findCharacterMatches('hello${0:world}', 'hlow', suggestionListElement.findSnippets('hello${0:world}'))).toEqual([0,2,4,9])
+
   describe 'findSnippets', ->
     it 'has no results when no snippets exist', ->
       expect(suggestionListElement.findSnippets('hello')).toEqual([])
-
-    it 'has no results when only empty snippets exist', ->
-      expect(suggestionListElement.findSnippets('hello$0')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${0}')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${0}')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello$0')).toEqual([])
-      expect(suggestionListElement.findSnippets('$0hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello$0hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello$1000hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${0}')).toEqual([])
-      expect(suggestionListElement.findSnippets('${0}hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${0}hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${1000}hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${0:}')).toEqual([])
-      expect(suggestionListElement.findSnippets('${0:}hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${0:}hello')).toEqual([])
-      expect(suggestionListElement.findSnippets('hello${1000:}hello')).toEqual([])
 
     it 'identifies a single snippet', ->
       # Without escaped right brace
@@ -229,12 +229,3 @@ describe 'Suggestion List Element', ->
       expect(suggestionListElement.removeEmptySnippets('${0:}hello')).toBe('hello')
       expect(suggestionListElement.removeEmptySnippets('hello${0:}hello')).toBe('hellohello')
       expect(suggestionListElement.removeEmptySnippets('hello${1000:}hello')).toBe('hellohello')
-
-  describe 'enhanceSnippet', ->
-    it 'wraps a snippet group', ->
-      expect(suggestionListElement.enhanceSnippet('${0:hello}')).toBe('<span class="snippet-completion">hello</span>')
-      expect(suggestionListElement.enhanceSnippet('${1000:hello}')).toBe('<span class="snippet-completion">hello</span>')
-
-    it 'tolerates an escaped right brace', ->
-      expect(suggestionListElement.enhanceSnippet('${0:hello{\\\\}}')).toBe('<span class="snippet-completion">hello{}</span>')
-      expect(suggestionListElement.enhanceSnippet('${1000:hello{\\\\}}')).toBe('<span class="snippet-completion">hello{}</span>')

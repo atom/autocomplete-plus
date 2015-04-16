@@ -112,24 +112,24 @@ describe 'SymbolProvider', ->
     editor.setText('function abc(){}\nfunction abc(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [0, 1]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [0, 1]
 
     editor.setCursorBufferPosition([2, 100])
     editor.insertText('\n\nfunction omg(){}; function omg(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 3]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3, 3]
 
     editor.selectLeft(16)
     editor.backspace()
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3]
 
     editor.insertText('\nfunction omg(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toEqual [3, 4]
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3, 4]
 
     editor.setText('')
     advanceClock(provider.changeUpdateDelay)
@@ -148,7 +148,7 @@ describe 'SymbolProvider', ->
     # rows when there are several changes before the change delay is
     # triggered. So we're just making sure the row is in there.
     suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForEditorPath(editor.getPath())).toContain 3
+    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toContain 3
 
   it "does not output suggestions from the other buffer", ->
     [results, coffeeEditor] = []
@@ -162,6 +162,74 @@ describe 'SymbolProvider', ->
     runs ->
       advanceClock 1 # build the new wordlist
       expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength 0
+
+  describe "when the editor's path changes", ->
+    it "continues to track changes on the new path", ->
+      buffer = editor.getBuffer()
+
+      expect(provider.isWatchingEditor(editor)).toBe true
+      expect(provider.isWatchingBuffer(buffer)).toBe true
+      expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
+
+      buffer.setPath('cats.js')
+
+      expect(provider.isWatchingEditor(editor)).toBe true
+      expect(provider.isWatchingBuffer(buffer)).toBe true
+
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
+      expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
+      editor.insertText('function aNewFunction(){};')
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
+
+  describe "when multiple editors track the same buffer", ->
+    [leftPane, rightPane, rightEditor] = []
+    beforeEach ->
+      pane = atom.workspace.paneForItem(editor)
+      rightPane = pane.splitRight(copyActiveItem: true)
+      rightEditor = rightPane.getItems()[0]
+
+      expect(provider.isWatchingEditor(editor)).toBe true
+      expect(provider.isWatchingEditor(rightEditor)).toBe true
+
+    it "watches the both the old and new editor for changes", ->
+      rightEditor.moveToBottom()
+      rightEditor.moveToBeginningOfLine()
+
+      expect(suggestionsForPrefix(provider, rightEditor, 'anew')).not.toContain 'aNewFunction'
+      rightEditor.insertText('function aNewFunction(){};')
+      expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain 'aNewFunction'
+
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
+
+      expect(suggestionsForPrefix(provider, editor, 'somenew')).not.toContain 'someNewFunction'
+      editor.insertText('function someNewFunction(){};')
+      expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain 'someNewFunction'
+
+    it "stops watching editors and removes content from symbol store as they are destroyed", ->
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+
+      buffer = editor.getBuffer()
+      editor.destroy()
+      expect(provider.isWatchingBuffer(buffer)).toBe true
+      expect(provider.isWatchingEditor(editor)).toBe false
+      expect(provider.isWatchingEditor(rightEditor)).toBe true
+
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+
+      rightEditor.insertText('function aNewFunction(){};')
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+
+      rightPane.destroy()
+      expect(provider.isWatchingBuffer(buffer)).toBe false
+      expect(provider.isWatchingEditor(editor)).toBe false
+      expect(provider.isWatchingEditor(rightEditor)).toBe false
+
+      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeFalsy()
+      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
 
   describe "when includeCompletionsFromAllBuffers is enabled", ->
     beforeEach ->

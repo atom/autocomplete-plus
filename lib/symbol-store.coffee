@@ -13,41 +13,78 @@ class Symbol
 
   getCount: -> @count
 
-  bufferRowsForEditorPath: (editorPath) ->
-    @metadataByPath[editorPath]?.bufferRows
+  bufferRowsForBufferPath: (bufferPath) ->
+    @metadataByPath[bufferPath]?.bufferRows
 
-  addInstance: (editorPath, bufferRow, scopeChain) ->
-    @metadataByPath[editorPath] ?= {}
-    @metadataByPath[editorPath].bufferRows ?= []
-    @metadataByPath[editorPath].bufferRows.push bufferRow
-    @metadataByPath[editorPath].scopeChains ?= {}
-    unless @metadataByPath[editorPath].scopeChains[scopeChain]?
+  countForBufferPath: (bufferPath) ->
+    metadata = @metadataByPath[bufferPath]
+    bufferPathCount = 0
+    if metadata?
+      bufferPathCount += scopeCount for scopeChain, scopeCount of metadata.scopeChains
+    bufferPathCount
+
+  clearForBufferPath: (bufferPath) ->
+    bufferPathCount = @countForBufferPath(bufferPath)
+    if bufferPathCount > 0
+      @count -= bufferPathCount
+      delete @metadataByPath[bufferPath]
+
+  updateForPathChange: (oldPath, newPath) ->
+    @metadataByPath[newPath] = @metadataByPath[oldPath]
+    delete @metadataByPath[oldPath]
+
+  adjustBufferRows: (bufferPath, adjustmentStartRow, adjustmentDelta) ->
+    bufferRows = @metadataByPath[bufferPath]?.bufferRows
+    return unless bufferRows?
+    index = binaryIndexOf(bufferRows, adjustmentStartRow)
+    length = bufferRows.length
+    while index < length
+      bufferRows[index] += adjustmentDelta
+      index++
+    return
+
+  addInstance: (bufferPath, bufferRow, scopeChain) ->
+    @metadataByPath[bufferPath] ?= {}
+    @addBufferRow(bufferPath, bufferRow)
+    @metadataByPath[bufferPath].scopeChains ?= {}
+    unless @metadataByPath[bufferPath].scopeChains[scopeChain]?
       @type = null
-      @metadataByPath[editorPath].scopeChains[scopeChain] = 0
-    @metadataByPath[editorPath].scopeChains[scopeChain] += 1
+      @metadataByPath[bufferPath].scopeChains[scopeChain] = 0
+    @metadataByPath[bufferPath].scopeChains[scopeChain] += 1
     @count += 1
 
-  removeInstance: (editorPath, bufferRow, scopeChain) ->
-    return unless @metadataByPath[editorPath]?
+  removeInstance: (bufferPath, bufferRow, scopeChain) ->
+    return unless @metadataByPath[bufferPath]?
 
-    bufferRows = @metadataByPath[editorPath].bufferRows
-    removeItemFromArray(bufferRows, bufferRow) if bufferRows?
+    @removeBufferRow(bufferPath, bufferRow)
 
-    if @metadataByPath[editorPath].scopeChains[scopeChain]?
+    if @metadataByPath[bufferPath].scopeChains[scopeChain]?
       @count -= 1
-      @metadataByPath[editorPath].scopeChains[scopeChain] -= 1
+      @metadataByPath[bufferPath].scopeChains[scopeChain] -= 1
 
-      if @metadataByPath[editorPath].scopeChains[scopeChain] is 0
-        delete @metadataByPath[editorPath].scopeChains[scopeChain]
+      if @metadataByPath[bufferPath].scopeChains[scopeChain] is 0
+        delete @metadataByPath[bufferPath].scopeChains[scopeChain]
         @type = null
 
-      if getObjectLength(@metadataByPath[editorPath].scopeChains) is 0
-        delete @metadataByPath[editorPath]
+      if getObjectLength(@metadataByPath[bufferPath].scopeChains) is 0
+        delete @metadataByPath[bufferPath]
+
+  addBufferRow: (bufferPath, row) ->
+    @metadataByPath[bufferPath].bufferRows ?= []
+    bufferRows = @metadataByPath[bufferPath].bufferRows
+    index = binaryIndexOf(bufferRows, row)
+    bufferRows.splice(index, 0, row)
+
+  removeBufferRow: (bufferPath, row) ->
+    bufferRows = @metadataByPath[bufferPath].bufferRows
+    return unless bufferRows
+    index = binaryIndexOf(bufferRows, row)
+    bufferRows.splice(index, 1) if bufferRows[index] is row
 
   isSingleInstanceOf: (word) ->
     @text is word and @count is 1
 
-  appliesToConfig: (config) ->
+  appliesToConfig: (config, bufferPath) ->
     @type = null if @cachedConfig isnt config
 
     unless @type?
@@ -61,7 +98,10 @@ class Symbol
               typePriority = options.typePriority
       @cachedConfig = config
 
-    @type?
+    if bufferPath?
+      @type? and @countForBufferPath(bufferPath) > 0
+    else
+      @type?
 
 module.exports =
 class SymbolStore
@@ -70,8 +110,14 @@ class SymbolStore
   constructor: (@wordRegex) ->
     @clear()
 
-  clear: ->
-    @symbolMap = {}
+  clear: (bufferPath) ->
+    if bufferPath?
+      for symbolKey, symbol of @symbolMap
+        symbol.clearForBufferPath(bufferPath)
+        delete @symbolMap[symbolKey] if symbol.getCount() is 0
+    else
+      @symbolMap = {}
+    return
 
   getLength: -> @count
 
@@ -79,30 +125,42 @@ class SymbolStore
     symbolKey = @getKey(symbolKey)
     @symbolMap[symbolKey]
 
-  symbolsForConfig: (config, wordUnderCursor) ->
+  symbolsForConfig: (config, bufferPath, wordUnderCursor) ->
     symbols = []
     for symbolKey, symbol of @symbolMap
-      symbols.push(symbol) if symbol.appliesToConfig(config) and not symbol.isSingleInstanceOf(wordUnderCursor)
+      symbols.push(symbol) if symbol.appliesToConfig(config, bufferPath) and not symbol.isSingleInstanceOf(wordUnderCursor)
     for type, options of config
       symbols = symbols.concat(options.suggestions) if options.suggestions
     symbols
 
-  addToken: (token, editorPath, bufferRow) =>
-    # This could be made async...
-    text = @getTokenText(token)
-    scopeChain = @getTokenScopeChain(token)
-    matches = text.match(@wordRegex)
-    if matches?
-      @addSymbol(symbolText, editorPath, bufferRow, scopeChain) for symbolText in matches
+  adjustBufferRows: (editor, oldRange, newRange) ->
+    adjustmentStartRow = oldRange.end.row + 1
+    adjustmentDelta = newRange.getRowCount() - oldRange.getRowCount()
+    for key, symbol of @symbolMap
+      symbol.adjustBufferRows(editor.getPath(), adjustmentStartRow, adjustmentDelta)
     return
 
-  removeToken: (token, editorPath, bufferRow) =>
+  updateForPathChange: (oldPath, newPath) ->
+    for key, symbol of @symbolMap
+      symbol.updateForPathChange(oldPath, newPath)
+    return
+
+  addToken: (token, bufferPath, bufferRow) =>
     # This could be made async...
     text = @getTokenText(token)
     scopeChain = @getTokenScopeChain(token)
     matches = text.match(@wordRegex)
     if matches?
-      @removeSymbol(symbolText, editorPath, bufferRow, scopeChain) for symbolText in matches
+      @addSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
+    return
+
+  removeToken: (token, bufferPath, bufferRow) =>
+    # This could be made async...
+    text = @getTokenText(token)
+    scopeChain = @getTokenScopeChain(token)
+    matches = text.match(@wordRegex)
+    if matches?
+      @removeSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
     return
 
   addTokensInBufferRange: (editor, bufferRange) ->
@@ -124,20 +182,20 @@ class SymbolStore
   Private Methods
   ###
 
-  addSymbol: (symbolText, editorPath, bufferRow, scopeChain) ->
+  addSymbol: (symbolText, bufferPath, bufferRow, scopeChain) ->
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     unless symbol?
       @symbolMap[symbolKey] = symbol = new Symbol(symbolText)
       @count += 1
 
-    symbol.addInstance(editorPath, bufferRow, scopeChain)
+    symbol.addInstance(bufferPath, bufferRow, scopeChain)
 
-  removeSymbol: (symbolText, editorPath, bufferRow, scopeChain) =>
+  removeSymbol: (symbolText, bufferPath, bufferRow, scopeChain) =>
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     if symbol?
-      symbol.removeInstance(editorPath, bufferRow, scopeChain)
+      symbol.removeInstance(bufferPath, bufferRow, scopeChain)
       if symbol.getCount() is 0
         delete @symbolMap[symbolKey]
         @count -= 1
@@ -159,11 +217,24 @@ class SymbolStore
     # some words are reserved, like 'constructor' :/
     value + '$$'
 
-removeItemFromArray = (array, item) ->
-  index = array.indexOf(item)
-  array.splice(index, 1) if index > -1
-
 getObjectLength = (object) ->
   count = 0
   count += 1 for k, v of object
   count
+
+binaryIndexOf = (array, searchElement) ->
+  minIndex = 0
+  maxIndex = array.length - 1
+
+  while minIndex <= maxIndex
+    currentIndex = (minIndex + maxIndex) / 2 | 0
+    currentElement = array[currentIndex]
+
+    if currentElement < searchElement
+      minIndex = currentIndex + 1
+    else if (currentElement > searchElement)
+      maxIndex = currentIndex - 1
+    else
+      return currentIndex
+
+  minIndex

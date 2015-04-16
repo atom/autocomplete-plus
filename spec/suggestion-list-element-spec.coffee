@@ -89,7 +89,7 @@ describe 'Suggestion List Element', ->
   describe 'findCharacterMatches', ->
     assertMatches = (text, replacementPrefix, truthyIndices) ->
       text = suggestionListElement.removeEmptySnippets(text)
-      snippets = suggestionListElement.findSnippets(text)
+      snippets = suggestionListElement.snippetParser.findSnippets(text)
       text = suggestionListElement.removeSnippetsFromText(snippets, text)
       matches = suggestionListElement.findCharacterMatcheIndices(text, replacementPrefix)
       for i in [0...text.length]

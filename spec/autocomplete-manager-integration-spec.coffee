@@ -357,7 +357,7 @@ describe 'Autocomplete Manager', ->
               charMatch = editorView.querySelector('.autocomplete-plus li span.word .character-match')
               expect(word.textContent).toBe 'ab(c)c'
               expect(charMatch.textContent).toBe 'c'
-              expect(charMatch.parentNode.parentNode).toHaveClass 'word'
+              expect(charMatch.parentNode).toHaveClass 'snippet-completion'
 
           it "does not highlight the snippet html when highlight beginning of the word", ->
             spyOn(provider, 'getSuggestions').andCallFake ->
@@ -379,7 +379,7 @@ describe 'Autocomplete Manager', ->
               expect(charMatches[1].textContent).toBe 'e'
               expect(charMatches[1].parentNode).toHaveClass 'word'
               expect(charMatches[2].textContent).toBe 'f'
-              expect(charMatches[2].parentNode.parentNode).toHaveClass 'word'
+              expect(charMatches[2].parentNode).toHaveClass 'snippet-completion'
 
     describe "when a replacementPrefix is not specified", ->
       beforeEach ->

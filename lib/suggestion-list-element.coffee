@@ -177,6 +177,8 @@ class SuggestionListElement extends HTMLElement
     li.remove() while li = @ol.childNodes[items.length]
     @selectedLi?.scrollIntoView(false)
 
+    @descriptionContainer.style['max-width'] = "#{@offsetWidth}px"
+
     if @suggestionListFollows is 'Word'
       firstChild = @ol.childNodes[0]
       wordContainer = firstChild?.querySelector('.word-container')

@@ -91,7 +91,7 @@ describe 'Suggestion List Element', ->
       text = suggestionListElement.removeEmptySnippets(text)
       snippets = suggestionListElement.snippetParser.findSnippets(text)
       text = suggestionListElement.removeSnippetsFromText(snippets, text)
-      matches = suggestionListElement.findCharacterMatcheIndices(text, replacementPrefix)
+      matches = suggestionListElement.findCharacterMatchIndices(text, replacementPrefix)
       for i in [0...text.length]
         if truthyIndices.indexOf(i) isnt -1
           expect(matches?[i]).toBeTruthy()

@@ -166,9 +166,9 @@ class SuggestionListElement extends HTMLElement
     li = document.createElement('li')
     li.textContent = 'test'
     @ol.appendChild(li)
-    itemHeight = li.offsetHeight
+    @itemHeight ?= li.offsetHeight
     paddingHeight = parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom']) ? 0
-    @scroller.style['max-height'] = "#{@maxVisibleSuggestions * itemHeight + paddingHeight}px"
+    @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @itemHeight + paddingHeight}px"
     li.remove()
 
   renderItems: ->

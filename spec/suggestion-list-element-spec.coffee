@@ -40,7 +40,7 @@ describe 'Suggestion List Element', ->
       html = suggestionListElement.getDisplayHTML(text, snippet, replacementPrefix)
       expect(html).toBe('<span class="character-match">a</span>bc(d, e)f')
 
-    it 'outputs correct html when there are character matches', ->
+    it 'outputs correct html when there are not character matches', ->
       text = ''
       snippet = 'abc(d, e)f'
       replacementPrefix = 'omg'

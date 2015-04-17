@@ -236,7 +236,7 @@ class SuggestionListElement extends HTMLElement
       snippets = @snippetParser.findSnippets(replacementText)
       replacementText = @removeSnippetsFromText(snippets, replacementText)
       snippetIndices = @findSnippetIndices(snippets)
-    characterMatchIndices = @findCharacterMatcheIndices(replacementText, replacementPrefix)
+    characterMatchIndices = @findCharacterMatchIndices(replacementText, replacementPrefix)
 
     displayHTML = ''
     for character, index in replacementText
@@ -306,7 +306,7 @@ class SuggestionListElement extends HTMLElement
   # {0: true, 2: true, 3: true}
   #
   # Returns an {Object}
-  findCharacterMatcheIndices: (text, replacementPrefix) ->
+  findCharacterMatchIndices: (text, replacementPrefix) ->
     return unless text?.length and replacementPrefix?.length
     matches = {}
     wordIndex = 0

@@ -78,4 +78,4 @@ class SnippetParser
         body = removeCharFromString(body, bodyIndex - bodyStart - i)
     body
 
-removeCharFromString = (str, index) -> str.slice(0, index) + str.slice(index + 1);
+removeCharFromString = (str, index) -> str.slice(0, index) + str.slice(index + 1)

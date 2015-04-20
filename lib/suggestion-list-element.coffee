@@ -49,7 +49,6 @@ class SuggestionListElement extends HTMLElement
     @parentElement.classList.add('autocomplete-plus')
     @addActiveClassToEditor()
     @renderList() unless @ol
-    @calculateMaxListHeight()
     @itemsChanged()
 
   detachedCallback: ->
@@ -103,12 +102,13 @@ class SuggestionListElement extends HTMLElement
     else
       @descriptionContainer.style.display = 'none'
 
-  itemsChanged: ->
+  itemsChanged: -> @render()
+
+  render: ->
     @selectedIndex = 0
     atom.views.pollAfterNextUpdate?()
-    atom.views.updateDocument =>
-      @renderItems()
-      @updateDescription()
+    atom.views.updateDocument @renderItems.bind(this)
+    atom.views.readDocument @readUIPropsFromDOM.bind(this)
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
@@ -132,8 +132,8 @@ class SuggestionListElement extends HTMLElement
 
   setSelectedIndex: (index) ->
     @selectedIndex = index
-    @renderItems()
-    @updateDescription()
+    atom.views.updateDocument @renderSelectedItem.bind(this)
+    atom.views.readDocument @readUIPropsFromDOM.bind(this)
 
   visibleItems: ->
     @model?.items?.slice(0, @maxItems)
@@ -162,29 +162,43 @@ class SuggestionListElement extends HTMLElement
     @descriptionContent = @querySelector('.suggestion-description-content')
     @descriptionMoreLink = @querySelector('.suggestion-description-more-link')
 
-  calculateMaxListHeight: ->
-    li = document.createElement('li')
-    li.textContent = 'test'
-    @ol.appendChild(li)
-    itemHeight = li.offsetHeight
-    paddingHeight = parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom']) ? 0
-    @scroller.style['max-height'] = "#{@maxVisibleSuggestions * itemHeight + paddingHeight}px"
-    li.remove()
-
   renderItems: ->
     items = @visibleItems() ? []
     @renderItem(item, index) for item, index in items
     li.remove() while li = @ol.childNodes[items.length]
-    @selectedLi?.scrollIntoView(false)
+    @updateDescription()
 
-    @descriptionContainer.style['max-width'] = "#{@offsetWidth}px"
+  renderSelectedItem: ->
+    @selectedLi.classList.remove('selected')
+    @selectedLi = @ol.childNodes[@selectedIndex]
+    @selectedLi.classList.add('selected')
+    @scrollSelectedItemIntoView()
+    @updateDescription()
 
+  # This is reading the DOM in the updateDOM cycle. If we dont, there is a flicker :/
+  scrollSelectedItemIntoView: ->
+    scrollTop = @scroller.scrollTop
+    selectedItemTop = @selectedLi.offsetTop
+    itemHeight = @uiProps.itemHeight
+    scrollerHeight = @maxVisibleSuggestions * itemHeight + @uiProps.paddingHeight
+    if selectedItemTop < scrollTop or selectedItemTop + itemHeight > scrollTop + scrollerHeight
+      @selectedLi.scrollIntoView(false)
+
+  readUIPropsFromDOM: ->
+    wordContainer = @selectedLi?.querySelector('.word-container')
+
+    @uiProps ?= {}
+    @uiProps.marginLeft = -(wordContainer?.offsetLeft ? 0)
+    @uiProps.itemHeight ?= @selectedLi.offsetHeight
+    @uiProps.paddingHeight ?= (parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom'])) ? 0
+
+    #TODO: use a new core API for batching sync writes after a read.
+    @updateUIForChangedProps()
+
+  updateUIForChangedProps: ->
+    @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"
     if @suggestionListFollows is 'Word'
-      firstChild = @ol.childNodes[0]
-      wordContainer = firstChild?.querySelector('.word-container')
-      marginLeft = 0
-      marginLeft = -wordContainer.offsetLeft if wordContainer?
-      @style['margin-left'] = "#{marginLeft}px"
+      @style['margin-left'] = "#{@uiProps.marginLeft}px"
 
   renderItem: ({iconHTML, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]

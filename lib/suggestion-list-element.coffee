@@ -172,11 +172,6 @@ class SuggestionListElement extends HTMLElement
     li.remove() while li = @ol.childNodes[items.length]
     @updateDescription()
 
-    if @suggestionListFollows is 'Word'
-      wordContainer = @selectedLi?.querySelector('.word-container')
-      marginLeft = -(wordContainer?.offsetLeft ? 0)
-      @style['margin-left'] = "#{marginLeft}px"
-
   renderSelectedItem: ->
     @selectedLi.classList.remove('selected')
     @selectedLi = @ol.childNodes[@selectedIndex]
@@ -194,14 +189,20 @@ class SuggestionListElement extends HTMLElement
       @selectedLi.scrollIntoView(false)
 
   readUIPropsFromDOM: ->
-    @oldUIProps = @uiProps
-    @uiProps =
-      itemHeight: @oldUIProps?.height ? @selectedLi.offsetHeight
-      paddingHeight: @oldUIProps?.paddingHeight ? (parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom'])) ? 0
-    @renderDisposables.add atom.views.updateDocument @updateUIForChangedProps.bind(this)
+    wordContainer = @selectedLi?.querySelector('.word-container')
+
+    @uiProps ?= {}
+    @uiProps.marginLeft = -(wordContainer?.offsetLeft ? 0)
+    @uiProps.itemHeight ?= @selectedLi.offsetHeight
+    @uiProps.paddingHeight ?= (parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom'])) ? 0
+
+    #TODO: use a new core API for batching sync writes after a read.
+    @updateUIForChangedProps()
 
   updateUIForChangedProps: ->
     @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"
+    if @suggestionListFollows is 'Word'
+      @style['margin-left'] = "#{@uiProps.marginLeft}px"
 
   renderItem: ({iconHTML, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]

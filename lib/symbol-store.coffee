@@ -30,7 +30,9 @@ class Symbol
       delete @metadataByPath[bufferPath]
 
   updateForPathChange: (oldPath, newPath) ->
-    @metadataByPath[newPath] = @metadataByPath[oldPath]
+    if @metadataByPath[oldPath]?
+      # Each symbol may not be in each path
+      @metadataByPath[newPath] = @metadataByPath[oldPath]
     delete @metadataByPath[oldPath]
 
   adjustBufferRows: (bufferPath, adjustmentStartRow, adjustmentDelta) ->

@@ -77,6 +77,7 @@ class SymbolProvider
 
       bufferSubscriptions.add buffer.onDidChangePath =>
         oldBufferPath = bufferPath
+        return unless @watchedBuffers[oldBufferPath]?
         bufferPath = buffer.getPath()
         @watchedBuffers[bufferPath] = @watchedBuffers[oldBufferPath]
         @symbolStore.updateForPathChange(oldBufferPath, bufferPath)

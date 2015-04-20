@@ -174,7 +174,10 @@ describe 'SymbolStore', ->
       expect(symbols[0].type).toBe 'newtype'
 
   describe "when there are multiple files with tokens in the store", ->
+    config = null
     beforeEach ->
+      config = stuff: selectors: Selector.create('.source')
+
       store.addToken({value: 'one', scopes: ['source.coffee']}, 'one.txt', 1)
       store.addToken({value: 'ok', scopes: ['source.coffee']}, 'one.txt', 1)
       store.addToken({value: 'wow', scopes: ['source.coffee']}, 'one.txt', 2)
@@ -184,11 +187,26 @@ describe 'SymbolStore', ->
       store.addToken({value: 'ok', scopes: ['source.coffee']}, 'two.txt', 1)
       store.addToken({value: 'wow', scopes: ['source.coffee']}, 'two.txt', 2)
 
+    describe "when a path changes", ->
+      it "returns the symbols transferred to the new path", ->
+        store.updateForPathChange('one.txt', 'newone.txt')
+        symbols = store.symbolsForConfig(config, 'newone.txt')
+        expect(symbols).toHaveLength 3
+        expect(symbols[0].text).toBe 'one'
+        expect(symbols[1].text).toBe 'ok'
+        expect(symbols[2].text).toBe 'wow'
+
+        store.updateForPathChange('nope.txt', 'another.txt')
+        symbols = store.symbolsForConfig(config, 'another.txt')
+        expect(symbols).toHaveLength 0
+        symbols = store.symbolsForConfig(config, 'newone.txt')
+        expect(symbols).toHaveLength 3
+        expect(symbols[0].text).toBe 'one'
+        expect(symbols[1].text).toBe 'ok'
+        expect(symbols[2].text).toBe 'wow'
+
     describe "::symbolsForConfig(config)", ->
       it "returs symbols based on path", ->
-        config =
-          stuff:
-            selectors: Selector.create('.source')
         symbols = store.symbolsForConfig(config, 'one.txt')
         expect(symbols).toHaveLength 3
         expect(symbols[0].text).toBe 'one'
@@ -198,10 +216,6 @@ describe 'SymbolStore', ->
     describe "::clear()", ->
       describe "when an bufferPaths is specified", ->
         it "removes only the path specified", ->
-          config =
-            stuff:
-              selectors: Selector.create('.source')
-
           symbols = store.symbolsForConfig(config)
           expect(symbols).toHaveLength 4
           expect(symbols[0].text).toBe 'one'

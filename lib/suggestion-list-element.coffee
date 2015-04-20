@@ -107,10 +107,8 @@ class SuggestionListElement extends HTMLElement
   render: ->
     @selectedIndex = 0
     atom.views.pollAfterNextUpdate?()
-    @renderDisposables?.dispose()
-    @renderDisposables = new CompositeDisposable()
-    @renderDisposables.add atom.views.updateDocument @renderItems.bind(this)
-    @renderDisposables.add atom.views.readDocument @readUIPropsFromDOM.bind(this)
+    atom.views.updateDocument @renderItems.bind(this)
+    atom.views.readDocument @readUIPropsFromDOM.bind(this)
 
   addActiveClassToEditor: ->
     editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
@@ -134,10 +132,8 @@ class SuggestionListElement extends HTMLElement
 
   setSelectedIndex: (index) ->
     @selectedIndex = index
-    @renderDisposables?.dispose()
-    @renderDisposables = new CompositeDisposable()
-    @renderDisposables.add atom.views.updateDocument @renderSelectedItem.bind(this)
-    @renderDisposables.add atom.views.readDocument @readUIPropsFromDOM.bind(this)
+    atom.views.updateDocument @renderSelectedItem.bind(this)
+    atom.views.readDocument @readUIPropsFromDOM.bind(this)
 
   visibleItems: ->
     @model?.items?.slice(0, @maxItems)

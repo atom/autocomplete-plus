@@ -39,8 +39,8 @@ Additionally, the keymap can be customized in your keymap.cson:
   'enter': 'autocomplete-plus:confirm'
   'up': 'unset!'
   'down': 'unset!'
-  'ctrl-p': 'autocomplete-plus:select-previous'
-  'ctrl-n': 'autocomplete-plus:select-next'
+  'ctrl-p': 'core:move-up'
+  'ctrl-n': 'core:move-down'
 ```
 
 ## Features

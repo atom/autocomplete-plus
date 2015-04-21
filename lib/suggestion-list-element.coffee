@@ -29,6 +29,8 @@ DefaultSuggestionTypeIconHTML =
   'require': '<i class="icon-package"></i>'
   'module': '<i class="icon-package"></i>'
   'package': '<i class="icon-package"></i>'
+  'tag': '<i class="icon-code"></i>'
+  'attribute': '<i class="icon-tag"></i>'
 
 SnippetStart = 1
 SnippetEnd = 2

@@ -76,8 +76,8 @@ class SymbolProvider
         @symbolStore.addTokensInBufferRange(editor, newRange)
 
       bufferSubscriptions.add buffer.onDidChangePath =>
+        return unless @watchedBuffers[bufferPath]?
         oldBufferPath = bufferPath
-        return unless @watchedBuffers[oldBufferPath]?
         bufferPath = buffer.getPath()
         @watchedBuffers[bufferPath] = @watchedBuffers[oldBufferPath]
         @symbolStore.updateForPathChange(oldBufferPath, bufferPath)

@@ -200,7 +200,7 @@ class SuggestionListElement extends HTMLElement
     if @suggestionListFollows is 'Word'
       @style['margin-left'] = "#{@uiProps.marginLeft}px"
 
-  renderItem: ({iconHTML, type, snippet, text, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
+  renderItem: ({iconHTML, type, snippet, text, displayText, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
     unless li
       li = document.createElement('li')
@@ -227,7 +227,7 @@ class SuggestionListElement extends HTMLElement
       typeIcon.classList.add(type) if type
 
     wordSpan = li.querySelector('.word')
-    wordSpan.innerHTML = @getDisplayHTML(text, snippet, replacementPrefix)
+    wordSpan.innerHTML = @getDisplayHTML(text, snippet, displayText, replacementPrefix)
 
     leftLabelSpan = li.querySelector('.left-label')
     if leftLabelHTML?
@@ -245,9 +245,11 @@ class SuggestionListElement extends HTMLElement
     else
       rightLabelSpan.textContent = ''
 
-  getDisplayHTML: (text, snippet, replacementPrefix) ->
+  getDisplayHTML: (text, snippet, displayText, replacementPrefix) ->
     replacementText = text
-    if typeof snippet is 'string'
+    if typeof displayText is 'string'
+      replacementText = displayText
+    else if typeof snippet is 'string'
       replacementText = @removeEmptySnippets(snippet)
       snippets = @snippetParser.findSnippets(replacementText)
       replacementText = @removeSnippetsFromText(snippets, replacementText)

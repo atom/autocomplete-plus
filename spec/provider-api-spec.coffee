@@ -96,6 +96,26 @@ describe 'Provider API', ->
         expect(suggestionListView.querySelector('.suggestion-description-content')).toHaveText('There be documentation')
         expect(suggestionListView.querySelector('.suggestion-description-more-link').style.display).toBe 'none'
 
+    it "favors the `displayText` over text or snippet suggestion options", ->
+      testProvider =
+        selector: '.source.js, .source.coffee'
+        getSuggestions: (options) ->
+          [
+            text: 'ohai',
+            snippet: 'snippet'
+            displayText: 'displayOHAI'
+            replacementPrefix: 'o',
+            rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        expect(suggestionListView.querySelector('.word')).toHaveText('displayOHAI')
+
     it 'correctly displays the suggestion description and More link', ->
       testProvider =
         selector: '.source.js, .source.coffee'

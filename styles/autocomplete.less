@@ -1,3 +1,6 @@
+// TODO: remove this fallback when 193 is out for a while
+.attr-syntax-color() { @syntax-color-attribute: #888; } .attr-syntax-color();
+
 @import "ui-variables";
 @import "syntax-variables";
 
@@ -173,6 +176,7 @@ autocomplete-suggestion-list {
     color: @text-color-subtle;
   }
 
+  .make-type-icon(attribute, @syntax-color-attribute);
   .make-type-icon(builtin, @syntax-color-keyword);
   .make-type-icon(class, @syntax-color-class);
   .make-type-icon(constant, @syntax-color-constant);

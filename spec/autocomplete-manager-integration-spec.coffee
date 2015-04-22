@@ -192,6 +192,20 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(prefix).toBe '.'
 
+      it "calls with prefix after non \\b word break", ->
+        editor.insertText('=""')
+        editor.insertText(' ')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe ' '
+
+      it "calls with prefix after non \\b word break", ->
+        editor.insertText('?')
+        editor.insertText(' ')
+        waitForAutocomplete()
+        runs ->
+          expect(prefix).toBe ' '
+
     describe "when the character entered is not at the cursor position", ->
       beforeEach ->
         editor.setText 'some text ok'

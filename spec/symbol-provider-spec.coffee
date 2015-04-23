@@ -41,7 +41,7 @@ describe 'SymbolProvider', ->
       autocompleteManager = mainModule.autocompleteManager
       advanceClock 1
       editorView = atom.views.getView(editor)
-      provider = autocompleteManager.providerManager.fuzzyProvider
+      provider = autocompleteManager.providerManager.defaultProvider
 
   it "runs a completion ", ->
     expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()

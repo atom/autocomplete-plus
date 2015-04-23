@@ -60,7 +60,7 @@ var quicksort = function () {
       mainModule.autocompleteManager?.ready
 
     runs ->
-      advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
+      advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
       autocompleteManager = mainModule.autocompleteManager
       displaySuggestions = autocompleteManager.displaySuggestions
       spyOn(autocompleteManager, 'displaySuggestions').andCallFake (suggestions, options) ->

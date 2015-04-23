@@ -35,7 +35,7 @@ describe 'Autocomplete', ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->
-        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
+        advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
         editorView = atom.views.getView(editor)
 
     it 'closes the suggestion list when saving', ->

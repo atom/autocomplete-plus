@@ -14,8 +14,8 @@ ProviderMetadata = null
 
 module.exports =
 class ProviderManager
-  fuzzyProvider: null
-  fuzzyRegistration: null
+  defaultProvider: null
+  defaultProviderRegistration: null
   store: null
   subscriptions: null
   globalBlacklist: null
@@ -23,14 +23,16 @@ class ProviderManager
   constructor: ->
     @subscriptions = new CompositeDisposable
     @globalBlacklist = new CompositeDisposable
+    @subscriptions.add(@globalBlacklist)
     @providers = []
-    @subscriptions.add(atom.config.observe('autocomplete-plus.enableBuiltinProvider', (value) => @toggleFuzzyProvider(value)))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.enableBuiltinProvider', (value) => @toggleDefaultProvider(value)))
     @subscriptions.add(atom.config.observe('autocomplete-plus.scopeBlacklist', (value) => @setGlobalBlacklist(value)))
 
   dispose: ->
-    @toggleFuzzyProvider(false)
+    @toggleDefaultProvider(false)
     @subscriptions?.dispose()
     @subscriptions = null
+    @globalBlacklist = null
     @providers = null
 
   providersForScopeDescriptor: (scopeDescriptor) =>
@@ -51,7 +53,7 @@ class ProviderManager
         if providerMetadata.shouldDisableDefaultProvider(scopeChain)
           disableDefaultProvider = true
 
-    matchingProviders = _.without(matchingProviders, @fuzzyProvider) if disableDefaultProvider
+    matchingProviders = _.without(matchingProviders, @defaultProvider) if disableDefaultProvider
     matchingProviders = (provider for provider in matchingProviders when (provider.inclusionPriority ? 0) >= lowestIncludedPriority)
     stableSort matchingProviders, (providerA, providerB) =>
       specificityA = @metadataForProvider(providerA).getSpecificity(scopeChain)
@@ -60,23 +62,23 @@ class ProviderManager
       difference = (providerB.suggestionPriority ? 1) - (providerA.suggestionPriority ? 1) if difference is 0
       difference
 
-  toggleFuzzyProvider: (enabled) =>
+  toggleDefaultProvider: (enabled) =>
     return unless enabled?
 
     if enabled
-      return if @fuzzyProvider? or @fuzzyRegistration?
+      return if @defaultProvider? or @defaultProviderRegistration?
       if atom.config.get('autocomplete-plus.defaultProvider') is 'Symbol'
         SymbolProvider ?= require('./symbol-provider')
-        @fuzzyProvider = new SymbolProvider()
+        @defaultProvider = new SymbolProvider()
       else
         FuzzyProvider ?= require('./fuzzy-provider')
-        @fuzzyProvider = new FuzzyProvider()
-      @fuzzyRegistration = @registerProvider(@fuzzyProvider)
+        @defaultProvider = new FuzzyProvider()
+      @defaultProviderRegistration = @registerProvider(@defaultProvider)
     else
-      @fuzzyRegistration.dispose() if @fuzzyRegistration?
-      @fuzzyProvider.dispose() if @fuzzyProvider?
-      @fuzzyRegistration = null
-      @fuzzyProvider = null
+      @defaultProviderRegistration?.dispose()
+      @defaultProvider?.dispose()
+      @defaultProviderRegistration = null
+      @defaultProvider = null
 
   setGlobalBlacklist: (globalBlacklist) =>
     @globalBlacklistSelectors = null
@@ -121,7 +123,7 @@ class ProviderManager
     apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
 
     if apiIs20
-      if provider.id? and provider isnt @fuzzyProvider
+      if provider.id? and provider isnt @defaultProvider
         grim ?= require 'grim'
         grim.deprecate """
           Autocomplete provider '#{provider.constructor.name}(#{provider.id})'

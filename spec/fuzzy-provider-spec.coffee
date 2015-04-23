@@ -28,13 +28,13 @@ describe 'FuzzyProvider', ->
 
       runs ->
         autocompleteManager = mainModule.autocompleteManager
-        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
+        advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
         editorView = atom.views.getView(editor)
 
     it 'adds words to the wordlist after they have been written', ->
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
-      provider = autocompleteManager.providerManager.fuzzyProvider
+      provider = autocompleteManager.providerManager.defaultProvider
 
       expect(provider.tokenList.getToken('somethingNew')).toBeUndefined()
       editor.insertText('somethingNew')
@@ -43,7 +43,7 @@ describe 'FuzzyProvider', ->
     it 'removes words that are no longer in the buffer', ->
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
-      provider = autocompleteManager.providerManager.fuzzyProvider
+      provider = autocompleteManager.providerManager.defaultProvider
 
       expect(provider.tokenList.getToken('somethingNew')).toBeUndefined()
       editor.insertText('somethingNew')
@@ -54,7 +54,7 @@ describe 'FuzzyProvider', ->
       expect(provider.tokenList.getToken('somethingNe')).toBe 'somethingNe'
 
     it "adds completions from editor.completions", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
+      provider = autocompleteManager.providerManager.defaultProvider
       atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], scopeSelector: '.source.js')
 
       editor.moveToBottom()
@@ -68,7 +68,7 @@ describe 'FuzzyProvider', ->
       expect(results[0].text).toBe 'abcd'
 
     it "adds completions from settings", ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
+      provider = autocompleteManager.providerManager.defaultProvider
       atom.config.set('editor.completions', {builtin: suggestions: ['nope']}, scopeSelector: '.source.js')
 
       editor.moveToBottom()
@@ -83,7 +83,7 @@ describe 'FuzzyProvider', ->
 
     # Fixing This Fixes #76
     xit 'adds words to the wordlist with unicode characters', ->
-      provider = autocompleteManager.providerManager.fuzzyProvider
+      provider = autocompleteManager.providerManager.defaultProvider
 
       expect(provider.tokenList.indexOf('somēthingNew')).toEqual(-1)
       editor.insertText('somēthingNew')
@@ -93,7 +93,7 @@ describe 'FuzzyProvider', ->
     # Fixing This Fixes #196
     xit 'removes words from the wordlist when they no longer exist in any open buffers', ->
       # Not sure we should fix this; could have a significant performance impacts
-      provider = autocompleteManager.providerManager.fuzzyProvider
+      provider = autocompleteManager.providerManager.defaultProvider
 
       expect(provider.tokenList.indexOf('bogos')).toEqual(-1)
       editor.insertText('bogos = 1')

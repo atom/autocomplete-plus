@@ -35,7 +35,7 @@ describe 'Autocomplete', ->
 
       runs ->
         editorView = atom.views.getView(editor)
-        advanceClock(mainModule.autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
+        advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
 
     afterEach ->
       autocomplete?.dispose()

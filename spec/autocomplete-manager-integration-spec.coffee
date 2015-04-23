@@ -1194,7 +1194,7 @@ describe 'Autocomplete Manager', ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->
-        advanceClock(autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
+        advanceClock(autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
 
     describe 'when fuzzyProvider is disabled', ->
       it 'should not show the suggestion list', ->

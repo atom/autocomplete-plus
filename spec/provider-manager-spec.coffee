@@ -39,7 +39,7 @@ describe 'Provider Manager', ->
       expect(providerManager.subscriptions).toBeNull()
       expect(providerManager.defaultProvider).toBeNull()
 
-    it 'registers FuzzyProvider for all scopes', ->
+    it 'registers the default provider for all scopes', ->
       expect(_.size(providerManager.providersForScopeDescriptor('*'))).toBe(1)
       expect(providerManager.providersForScopeDescriptor('*')[0]).toBe(providerManager.defaultProvider)
 
@@ -209,7 +209,7 @@ describe 'Provider Manager', ->
     beforeEach ->
       atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
 
-    it 'does not register FuzzyProvider for all scopes', ->
+    it 'does not register the default provider for all scopes', ->
       expect(_.size(providerManager.providersForScopeDescriptor('*'))).toBe(0)
       expect(providerManager.defaultProvider).toEqual(null)
       expect(providerManager.defaultProviderRegistration).toEqual(null)
@@ -266,38 +266,38 @@ describe 'Provider Manager', ->
       providerManager.registerProvider(testProvider4)
 
     it 'returns providers in the correct order for the given scope chain', ->
-      fuzzyProvider = providerManager.defaultProvider
+      defaultProvider = providerManager.defaultProvider
 
       providers = providerManager.providersForScopeDescriptor('.source.other')
       expect(providers).toHaveLength 2
       expect(providers[0]).toEqual testProvider3
-      expect(providers[1]).toEqual fuzzyProvider
+      expect(providers[1]).toEqual defaultProvider
 
       providers = providerManager.providersForScopeDescriptor('.source.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual testProvider1
       expect(providers[1]).toEqual testProvider3
-      expect(providers[2]).toEqual fuzzyProvider
+      expect(providers[2]).toEqual defaultProvider
 
       providers = providerManager.providersForScopeDescriptor('.source.js .comment')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual testProvider4
       expect(providers[1]).toEqual testProvider1
       expect(providers[2]).toEqual testProvider3
-      expect(providers[3]).toEqual fuzzyProvider
+      expect(providers[3]).toEqual defaultProvider
 
       providers = providerManager.providersForScopeDescriptor('.source.js .variable.js')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual testProvider2
       expect(providers[1]).toEqual testProvider1
       expect(providers[2]).toEqual testProvider3
-      expect(providers[3]).toEqual fuzzyProvider
+      expect(providers[3]).toEqual defaultProvider
 
       providers = providerManager.providersForScopeDescriptor('.source.js .other.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual testProvider1
       expect(providers[1]).toEqual testProvider3
-      expect(providers[2]).toEqual fuzzyProvider
+      expect(providers[2]).toEqual defaultProvider
 
     it 'does not return providers if the scopeChain exactly matches a global blacklist item', ->
       expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
@@ -320,20 +320,20 @@ describe 'Provider Manager', ->
       expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
 
     it 'filters a provider if the scopeChain matches a provider blacklist item', ->
-      fuzzyProvider = providerManager.defaultProvider
+      defaultProvider = providerManager.defaultProvider
 
       providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .other.js')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual testProvider2
       expect(providers[1]).toEqual testProvider1
       expect(providers[2]).toEqual testProvider3
-      expect(providers[3]).toEqual fuzzyProvider
+      expect(providers[3]).toEqual defaultProvider
 
       providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .comment2.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual testProvider1
       expect(providers[1]).toEqual testProvider3
-      expect(providers[2]).toEqual fuzzyProvider
+      expect(providers[2]).toEqual defaultProvider
 
     it 'filters a provider if the scopeChain matches a provider providerblacklist item', ->
       providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .other.js')
@@ -350,12 +350,12 @@ describe 'Provider Manager', ->
       expect(providers[2]).toEqual(testProvider3)
 
   describe "when inclusion priorities are used", ->
-    [accessoryProvider1, accessoryProvider2, verySpecificProvider, mainProvider, fuzzyProvider] = []
+    [accessoryProvider1, accessoryProvider2, verySpecificProvider, mainProvider, defaultProvider] = []
 
     beforeEach ->
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
-      fuzzyProvider = providerManager.defaultProvider
+      defaultProvider = providerManager.defaultProvider
 
       accessoryProvider1 =
         selector: '*'
@@ -392,7 +392,7 @@ describe 'Provider Manager', ->
       providers = providerManager.providersForScopeDescriptor('.source.coffee')
       expect(providers).toHaveLength 2
       expect(providers[0]).toEqual accessoryProvider1
-      expect(providers[1]).toEqual fuzzyProvider
+      expect(providers[1]).toEqual defaultProvider
 
     it 'exclude the lower priority provider, the default, when one with a higher proirity excludes the lower', ->
       providers = providerManager.providersForScopeDescriptor('.source.js')

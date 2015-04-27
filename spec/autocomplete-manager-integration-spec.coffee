@@ -1210,7 +1210,7 @@ describe 'Autocomplete Manager', ->
       runs ->
         advanceClock(autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
 
-    describe 'when fuzzyProvider is disabled', ->
+    describe 'when the built-in provider is disabled', ->
       it 'should not show the suggestion list', ->
         atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()

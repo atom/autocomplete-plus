@@ -46,7 +46,7 @@ module.exports =
       order: 6
     includeCompletionsFromAllBuffers:
       title: 'Include Completions From All Buffers'
-      description: 'For grammars with no registered provider(s), FuzzyProvider will include completions from all buffers, instead of just the buffer you are currently editing.'
+      description: 'For grammars with no registered provider(s), the default provider will include completions from all buffers, instead of just the buffer you are currently editing.'
       type: 'boolean'
       default: false
       order: 7

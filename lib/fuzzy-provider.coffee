@@ -17,7 +17,6 @@ class FuzzyProvider
   selector: '*'
   inclusionPriority: 0
   suggestionPriority: 0
-  id: 'autocomplete-plus-fuzzyprovider'
 
   constructor: ->
     @debouncedBuildWordList()

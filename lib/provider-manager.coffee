@@ -154,11 +154,6 @@ class ProviderManager
 
     return if @isProviderRegistered(provider)
 
-    # TODO API: Deprecate the 1.0 APIs
-    selector = provider.selector
-    disabledSelector = provider.disableForSelector
-    disabledSelector = provider.blacklist unless apiIs20
-
     @addProvider(provider, apiVersion)
 
     disposable = new Disposable =>

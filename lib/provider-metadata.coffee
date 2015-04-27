@@ -1,4 +1,3 @@
-{specificity} = require 'clear-cut'
 {Selector} = require 'selector-kit'
 {selectorForScopeChain, selectorsMatchScopeChain} = require './scope-helpers'
 

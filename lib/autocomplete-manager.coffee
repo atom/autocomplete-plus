@@ -30,7 +30,7 @@ class AutocompleteManager
   suppressForClasses: []
   shouldDisplaySuggestions: false
   manualActivationStrictPrefixes: null
-  prefixRegex: /(\b|(['"~`!@#\$%^&*\(\)\{\}\[\]=\+,/\?>]))((\w+[\w-]*)|([.:;[{(< ]+))$/
+  prefixRegex: /(\b|['"~`!@#\$%^&*\(\)\{\}\[\]=\+,/\?>])((\w+[\w-]*)|([.:;[{(< ]+))$/
   wordPrefixRegex: /^\w+[\w-]*$/
 
   constructor: ->
@@ -254,7 +254,7 @@ class AutocompleteManager
 
   getPrefix: (editor, bufferPosition) ->
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
-    @prefixRegex.exec(line)?[3] or ''
+    @prefixRegex.exec(line)?[2] or ''
 
   getDefaultReplacementPrefix: (prefix) ->
     if @wordPrefixRegex.test(prefix)

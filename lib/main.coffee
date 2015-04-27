@@ -1,4 +1,4 @@
-{Disposable, CompositeDisposable} = require 'atom'
+{CompositeDisposable} = require 'atom'
 
 module.exports =
   config:
@@ -38,7 +38,7 @@ module.exports =
       order: 5
     scopeBlacklist:
       title: 'Scope Blacklist'
-      description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/advanced/scopes-and-scope-descriptors'
+      description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors'
       type: 'array'
       default: []
       items:
@@ -101,6 +101,9 @@ module.exports =
         type: 'string'
       order: 15
 
+  autocompleteManager: null
+  subscriptions: null
+
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
     # Upgrade to the new config key name
@@ -109,18 +112,20 @@ module.exports =
       atom.config.transact ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', oldMax)
         atom.config.unset('autocomplete-plus.maxSuggestions')
-
+    @subscriptions = new CompositeDisposable
     @getAutocompleteManager()
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
-    @autocompleteManager?.dispose()
+    @subscriptions.dispose()
+    @subscriptions = null
     @autocompleteManager = null
 
   getAutocompleteManager: ->
     unless @autocompleteManager?
       AutocompleteManager = require './autocomplete-manager'
       @autocompleteManager = new AutocompleteManager()
+      @subscriptions.add(@autocompleteManager)
     @autocompleteManager
 
   consumeSnippets: (snippetsManager) ->

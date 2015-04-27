@@ -16,6 +16,7 @@ module.exports =
 class ProviderManager
   defaultProvider: null
   defaultProviderRegistration: null
+  providers: null
   store: null
   subscriptions: null
   globalBlacklist: null

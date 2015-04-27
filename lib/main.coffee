@@ -117,7 +117,7 @@ module.exports =
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
-    @subscriptions.dispose()
+    @subscriptions?.dispose()
     @subscriptions = null
     @autocompleteManager = null
 

@@ -222,7 +222,7 @@ class SymbolProvider
   getLocalityScore: (bufferPosition, bufferRowsContainingSymbol) ->
     if bufferRowsContainingSymbol?
       rowDifference = Number.MAX_VALUE
-      rowDifference = Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in bufferRowsContainingSymbol
+      rowDifference = (Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in bufferRowsContainingSymbol)
       locality = @computeLocalityModifier(rowDifference)
       locality
     else

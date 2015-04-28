@@ -1245,6 +1245,7 @@ describe 'Autocomplete Manager', ->
 
       it 'shows the suggestion list on backspace if allowed', ->
         runs ->
+          atom.config.set('autocomplete-plus.backspaceTriggersAutocomplete', true)
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
           editor.moveToBottom()

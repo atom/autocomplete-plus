@@ -90,8 +90,8 @@ class SuggestionListElement extends HTMLElement
     item = item.parentNode while item.tagName isnt 'LI' and item isnt this
     item if item.tagName is 'LI'
 
-  updateDescription: ->
-    item = @visibleItems()[@selectedIndex]
+  updateDescription: (item) ->
+    item = item ? @visibleItems()[@selectedIndex]
     if item.description? and item.description.length > 0
       @descriptionContainer.style.display = 'block'
       @descriptionContent.textContent = item.description
@@ -165,10 +165,26 @@ class SuggestionListElement extends HTMLElement
     @descriptionMoreLink = @querySelector('.suggestion-description-more-link')
 
   renderItems: ->
+    @style.width = null
     items = @visibleItems() ? []
-    @renderItem(item, index) for item, index in items
+    longestDesc = 0
+    longestDescIndex = null
+    for item, index in items
+      @renderItem(item, index)
+      descLength = @descriptionLength(item)
+      if descLength > longestDesc
+        longestDesc = descLength
+        longestDescIndex = index
     li.remove() while li = @ol.childNodes[items.length]
-    @updateDescription()
+    @updateDescription(items[longestDescIndex])
+
+  descriptionLength: (item) ->
+    count = 0
+    if item.description?
+      count += item.description.length
+    if item.descriptionMoreURL?
+      count += 6
+    count
 
   renderSelectedItem: ->
     @selectedLi.classList.remove('selected')
@@ -190,6 +206,7 @@ class SuggestionListElement extends HTMLElement
     wordContainer = @selectedLi?.querySelector('.word-container')
 
     @uiProps ?= {}
+    @uiProps.width = @offsetWidth
     @uiProps.marginLeft = -(wordContainer?.offsetLeft ? 0)
     @uiProps.itemHeight ?= @selectedLi.offsetHeight
     @uiProps.paddingHeight ?= (parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom'])) ? 0
@@ -202,8 +219,10 @@ class SuggestionListElement extends HTMLElement
 
   updateUIForChangedProps: ->
     @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"
+    @style.width = "#{@uiProps.width}px"
     if @suggestionListFollows is 'Word'
       @style['margin-left'] = "#{@uiProps.marginLeft}px"
+    @updateDescription()
 
   renderItem: ({iconHTML, type, snippet, text, displayText, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
@@ -292,7 +311,6 @@ class SuggestionListElement extends HTMLElement
       index = snippetEnd + 1
     result += text.slice(index, text.length) if index isnt text.length
     result
-
 
   # Computes the indices of snippets in the resulting string from
   # `removeSnippetsFromText`.

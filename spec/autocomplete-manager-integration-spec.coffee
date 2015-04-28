@@ -237,12 +237,11 @@ describe 'Autocomplete Manager', ->
             expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
 
       describe "when a suggestion description is specified", ->
-        beforeEach ->
+        it "shows the maxVisibleSuggestions in the suggestion popup, but with extra height for the description", ->
           spyOn(provider, 'getSuggestions').andCallFake ->
             list = ['ab', 'abc', 'abcd', 'abcde']
             ({text, description: "#{text} yeah ok"} for text in list)
 
-        it "shows the maxVisibleSuggestions in the suggestion popup, but with extra height for the description", ->
           triggerAutocompletion(editor, true, 'a')
 
           runs ->
@@ -253,6 +252,38 @@ describe 'Autocomplete Manager', ->
             suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
             expect(suggestionList.offsetHeight).toBe(3 * itemHeight)
             expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
+
+        it "adjusts the width when the description changes", ->
+          listWidth = null
+          spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+            list =[
+              {text: 'ab',    description: 'mmmmmmmmmmmmmmmmmmmmmmmmmm'}
+              {text: 'abc',   description: 'mmmmmmmmmmmmmmmmmmmmmm'}
+              {text: 'abcd',  description: 'mmmmmmmmmmmmmmmmmm'}
+              {text: 'abcde', description: 'mmmmmmmmmmmmmm'}
+            ]
+            (item for item in list when item.text.startsWith(prefix))
+
+          triggerAutocompletion(editor, true, 'a')
+
+          runs ->
+            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList).toExist()
+
+            listWidth = parseInt(suggestionList.style.width)
+            expect(listWidth).toBeGreaterThan 0
+
+            editor.insertText('b')
+            editor.insertText('c')
+            waitForAutocomplete()
+
+          runs ->
+            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList).toExist()
+
+            newWidth = parseInt(suggestionList.style.width)
+            expect(newWidth).toBeGreaterThan 0
+            expect(newWidth).toBeLessThan listWidth
 
     describe "when match.snippet is used", ->
       beforeEach ->

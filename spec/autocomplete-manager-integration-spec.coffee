@@ -1456,5 +1456,6 @@ describe 'Autocomplete Manager', ->
   pixelLeftForBufferPosition = (bufferPosition) ->
     gutterWidth ?= editorView.shadowRoot.querySelector('.gutter').offsetWidth
     left = editorView.pixelPositionForBufferPosition(bufferPosition).left
+    left += editorView.offsetLeft
     left = gutterWidth + left if requiresGutter()
     "#{left}px"

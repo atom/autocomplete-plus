@@ -77,7 +77,7 @@ module.exports =
       title: 'Allow Backspace To Trigger Autocomplete'
       description: 'If enabled, typing `backspace` will show the suggestion list if suggestions are available. If disabled, suggestions will not be shown while backspacing.'
       type: 'boolean'
-      default: true
+      default: false
       order: 12
     suggestionListFollows:
       title: 'Suggestions List Follows'

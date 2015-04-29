@@ -250,7 +250,8 @@ describe 'Autocomplete Manager', ->
             expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
 
             suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-            expect(suggestionList.offsetHeight).toBe(3 * itemHeight)
+            descriptionHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus .suggestion-description')).height)
+            expect(suggestionList.offsetHeight).toBe(2 * itemHeight + descriptionHeight)
             expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
 
         it "adjusts the width when the description changes", ->

@@ -504,39 +504,41 @@ describe 'Autocomplete Manager', ->
 
       it "keeps the suggestion list planted at the beginning of the prefix when typing", ->
         overlayElement = null
-        editor.insertText('x')
+        # Lost of x's to keep the margin offset away from the left of the window
+        # See https://github.com/atom-community/autocomplete-plus/issues/399
+        editor.insertText('xxxxxxxxxx xx')
         editor.insertText(' ')
         waitForAutocomplete()
 
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.insertText('a')
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.insertText('b')
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.backspace()
           editor.backspace()
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.backspace()
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 0])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 11])
 
           editor.insertText(' ')
           editor.insertText('a')
@@ -545,7 +547,7 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
       it "when broken by a non-word character, the suggestion list is positioned at the beginning of the new word", ->
         overlayElement = null

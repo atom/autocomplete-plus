@@ -504,7 +504,7 @@ describe 'Autocomplete Manager', ->
 
       it "keeps the suggestion list planted at the beginning of the prefix when typing", ->
         overlayElement = null
-        # Lost of x's to keep the margin offset away from the left of the window
+        # Lots of x's to keep the margin offset away from the left of the window
         # See https://github.com/atom-community/autocomplete-plus/issues/399
         editor.insertText('xxxxxxxxxx xx')
         editor.insertText(' ')

@@ -481,14 +481,14 @@ describe 'Autocomplete Manager', ->
         atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
 
       it "opens to the correct position, and correctly closes on cancel", ->
-        editor.insertText('x ab')
+        editor.insertText('xxxxxxxxxxx ab')
         triggerAutocompletion(editor, false, 'c')
 
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
           expect(overlayElement).toExist()
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
       it "displays the suggestion list with a negative margin to align the prefix with the word-container", ->
         spyOn(provider, 'getSuggestions').andCallFake (options) ->
@@ -551,7 +551,7 @@ describe 'Autocomplete Manager', ->
 
       it "when broken by a non-word character, the suggestion list is positioned at the beginning of the new word", ->
         overlayElement = null
-        editor.insertText('x')
+        editor.insertText('xxxxxxxxxxx')
         editor.insertText(' abc')
         editor.insertText('d')
         waitForAutocomplete()
@@ -559,8 +559,8 @@ describe 'Autocomplete Manager', ->
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
-          left = editorView.pixelPositionForBufferPosition([0, 2]).left
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          left = editorView.pixelPositionForBufferPosition([0, 12]).left
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
           editor.insertText(' ')
           editor.insertText('a')
@@ -568,7 +568,7 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 7])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 17])
 
           editor.backspace()
           editor.backspace()
@@ -576,7 +576,7 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
     describe 'accepting suggestions', ->
       beforeEach ->

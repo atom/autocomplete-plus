@@ -250,7 +250,8 @@ describe 'Autocomplete Manager', ->
             expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
 
             suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-            expect(suggestionList.offsetHeight).toBe(3 * itemHeight)
+            descriptionHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus .suggestion-description')).height)
+            expect(suggestionList.offsetHeight).toBe(2 * itemHeight + descriptionHeight)
             expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
 
         it "adjusts the width when the description changes", ->
@@ -480,14 +481,14 @@ describe 'Autocomplete Manager', ->
         atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
 
       it "opens to the correct position, and correctly closes on cancel", ->
-        editor.insertText('x ab')
+        editor.insertText('xxxxxxxxxxx ab')
         triggerAutocompletion(editor, false, 'c')
 
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
           expect(overlayElement).toExist()
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
       it "displays the suggestion list with a negative margin to align the prefix with the word-container", ->
         spyOn(provider, 'getSuggestions').andCallFake (options) ->
@@ -503,39 +504,41 @@ describe 'Autocomplete Manager', ->
 
       it "keeps the suggestion list planted at the beginning of the prefix when typing", ->
         overlayElement = null
-        editor.insertText('x')
+        # Lots of x's to keep the margin offset away from the left of the window
+        # See https://github.com/atom-community/autocomplete-plus/issues/399
+        editor.insertText('xxxxxxxxxx xx')
         editor.insertText(' ')
         waitForAutocomplete()
 
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.insertText('a')
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.insertText('b')
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.backspace()
           editor.backspace()
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
           editor.backspace()
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 0])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 11])
 
           editor.insertText(' ')
           editor.insertText('a')
@@ -544,11 +547,11 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
       it "when broken by a non-word character, the suggestion list is positioned at the beginning of the new word", ->
         overlayElement = null
-        editor.insertText('x')
+        editor.insertText('xxxxxxxxxxx')
         editor.insertText(' abc')
         editor.insertText('d')
         waitForAutocomplete()
@@ -556,8 +559,8 @@ describe 'Autocomplete Manager', ->
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
-          left = editorView.pixelPositionForBufferPosition([0, 2]).left
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          left = editorView.pixelPositionForBufferPosition([0, 12]).left
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
           editor.insertText(' ')
           editor.insertText('a')
@@ -565,7 +568,7 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 7])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 17])
 
           editor.backspace()
           editor.backspace()
@@ -573,7 +576,7 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 2])
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
     describe 'accepting suggestions', ->
       beforeEach ->
@@ -1456,5 +1459,6 @@ describe 'Autocomplete Manager', ->
   pixelLeftForBufferPosition = (bufferPosition) ->
     gutterWidth ?= editorView.shadowRoot.querySelector('.gutter').offsetWidth
     left = editorView.pixelPositionForBufferPosition(bufferPosition).left
+    left += editorView.offsetLeft
     left = gutterWidth + left if requiresGutter()
     "#{left}px"

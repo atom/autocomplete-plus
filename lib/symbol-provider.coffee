@@ -119,6 +119,10 @@ class SymbolProvider
     @config = {}
     allConfigEntries = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
 
+    # Config entries are reverse sorted in order of specificity. We want most
+    # specific to win; this simplifies the loop.
+    allConfigEntries.reverse()
+
     addedConfigEntry = false
     for {value} in allConfigEntries
       if Array.isArray(value)

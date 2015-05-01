@@ -108,9 +108,20 @@ class Symbol
 module.exports =
 class SymbolStore
   count: 0
+  wordRegexes: null
 
   constructor: (@wordRegex) ->
+    @wordRegexes = {}
     @clear()
+
+  setWordRegexForScopeDescriptor: (scopeDescriptor, wordRegex) ->
+    scopes = scopeDescriptor.getScopesArray?() ? scopeDescriptor
+    @wordRegexes[scopes[0]] = wordRegex if scopes?[0]?
+
+  wordRegexForScopeDescriptor: (scopeDescriptor) ->
+    scopes = scopeDescriptor.getScopesArray?() ? scopeDescriptor
+    wordRegex = @wordRegexes[scopes?[0]]
+    wordRegex ? @wordRegex
 
   clear: (bufferPath) ->
     if bufferPath?
@@ -151,7 +162,8 @@ class SymbolStore
     # This could be made async...
     text = @getTokenText(token)
     scopeChain = @getTokenScopeChain(token)
-    matches = text.match(@wordRegex)
+    wordRegex = @wordRegexForScopeDescriptor(token.scopes)
+    matches = text.match(wordRegex)
     if matches?
       @addSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
     return
@@ -160,7 +172,8 @@ class SymbolStore
     # This could be made async...
     text = @getTokenText(token)
     scopeChain = @getTokenScopeChain(token)
-    matches = text.match(@wordRegex)
+    wordRegex = @wordRegexForScopeDescriptor(token.scopes)
+    matches = text.match(wordRegex)
     if matches?
       @removeSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
     return

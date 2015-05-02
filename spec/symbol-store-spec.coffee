@@ -173,6 +173,21 @@ describe 'SymbolStore', ->
       expect(symbols[0].text).toBe 'abc'
       expect(symbols[0].type).toBe 'newtype'
 
+  describe "when different word regexes are specified", ->
+    it "adds tokens matching the scopeDescriptor", ->
+      scopeDescriptor = editor.getRootScopeDescriptor()
+      store.setWordRegexForScopeDescriptor(scopeDescriptor, /[$@][a-z]+/)
+
+      editor.setText('abc @def .ghi $klm\n$klm')
+      expect(store.getLength()).toBe 2
+      expect(store.getSymbol('@def').getCount()).toBe 1
+      expect(store.getSymbol('$klm').getCount()).toBe 2
+
+      editor.setText('abc @def .ghi $klm')
+      expect(store.getLength()).toBe 2
+      expect(store.getSymbol('@def').getCount()).toBe 1
+      expect(store.getSymbol('$klm').getCount()).toBe 1
+
   describe "when there are multiple files with tokens in the store", ->
     config = null
     beforeEach ->

@@ -124,6 +124,7 @@ class SymbolStore
     wordRegex ? @wordRegex
 
   clear: (bufferPath) ->
+    console.log 'rem all', bufferPath
     if bufferPath?
       for symbolKey, symbol of @symbolMap
         symbol.clearForBufferPath(bufferPath)
@@ -164,6 +165,7 @@ class SymbolStore
     scopeChain = @getTokenScopeChain(token)
     wordRegex = @wordRegexForScopeDescriptor(token.scopes)
     matches = text.match(wordRegex)
+    console.log 'matching', text
     if matches?
       @addSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
     return
@@ -198,6 +200,7 @@ class SymbolStore
   ###
 
   addSymbol: (symbolText, bufferPath, bufferRow, scopeChain) ->
+    console.log 'adding', symbolText
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     unless symbol?
@@ -207,6 +210,7 @@ class SymbolStore
     symbol.addInstance(bufferPath, bufferRow, scopeChain)
 
   removeSymbol: (symbolText, bufferPath, bufferRow, scopeChain) =>
+    console.log 'rem', symbolText
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     if symbol?

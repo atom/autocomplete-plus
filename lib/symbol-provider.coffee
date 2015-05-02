@@ -176,8 +176,14 @@ class SymbolProvider
   ###
 
   getSuggestions: (options) =>
-    # No prefix? Don't autocomplete!
-    return unless options.prefix.trim().length
+    prefix = @getPrefix(options)
+    return unless prefix?.trim()
+
+    if prefix isnt options.prefix
+      {editor, bufferPosition, scopeDescriptor} = options
+      options = {editor, bufferPosition, scopeDescriptor, prefix}
+
+    console.log prefix
     @findSuggestionsForWord(options)
 
   findSuggestionsForWord: (options) =>
@@ -198,6 +204,16 @@ class SymbolProvider
       word.replacementPrefix = options.prefix
 
     return words
+
+  getPrefix: ({prefix, editor, bufferPosition}) ->
+    scopeDescriptor = editor.getRootScopeDescriptor()
+    prefixPattern = atom.config.get('autocomplete.symbolPrefixPattern', scope: scopeDescriptor)
+    if prefixPattern
+      prefixRegex = new RegExp(prefixPattern)
+      line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
+      line.match(prefixRegex)?[0]
+    else
+      prefix
 
   wordAtBufferPosition: ({editor, prefix, bufferPosition}) ->
     lineFromPosition = editor.getTextInRange([bufferPosition, [bufferPosition.row, Infinity]])
@@ -249,6 +265,22 @@ class SymbolProvider
 
   buildSymbolList: (editor) =>
     return unless editor?
+
+    scopeDescriptor = editor.getRootScopeDescriptor()
+    symbolPattern = atom.config.get('autocomplete.symbolPattern', scope: scopeDescriptor)
+    if symbolPattern and typeof symbolPattern is 'string'
+      try
+        wordRegex = new RegExp(symbolPattern, 'g')
+        @symbolStore.setWordRegexForScopeDescriptor(scopeDescriptor, wordRegex)
+      catch error
+        console.error """
+          Could not create a regex from pattern `#{symbolPattern}` from
+          'autocomplete.symbolPattern' in scope #{scopeDescriptor}.
+          Please file an issue on the originating language package.
+
+          #{error}
+        """
+
     @symbolStore.clear(editor.getPath())
     @cacheSymbolsFromEditor(editor)
 

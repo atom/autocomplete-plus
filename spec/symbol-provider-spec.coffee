@@ -256,6 +256,30 @@ describe 'SymbolProvider', ->
       results = suggestionsForPrefix(provider, editor, 'item')
       expect(results[0]).toBe 'items'
 
+  fdescribe "when the language specifies an autocomplete.symbolPattern pattern", ->
+    beforeEach ->
+      editor.setText '''
+        var $myvar = 'ok'
+        my
+      '''
+
+    it "calls console.error when the pattern is invalid", ->
+      atom.config.set('autocomplete.symbolPattern', '([a-z]', scopeSelector: '.source.js')
+      spyOn(console, 'error')
+      provider.buildSymbolList(editor)
+      expect(console.error).toHaveBeenCalled()
+      arg = console.error.mostRecentCall.args[0]
+      expect(arg).toContain('`([a-z]`')
+
+    it "uses the config for the scope under the cursor", ->
+      atom.config.set('autocomplete.symbolPattern', '[$][a-z]+', scopeSelector: '.source.js')
+      provider.buildSymbolList(editor)
+
+      editor.setCursorBufferPosition([1, 2])
+      suggestions = suggestionsForPrefix(provider, editor, '$', raw: true)
+      expect(suggestions).toHaveLength 1
+      expect(suggestions[0].text).toBe '$myvar'
+
   describe "when the completions changes between scopes", ->
     beforeEach ->
       editor.setText '''

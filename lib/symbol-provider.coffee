@@ -129,9 +129,7 @@ class SymbolProvider
 
     addedConfigEntry = false
     for {value} in allConfigEntries
-      if Array.isArray(value)
-        @addLegacyConfigEntry(value) if value.length
-      else if typeof value is 'object'
+      if not Array.isArray(value) and typeof value is 'object'
         @addConfigEntry(value)
         addedConfigEntry = true
 

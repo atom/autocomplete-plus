@@ -117,17 +117,19 @@ class SymbolProvider
 
   buildConfig: (scopeDescriptor) ->
     @config = {}
-    allConfigEntries = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
+    legacyCompletions = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
+    allConfigEntries = @settingsForScopeDescriptor(scopeDescriptor, 'autocomplete.symbols')
 
     # Config entries are reverse sorted in order of specificity. We want most
     # specific to win; this simplifies the loop.
     allConfigEntries.reverse()
 
+    for {value} in legacyCompletions
+      @addLegacyConfigEntry(value) if Array.isArray(value) and value.length
+
     addedConfigEntry = false
     for {value} in allConfigEntries
-      if Array.isArray(value)
-        @addLegacyConfigEntry(value) if value.length
-      else if typeof value is 'object'
+      if not Array.isArray(value) and typeof value is 'object'
         @addConfigEntry(value)
         addedConfigEntry = true
 

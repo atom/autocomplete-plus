@@ -106,12 +106,6 @@ module.exports =
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
-    # Upgrade to the new config key name
-    oldMax = atom.config.get('autocomplete-plus.maxSuggestions')
-    if oldMax? and oldMax isnt 10
-      atom.config.transact ->
-        atom.config.set('autocomplete-plus.maxVisibleSuggestions', oldMax)
-        atom.config.unset('autocomplete-plus.maxSuggestions')
     @subscriptions = new CompositeDisposable
     @getAutocompleteManager()
 

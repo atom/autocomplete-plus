@@ -44,7 +44,7 @@ describe 'Autocomplete Manager', ->
           excludeLowerPriority: true
           getSuggestions: ({prefix}) ->
             list = ['ab', 'abc', 'abcd', 'abcde']
-            ({text, replacementPrefix: prefix} for text in list)
+            ({text} for text in list)
         mainModule.consumeProvider(provider)
 
     it "calls the provider's onDidInsertSuggestion method when it exists", ->
@@ -486,9 +486,20 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
-
           expect(overlayElement).toExist()
           expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
+
+      it "displays the suggestion list taking into account the passed back replacementPrefix", ->
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          [{text: '::before', replacementPrefix: '::', leftLabel: 'void'}]
+
+        editor.insertText('xxxxxxxxxxx ab:')
+        triggerAutocompletion(editor, false, ':')
+
+        runs ->
+          overlayElement = editorView.querySelector('.autocomplete-plus')
+          expect(overlayElement).toExist()
+          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
 
       it "displays the suggestion list with a negative margin to align the prefix with the word-container", ->
         spyOn(provider, 'getSuggestions').andCallFake (options) ->

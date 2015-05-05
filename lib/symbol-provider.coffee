@@ -145,6 +145,7 @@ class SymbolProvider
     for type, options of config
       @config[type] ?= {}
       @config[type].selectors = Selector.create(options.selector) if options.selector?
+      @config[type].displaySelectors = Selector.create(options.displaySelector) if options.displaySelector?
       @config[type].typePriority = options.typePriority ? 1
       @config[type].wordRegex = @wordRegex
 
@@ -188,7 +189,7 @@ class SymbolProvider
     @buildConfigIfScopeChanged(options)
 
     bufferPath = if @includeCompletionsFromAllBuffers then null else @editor.getPath()
-    symbolList = @symbolStore.symbolsForConfig(@config, bufferPath, wordUnderCursor)
+    symbolList = @symbolStore.symbolsForConfig(@config, bufferPath, options.scopeDescriptor, wordUnderCursor)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")

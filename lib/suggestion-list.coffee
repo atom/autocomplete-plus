@@ -75,13 +75,20 @@ class SuggestionList
     if atom.config.get('autocomplete-plus.suggestionListFollows') is 'Cursor'
       @showAtCursorPosition(editor, options)
     else
-      @showAtBeginningOfPrefix(editor, options)
+      prefix = options.prefix
+      followRawPrefix = false
+      for item in @items
+        if item.replacementPrefix?
+          prefix = item.replacementPrefix.trim()
+          followRawPrefix = true
+          break
+      @showAtBeginningOfPrefix(editor, prefix, followRawPrefix)
 
-  showAtBeginningOfPrefix: (editor, {prefix}) =>
+  showAtBeginningOfPrefix: (editor, prefix, followRawPrefix=false) =>
     return unless editor?
 
     bufferPosition = editor.getCursorBufferPosition()
-    bufferPosition = bufferPosition.translate([0, -prefix.length]) if @wordPrefixRegex.test(prefix)
+    bufferPosition = bufferPosition.translate([0, -prefix.length]) if followRawPrefix or @wordPrefixRegex.test(prefix)
 
     if @active
       unless bufferPosition.isEqual(@displayBufferPosition)

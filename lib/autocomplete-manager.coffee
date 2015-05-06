@@ -2,6 +2,7 @@
 _ = require 'underscore-plus'
 path = require 'path'
 semver = require 'semver'
+fuzzaldrin = require 'fuzzaldrin'
 
 ProviderManager = require './provider-manager'
 SuggestionList = require './suggestion-list'
@@ -175,6 +176,7 @@ class AutocompleteManager
           suggestion.provider = provider
           @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if activatedManually
 
+        providerSuggestions = @filterSuggestions(providerSuggestions, options) if provider.filterSuggestions
         providerSuggestions
 
     return unless providerPromises?.length
@@ -188,6 +190,16 @@ class AutocompleteManager
           @confirm(suggestions[0])
         else
           @displaySuggestions(suggestions, options)
+
+  filterSuggestions: (suggestions, {prefix}) ->
+    results = []
+    for suggestion in suggestions
+      text = (suggestion.snippet or suggestion.text)
+      suggestionPrefix = suggestion.replacementPrefix ? prefix
+      prefixIsEmpty = not suggestionPrefix or suggestionPrefix is ' '
+      isMatch = not prefixIsEmpty and suggestionPrefix[0].toLowerCase() is text[0].toLowerCase() and fuzzaldrin.score(text, suggestionPrefix) > 0
+      results.push(suggestion) if prefixIsEmpty or isMatch
+    results
 
   # providerSuggestions - array of arrays of suggestions provided by all called providers
   mergeSuggestionsFromProviders: (providerSuggestions) ->

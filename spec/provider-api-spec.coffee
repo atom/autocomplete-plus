@@ -167,8 +167,8 @@ describe 'Provider API', ->
 
         runs ->
           expect(getSuggestions()).toEqual [
-            {text: 'okwow'}
             {text: 'ok'}
+            {text: 'okwow'}
           ]
 
       it 'filters suggestions based on the specified replacementPrefix for each suggestion', ->

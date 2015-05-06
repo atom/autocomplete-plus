@@ -193,13 +193,28 @@ class AutocompleteManager
 
   filterSuggestions: (suggestions, {prefix}) ->
     results = []
-    for suggestion in suggestions
+    for suggestion, i in suggestions
+      # sortScore mostly preserves in the original sorting. The function is
+      # chosen such that suggestions with a very high match score can break out.
+      suggestion.sortScore = Math.max(-i / 10 + 3, 0) + 1
+      suggestion.score = null
+
       text = (suggestion.snippet or suggestion.text)
       suggestionPrefix = suggestion.replacementPrefix ? prefix
       prefixIsEmpty = not suggestionPrefix or suggestionPrefix is ' '
-      isMatch = not prefixIsEmpty and suggestionPrefix[0].toLowerCase() is text[0].toLowerCase() and fuzzaldrin.score(text, suggestionPrefix) > 0
-      results.push(suggestion) if prefixIsEmpty or isMatch
+      firstCharIsMatch = not prefixIsEmpty and suggestionPrefix[0].toLowerCase() is text[0].toLowerCase()
+
+      if prefixIsEmpty
+        results.push(suggestion)
+      if firstCharIsMatch and (score = fuzzaldrin.score(text, suggestionPrefix)) > 0
+        suggestion.score = score * suggestion.sortScore
+        results.push(suggestion)
+
+    results.sort(@reverseSortOnScoreComparator)
     results
+
+  reverseSortOnScoreComparator: (a, b) ->
+    (b.score ? b.sortScore) - (a.score ? a.sortScore)
 
   # providerSuggestions - array of arrays of suggestions provided by all called providers
   mergeSuggestionsFromProviders: (providerSuggestions) ->

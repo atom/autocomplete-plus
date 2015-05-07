@@ -1264,6 +1264,8 @@ describe 'Autocomplete Manager', ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
+
+      waitsFor ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->
@@ -1465,6 +1467,8 @@ describe 'Autocomplete Manager', ->
       # Activate the package
       waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
         mainModule = a.mainModule
+
+      waitsFor ->
         autocompleteManager = mainModule.autocompleteManager
 
     it 'sets the width of the view to be wide enough to contain the longest completion without scrolling', ->

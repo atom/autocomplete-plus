@@ -107,7 +107,8 @@ module.exports =
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
     @subscriptions = new CompositeDisposable
-    @getAutocompleteManager()
+    setImmediate =>
+      @getAutocompleteManager()
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->

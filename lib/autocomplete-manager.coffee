@@ -110,9 +110,9 @@ class AutocompleteManager
 
   handleCommands: =>
     @subscriptions.add atom.commands.add 'atom-text-editor',
-      'autocomplete-plus:activate': =>
+      'autocomplete-plus:activate': (event) =>
         @shouldDisplaySuggestions = true
-        @findSuggestions(true)
+        @findSuggestions(event.detail?.activatedManually ? true)
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it

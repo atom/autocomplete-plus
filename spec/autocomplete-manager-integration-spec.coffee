@@ -756,6 +756,20 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
           expect(editor.getText()).toBe 'omgok'
 
+      it 'does not accept the suggestion if the event detail is activatedManually: false', ->
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          [text: 'omgok']
+
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate', activatedManually: false)
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
       it 'does not auto-accept a single suggestion when filtering', ->
         spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
           list = _.filter ['a', 'abc'], (word) -> word.indexOf(prefix) is 0

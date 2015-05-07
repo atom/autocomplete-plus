@@ -102,7 +102,11 @@ class AutocompleteManager
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
     @subscriptions.add atom.config.observe 'autocomplete-plus.suppressActivationForEditorClasses', (value) =>
-      @suppressForClasses = _.chain(value).map((classNames) -> classNames?.trim().split('.').map((className) -> className?.trim())).compact().value()
+      @suppressForClasses = []
+      for selector in value
+        classes = (className.trim() for className in selector.trim().split('.') when className.trim())
+        @suppressForClasses.push(classes) if classes.length
+      return
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
@@ -431,11 +435,7 @@ class AutocompleteManager
         # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
         # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
         shouldActivate = oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs
-
-      # Suppress activation if the editorView has classes that match the suppression list
-      if shouldActivate
-        for classNames in @suppressForClasses
-          shouldActivate = false if _.intersection(@editorView.classList, classNames)?.length is classNames.length
+      shouldActivate = false if shouldActivate and @shouldSuppressActivationForEditorClasses()
 
     if shouldActivate
       @cancelHideSuggestionListRequest()
@@ -443,6 +443,14 @@ class AutocompleteManager
     else
       @cancelNewSuggestionsRequest()
       @hideSuggestionList()
+
+  shouldSuppressActivationForEditorClasses: ->
+    for classNames in @suppressForClasses
+      containsCount = 0
+      for className in classNames
+        containsCount += 1 if @editorView.classList.contains(className)
+      return true if containsCount is classNames.length
+    false
 
   # Public: Clean up, stop listening to events
   dispose: =>

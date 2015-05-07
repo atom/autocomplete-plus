@@ -1,5 +1,4 @@
 {Range, TextEditor, CompositeDisposable, Disposable}  = require 'atom'
-_ = require 'underscore-plus'
 path = require 'path'
 semver = require 'semver'
 fuzzaldrin = require 'fuzzaldrin'
@@ -147,7 +146,10 @@ class AutocompleteManager
         upgradedOptions = options
       else
         getSuggestions = provider.requestHandler.bind(provider)
-        upgradedOptions = _.extend {}, options,
+        upgradedOptions =
+          editor: options.editor
+          prefix: options.prefix
+          bufferPosition: options.bufferPosition
           position: options.bufferPosition
           scope: options.scopeDescriptor
           scopeChain: options.scopeDescriptor.getScopeChain()
@@ -277,11 +279,21 @@ class AutocompleteManager
     hasDeprecations
 
   displaySuggestions: (suggestions, options) =>
-    suggestions = _.uniq(suggestions, (s) -> s.text + s.snippet)
+    suggestions = @getUniqueSuggestions(suggestions)
     if @shouldDisplaySuggestions and suggestions.length
       @showSuggestionList(suggestions, options)
     else
       @hideSuggestionList()
+
+  getUniqueSuggestions: (suggestions) ->
+    seen = {}
+    result = []
+    for suggestion in suggestions
+      val = suggestion.text + suggestion.snippet
+      unless seen[val]
+        result.push(suggestion)
+        seen[val] = true
+    result
 
   getPrefix: (editor, bufferPosition) ->
     line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])

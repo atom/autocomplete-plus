@@ -45,7 +45,6 @@ describe 'Provider Manager', ->
 
     it 'adds providers', ->
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
-      console.log providerManager.subscriptions
       expect(providerManager.subscriptions?.disposables?.has(testProvider)).toEqual(false)
 
       providerManager.addProvider(testProvider, '2.0.0')
@@ -123,47 +122,47 @@ describe 'Provider Manager', ->
 
     it 'registers a valid provider', ->
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'removes a registration', ->
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
       registration.dispose()
 
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
     it 'does not create duplicate registrations for the same scope', ->
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'does not register an invalid provider', ->
@@ -174,12 +173,12 @@ describe 'Provider Manager', ->
           return
 
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), bogusProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(bogusProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(bogusProvider)
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), bogusProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(bogusProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
     it 'registers a provider with a blacklist', ->
@@ -197,12 +196,12 @@ describe 'Provider Manager', ->
       expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
       expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeDescriptor('.source.js'), testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
   describe 'when no providers have been registered, and enableBuiltinProvider is false', ->

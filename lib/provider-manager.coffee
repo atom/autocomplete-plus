@@ -1,5 +1,6 @@
 {CompositeDisposable, Disposable} = require 'atom'
 _ = require 'underscore-plus'
+{isFunction, isString} = require('./type-helpers')
 semver = require 'semver'
 {Selector} = require 'selector-kit'
 stableSort = require 'stable'
@@ -90,9 +91,9 @@ class ProviderManager
   isValidProvider: (provider, apiVersion) ->
     # TODO API: Check based on the apiVersion
     if semver.satisfies(apiVersion, '>=2.0.0')
-      provider? and _.isFunction(provider.getSuggestions) and _.isString(provider.selector) and !!provider.selector.length
+      provider? and isFunction(provider.getSuggestions) and isString(provider.selector) and !!provider.selector.length
     else
-      provider? and _.isFunction(provider.requestHandler) and _.isString(provider.selector) and !!provider.selector.length
+      provider? and isFunction(provider.requestHandler) and isString(provider.selector) and !!provider.selector.length
 
   metadataForProvider: (provider) =>
     for providerMetadata in @providers

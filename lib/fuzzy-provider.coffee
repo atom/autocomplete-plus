@@ -1,4 +1,3 @@
-_ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 {TextEditor, CompositeDisposable}  = require 'atom'
 RefCountedTokenList = require './ref-counted-token-list'
@@ -160,10 +159,15 @@ class FuzzyProvider
   # Returns an {Array} of strings
   getCompletionsForCursorScope: (scopeDescriptor) ->
     completions = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
+    seen = {}
     resultCompletions = []
     for {value} in completions
-      resultCompletions = resultCompletions.concat(value) if Array.isArray(value)
-    _.uniq(resultCompletions)
+      if Array.isArray(value)
+        for completion in value
+          unless seen[completion]
+            resultCompletions.push(completion)
+            seen[completion] = true
+    resultCompletions
 
   # Public: Clean up, stop listening to events
   dispose: =>

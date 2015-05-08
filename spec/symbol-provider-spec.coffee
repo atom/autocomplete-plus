@@ -1,6 +1,5 @@
 {Point} = require 'atom'
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
-_ = require 'underscore-plus'
 
 suggestionForWord = (suggestionList, word) ->
   suggestionList.getSymbol(word)

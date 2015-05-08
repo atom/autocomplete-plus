@@ -1,5 +1,4 @@
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
-_ = require 'underscore-plus'
 
 describe 'FuzzyProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager] = []

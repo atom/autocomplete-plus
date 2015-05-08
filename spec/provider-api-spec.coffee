@@ -1,5 +1,4 @@
 {waitForAutocomplete, triggerAutocompletion} = require './spec-helper'
-_ = require 'underscore-plus'
 
 describe 'Provider API', ->
   [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []

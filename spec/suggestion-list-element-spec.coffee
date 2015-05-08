@@ -1,5 +1,4 @@
 SuggestionListElement = require '../lib/suggestion-list-element'
-_ = require 'underscore-plus'
 
 describe 'Suggestion List Element', ->
   [suggestionListElement] = []

@@ -1,5 +1,4 @@
 {CompositeDisposable, Disposable} = require 'atom'
-_ = require 'underscore-plus'
 {isFunction, isString} = require('./type-helpers')
 semver = require 'semver'
 {Selector} = require 'selector-kit'
@@ -55,7 +54,10 @@ class ProviderManager
         if providerMetadata.shouldDisableDefaultProvider(scopeChain)
           disableDefaultProvider = true
 
-    matchingProviders = _.without(matchingProviders, @defaultProvider) if disableDefaultProvider
+    if disableDefaultProvider
+      index = matchingProviders.indexOf(@defaultProvider)
+      matchingProviders.splice(index, 1) if index > -1
+
     matchingProviders = (provider for provider in matchingProviders when (provider.inclusionPriority ? 0) >= lowestIncludedPriority)
     stableSort matchingProviders, (providerA, providerB) =>
       difference = (providerB.suggestionPriority ? 1) - (providerA.suggestionPriority ? 1)

@@ -1,5 +1,4 @@
 ProviderManager = require '../lib/provider-manager'
-_ = require 'underscore-plus'
 
 describe 'Provider Manager', ->
   [providerManager, testProvider, registration] = []

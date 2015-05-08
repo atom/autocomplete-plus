@@ -1,5 +1,4 @@
 {CompositeDisposable} = require 'atom'
-_ = require 'underscore-plus'
 SnippetParser = require './snippet-parser'
 {isString} = require('./type-helpers')
 

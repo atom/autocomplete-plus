@@ -1,6 +1,5 @@
 {waitForAutocomplete, triggerAutocompletion} = require './spec-helper'
 grim = require 'grim'
-_ = require 'underscore-plus'
 
 describe 'Provider API Legacy', ->
   [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []

@@ -1,5 +1,4 @@
 {triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
-_ = require 'underscore-plus'
 {KeymapManager} = require 'atom'
 
 NodeTypeText = 3
@@ -775,7 +774,9 @@ describe 'Autocomplete Manager', ->
 
       it 'does not auto-accept a single suggestion when filtering', ->
         spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
-          list = _.filter ['a', 'abc'], (word) -> word.indexOf(prefix) is 0
+          list = []
+          list.push 'a' if 'a'.indexOf(prefix) is 0
+          list.push 'abc' if 'abc'.indexOf(prefix) is 0
           ({text: t} for t in list)
 
         editor.insertText('a')

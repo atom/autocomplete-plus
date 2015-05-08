@@ -45,25 +45,25 @@ describe 'Provider Manager', ->
 
     it 'adds providers', ->
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
-      expect(providerManager.subscriptions?.disposables?.has(testProvider)).toEqual(false)
+      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).toBe(-1)
 
       providerManager.addProvider(testProvider, '2.0.0')
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(true)
       apiVersion = providerManager.apiVersionForProvider(testProvider)
       expect(apiVersion).toEqual('2.0.0')
-      expect(providerManager.subscriptions?.disposables?.has(testProvider)).toEqual(true)
+      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).not.toBe(-1)
 
     it 'removes providers', ->
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
-      expect(providerManager.subscriptions?.disposables?.has(testProvider)).toEqual(false)
+      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).toBe(-1)
 
       providerManager.addProvider(testProvider)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
-      expect(providerManager.subscriptions?.disposables?.has(testProvider)).toEqual(true)
+      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).not.toBe(-1)
 
       providerManager.removeProvider(testProvider)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
-      expect(providerManager.subscriptions?.disposables?.has(testProvider)).toEqual(false)
+      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).toBe(-1)
 
     it 'can identify a provider with a missing getSuggestions', ->
       bogusProvider =

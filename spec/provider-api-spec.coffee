@@ -42,18 +42,18 @@ describe 'Provider API', ->
         selector: '.source.js,.source.coffee'
         getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
-      expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
-      expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
 
     it 'registers the provider specified by the naked provider', ->
       testProvider =
         selector: '.source.js,.source.coffee'
         getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
-      expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(1)
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
-      expect(_.size(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js'))).toEqual(2)
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
 
     it 'passes the correct parameters to getSuggestions for the version', ->
       testProvider =

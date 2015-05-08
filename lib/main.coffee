@@ -25,7 +25,7 @@ module.exports =
       title: 'Keymap For Confirming A Suggestion'
       description: 'You should use the key(s) indicated here to confirm a suggestion from the suggestion list and have it inserted into the file.'
       type: 'string'
-      default: 'tab'
+      default: 'tab and enter'
       enum: ['tab', 'enter', 'tab and enter']
       order: 4
     fileBlacklist:

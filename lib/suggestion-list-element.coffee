@@ -1,6 +1,7 @@
 {CompositeDisposable} = require 'atom'
 _ = require 'underscore-plus'
 SnippetParser = require './snippet-parser'
+{isString} = require('./type-helpers')
 
 ItemTemplate = """
   <span class="icon-container"></span>
@@ -240,8 +241,8 @@ class SuggestionListElement extends HTMLElement
     typeIconContainer = li.querySelector('.icon-container')
     typeIconContainer.innerHTML = ''
 
-    sanitizedType = if _.isString(type) then type else ''
-    sanitizedIconHTML = if _.isString(iconHTML) then iconHTML else undefined
+    sanitizedType = if isString(type) then type else ''
+    sanitizedIconHTML = if isString(iconHTML) then iconHTML else undefined
     defaultLetterIconHTML = if sanitizedType then "<span class=\"icon-letter\">#{sanitizedType[0]}</span>" else ''
     defaultIconHTML = DefaultSuggestionTypeIconHTML[sanitizedType] ? defaultLetterIconHTML
     if (sanitizedIconHTML or defaultIconHTML) and iconHTML isnt false

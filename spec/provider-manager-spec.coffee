@@ -408,3 +408,39 @@ describe 'Provider Manager', ->
       expect(providers[0]).toEqual verySpecificProvider
       expect(providers[1]).toEqual accessoryProvider2
       expect(providers[2]).toEqual accessoryProvider1
+
+  describe "when suggestionPriorities are the same", ->
+    [provider1, provider2, provider3, defaultProvider] = []
+    beforeEach ->
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
+      providerManager = new ProviderManager()
+      defaultProvider = providerManager.defaultProvider
+
+      provider1 =
+        selector: '*'
+        suggestionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      provider2 =
+        selector: '.source.js'
+        suggestionPriority: 3
+        getSuggestions: (options) ->
+        dispose: ->
+
+      provider3 =
+        selector: '.source.js .comment'
+        suggestionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      providerManager.registerProvider(provider1)
+      providerManager.registerProvider(provider2)
+      providerManager.registerProvider(provider3)
+
+    it 'sorts by specificity', ->
+      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      expect(providers).toHaveLength 4
+      expect(providers[0]).toEqual provider2
+      expect(providers[1]).toEqual provider3
+      expect(providers[2]).toEqual provider1

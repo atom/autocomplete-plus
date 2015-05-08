@@ -44,25 +44,25 @@ describe 'Provider Manager', ->
 
     it 'adds providers', ->
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
-      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).toBe(-1)
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe false
 
       providerManager.addProvider(testProvider, '2.0.0')
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(true)
       apiVersion = providerManager.apiVersionForProvider(testProvider)
       expect(apiVersion).toEqual('2.0.0')
-      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).not.toBe(-1)
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe true
 
     it 'removes providers', ->
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
-      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).toBe(-1)
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe false
 
       providerManager.addProvider(testProvider)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
-      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).not.toBe(-1)
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe true
 
       providerManager.removeProvider(testProvider)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
-      expect(providerManager.subscriptions?.disposables?.indexOf(testProvider)).toBe(-1)
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe false
 
     it 'can identify a provider with a missing getSuggestions', ->
       bogusProvider =
@@ -442,3 +442,11 @@ describe 'Provider Manager', ->
       expect(providers[0]).toEqual provider2
       expect(providers[1]).toEqual provider3
       expect(providers[2]).toEqual provider1
+
+hasDisposable = (compositeDisposable, disposable) ->
+  if compositeDisposable?.disposables?.indexOf?
+    compositeDisposable.disposables.indexOf(disposable) > -1
+  if compositeDisposable?.disposables?.has?
+    compositeDisposable.disposables.has(disposable)
+  else
+    false

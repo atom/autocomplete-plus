@@ -20,7 +20,6 @@ autocomplete-suggestion-list.select-list.popover-list {
   display: inline-block;
   min-width: 200px;
   padding: 0;
-  max-width: 700px;
 
   .suggestion-list-scroller {
     overflow-y: auto;
@@ -155,13 +154,7 @@ autocomplete-suggestion-list {
   }
 
   .word {
-    // TODO: The 600px is arbitrary. We need to make it butt up against the
-    // right of the window.
     float: left;
-    max-width: 600px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .character-match {
@@ -171,6 +164,25 @@ autocomplete-suggestion-list {
 
   .snippet-completion {
     color: @text-color-subtle;
+  }
+
+  // Here we set the max width of the popup
+  .word, .left-label, .right-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .left-label {
+    max-width: 150px;
+  }
+
+  .right-label {
+    max-width: 150px;
+  }
+
+  .word {
+    max-width: 500px;
   }
 
   .make-type-icon(attribute, @syntax-color-attribute);

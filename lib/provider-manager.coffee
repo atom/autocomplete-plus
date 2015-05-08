@@ -151,7 +151,7 @@ class ProviderManager
 
     unless @isValidProvider(provider, apiVersion)
       console.warn "Provider #{provider.constructor.name} is not valid", provider
-      return
+      return new Disposable()
 
     return if @isProviderRegistered(provider)
 

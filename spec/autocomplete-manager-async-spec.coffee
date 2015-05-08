@@ -27,9 +27,6 @@ describe 'Async providers', ->
       mainModule = a.mainModule
 
     waitsFor ->
-      mainModule.autocompleteManager?.ready
-
-    runs ->
       autocompleteManager = mainModule.autocompleteManager
 
   afterEach ->

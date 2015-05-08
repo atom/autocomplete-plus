@@ -107,13 +107,21 @@ module.exports =
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
     @subscriptions = new CompositeDisposable
-    @getAutocompleteManager()
+    @requireAutocompleteManagerAsync()
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
     @subscriptions?.dispose()
     @subscriptions = null
     @autocompleteManager = null
+
+  requireAutocompleteManagerAsync: (callback) ->
+    if @autocompleteManager?
+      callback?(@autocompleteManager)
+    else
+      setImmediate =>
+        autocompleteManager = @getAutocompleteManager()
+        callback?(autocompleteManager)
 
   getAutocompleteManager: ->
     unless @autocompleteManager?
@@ -123,7 +131,8 @@ module.exports =
     @autocompleteManager
 
   consumeSnippets: (snippetsManager) ->
-    @getAutocompleteManager().setSnippetsManager(snippetsManager)
+    @requireAutocompleteManagerAsync (autocompleteManager) ->
+      autocompleteManager.setSnippetsManager(snippetsManager)
 
   ###
   Section: Provider API
@@ -148,6 +157,8 @@ module.exports =
     providers = [providers] if providers? and not Array.isArray(providers)
     return unless providers?.length > 0
     registrations = new CompositeDisposable
-    for provider in providers
-      registrations.add @getAutocompleteManager().providerManager.registerProvider(provider, apiVersion)
+    @requireAutocompleteManagerAsync (autocompleteManager) ->
+      for provider in providers
+        registrations.add autocompleteManager.providerManager.registerProvider(provider, apiVersion)
+      return
     registrations

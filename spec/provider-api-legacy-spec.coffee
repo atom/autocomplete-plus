@@ -25,8 +25,10 @@ describe 'Provider API Legacy', ->
         atom.workspace.open('sample.js').then (e) -> editor = e
         atom.packages.activatePackage('autocomplete-plus').then (a) ->
           mainModule = a.mainModule
-          autocompleteManager = mainModule.autocompleteManager
       ]
+
+    waitsFor ->
+      autocompleteManager = mainModule.autocompleteManager
 
   afterEach ->
     registration?.dispose() if registration?.dispose?

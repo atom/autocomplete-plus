@@ -37,6 +37,9 @@ describe 'Autocomplete Manager', ->
             mainModule = a.mainModule
         ]
 
+      waitsFor ->
+        mainModule.autocompleteManager
+
       runs ->
         provider =
           selector: '*'

@@ -4,6 +4,12 @@
   "main": "./lib/main",
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/atom-community/autocomplete-plus",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/atom-community/autocomplete-plus/raw/master/LICENSE.md"
+    }
+  ],
   "engines": {
     "atom": ">=0.189.0 <2.0.0"
   },

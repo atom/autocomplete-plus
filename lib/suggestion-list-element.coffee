@@ -39,12 +39,14 @@ SnippetStartAndEnd = 3
 class SuggestionListElement extends HTMLElement
   maxItems: 200
   emptySnippetGroupRegex: /(\$\{\d+\:\})|(\$\{\d+\})|(\$\d+)/ig
+  nodePool: null
 
   createdCallback: ->
     @subscriptions = new CompositeDisposable
     @classList.add('popover-list', 'select-list', 'autocomplete-suggestion-list')
     @registerMouseHandling()
     @snippetParser = new SnippetParser
+    @nodePool = []
 
   attachedCallback: ->
     # TODO: Fix overlay decorator to in atom to apply class attribute correctly, then move this to overlay creation point.
@@ -104,7 +106,11 @@ class SuggestionListElement extends HTMLElement
     else
       @descriptionContainer.style.display = 'none'
 
-  itemsChanged: -> @render()
+  itemsChanged: ->
+    if @model?.items?.length
+      @render()
+    else
+      @returnItemsToPool(0)
 
   render: ->
     @selectedIndex = 0
@@ -175,8 +181,14 @@ class SuggestionListElement extends HTMLElement
       if descLength > longestDesc
         longestDesc = descLength
         longestDescIndex = index
-    li.remove() while li = @ol.childNodes[items.length]
     @updateDescription(items[longestDescIndex])
+    @returnItemsToPool(items.length)
+
+  returnItemsToPool: (pivotIndex) ->
+    while li = @ol.childNodes[pivotIndex]
+      li.remove()
+      @nodePool.push(li)
+    return
 
   descriptionLength: (item) ->
     count = 0
@@ -227,8 +239,11 @@ class SuggestionListElement extends HTMLElement
   renderItem: ({iconHTML, type, snippet, text, displayText, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
     unless li
-      li = document.createElement('li')
-      li.innerHTML = ItemTemplate
+      if @nodePool.length > 0
+        li = @nodePool.pop()
+      else
+        li = document.createElement('li')
+        li.innerHTML = ItemTemplate
       li.dataset.index = index
       @ol.appendChild(li)
 

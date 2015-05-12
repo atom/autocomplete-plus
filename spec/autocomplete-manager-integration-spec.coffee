@@ -1,5 +1,6 @@
 {triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
 {KeymapManager} = require 'atom'
+temp = require('temp').track()
 
 NodeTypeText = 3
 
@@ -64,6 +65,175 @@ describe 'Autocomplete Manager', ->
         expect(editor).toBe editor
         expect(triggerPosition).toEqual [0, 1]
         expect(suggestion.text).toBe 'ab'
+
+    it 'closes the suggestion list when saving', ->
+      directory = temp.mkdirSync()
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      editor.insertText('a')
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        editor.saveAs(path.join(directory, 'spec', 'tmp', 'issue-11.js'))
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+    it 'does not show suggestions after a word has been confirmed', ->
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      editor.insertText(c) for c in 'red'
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+    it 'works after closing one of the copied tabs', ->
+      atom.workspace.paneForItem(editor).splitRight({copyActiveItem: true})
+      atom.workspace.getActivePane().destroy()
+
+      editor.insertNewline()
+      editor.insertText('f')
+
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+    it 'closes the suggestion list when entering an empty string (e.g. carriage return)', ->
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      editor.insertText('a')
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        editor.insertText('\r')
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+    it 'it refocuses the editor after pressing enter', ->
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      editor.insertText('a')
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        editor.insertText('\n')
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        expect(editorView).toHaveFocus()
+
+    it 'it hides the suggestion list when the user keeps typing', ->
+      spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+        ({text: t} for t in ['acd', 'ade'] when t.startsWith prefix)
+
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      # Trigger an autocompletion
+      editor.moveToBottom()
+      editor.insertText('a')
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+        editor.insertText('b')
+        waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+    it 'does not show the suggestion list when pasting', ->
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      editor.insertText('red')
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+    it 'only shows for the editor that currently has focus', ->
+      editor2 = atom.workspace.paneForItem(editor).splitRight({copyActiveItem: true}).getActiveItem()
+      editorView2 = atom.views.getView(editor2)
+      editorView.focus()
+
+      expect(editorView).toHaveFocus()
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      expect(editorView2).not.toHaveFocus()
+      expect(editorView2.querySelector('.autocomplete-plus')).not.toExist()
+
+      editor.insertText('r')
+
+      expect(editorView).toHaveFocus()
+      expect(editorView2).not.toHaveFocus()
+
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView).toHaveFocus()
+        expect(editorView2).not.toHaveFocus()
+
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        expect(editorView2.querySelector('.autocomplete-plus')).not.toExist()
+
+        atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+
+        expect(editorView).toHaveFocus()
+        expect(editorView2).not.toHaveFocus()
+
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        expect(editorView2.querySelector('.autocomplete-plus')).not.toExist()
+
+    describe 'when multiple cursors are defined', ->
+      it 'autocompletes word when there is only a prefix', ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [{text: 'shift'}]
+
+        editor.getBuffer().insert([0, 0], 's:extra:s')
+        editor.setSelectedBufferRanges([[[0, 1], [0, 1]], [[0, 9], [0, 9]]])
+        triggerAutocompletion(editor, false, 'h')
+
+        waits(completionDelay)
+
+        runs ->
+          autocompleteManager = mainModule.autocompleteManager
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+
+          expect(editor.lineTextForBufferRow(0)).toBe('shift:extra:shift')
+          expect(editor.getCursorBufferPosition()).toEqual([0, 17])
+          expect(editor.getLastSelection().getBufferRange()).toEqual({
+            start:
+              row: 0
+              column: 17
+            end:
+              row: 0
+              column: 17
+          })
+
+          expect(editor.getSelections().length).toEqual(2)
+
+      it 'cancels the autocomplete when text differs between cursors', ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          []
+
+        editor.getBuffer().insert([0, 0], 's:extra:a')
+        editor.setCursorBufferPosition([0, 1])
+        editor.addCursorAtBufferPosition([0, 9])
+        triggerAutocompletion(editor, false, 'h')
+
+        waits(completionDelay)
+
+        runs ->
+          autocompleteManager = mainModule.autocompleteManager
+          editorView = atom.views.getView(editor)
+          atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+
+          expect(editor.lineTextForBufferRow(0)).toBe('sh:extra:ah')
+          expect(editor.getSelections().length).toEqual(2)
+          expect(editor.getSelections()[0].getBufferRange()).toEqual([[0, 2], [0, 2]])
+          expect(editor.getSelections()[1].getBufferRange()).toEqual([[0, 11], [0, 11]])
+
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
     describe "suppression for editorView classes", ->
       beforeEach ->

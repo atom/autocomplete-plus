@@ -3,11 +3,11 @@
   "version": "2.14.0",
   "main": "./lib/main",
   "description": "Display possible completions in the editor while typing",
-  "repository": "https://github.com/atom-community/autocomplete-plus",
+  "repository": "https://github.com/atom/autocomplete-plus",
   "licenses": [
     {
       "type": "MIT",
-      "url": "http://github.com/atom-community/autocomplete-plus/raw/master/LICENSE.md"
+      "url": "http://github.com/atom/autocomplete-plus/raw/master/LICENSE.md"
     }
   ],
   "engines": {

@@ -134,7 +134,7 @@ class ProviderManager
           Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
           contains an `id` property.
           An `id` attribute on your provider is no longer necessary.
-          See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+          See https://github.com/atom/autocomplete-plus/wiki/Provider-API
         """
       if provider.requestHandler?
         grim ?= require 'grim'
@@ -142,7 +142,7 @@ class ProviderManager
           Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
           contains a `requestHandler` property.
           `requestHandler` has been renamed to `getSuggestions`.
-          See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+          See https://github.com/atom/autocomplete-plus/wiki/Provider-API
         """
       if provider.blacklist?
         grim ?= require 'grim'
@@ -150,7 +150,7 @@ class ProviderManager
           Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
           contains a `blacklist` property.
           `blacklist` has been renamed to `disableForSelector`.
-          See https://github.com/atom-community/autocomplete-plus/wiki/Provider-API
+          See https://github.com/atom/autocomplete-plus/wiki/Provider-API
         """
 
     unless @isValidProvider(provider, apiVersion)

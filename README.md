@@ -1,8 +1,8 @@
-# autocomplete+ package [![OS X Build Status](https://travis-ci.org/atom-community/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom-community/autocomplete-plus) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/4faqdkcw2d0ybgiv/branch/master?svg=true)](https://ci.appveyor.com/project/joefitzgerald/autocomplete-plus/branch/master)
+# autocomplete+ package [![OS X Build Status](https://travis-ci.org/atom/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom/autocomplete-plus) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/4faqdkcw2d0ybgiv/branch/master?svg=true)](https://ci.appveyor.com/project/joefitzgerald/autocomplete-plus/branch/master)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/atom-community/autocomplete-plus)
 
 
-[View the changelog](https://github.com/atom-community/autocomplete-plus/releases)
+[View the changelog](https://github.com/atom/autocomplete-plus/releases)
 
 View and insert possible completions in the editor while typing
 
@@ -21,7 +21,7 @@ View and insert possible completions in the editor while typing
 
 `autocomplete+` has a powerful autocomplete provider API, allowing provider authors to add language-specific behavior to this package.
 
-You should *definitely* install additional providers (the default provider bundled with this package is somewhat crude): https://github.com/atom-community/autocomplete-plus/wiki/Autocomplete-Providers
+You should *definitely* install additional providers (the default provider bundled with this package is somewhat crude): https://github.com/atom/autocomplete-plus/wiki/Autocomplete-Providers
 
 ## Usage
 
@@ -57,4 +57,4 @@ Additionally, the keymap can be customized in your keymap.cson:
 
 Great autocomplete depends on having great autocomplete providers. If there is not already a great provider for the language / grammar that you are working in, please consider creating a provider.
 
-[Read the `Provider API` documentation](https://github.com/atom-community/autocomplete-plus/wiki/Provider-API) to learn how to create a new autocomplete provider.
+[Read the `Provider API` documentation](https://github.com/atom/autocomplete-plus/wiki/Provider-API) to learn how to create a new autocomplete provider.

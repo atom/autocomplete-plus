@@ -337,6 +337,7 @@ class AutocompleteManager
   hideSuggestionList: =>
     return if @disposed
     @clearManualActivationStrictPrefixes()
+    @suggestionList.changeItems(null)
     @suggestionList.hide()
     @shouldDisplaySuggestions = false
 

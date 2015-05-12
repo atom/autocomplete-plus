@@ -1429,7 +1429,7 @@ describe 'Autocomplete Manager', ->
           waitForAutocomplete()
 
         runs ->
-          expect(autocompleteManager.suggestionList.changeItems).not.toHaveBeenCalled()
+          expect(autocompleteManager.suggestionList.changeItems).toHaveBeenCalledWith(null)
 
           activeElement.dispatchEvent(buildIMECompositionEvent('compositionend', {target: activeElement}))
           activeElement.dispatchEvent(buildTextInputEvent({data: 'ã', target: activeElement}))

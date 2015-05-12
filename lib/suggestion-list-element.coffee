@@ -185,7 +185,7 @@ class SuggestionListElement extends HTMLElement
     @returnItemsToPool(items.length)
 
   returnItemsToPool: (pivotIndex) ->
-    while li = @ol.childNodes[pivotIndex]
+    while @ol? and li = @ol.childNodes[pivotIndex]
       li.remove()
       @nodePool.push(li)
     return

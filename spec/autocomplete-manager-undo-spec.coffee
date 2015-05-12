@@ -50,8 +50,8 @@ describe 'Autocomplete Manager', ->
 
       runs ->
         # Accept suggestion
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+        editorView = atom.views.getView(editor)
+        atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
 
         expect(editor.getBuffer().getLastLine()).toEqual('function')
 

@@ -1,11 +1,23 @@
 {waitForAutocomplete, triggerAutocompletion} = require './spec-helper'
 grim = require 'grim'
 
+class MockDeprecation
+  constructor: (@message) ->
+  getMessage: -> @message
+
 describe 'Provider API Legacy', ->
   [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
 
   beforeEach ->
     runs ->
+      deprecations = []
+      spyOn(grim, 'deprecate').andCallFake (message) ->
+        deprecations.push new MockDeprecation(message)
+      spyOn(grim, 'getDeprecationsLength').andCallFake ->
+        deprecations.length
+      spyOn(grim, 'getDeprecations').andCallFake ->
+        deprecations
+
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('editor.fontSize', '16')

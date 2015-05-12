@@ -89,7 +89,7 @@ module.exports =
     defaultProvider:
       description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
       type: 'string'
-      default: 'Fuzzy'
+      default: 'Symbol'
       enum: ['Fuzzy', 'Symbol']
       order: 14
     suppressActivationForEditorClasses:

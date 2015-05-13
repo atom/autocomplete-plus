@@ -93,7 +93,8 @@ class SuggestionListElement extends HTMLElement
     item if item.tagName is 'LI'
 
   updateDescription: (item) ->
-    item = item ? @visibleItems()[@selectedIndex]
+    item = item ? @model?.items?[@selectedIndex]
+    return unless item?
     if item.description? and item.description.length > 0
       @descriptionContainer.style.display = 'block'
       @descriptionContent.textContent = item.description

@@ -48,7 +48,7 @@ module.exports =
       title: 'Include Completions From All Buffers'
       description: 'For grammars with no registered provider(s), the default provider will include completions from all buffers, instead of just the buffer you are currently editing.'
       type: 'boolean'
-      default: false
+      default: true
       order: 7
     strictMatching:
       title: 'Use Strict Matching For Built-In Provider'

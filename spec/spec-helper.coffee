@@ -5,6 +5,7 @@ beforeEach ->
   spyOn(atom.views, 'updateDocument').andCallFake (fn) -> fn()
   atom.config.set('autocomplete-plus.defaultProvider', 'Symbol')
   atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
+  atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false)
 
 exports.triggerAutocompletion = (editor, moveCursor = true, char = 'f') ->
   if moveCursor

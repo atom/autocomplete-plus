@@ -444,9 +444,9 @@ describe 'Provider Manager', ->
       expect(providers[2]).toEqual provider1
 
 hasDisposable = (compositeDisposable, disposable) ->
-  if compositeDisposable?.disposables?.indexOf?
-    compositeDisposable.disposables.indexOf(disposable) > -1
   if compositeDisposable?.disposables?.has?
     compositeDisposable.disposables.has(disposable)
+  else if compositeDisposable?.disposables?.indexOf?
+    compositeDisposable.disposables.indexOf(disposable) > -1
   else
     false

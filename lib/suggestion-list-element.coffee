@@ -232,7 +232,7 @@ class SuggestionListElement extends HTMLElement
 
   updateUIForChangedProps: ->
     @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"
-    @style.width = "#{@uiProps.width}px"
+    @style.width = "#{@uiProps.width + 1}px"
     if @suggestionListFollows is 'Word'
       @style['margin-left'] = "#{@uiProps.marginLeft}px"
     @updateDescription()

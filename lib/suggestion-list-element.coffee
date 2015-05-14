@@ -142,7 +142,6 @@ class SuggestionListElement extends HTMLElement
   setSelectedIndex: (index) ->
     @selectedIndex = index
     atom.views.updateDocument @renderSelectedItem.bind(this)
-    atom.views.readDocument @readUIPropsFromDOM.bind(this)
 
   visibleItems: ->
     @model?.items?.slice(0, @maxItems)
@@ -219,7 +218,7 @@ class SuggestionListElement extends HTMLElement
     wordContainer = @selectedLi?.querySelector('.word-container')
 
     @uiProps ?= {}
-    @uiProps.width = @offsetWidth
+    @uiProps.width = @offsetWidth + 1
     @uiProps.marginLeft = -(wordContainer?.offsetLeft ? 0)
     @uiProps.itemHeight ?= @selectedLi.offsetHeight
     @uiProps.paddingHeight ?= (parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom'])) ? 0
@@ -232,7 +231,7 @@ class SuggestionListElement extends HTMLElement
 
   updateUIForChangedProps: ->
     @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"
-    @style.width = "#{@uiProps.width + 1}px"
+    @style.width = "#{@uiProps.width}px"
     if @suggestionListFollows is 'Word'
       @style['margin-left'] = "#{@uiProps.marginLeft}px"
     @updateDescription()

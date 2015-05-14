@@ -1,6 +1,7 @@
 {triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
 {KeymapManager} = require 'atom'
 temp = require('temp').track()
+path = require 'path'
 
 NodeTypeText = 3
 

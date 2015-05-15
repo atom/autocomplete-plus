@@ -2,6 +2,8 @@
 
 Displays possible autocomplete suggestions on keystroke (or manually by typing `ctrl-space`) and inserts a suggestion in the editor if confirmed.
 
+![autocomplete+](https://cloud.githubusercontent.com/assets/744740/7656861/9fb8bcc4-faea-11e4-9814-9dca218ded93.png)
+
 [Changelog](https://github.com/atom/autocomplete-plus/releases)
 
 ## Installation

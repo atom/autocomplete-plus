@@ -130,7 +130,7 @@ class AutocompleteManager
     scopeDescriptor = cursor.getScopeDescriptor()
     prefix = @getPrefix(@editor, bufferPosition)
 
-    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix}, activatedManually)
+    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix, activatedManually}, activatedManually)
 
   getSuggestionsFromProviders: (options, activatedManually) =>
     providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)

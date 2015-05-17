@@ -209,9 +209,14 @@ class SuggestionListElement extends HTMLElement
   scrollSelectedItemIntoView: ->
     scrollTop = @scroller.scrollTop
     selectedItemTop = @selectedLi.offsetTop
+    if selectedItemTop < scrollTop
+      # scroll up
+      return @selectedLi.scrollIntoView(true)
+
     itemHeight = @uiProps.itemHeight
     scrollerHeight = @maxVisibleSuggestions * itemHeight + @uiProps.paddingHeight
-    if selectedItemTop < scrollTop or selectedItemTop + itemHeight > scrollTop + scrollerHeight
+    if selectedItemTop + itemHeight > scrollTop + scrollerHeight
+      # scroll down
       @selectedLi.scrollIntoView(false)
 
   readUIPropsFromDOM: ->

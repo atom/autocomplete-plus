@@ -877,6 +877,8 @@ describe 'Autocomplete Manager', ->
             expect(editor.getText()).toBe 'oneomgTwotwothree'
 
     describe 'when auto-activation is disabled', ->
+      [options] = []
+
       beforeEach ->
         atom.config.set('autocomplete-plus.enableAutoActivation', false)
 
@@ -942,6 +944,23 @@ describe 'Autocomplete Manager', ->
 
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+      it 'includes the correct value for activatedManually when explicitly triggered', ->
+        spyOn(provider, 'getSuggestions').andCallFake (o) ->
+          options = o
+          return [{text: 'omgok'}, {text: 'ahgok'}]
+
+        triggerAutocompletion(editor)
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(options).toBeDefined()
+          expect(options.activatedManually).toBe(true)
 
       it 'does not auto-accept a single suggestion when filtering', ->
         spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->

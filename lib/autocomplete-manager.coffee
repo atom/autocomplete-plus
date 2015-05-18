@@ -130,9 +130,9 @@ class AutocompleteManager
     scopeDescriptor = cursor.getScopeDescriptor()
     prefix = @getPrefix(@editor, bufferPosition)
 
-    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix}, activatedManually)
+    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix, activatedManually})
 
-  getSuggestionsFromProviders: (options, activatedManually) =>
+  getSuggestionsFromProviders: (options) =>
     providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)
 
     providerPromises = []
@@ -180,7 +180,7 @@ class AutocompleteManager
         for suggestion in providerSuggestions
           suggestion.replacementPrefix ?= @getDefaultReplacementPrefix(options.prefix)
           suggestion.provider = provider
-          @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if activatedManually
+          @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if options.activatedManually
 
         providerSuggestions = @filterSuggestions(providerSuggestions, options) if provider.filterSuggestions
         providerSuggestions
@@ -191,7 +191,7 @@ class AutocompleteManager
       .then (suggestions) =>
         return unless @currentSuggestionsPromise is suggestionsPromise
         suggestions = @filterForManualActivationStrictPrefix(suggestions)
-        if activatedManually and @shouldDisplaySuggestions and suggestions.length is 1
+        if options.activatedManually and @shouldDisplaySuggestions and suggestions.length is 1
           # When there is one suggestion in manual mode, just confirm it
           @confirm(suggestions[0])
         else

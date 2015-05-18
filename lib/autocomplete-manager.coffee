@@ -438,16 +438,24 @@ class AutocompleteManager
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     shouldActivate = false
-    cursorBufferPosition = @editor.getLastCursor().getBufferPosition()
+    cursorPositions = @editor.getCursorBufferPositions()
 
     if @autoActivationEnabled or @suggestionList.isActive()
-      if newText?.length and newRange.containsPoint(cursorBufferPosition)
-        # Activate on space, a non-whitespace character, or a bracket-matcher pair
-        shouldActivate = newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs
-      else if oldText?.length and (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldRange.containsPoint(cursorBufferPosition)
-        # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur
-        # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair
-        shouldActivate = oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs
+
+      # Activate on space, a non-whitespace character, or a bracket-matcher pair.
+      if newText.length > 0
+        shouldActivate =
+          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
+          (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs)
+
+      # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur.
+      # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair.
+      else if oldText.length > 0
+        shouldActivate =
+          (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and
+          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
+          (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
+
       shouldActivate = false if shouldActivate and @shouldSuppressActivationForEditorClasses()
 
     if shouldActivate

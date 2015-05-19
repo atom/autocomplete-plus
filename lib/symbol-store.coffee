@@ -147,19 +147,15 @@ class SymbolStore
       symbol.updateForPathChange(oldPath, newPath)
     return
 
-  addToken: (token, bufferPath, bufferRow) =>
+  addToken: (text, scopeChain, bufferPath, bufferRow) =>
     # This could be made async...
-    text = @getTokenText(token)
-    scopeChain = @getTokenScopeChain(token)
     matches = text.match(@wordRegex)
     if matches?
       @addSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
     return
 
-  removeToken: (token, bufferPath, bufferRow) =>
+  removeToken: (text, scopeChain, bufferPath, bufferRow) =>
     # This could be made async...
-    text = @getTokenText(token)
-    scopeChain = @getTokenScopeChain(token)
     matches = text.match(@wordRegex)
     if matches?
       @removeSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
@@ -172,12 +168,22 @@ class SymbolStore
     @operateOnTokensInBufferRange(editor, bufferRange, @removeToken)
 
   operateOnTokensInBufferRange: (editor, bufferRange, operatorFunc) ->
-    tokenizedLines = @getTokenizedLines(editor)[bufferRange.start.row..bufferRange.end.row]
-    bufferRowBase = bufferRange.start.row
-    for {tokens}, bufferRowIndex in tokenizedLines
-      bufferRow = bufferRowBase + bufferRowIndex
-      for token in tokens
-        operatorFunc(token, editor.getPath(), bufferRow)
+    tokenizedLines = @getTokenizedLines(editor)
+
+    useTokenIterator = null
+
+    for bufferRow in [bufferRange.start.row..bufferRange.end.row] by 1
+      tokenizedLine = tokenizedLines[bufferRow]
+      useTokenIterator ?= typeof tokenizedLine.getTokenIterator is 'function'
+
+      if useTokenIterator
+        iterator = tokenizedLine.getTokenIterator?()
+        while iterator.next()
+          operatorFunc(iterator.getText(), @buildScopeChainString(iterator.getScopes()), editor.getPath(), bufferRow)
+      else
+        for token in tokenizedLine.tokens
+          operatorFunc(token.value, @buildScopeChainString(token.scopes), editor.getPath(), bufferRow)
+
     return
 
   ###
@@ -208,12 +214,8 @@ class SymbolStore
     # without warning.
     editor.displayBuffer.tokenizedBuffer.tokenizedLines
 
-  getTokenText: (token) -> token.value
-
-  getTokenScopeChain: (token) ->
-    scopeChain = ''
-    scopeChain += ' .' + scope for scope in token.scopes
-    scopeChain
+  buildScopeChainString: (scopes) ->
+    '.' + scopes.join(' .')
 
   getKey: (value) ->
     # some words are reserved, like 'constructor' :/

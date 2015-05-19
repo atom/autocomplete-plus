@@ -178,14 +178,14 @@ describe 'SymbolStore', ->
     beforeEach ->
       config = stuff: selectors: Selector.create('.source')
 
-      store.addToken({value: 'one', scopes: ['source.coffee']}, 'one.txt', 1)
-      store.addToken({value: 'ok', scopes: ['source.coffee']}, 'one.txt', 1)
-      store.addToken({value: 'wow', scopes: ['source.coffee']}, 'one.txt', 2)
-      store.addToken({value: 'wow', scopes: ['source.coffee']}, 'one.txt', 2)
+      store.addToken('one', '.source.coffee', 'one.txt', 1)
+      store.addToken('ok', '.source.coffee', 'one.txt', 1)
+      store.addToken('wow', '.source.coffee', 'one.txt', 2)
+      store.addToken('wow', '.source.coffee', 'one.txt', 2)
 
-      store.addToken({value: 'two', scopes: ['source.coffee']}, 'two.txt', 1)
-      store.addToken({value: 'ok', scopes: ['source.coffee']}, 'two.txt', 1)
-      store.addToken({value: 'wow', scopes: ['source.coffee']}, 'two.txt', 2)
+      store.addToken('two', '.source.coffee', 'two.txt', 1)
+      store.addToken('ok', '.source.coffee', 'two.txt', 1)
+      store.addToken('wow', '.source.coffee', 'two.txt', 2)
 
     describe "when a path changes", ->
       it "returns the symbols transferred to the new path", ->

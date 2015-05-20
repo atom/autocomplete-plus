@@ -251,24 +251,9 @@ class SymbolProvider
     _.defer => @buildSymbolList(editor)
 
   buildSymbolList: (editor) =>
-    return unless editor?
+    return unless editor?.isAlive()
     @symbolStore.clear(editor.getPath())
-    @cacheSymbolsFromEditor(editor)
-
-  cacheSymbolsFromEditor: (editor, tokenizedLines) ->
-    tokenizedLines ?= @getTokenizedLines(editor)
-
-    bufferPath = editor.getPath()
-    for {tokens}, bufferRow in tokenizedLines
-      for token in tokens
-        @symbolStore.addToken(token, bufferPath, bufferRow, @minimumWordLength)
-    return
-
-  getTokenizedLines: (editor) ->
-    # Warning: displayBuffer and tokenizedBuffer are private APIs. Please do not
-    # copy into your own package. If you do, be prepared to have it break
-    # without warning.
-    editor.displayBuffer.tokenizedBuffer.tokenizedLines
+    @symbolStore.addTokensInBufferRange(editor, editor.getBuffer().getRange())
 
   # FIXME: this should go in the core ScopeDescriptor class
   scopeDescriptorsEqual: (a, b) ->

@@ -199,6 +199,7 @@ class SuggestionListElement extends HTMLElement
     count
 
   renderSelectedItem: ->
+    return unless @selectedLi?
     @selectedLi.classList.remove('selected')
     @selectedLi = @ol.childNodes[@selectedIndex]
     @selectedLi.classList.add('selected')

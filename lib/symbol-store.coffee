@@ -95,7 +95,7 @@ class Symbol
         continue unless options.selectors?
         for filePath, {scopeChains} of @metadataByPath
           for scopeChain, __ of scopeChains
-            if (!@type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
+            if (not @type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
               @type = type
               typePriority = options.typePriority
       @cachedConfig = config

@@ -108,22 +108,22 @@ describe 'Suggestion List Element', ->
     it 'finds matches when no snippets exist', ->
       assertMatches('hello', '', [])
       assertMatches('hello', 'h', [0])
-      assertMatches('hello', 'hl', [0,2])
-      assertMatches('hello', 'hlo', [0,2,4])
+      assertMatches('hello', 'hl', [0, 2])
+      assertMatches('hello', 'hlo', [0, 2, 4])
 
     it 'finds matches when snippets exist', ->
       assertMatches('${0:hello}', '', [])
       assertMatches('${0:hello}', 'h', [0])
-      assertMatches('${0:hello}', 'hl', [0,2])
-      assertMatches('${0:hello}', 'hlo', [0,2,4])
+      assertMatches('${0:hello}', 'hl', [0, 2])
+      assertMatches('${0:hello}', 'hlo', [0, 2, 4])
       assertMatches('${0:hello}world', '', [])
       assertMatches('${0:hello}world', 'h', [0])
-      assertMatches('${0:hello}world', 'hw', [0,5])
-      assertMatches('${0:hello}world', 'hlw', [0,2,5])
+      assertMatches('${0:hello}world', 'hw', [0, 5])
+      assertMatches('${0:hello}world', 'hlw', [0, 2, 5])
       assertMatches('hello${0:world}', '', [])
       assertMatches('hello${0:world}', 'h', [0])
-      assertMatches('hello${0:world}', 'hw', [0,5])
-      assertMatches('hello${0:world}', 'hlw', [0,2,5])
+      assertMatches('hello${0:world}', 'hw', [0, 5])
+      assertMatches('hello${0:world}', 'hlw', [0, 2, 5])
 
   describe 'removeEmptySnippets', ->
     it 'removes an empty snippet group', ->

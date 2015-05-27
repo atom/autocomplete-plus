@@ -174,6 +174,7 @@ class SymbolStore
 
     for bufferRow in [bufferRange.start.row..bufferRange.end.row] by 1
       tokenizedLine = tokenizedLines[bufferRow]
+      continue unless tokenizedLine?
       useTokenIterator ?= typeof tokenizedLine.getTokenIterator is 'function'
 
       if useTokenIterator

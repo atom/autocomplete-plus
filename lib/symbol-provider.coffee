@@ -211,7 +211,7 @@ class SymbolProvider
     candidates = []
     for symbol in symbolList
       text = (symbol.snippet or symbol.text)
-      continue unless prefix[0].toLowerCase() is text[0].toLowerCase() # must match the first char!
+      continue unless text and prefix[0].toLowerCase() is text[0].toLowerCase() # must match the first char!
       score = fuzzaldrin.score(text, prefix)
       score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBufferPath?(bufferPath))
       candidates.push({symbol, score, locality, rowDifference}) if score > 0

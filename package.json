@@ -19,7 +19,7 @@
     "underscore-plus": "^1.6.6"
   },
   "devDependencies": {
-    "coffeelint": ">=1.8.1",
+    "coffeelint": "^1.9.7",
     "fs-plus": ">=2.4.0",
     "temp": ">=0.7.0"
   },

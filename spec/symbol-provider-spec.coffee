@@ -7,11 +7,11 @@ suggestionForWord = (suggestionList, word) ->
 suggestionsForPrefix = (provider, editor, prefix, options) ->
   bufferPosition = editor.getCursorBufferPosition()
   scopeDescriptor = editor.getLastCursor().getScopeDescriptor()
-  suggestions = provider.findSuggestionsForWord({editor, bufferPosition, prefix, scopeDescriptor})
+  suggestions = provider.getSuggestions({editor, bufferPosition, prefix, scopeDescriptor})
   if options?.raw
     suggestions
   else
-    (sug.text for sug in suggestions)
+    if suggestions then (sug.text for sug in suggestions) else []
 
 describe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
@@ -161,6 +161,19 @@ describe 'SymbolProvider', ->
     runs ->
       advanceClock 1 # build the new wordlist
       expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength 0
+
+  describe "when autocomplete-plus.minimumWordLength is > 1", ->
+    beforeEach ->
+      atom.config.set('autocomplete-plus.minimumWordLength', 3)
+
+    it "only returns results when the prefix is at least the min word length", ->
+      editor.insertText('function aNewFunction(){};')
+      advanceClock provider.changeUpdateDelay
+
+      expect(suggestionsForPrefix(provider, editor, 'a')).not.toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'an')).not.toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'ane')).toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 
   describe "when the editor's path changes", ->
     it "continues to track changes on the new path", ->

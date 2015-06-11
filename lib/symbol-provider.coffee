@@ -178,12 +178,10 @@ class SymbolProvider
   ###
 
   getSuggestions: (options) =>
-    # No prefix? Don't autocomplete!
-    return unless options.prefix.trim().length
-    @findSuggestionsForWord(options)
-
-  findSuggestionsForWord: (options) =>
+    prefix = options.prefix?.trim()
+    return unless prefix?.length >= @minimumWordLength
     return unless @symbolStore.getLength()
+
     wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
 

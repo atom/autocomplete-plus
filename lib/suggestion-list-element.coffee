@@ -199,12 +199,12 @@ class SuggestionListElement extends HTMLElement
     count
 
   renderSelectedItem: ->
-    return unless @selectedLi?
-    @selectedLi.classList.remove('selected')
+    @selectedLi?.classList.remove('selected')
     @selectedLi = @ol.childNodes[@selectedIndex]
-    @selectedLi.classList.add('selected')
-    @scrollSelectedItemIntoView()
-    @updateDescription()
+    if @selectedLi?
+      @selectedLi.classList.add('selected')
+      @scrollSelectedItemIntoView()
+      @updateDescription()
 
   # This is reading the DOM in the updateDOM cycle. If we dont, there is a flicker :/
   scrollSelectedItemIntoView: ->

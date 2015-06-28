@@ -66,10 +66,9 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.add @model.onDidConfirmSelection(@confirmSelection.bind(this))
     @subscriptions.add @model.onDidDispose(@dispose.bind(this))
 
-    @subscriptions.add atom.keymap.onDidFailToMatchBinding ({keystrokes, keyboardEventTarget}) =>
+    @subscriptions.add atom.keymaps.onDidFailToMatchBinding ({keystrokes, keyboardEventTarget}) =>
       if atom.config.get('autocomplete-plus.typingConfirmsSelection') and not (keystrokes in ["cmd", "alt", "shift", "ctrl"])
-        unless @selectedIndex is -1
-          @confirmSelection(keystrokes)
+        @confirmSelection(keystrokes)
 
     @subscriptions.add atom.config.observe 'autocomplete-plus.suggestionListFollows', (@suggestionListFollows) =>
     @subscriptions.add atom.config.observe 'autocomplete-plus.maxVisibleSuggestions', (@maxVisibleSuggestions) =>
@@ -143,7 +142,7 @@ class SuggestionListElement extends HTMLElement
     unless @selectedIndex >= (@visibleItems().length - 1)
       @setSelectedIndex(@selectedIndex + 1)
     else
-      @setSelectedIndex(0)
+      @setSelectedIndex(if atom.config.get('autocomplete-plus.typingConfirmsSelection') then -1 else 0)
 
   setSelectedIndex: (index) ->
     @selectedIndex = index
@@ -205,6 +204,7 @@ class SuggestionListElement extends HTMLElement
     count
 
   renderSelectedItem: ->
+    return if @selectedIndex is -1
     @selectedLi?.classList.remove('selected')
     @selectedLi = @ol.childNodes[@selectedIndex]
     if @selectedLi?
@@ -214,6 +214,7 @@ class SuggestionListElement extends HTMLElement
 
   # This is reading the DOM in the updateDOM cycle. If we dont, there is a flicker :/
   scrollSelectedItemIntoView: ->
+    return if @selectedIndex is -1
     scrollTop = @scroller.scrollTop
     selectedItemTop = @selectedLi.offsetTop
     if selectedItemTop < scrollTop
@@ -227,6 +228,7 @@ class SuggestionListElement extends HTMLElement
       @selectedLi.scrollIntoView(false)
 
   readUIPropsFromDOM: ->
+    return if @selectedIndex is -1
     wordContainer = @selectedLi?.querySelector('.word-container')
 
     @uiProps ?= {}
@@ -242,6 +244,7 @@ class SuggestionListElement extends HTMLElement
       @updateUIForChangedProps()
 
   updateUIForChangedProps: ->
+    return if @selectedIndex is -1
     @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"
     @style.width = "#{@uiProps.width}px"
     if @suggestionListFollows is 'Word'

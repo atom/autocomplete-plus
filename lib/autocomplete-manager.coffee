@@ -1,18 +1,22 @@
-{Range, TextEditor, CompositeDisposable, Disposable}  = require('atom')
-_ = require('underscore-plus')
-path = require('path')
-ProviderManager = require('./provider-manager')
-SuggestionList = require('./suggestion-list')
-SuggestionListElement = require('./suggestion-list-element')
+{Range, TextEditor, CompositeDisposable, Disposable}  = require 'atom'
+path = require 'path'
+semver = require 'semver'
+fuzzaldrin = require 'fuzzaldrin'
+
+ProviderManager = require './provider-manager'
+SuggestionList = require './suggestion-list'
+SuggestionListElement = require './suggestion-list-element'
 
 # Deferred requires
 minimatch = null
+grim = null
 
 module.exports =
 class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
   typingConfirmsSelection: false
+  bracketMatcherPairs: ['()', '[]', '{}', '""', "''", '``', "“”", '‘’', "«»", "‹›"]
   buffer: null
   compositionInProgress: false
   disposed: false
@@ -24,7 +28,11 @@ class AutocompleteManager
   subscriptions: null
   suggestionDelay: 50
   suggestionList: null
+  suppressForClasses: []
   shouldDisplaySuggestions: false
+  manualActivationStrictPrefixes: null
+  prefixRegex: /(\b|['"~`!@#\$%^&*\(\)\{\}\[\]=\+,/\?>])((\w+[\w-]*)|([.:;[{(< ]+))$/
+  wordPrefixRegex: /^\w+[\w-]*$/
 
   constructor: ->
     @subscriptions = new CompositeDisposable
@@ -92,6 +100,13 @@ class AutocompleteManager
     # Watch config values
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
+    @subscriptions.add atom.config.observe 'autocomplete-plus.suppressActivationForEditorClasses', (value) =>
+      @suppressForClasses = []
+      for selector in value
+        classes = (className.trim() for className in selector.trim().split('.') when className.trim())
+        @suppressForClasses.push(classes) if classes.length
+      return
 
     # Handle events from suggestion list
     @subscriptions.add(@suggestionList.onDidConfirm(@confirm))
@@ -99,44 +114,114 @@ class AutocompleteManager
 
   handleCommands: =>
     @subscriptions.add atom.commands.add 'atom-text-editor',
-      'autocomplete-plus:activate': =>
+      'autocomplete-plus:activate': (event) =>
         @shouldDisplaySuggestions = true
-        @findSuggestions()
+        @findSuggestions(event.detail?.activatedManually ? true)
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
-  findSuggestions: =>
+  findSuggestions: (activatedManually) =>
     return if @disposed
     return unless @providerManager? and @editor? and @buffer?
     return if @isCurrentFileBlackListed()
     cursor = @editor.getLastCursor()
     return unless cursor?
-    cursorPosition = cursor.getBufferPosition()
-    currentScope = cursor.getScopeDescriptor()
-    return unless currentScope?
-    currentScopeChain = currentScope.getScopeChain()
-    return unless currentScopeChain?
 
-    options =
-      editor: @editor
-      buffer: @buffer
-      cursor: cursor
-      position: cursorPosition
-      scope: currentScope
-      scopeChain: currentScopeChain
-      prefix: @prefixForCursor(cursor)
+    bufferPosition = cursor.getBufferPosition()
+    scopeDescriptor = cursor.getScopeDescriptor()
+    prefix = @getPrefix(@editor, bufferPosition)
 
-    @getSuggestionsFromProviders(options)
+    @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix, activatedManually})
 
   getSuggestionsFromProviders: (options) =>
-    providers = @providerManager.providersForScopeChain(options.scopeChain)
-    providerPromises = providers?.map((provider) -> provider?.requestHandler(options))
+    providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)
+
+    providerPromises = []
+    providers.forEach (provider) =>
+      apiVersion = @providerManager.apiVersionForProvider(provider)
+      apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+
+      # TODO API: remove upgrading when 1.0 support is removed
+      if apiIs20
+        getSuggestions = provider.getSuggestions.bind(provider)
+        upgradedOptions = options
+      else
+        getSuggestions = provider.requestHandler.bind(provider)
+        upgradedOptions =
+          editor: options.editor
+          prefix: options.prefix
+          bufferPosition: options.bufferPosition
+          position: options.bufferPosition
+          scope: options.scopeDescriptor
+          scopeChain: options.scopeDescriptor.getScopeChain()
+          buffer: options.editor.getBuffer()
+          cursor: options.editor.getLastCursor()
+
+      providerPromises.push Promise.resolve(getSuggestions(upgradedOptions)).then (providerSuggestions) =>
+        return unless providerSuggestions?
+
+        # TODO API: remove upgrading when 1.0 support is removed
+        hasDeprecations = false
+        if apiIs20 and providerSuggestions.length
+          hasDeprecations = @deprecateForSuggestion(provider, providerSuggestions[0])
+
+        if hasDeprecations or not apiIs20
+          providerSuggestions = providerSuggestions.map (suggestion) ->
+            newSuggestion =
+              text: suggestion.text ? suggestion.word
+              snippet: suggestion.snippet
+              replacementPrefix: suggestion.replacementPrefix ? suggestion.prefix
+              className: suggestion.className
+              type: suggestion.type
+            newSuggestion.rightLabelHTML = suggestion.label if not newSuggestion.rightLabelHTML? and suggestion.renderLabelAsHtml
+            newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
+            newSuggestion
+
+        # FIXME: Cycling through the suggestions again is not ideal :/
+        for suggestion in providerSuggestions
+          suggestion.replacementPrefix ?= @getDefaultReplacementPrefix(options.prefix)
+          suggestion.provider = provider
+          @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if options.activatedManually
+
+        providerSuggestions = @filterSuggestions(providerSuggestions, options) if provider.filterSuggestions
+        providerSuggestions
+
     return unless providerPromises?.length
     @currentSuggestionsPromise = suggestionsPromise = Promise.all(providerPromises)
       .then(@mergeSuggestionsFromProviders)
       .then (suggestions) =>
-        if @currentSuggestionsPromise is suggestionsPromise
+        return unless @currentSuggestionsPromise is suggestionsPromise
+        suggestions = @filterForManualActivationStrictPrefix(suggestions)
+        if options.activatedManually and @shouldDisplaySuggestions and suggestions.length is 1
+          # When there is one suggestion in manual mode, just confirm it
+          @confirm(suggestions[0])
+        else
           @displaySuggestions(suggestions, options)
+
+  filterSuggestions: (suggestions, {prefix}) ->
+    results = []
+    for suggestion, i in suggestions
+      # sortScore mostly preserves in the original sorting. The function is
+      # chosen such that suggestions with a very high match score can break out.
+      suggestion.sortScore = Math.max(-i / 10 + 3, 0) + 1
+      suggestion.score = null
+
+      text = (suggestion.snippet or suggestion.text)
+      suggestionPrefix = suggestion.replacementPrefix ? prefix
+      prefixIsEmpty = not suggestionPrefix or suggestionPrefix is ' '
+      firstCharIsMatch = not prefixIsEmpty and suggestionPrefix[0].toLowerCase() is text[0].toLowerCase()
+
+      if prefixIsEmpty
+        results.push(suggestion)
+      if firstCharIsMatch and (score = fuzzaldrin.score(text, suggestionPrefix)) > 0
+        suggestion.score = score * suggestion.sortScore
+        results.push(suggestion)
+
+    results.sort(@reverseSortOnScoreComparator)
+    results
+
+  reverseSortOnScoreComparator: (a, b) ->
+    (b.score ? b.sortScore) - (a.score ? a.sortScore)
 
   # providerSuggestions - array of arrays of suggestions provided by all called providers
   mergeSuggestionsFromProviders: (providerSuggestions) ->
@@ -145,50 +230,116 @@ class AutocompleteManager
       suggestions
     , []
 
+  deprecateForSuggestion: (provider, suggestion) ->
+    hasDeprecations = false
+    if suggestion.word?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `word` attribute.
+        The `word` attribute is now `text`.
+        See https://github.com/atom/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.prefix?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `prefix` attribute.
+        The `prefix` attribute is now `replacementPrefix` and is optional.
+        See https://github.com/atom/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.label?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `label` attribute.
+        The `label` attribute is now `rightLabel` or `rightLabelHTML`.
+        See https://github.com/atom/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.onWillConfirm?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `onWillConfirm` callback.
+        The `onWillConfirm` callback is no longer supported.
+        See https://github.com/atom/autocomplete-plus/wiki/Provider-API
+      """
+    if suggestion.onDidConfirm?
+      hasDeprecations = true
+      grim ?= require 'grim'
+      grim.deprecate """
+        Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+        returns suggestions with a `onDidConfirm` callback.
+        The `onDidConfirm` callback is now a `onDidInsertSuggestion` callback on the provider itself.
+        See https://github.com/atom/autocomplete-plus/wiki/Provider-API
+      """
+    hasDeprecations
+
   displaySuggestions: (suggestions, options) =>
-    suggestions = _.uniq(suggestions, (s) -> s.word)
+    suggestions = @getUniqueSuggestions(suggestions)
     if @shouldDisplaySuggestions and suggestions.length
-      @showSuggestionList(suggestions)
+      @showSuggestionList(suggestions, options)
     else
       @hideSuggestionList()
 
-  prefixForCursor: (cursor) =>
-    return '' unless @buffer? and cursor?
-    start = cursor.getBeginningOfCurrentWordBufferPosition()
-    end = cursor.getBufferPosition()
-    return '' unless start? and end?
-    @buffer.getTextInRange(new Range(start, end))
+  getUniqueSuggestions: (suggestions) ->
+    seen = {}
+    result = []
+    for suggestion in suggestions
+      val = suggestion.text + suggestion.snippet
+      unless seen[val]
+        result.push(suggestion)
+        seen[val] = true
+    result
+
+  getPrefix: (editor, bufferPosition) ->
+    line = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
+    @prefixRegex.exec(line)?[2] or ''
+
+  getDefaultReplacementPrefix: (prefix) ->
+    if @wordPrefixRegex.test(prefix)
+      prefix
+    else
+      ''
 
   # Private: Gets called when the user successfully confirms a suggestion
   #
   # match - An {Object} representing the confirmed suggestion
-  confirm: (match, keystroke) =>
-    return unless @editor? and match? and not @disposed
+  confirm: (suggestion, keystroke) =>
+    return unless @editor? and suggestion? and not @disposed
 
-    match.onWillConfirm?()
+    apiVersion = @providerManager.apiVersionForProvider(suggestion.provider)
+    apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+    triggerPosition = @editor.getLastCursor().getBufferPosition()
+
+    # TODO API: Remove as this is no longer used
+    suggestion.onWillConfirm?()
 
     @editor.getSelections()?.forEach((selection) -> selection?.clear())
     @hideSuggestionList()
 
-    @replaceTextWithMatch(match)
+    @replaceTextWithMatch(suggestion)
 
-    # FIXME: move this to the snippet provider's onDidInsertSuggestion() method
-    # when the API has been updated.
-    if match.isSnippet
-      setTimeout =>
-        atom.commands.dispatch(atom.views.getView(@editor), 'snippets:expand')
-      , 1
+    # TODO API: Remove when we remove the 1.0 API
+    if apiIs20
+      suggestion.provider.onDidInsertSuggestion?({@editor, suggestion, triggerPosition})
+    else
+      suggestion.onDidConfirm?()
+      @editor.insertText(keystroke) if keystroke?
 
-    match.onDidConfirm?()
-    @editor.insertText(keystroke) if keystroke?
-
-  showSuggestionList: (suggestions) ->
+  showSuggestionList: (suggestions, options) ->
     return if @disposed
     @suggestionList.changeItems(suggestions)
-    @suggestionList.show(@editor)
+    @suggestionList.show(@editor, options)
 
   hideSuggestionList: =>
     return if @disposed
+    @clearManualActivationStrictPrefixes()
+    @suggestionList.changeItems(null)
     @suggestionList.hide()
     @shouldDisplaySuggestions = false
 
@@ -202,21 +353,40 @@ class AutocompleteManager
   # Private: Replaces the current prefix with the given match.
   #
   # match - The match to replace the current prefix with
-  replaceTextWithMatch: (match) =>
+  replaceTextWithMatch: (suggestion) =>
     return unless @editor?
     newSelectedBufferRanges = []
 
-    selections = @editor.getSelections()
-    return unless selections?
-    @editor.transact =>
-      if match.prefix?.length > 0
-        @editor.selectLeft(match.prefix.length)
-        @editor.delete()
+    cursors = @editor.getCursors()
+    return unless cursors?
 
-      if match.snippet? and @snippetsManager?
-        @snippetsManager.insertSnippet(match.snippet, @editor)
-      else
-        @editor.insertText(match.word ? match.snippet)
+    @editor.transact =>
+      for cursor in cursors
+        endPosition = cursor.getBufferPosition()
+        beginningPosition = [endPosition.row, endPosition.column - suggestion.replacementPrefix.length]
+
+        if @editor.getTextInBufferRange([beginningPosition, endPosition]) is suggestion.replacementPrefix
+          suffix = @getSuffix(@editor, endPosition, suggestion)
+          cursor.moveRight(suffix.length) if suffix.length
+          cursor.selection.selectLeft(suggestion.replacementPrefix.length + suffix.length)
+
+          if suggestion.snippet? and @snippetsManager?
+            @snippetsManager.insertSnippet(suggestion.snippet, @editor, cursor)
+          else
+            cursor.selection.insertText(suggestion.text ? suggestion.snippet)
+      return
+
+  getSuffix: (editor, bufferPosition, suggestion) ->
+    # This just chews through the suggestion and tries to match the suggestion
+    # substring with the lineText starting at the cursor. There is probably a
+    # more efficient way to do this.
+    suffix = (suggestion.snippet ? suggestion.text)
+    endPosition = [bufferPosition.row, bufferPosition.column + suffix.length]
+    endOfLineText = editor.getTextInBufferRange([bufferPosition, endPosition])
+    while suffix
+      return suffix if endOfLineText.startsWith(suffix)
+      suffix = suffix.slice(1)
+    ''
 
   # Private: Checks whether the current file is blacklisted.
   #
@@ -266,25 +436,44 @@ class AutocompleteManager
   # character with a single keystroke. (= pasting)
   #
   # event - The change {Event}
-  bufferChanged: ({newText, oldText}) =>
+  bufferChanged: ({newText, newRange, oldText, oldRange}) =>
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
-    autoActivationEnabled = atom.config.get('autocomplete-plus.enableAutoActivation')
-    editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
-    vimModeActive = editorElement?.classList?.contains('vim-mode')
+    shouldActivate = false
+    cursorPositions = @editor.getCursorBufferPositions()
 
-    if vimModeActive
-      vimInsertModeActive = editorElement?.classList?.contains('insert-mode')
+    if @autoActivationEnabled or @suggestionList.isActive()
 
-    wouldAutoActivate = (!vimModeActive or vimInsertModeActive) and
-    (newText.trim().length is 1 or ((@backspaceTriggersAutocomplete or @suggestionList.isActive()) and oldText.trim().length is 1))
+      # Activate on space, a non-whitespace character, or a bracket-matcher pair.
+      if newText.length > 0
+        shouldActivate =
+          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
+          (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs)
 
-    if autoActivationEnabled and wouldAutoActivate
+      # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur.
+      # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair.
+      else if oldText.length > 0
+        shouldActivate =
+          (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and
+          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
+          (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
+
+      shouldActivate = false if shouldActivate and @shouldSuppressActivationForEditorClasses()
+
+    if shouldActivate
       @cancelHideSuggestionListRequest()
       @requestNewSuggestions()
     else
       @cancelNewSuggestionsRequest()
       @hideSuggestionList()
+
+  shouldSuppressActivationForEditorClasses: ->
+    for classNames in @suppressForClasses
+      containsCount = 0
+      for className in classNames
+        containsCount += 1 if @editorView.classList.contains(className)
+      return true if containsCount is classNames.length
+    false
 
   # Public: Clean up, stop listening to events
   dispose: =>
@@ -297,3 +486,24 @@ class AutocompleteManager
     @subscriptions = null
     @suggestionList = null
     @providerManager = null
+
+  clearManualActivationStrictPrefixes: ->
+    @manualActivationStrictPrefixes = null
+
+  addManualActivationStrictPrefix: (provider, prefix) ->
+    return if @manualActivationStrictPrefixes?.has(provider) or not prefix?
+    @manualActivationStrictPrefixes ?= new WeakMap
+    @manualActivationStrictPrefixes.set(provider, prefix.toLowerCase())
+
+  filterForManualActivationStrictPrefix: (suggestions) ->
+    return suggestions unless @manualActivationStrictPrefixes?
+
+    results = []
+    for suggestion in suggestions
+      lowercaseText = (suggestion.snippet ? suggestion.text).toLowerCase()
+      if lowercaseText[0] is suggestion.replacementPrefix.toLowerCase()[0]
+        strictPrefix = @manualActivationStrictPrefixes.get(suggestion.provider)
+        results.push(suggestion) if strictPrefix? and lowercaseText.startsWith(strictPrefix)
+      else
+        results.push(suggestion)
+    results

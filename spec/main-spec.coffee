@@ -1,4 +1,4 @@
-{waitForAutocomplete} = require('./spec-helper')
+{waitForAutocomplete} = require './spec-helper'
 
 describe 'Autocomplete', ->
   [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
@@ -35,6 +35,7 @@ describe 'Autocomplete', ->
 
     runs ->
       editorView = atom.views.getView(editor)
+      advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
 
   describe '@activate()', ->
     it 'activates autocomplete and initializes AutocompleteManager', ->

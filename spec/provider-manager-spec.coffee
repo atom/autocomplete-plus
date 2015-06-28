@@ -1,31 +1,27 @@
-ProviderManager = require('../lib/provider-manager')
-_ = require('underscore-plus')
+ProviderManager = require '../lib/provider-manager'
 
 describe 'Provider Manager', ->
   [providerManager, testProvider, registration] = []
 
   beforeEach ->
-    runs ->
-      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
-      providerManager = new ProviderManager()
-      testProvider =
-        requestHandler: (options) ->
-          [{
-            word: 'ohai',
-            prefix: 'ohai'
-          }]
-        selector: '.source.js'
-        dispose: ->
-          return
+    atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
+    providerManager = new ProviderManager()
+    testProvider =
+      getSuggestions: (options) ->
+        [{
+          text: 'ohai',
+          replacementPrefix: 'ohai'
+        }]
+      selector: '.source.js'
+      dispose: ->
 
   afterEach ->
-    runs ->
-      registration?.dispose() if registration?.dispose?
-      registration = null
-      testProvider?.dispose() if testProvider?.dispose?
-      testProvider = null
-      providerManager?.dispose()
-      providerManager = null
+    registration?.dispose?()
+    registration = null
+    testProvider?.dispose?()
+    testProvider = null
+    providerManager?.dispose()
+    providerManager = null
 
   describe 'when no providers have been registered, and enableBuiltinProvider is true', ->
     beforeEach ->
@@ -34,335 +30,423 @@ describe 'Provider Manager', ->
     it 'is constructed correctly', ->
       expect(providerManager.providers).toBeDefined()
       expect(providerManager.subscriptions).toBeDefined()
-      expect(providerManager.store).toBeDefined()
-      expect(providerManager.fuzzyProvider).toBeDefined()
+      expect(providerManager.defaultProvider).toBeDefined()
 
     it 'disposes correctly', ->
       providerManager.dispose()
       expect(providerManager.providers).toBeNull()
       expect(providerManager.subscriptions).toBeNull()
-      expect(providerManager.store).toBeNull()
-      expect(providerManager.fuzzyProvider).toBeNull()
+      expect(providerManager.defaultProvider).toBeNull()
 
-    it 'registers FuzzyProvider for all scopes', ->
-      expect(_.size(providerManager.providersForScopeChain('*'))).toBe(1)
-      expect(providerManager.providersForScopeChain('*')[0]).toBe(providerManager.fuzzyProvider)
+    it 'registers the default provider for all scopes', ->
+      expect(providerManager.providersForScopeDescriptor('*').length).toBe(1)
+      expect(providerManager.providersForScopeDescriptor('*')[0]).toBe(providerManager.defaultProvider)
 
     it 'adds providers', ->
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
-      expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
+      expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe false
 
-      providerManager.addProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
-      uuid = providerManager.providers.get(testProvider)
-      expect(uuid).toBeDefined()
-      expect(uuid).not.toEqual('')
-      expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(true)
-
-      providerManager.addProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
-      uuid2 = providerManager.providers.get(testProvider)
-      expect(uuid2).toBeDefined()
-      expect(uuid2).not.toEqual('')
-      expect(uuid).toEqual(uuid2)
-      expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(true)
-      providerManager.removeProvider(testProvider)
+      providerManager.addProvider(testProvider, '2.0.0')
+      expect(providerManager.isProviderRegistered(testProvider)).toEqual(true)
+      apiVersion = providerManager.apiVersionForProvider(testProvider)
+      expect(apiVersion).toEqual('2.0.0')
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe true
 
     it 'removes providers', ->
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
-      expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe false
 
       providerManager.addProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
-      expect(providerManager.providers.get(testProvider)).toBeDefined()
-      expect(providerManager.providers.get(testProvider)).not.toEqual('')
-      expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(true)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe true
 
       providerManager.removeProvider(testProvider)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
-      expect(_.contains(providerManager.subscriptions?.disposables, testProvider)).toEqual(false)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
+      expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe false
 
-    it 'can identify a provider with a missing requestHandler', ->
+    it 'can identify a provider with a missing getSuggestions', ->
       bogusProvider =
-        badRequestHandler: (options) ->
-          return []
+        badgetSuggestions: (options) ->
         selector: '.source.js'
         dispose: ->
-          return
-      expect(providerManager.isValidProvider({})).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
-    it 'can identify a provider with an invalid requestHandler', ->
+    it 'can identify a provider with an invalid getSuggestions', ->
       bogusProvider =
-        requestHandler: 'yo, this is a bad handler'
+        getSuggestions: 'yo, this is a bad handler'
         selector: '.source.js'
         dispose: ->
-          return
-      expect(providerManager.isValidProvider({})).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
     it 'can identify a provider with a missing selector', ->
       bogusProvider =
-        requestHandler: (options) ->
-          return []
+        getSuggestions: (options) ->
         aSelector: '.source.js'
         dispose: ->
-          return
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
     it 'can identify a provider with an invalid selector', ->
       bogusProvider =
-        requestHandler: (options) ->
-          return []
+        getSuggestions: (options) ->
         selector: ''
         dispose: ->
-          return
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
       bogusProvider =
-        requestHandler: (options) ->
-          return []
+        getSuggestions: (options) ->
         selector: false
         dispose: ->
-          return
 
-      expect(providerManager.isValidProvider(bogusProvider)).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+
+    it 'correctly identifies a 1.0 provider', ->
+      bogusProvider =
+        selector: '.source.js'
+        requestHandler: 'yo, this is a bad handler'
+        dispose: ->
+      expect(providerManager.isValidProvider({}, '1.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '1.0.0')).toEqual(false)
+
+      legitProvider =
+        selector: '.source.js'
+        requestHandler: ->
+        dispose: ->
+      expect(providerManager.isValidProvider(legitProvider, '1.0.0')).toEqual(true)
 
     it 'registers a valid provider', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'removes a registration', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
       registration.dispose()
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
     it 'does not create duplicate registrations for the same scope', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'does not register an invalid provider', ->
       bogusProvider =
-        requestHandler: 'yo, this is a bad handler'
+        getSuggestions: 'yo, this is a bad handler'
         selector: '.source.js'
         dispose: ->
           return
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), bogusProvider)).toEqual(false)
-      expect(providerManager.providers.has(bogusProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(bogusProvider)).toBe(-1)
+      expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(bogusProvider)
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), bogusProvider)).toEqual(false)
-      expect(providerManager.providers.has(bogusProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(bogusProvider)).toBe(-1)
+      expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
     it 'registers a provider with a blacklist', ->
       testProvider =
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           [{
-            word: 'ohai',
-            prefix: 'ohai'
+            text: 'ohai',
+            replacementPrefix: 'ohai'
           }]
         selector: '.source.js'
-        blacklist: '.source.js .comment'
+        disableForSelector: '.source.js .comment'
         dispose: ->
           return
 
-      expect(providerManager.isValidProvider(testProvider)).toEqual(true)
+      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(false)
-      expect(providerManager.providers.has(testProvider)).toEqual(false)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-      expect(_.contains(providerManager.providersForScopeChain('.source.js'), testProvider)).toEqual(true)
-      expect(providerManager.providers.has(testProvider)).toEqual(true)
+      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
+      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
   describe 'when no providers have been registered, and enableBuiltinProvider is false', ->
 
     beforeEach ->
       atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
 
-    it 'does not register FuzzyProvider for all scopes', ->
-      expect(_.size(providerManager.providersForScopeChain('*'))).toBe(0)
-      expect(providerManager.fuzzyProvider).toEqual(null)
-      expect(providerManager.fuzzyRegistration).toEqual(null)
+    it 'does not register the default provider for all scopes', ->
+      expect(providerManager.providersForScopeDescriptor('*').length).toBe(0)
+      expect(providerManager.defaultProvider).toEqual(null)
+      expect(providerManager.defaultProviderRegistration).toEqual(null)
 
   describe 'when providers have been registered', ->
-    [testProvider1, testProvider2, testProvider3, testProvider4, registration1, registration2, registration3, registration4] = []
+    [testProvider1, testProvider2, testProvider3, testProvider4] = []
 
     beforeEach ->
-      runs ->
-        atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
-        providerManager = new ProviderManager()
-        testProvider1 =
-          requestHandler: (options) ->
-            [{
-              word: 'ohai2',
-              prefix: 'ohai2'
-            }]
-          selector: '.source.js'
-          dispose: ->
-            return
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
+      providerManager = new ProviderManager()
 
-        testProvider2 =
-          requestHandler: (options) ->
-            [{
-              word: 'ohai2',
-              prefix: 'ohai2'
-            }]
-          selector: '.source.js .variable.js'
-          blacklist: '.source.js .variable.js .comment2'
-          providerblacklist:
-            'autocomplete-plus-fuzzyprovider': '.source.js .variable.js .comment3'
-          dispose: ->
-            return
+      testProvider1 =
+        selector: '.source.js'
+        getSuggestions: (options) ->
+          [{
+            text: 'ohai2',
+            replacementPrefix: 'ohai2'
+          }]
+        dispose: ->
 
-        testProvider3 =
-          requestHandler: (options) ->
-            [{
-              word: 'ohai3',
-              prefix: 'ohai3'
-            }]
-          selector: '*'
-          dispose: ->
-            return
+      testProvider2 =
+        selector: '.source.js .variable.js'
+        disableForSelector: '.source.js .variable.js .comment2'
+        providerblacklist:
+          'autocomplete-plus-fuzzyprovider': '.source.js .variable.js .comment3'
+        getSuggestions: (options) ->
+          [{
+            text: 'ohai2',
+            replacementPrefix: 'ohai2'
+          }]
+        dispose: ->
 
-        testProvider4 =
-          requestHandler: (options) ->
-            [{
-              word: 'ohai4',
-              prefix: 'ohai4'
-            }]
-          selector: '.source.js .comment'
-          dispose: ->
-            return
+      testProvider3 =
+        selector: '*'
+        getSuggestions: (options) ->
+          [{
+            text: 'ohai3',
+            replacementPrefix: 'ohai3'
+          }]
+        dispose: ->
 
-        registration1 = providerManager.registerProvider(testProvider1)
-        registration2 = providerManager.registerProvider(testProvider2)
-        registration3 = providerManager.registerProvider(testProvider3)
-        registration4 = providerManager.registerProvider(testProvider4)
+      testProvider4 =
+        selector: '.source.js .comment'
+        getSuggestions: (options) ->
+          [{
+            text: 'ohai4',
+            replacementPrefix: 'ohai4'
+          }]
+        dispose: ->
 
-    afterEach ->
-      registration1?.dispose()
-      registration2?.dispose()
-      registration3?.dispose()
-      registration4?.dispose()
-      registration1 = null
-      registration2 = null
-      registration3 = null
-      registration4 = null
-      testProvider1 = null
-      testProvider2 = null
-      testProvider3 = null
-      testProvider4 = null
+      providerManager.registerProvider(testProvider1)
+      providerManager.registerProvider(testProvider2)
+      providerManager.registerProvider(testProvider3)
+      providerManager.registerProvider(testProvider4)
 
     it 'returns providers in the correct order for the given scope chain', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.other'))).toEqual(2)
-      expect(providerManager.providersForScopeChain('.source.other')[0]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.other')[1]).toEqual(providerManager.fuzzyProvider)
+      defaultProvider = providerManager.defaultProvider
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js'))).toEqual(3)
-      expect(providerManager.providersForScopeChain('.source.js')[0]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js')[1]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.js')[2]).toEqual(providerManager.fuzzyProvider)
+      providers = providerManager.providersForScopeDescriptor('.source.other')
+      expect(providers).toHaveLength 2
+      expect(providers[0]).toEqual testProvider3
+      expect(providers[1]).toEqual defaultProvider
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
-      expect(providerManager.providersForScopeChain('.source.js .comment')[0]).toEqual(testProvider4)
-      expect(providerManager.providersForScopeChain('.source.js .comment')[1]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js .comment')[2]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.js .comment')[3]).toEqual(providerManager.fuzzyProvider)
+      providers = providerManager.providersForScopeDescriptor('.source.js')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual testProvider1
+      expect(providers[1]).toEqual testProvider3
+      expect(providers[2]).toEqual defaultProvider
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js .variable.js'))).toEqual(4)
+      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      expect(providers).toHaveLength 4
+      expect(providers[0]).toEqual testProvider4
+      expect(providers[1]).toEqual testProvider1
+      expect(providers[2]).toEqual testProvider3
+      expect(providers[3]).toEqual defaultProvider
 
-      expect(providerManager.providersForScopeChain('.source.js .variable.js')[0]).toEqual(testProvider2)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js')[1]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js')[2]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js')[3]).toEqual(providerManager.fuzzyProvider)
+      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js')
+      expect(providers).toHaveLength 4
+      expect(providers[0]).toEqual testProvider2
+      expect(providers[1]).toEqual testProvider1
+      expect(providers[2]).toEqual testProvider3
+      expect(providers[3]).toEqual defaultProvider
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js .other.js'))).toEqual(3)
-      expect(providerManager.providersForScopeChain('.source.js .comment')[1]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js .comment')[2]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.js .comment')[3]).toEqual(providerManager.fuzzyProvider)
+      providers = providerManager.providersForScopeDescriptor('.source.js .other.js')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual testProvider1
+      expect(providers[1]).toEqual testProvider3
+      expect(providers[2]).toEqual defaultProvider
 
     it 'does not return providers if the scopeChain exactly matches a global blacklist item', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js .comment'])
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(0)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 0
 
     it 'does not return providers if the scopeChain matches a global blacklist item with a wildcard', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(0)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 0
 
     it 'does not return providers if the scopeChain matches a global blacklist item with a wildcard one level of depth below the current scope', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment .other'))).toEqual(0)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment .other')).toHaveLength 0
 
     it 'does return providers if the scopeChain does not match a global blacklist item with a wildcard', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.coffee *'])
-      expect(_.size(providerManager.providersForScopeChain('.source.js .comment'))).toEqual(4)
+      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
 
     it 'filters a provider if the scopeChain matches a provider blacklist item', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js .variable.js .other.js'))).toEqual(4)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[0]).toEqual(testProvider2)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[1]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[2]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[3]).toEqual(providerManager.fuzzyProvider)
+      defaultProvider = providerManager.defaultProvider
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js'))).toEqual(3)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js')[0]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js')[1]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment2.js')[2]).toEqual(providerManager.fuzzyProvider)
+      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .other.js')
+      expect(providers).toHaveLength 4
+      expect(providers[0]).toEqual testProvider2
+      expect(providers[1]).toEqual testProvider1
+      expect(providers[2]).toEqual testProvider3
+      expect(providers[3]).toEqual defaultProvider
+
+      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .comment2.js')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual testProvider1
+      expect(providers[1]).toEqual testProvider3
+      expect(providers[2]).toEqual defaultProvider
 
     it 'filters a provider if the scopeChain matches a provider providerblacklist item', ->
-      expect(_.size(providerManager.providersForScopeChain('.source.js .variable.js .other.js'))).toEqual(4)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[0]).toEqual(testProvider2)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[1]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[2]).toEqual(testProvider3)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .other.js')[3]).toEqual(providerManager.fuzzyProvider)
+      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .other.js')
+      expect(providers).toHaveLength 4
+      expect(providers[0]).toEqual(testProvider2)
+      expect(providers[1]).toEqual(testProvider1)
+      expect(providers[2]).toEqual(testProvider3)
+      expect(providers[3]).toEqual(providerManager.defaultProvider)
 
-      expect(_.size(providerManager.providersForScopeChain('.source.js .variable.js .comment3.js'))).toEqual(3)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment3.js')[0]).toEqual(testProvider2)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment3.js')[1]).toEqual(testProvider1)
-      expect(providerManager.providersForScopeChain('.source.js .variable.js .comment3.js')[2]).toEqual(testProvider3)
+      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .comment3.js')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual(testProvider2)
+      expect(providers[1]).toEqual(testProvider1)
+      expect(providers[2]).toEqual(testProvider3)
+
+  describe "when inclusion priorities are used", ->
+    [accessoryProvider1, accessoryProvider2, verySpecificProvider, mainProvider, defaultProvider] = []
+
+    beforeEach ->
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
+      providerManager = new ProviderManager()
+      defaultProvider = providerManager.defaultProvider
+
+      accessoryProvider1 =
+        selector: '*'
+        inclusionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      accessoryProvider2 =
+        selector: '.source.js'
+        inclusionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      verySpecificProvider =
+        selector: '.source.js .comment'
+        inclusionPriority: 2
+        excludeLowerPriority: true
+        getSuggestions: (options) ->
+        dispose: ->
+
+      mainProvider =
+        selector: '.source.js'
+        inclusionPriority: 1
+        excludeLowerPriority: true
+        getSuggestions: (options) ->
+        dispose: ->
+
+      providerManager.registerProvider(accessoryProvider1)
+      providerManager.registerProvider(accessoryProvider2)
+      providerManager.registerProvider(verySpecificProvider)
+      providerManager.registerProvider(mainProvider)
+
+    it 'returns the default provider and higher when nothing with a higher proirity is excluding the lower', ->
+      providers = providerManager.providersForScopeDescriptor('.source.coffee')
+      expect(providers).toHaveLength 2
+      expect(providers[0]).toEqual accessoryProvider1
+      expect(providers[1]).toEqual defaultProvider
+
+    it 'exclude the lower priority provider, the default, when one with a higher proirity excludes the lower', ->
+      providers = providerManager.providersForScopeDescriptor('.source.js')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual accessoryProvider2
+      expect(providers[1]).toEqual mainProvider
+      expect(providers[2]).toEqual accessoryProvider1
+
+    it 'excludes the all lower priority providers when multiple providers of lower priority', ->
+      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      expect(providers).toHaveLength 3
+      expect(providers[0]).toEqual verySpecificProvider
+      expect(providers[1]).toEqual accessoryProvider2
+      expect(providers[2]).toEqual accessoryProvider1
+
+  describe "when suggestionPriorities are the same", ->
+    [provider1, provider2, provider3, defaultProvider] = []
+    beforeEach ->
+      atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
+      providerManager = new ProviderManager()
+      defaultProvider = providerManager.defaultProvider
+
+      provider1 =
+        selector: '*'
+        suggestionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      provider2 =
+        selector: '.source.js'
+        suggestionPriority: 3
+        getSuggestions: (options) ->
+        dispose: ->
+
+      provider3 =
+        selector: '.source.js .comment'
+        suggestionPriority: 2
+        getSuggestions: (options) ->
+        dispose: ->
+
+      providerManager.registerProvider(provider1)
+      providerManager.registerProvider(provider2)
+      providerManager.registerProvider(provider3)
+
+    it 'sorts by specificity', ->
+      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      expect(providers).toHaveLength 4
+      expect(providers[0]).toEqual provider2
+      expect(providers[1]).toEqual provider3
+      expect(providers[2]).toEqual provider1
+
+hasDisposable = (compositeDisposable, disposable) ->
+  if compositeDisposable?.disposables?.has?
+    compositeDisposable.disposables.has(disposable)
+  else if compositeDisposable?.disposables?.indexOf?
+    compositeDisposable.disposables.indexOf(disposable) > -1
+  else
+    false

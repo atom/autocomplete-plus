@@ -1,4 +1,4 @@
-{waitForAutocomplete} = require('./spec-helper')
+{waitForAutocomplete} = require './spec-helper'
 describe 'Async providers', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, registration] = []
 
@@ -27,9 +27,6 @@ describe 'Async providers', ->
       mainModule = a.mainModule
 
     waitsFor ->
-      mainModule.autocompleteManager?.ready
-
-    runs ->
       autocompleteManager = mainModule.autocompleteManager
 
   afterEach ->
@@ -38,20 +35,20 @@ describe 'Async providers', ->
   describe 'when an async provider is registered', ->
     beforeEach ->
       testAsyncProvider =
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           return new Promise((resolve) ->
             setTimeout ->
               resolve(
                 [{
-                  word: 'asyncProvided',
-                  prefix: 'asyncProvided',
-                  label: 'asyncProvided'
+                  text: 'asyncProvided',
+                  replacementPrefix: 'asyncProvided',
+                  rightLabel: 'asyncProvided'
                 }]
               )
             , 10
             )
         selector: '.source.js'
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testAsyncProvider)
 
     it 'should provide completions when a provider returns a promise that results in an array of suggestions', ->
       editor.moveToBottom()
@@ -61,25 +58,25 @@ describe 'Async providers', ->
 
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-        expect(suggestionListView.querySelector('li .completion-label')).toHaveText('asyncProvided')
+        expect(suggestionListView.querySelector('li .right-label')).toHaveText('asyncProvided')
 
   describe 'when a provider takes a long time to provide suggestions', ->
     beforeEach ->
       testAsyncProvider =
         selector: '.source.js'
-        requestHandler: (options) ->
+        getSuggestions: (options) ->
           return new Promise((resolve) ->
             setTimeout ->
               resolve(
                 [{
-                  word: 'asyncProvided',
-                  prefix: 'asyncProvided',
-                  label: 'asyncProvided'
+                  text: 'asyncProvided',
+                  replacementPrefix: 'asyncProvided',
+                  rightLabel: 'asyncProvided'
                 }]
               )
             , 1000
             )
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testAsyncProvider})
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testAsyncProvider)
 
     it 'does not show the suggestion list when it is triggered then no longer needed', ->
       runs ->
@@ -95,7 +92,7 @@ describe 'Async providers', ->
 
       runs ->
         # Waiting will kick off the suggestion request
-        editor.insertText(' ')
+        editor.insertText('\r')
         waitForAutocomplete()
 
         # Expect nothing because the provider has not come back yet

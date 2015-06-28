@@ -1,6 +1,6 @@
 temp = require('temp').track()
-path = require('path')
-fs = require('fs-plus')
+path = require 'path'
+fs = require 'fs-plus'
 
 describe 'Autocomplete Manager', ->
   [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager, didAutocomplete] = []
@@ -60,6 +60,7 @@ var quicksort = function () {
       mainModule.autocompleteManager?.ready
 
     runs ->
+      advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
       autocompleteManager = mainModule.autocompleteManager
       displaySuggestions = autocompleteManager.displaySuggestions
       spyOn(autocompleteManager, 'displaySuggestions').andCallFake (suggestions, options) ->

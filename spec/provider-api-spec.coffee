@@ -1,5 +1,4 @@
-{waitForAutocomplete} = require('./spec-helper')
-_ = require('underscore-plus')
+{waitForAutocomplete, triggerAutocompletion} = require './spec-helper'
 
 describe 'Provider API', ->
   [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
@@ -18,17 +17,16 @@ describe 'Provider API', ->
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise -> atom.workspace.open('sample.js').then (e) ->
-      editor = e
-
     # Activate the package
-    waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
-      mainModule = a.mainModule
+    waitsForPromise ->
+      Promise.all [
+        atom.packages.activatePackage('language-javascript')
+        atom.workspace.open('sample.js').then (e) -> editor = e
+        atom.packages.activatePackage('autocomplete-plus').then (a) ->
+          mainModule = a.mainModule
+      ]
 
     waitsFor ->
-      mainModule.autocompleteManager?.ready
-
-    runs ->
       autocompleteManager = mainModule.autocompleteManager
 
   afterEach ->
@@ -37,137 +35,188 @@ describe 'Provider API', ->
     testProvider?.dispose() if testProvider?.dispose?
     testProvider = null
 
-  describe 'When the Editor has a grammar', ->
+  describe 'Provider API v2.0.0', ->
+    it 'registers the provider specified by [provider]', ->
+      testProvider =
+        selector: '.source.js,.source.coffee'
+        getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
-    beforeEach ->
-      waitsForPromise ->
-        atom.packages.activatePackage('language-javascript')
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
 
-    describe 'Provider API v1.0.0', ->
-      [registration1, registration2, registration3] = []
+    it 'registers the provider specified by the naked provider', ->
+      testProvider =
+        selector: '.source.js,.source.coffee'
+        getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
-      afterEach ->
-        registration1?.dispose()
-        registration2?.dispose()
-        registration3?.dispose()
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
 
-      it 'should allow registration of a provider', ->
+    it 'passes the correct parameters to getSuggestions for the version', ->
+      testProvider =
+        selector: '.source.js,.source.coffee'
+        getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
+
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      spyOn(testProvider, 'getSuggestions')
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        args = testProvider.getSuggestions.mostRecentCall.args[0]
+        expect(args.editor).toBeDefined()
+        expect(args.bufferPosition).toBeDefined()
+        expect(args.scopeDescriptor).toBeDefined()
+        expect(args.prefix).toBeDefined()
+
+        expect(args.scope).not.toBeDefined()
+        expect(args.scopeChain).not.toBeDefined()
+        expect(args.buffer).not.toBeDefined()
+        expect(args.cursor).not.toBeDefined()
+
+    it 'correctly displays the suggestion options', ->
+      testProvider =
+        selector: '.source.js, .source.coffee'
+        getSuggestions: (options) ->
+          [
+            text: 'ohai',
+            replacementPrefix: 'o',
+            rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
+        expect(suggestionListView.querySelector('.word')).toHaveText('ohai')
+        expect(suggestionListView.querySelector('.suggestion-description-content')).toHaveText('There be documentation')
+        expect(suggestionListView.querySelector('.suggestion-description-more-link').style.display).toBe 'none'
+
+    it "favors the `displayText` over text or snippet suggestion options", ->
+      testProvider =
+        selector: '.source.js, .source.coffee'
+        getSuggestions: (options) ->
+          [
+            text: 'ohai',
+            snippet: 'snippet'
+            displayText: 'displayOHAI'
+            replacementPrefix: 'o',
+            rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        expect(suggestionListView.querySelector('.word')).toHaveText('displayOHAI')
+
+    it 'correctly displays the suggestion description and More link', ->
+      testProvider =
+        selector: '.source.js, .source.coffee'
+        getSuggestions: (options) ->
+          [
+            text: 'ohai',
+            replacementPrefix: 'o',
+            rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
+            descriptionMoreURL: 'http://google.com'
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        content = suggestionListView.querySelector('.suggestion-description-content')
+        moreLink = suggestionListView.querySelector('.suggestion-description-more-link')
+        expect(content).toHaveText('There be documentation')
+        expect(moreLink).toHaveText('More..')
+        expect(moreLink.style.display).toBe 'inline'
+        expect(moreLink.getAttribute('href')).toBe 'http://google.com'
+
+    describe "when the filterSuggestions option is set to true", ->
+      getSuggestions = ->
+        ({text} for {text} in autocompleteManager.suggestionList.items)
+
+      beforeEach ->
+        editor.setText('')
+
+      it 'filters suggestions based on the default prefix', ->
+        testProvider =
+          selector: '.source.js'
+          filterSuggestions: true
+          getSuggestions: (options) ->
+            [
+              {text: 'okwow'}
+              {text: 'ohai'}
+              {text: 'ok'}
+              {text: 'cats'}
+              {text: 'something'}
+            ]
+        registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+        editor.insertText('o')
+        editor.insertText('k')
+        waitForAutocomplete()
+
         runs ->
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+          expect(getSuggestions()).toEqual [
+            {text: 'ok'}
+            {text: 'okwow'}
+          ]
 
-          testProvider =
-            requestHandler: (options) ->
-              [{
-                word: 'ohai',
-                prefix: 'ohai',
-                label: '<span style="color: red">ohai</span>',
-                renderLabelAsHtml: true,
-                className: 'ohai'
-              }]
-            selector: '.source.js,.source.coffee'
-          # Register the test provider
-          registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+      it 'filters suggestions based on the specified replacementPrefix for each suggestion', ->
+        testProvider =
+          selector: '.source.js'
+          filterSuggestions: true
+          getSuggestions: (options) ->
+            [
+              {text: 'ohai'}
+              {text: 'hai'}
+              {text: 'okwow', replacementPrefix: 'k'}
+              {text: 'ok', replacementPrefix: 'nope'}
+              {text: '::cats', replacementPrefix: '::'}
+              {text: 'something', replacementPrefix: 'sm'}
+            ]
+        registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.go')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+        editor.insertText('h')
+        waitForAutocomplete()
 
-          editor.moveToBottom()
-          editor.insertText('o')
-
-          waitForAutocomplete()
-
-          runs ->
-            suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
-
-            expect(suggestionListView.querySelector('li .completion-label')).toHaveHtml('<span style="color: red">ohai</span>')
-            expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
-
-      it 'should dispose a provider registration correctly', ->
         runs ->
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+          expect(getSuggestions()).toEqual [
+            {text: 'hai'}
+            {text: '::cats'}
+            {text: 'something'}
+          ]
 
-          testProvider =
-            requestHandler: (options) ->
-              [{
-                word: 'ohai',
-                prefix: 'ohai'
-              }]
-            selector: '.source.js,.source.coffee'
-          # Register the test provider
-          registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
+      it 'allows all suggestions when the prefix is an empty string / space', ->
+        testProvider =
+          selector: '.source.js'
+          filterSuggestions: true
+          getSuggestions: (options) ->
+            [
+              {text: 'ohai'}
+              {text: 'hai'}
+              {text: 'okwow', replacementPrefix: ' '}
+              {text: 'ok', replacementPrefix: 'nope'}
+            ]
+        registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.go')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+        editor.insertText('h')
+        editor.insertText(' ')
+        waitForAutocomplete()
 
-          registration.dispose()
-
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-          registration.dispose()
-
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-      it 'should remove a providers registration if the provider is disposed', ->
         runs ->
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-          testProvider =
-            requestHandler: (options) ->
-              [{
-                word: 'ohai',
-                prefix: 'ohai'
-              }]
-            selector: '.source.js,.source.coffee'
-            dispose: ->
-              return
-          # Register the test provider
-          registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
-
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(2)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(2)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(testProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.go')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-
-          testProvider.dispose()
-
-          expect(autocompleteManager.providerManager.store).toBeDefined()
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.js'))).toEqual(1)
-          expect(_.size(autocompleteManager.providerManager.providersForScopeChain('.source.coffee'))).toEqual(1)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.js')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
-          expect(autocompleteManager.providerManager.providersForScopeChain('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.fuzzyProvider)
+          expect(getSuggestions()).toEqual [
+            {text: 'ohai'}
+            {text: 'hai'}
+            {text: 'okwow'}
+          ]

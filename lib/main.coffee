@@ -1,4 +1,4 @@
-{Disposable} = require('atom')
+{CompositeDisposable} = require 'atom'
 
 module.exports =
   config:
@@ -25,16 +25,9 @@ module.exports =
       title: 'Keymap For Confirming A Suggestion'
       description: 'You should use the key(s) indicated here to confirm a suggestion from the suggestion list and have it inserted into the file.'
       type: 'string'
-      default: 'tab'
+      default: 'tab and enter'
       enum: ['tab', 'enter', 'tab and enter']
       order: 4
-    navigateCompletions:
-      title: 'Keymap For Navigating The Suggestion List'
-      description: 'You should use the keys indicated here to select suggestions in the suggestion list (moving up or down).'
-      type: 'string'
-      default: 'up,down'
-      enum: ['up,down', 'ctrl-p,ctrl-n']
-      order: 5
     fileBlacklist:
       title: 'File Blacklist'
       description: 'Suggestions will not be provided for files matching this list.'
@@ -42,121 +35,136 @@ module.exports =
       default: ['.*']
       items:
         type: 'string'
-      order: 6
+      order: 5
     scopeBlacklist:
       title: 'Scope Blacklist'
-      description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/advanced/scopes-and-scope-descriptors'
+      description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors'
       type: 'array'
       default: []
       items:
         type: 'string'
-      order: 7
+      order: 6
     includeCompletionsFromAllBuffers:
       title: 'Include Completions From All Buffers'
-      description: 'For grammars with no registered provider(s), FuzzyProvider will include completions from all buffers, instead of just the buffer you are currently editing.'
+      description: 'For grammars with no registered provider(s), the default provider will include completions from all buffers, instead of just the buffer you are currently editing.'
       type: 'boolean'
-      default: false
-      order: 8
+      default: true
+      order: 7
     strictMatching:
       title: 'Use Strict Matching For Built-In Provider'
       description: 'Fuzzy searching is performed if this is disabled; if it is enabled, suggestions must begin with the prefix from the current word.'
       type: 'boolean'
       default: false
-      order: 9
+      order: 8
     minimumWordLength:
       description: "Only autocomplete when you've typed at least this many characters."
       type: 'integer'
-      default: 1
-      order: 10
+      default: 3
+      order: 9
     enableBuiltinProvider:
       title: 'Enable Built-In Provider'
       description: 'The package comes with a built-in provider that will provide suggestions using the words in your current buffer or all open buffers. You will get better suggestions by installing additional autocomplete+ providers. To stop using the built-in provider, disable this option.'
       type: 'boolean'
       default: true
-      order: 11
+      order: 10
     builtinProviderBlacklist:
       title: 'Built-In Provider Blacklist'
       description: 'Don\'t use the built-in provider for these selector(s).'
       type: 'string'
       default: '.source.gfm'
-      order: 12
+      order: 11
     backspaceTriggersAutocomplete:
       title: 'Allow Backspace To Trigger Autocomplete'
       description: 'If enabled, typing `backspace` will show the suggestion list if suggestions are available. If disabled, suggestions will not be shown while backspacing.'
       type: 'boolean'
-      default: true
+      default: false
+      order: 12
+    suggestionListFollows:
+      title: 'Suggestions List Follows'
+      description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appears at the beginning of the word that\'s being completed.'
+      type: 'string'
+      default: 'Word'
+      enum: ['Word', 'Cursor']
       order: 13
+    defaultProvider:
+      description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
+      type: 'string'
+      default: 'Symbol'
+      enum: ['Fuzzy', 'Symbol']
+      order: 14
+    suppressActivationForEditorClasses:
+      title: 'Suppress Activation For Editor Classes'
+      description: 'Don\'t auto-activate when any of these classes are present in the editor.'
+      type: 'array'
+      default: ['vim-mode.command-mode', 'vim-mode.visual-mode', 'vim-mode.operator-pending-mode']
+      items:
+        type: 'string'
+      order: 15
     typingConfirmsSelection:
       title: 'Confirm Selection By Typing'
       description: 'If enabled, typing a key that doesn\'t match any binding will confirm your selection in case you made any. Nothing will be selected by default. If disabled, you\'ll just continue typing.'
       type: 'boolean'
       default: false
-      order: 14
-    suggestionListFollows:
-      title: 'Suggestions List Follows'
-      description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appers at the beginning of the word that\'s being completed.'
-      type: 'string'
-      default: 'Cursor'
-      enum: ['Cursor', 'Word']
-      order: 15
-    defaultProvider:
-      description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
-      type: 'string'
-      default: 'Fuzzy'
-      enum: ['Fuzzy', 'Symbol']
       order: 16
+
+  autocompleteManager: null
+  subscriptions: null
 
   # Public: Creates AutocompleteManager instances for all active and future editors (soon, just a single AutocompleteManager)
   activate: ->
-    # Upgrade to the new config key name
-    oldMax = atom.config.get('autocomplete-plus.maxSuggestions')
-    if oldMax isnt 10
-      atom.config.transact ->
-        atom.config.set('autocomplete-plus.maxVisibleSuggestions', oldMax)
-        atom.config.unset('autocomplete-plus.maxSuggestions')
-
-    @getAutocompleteManager()
-    # @activateTimeout = setTimeout(@getAutocompleteManager, 0)
+    @subscriptions = new CompositeDisposable
+    @requireAutocompleteManagerAsync()
 
   # Public: Cleans everything up, removes all AutocompleteManager instances
   deactivate: ->
-    @autocompleteManager?.dispose()
+    @subscriptions?.dispose()
+    @subscriptions = null
     @autocompleteManager = null
 
+  requireAutocompleteManagerAsync: (callback) ->
+    if @autocompleteManager?
+      callback?(@autocompleteManager)
+    else
+      setImmediate =>
+        autocompleteManager = @getAutocompleteManager()
+        callback?(autocompleteManager)
+
   getAutocompleteManager: ->
-    if @activateTimeout?
-      clearTimeout(@activateTimeout)
-      @activateTimeout = null
-    return @autocompleteManager if @autocompleteManager?
-    AutocompleteManager = require('./autocomplete-manager')
-    @autocompleteManager = new AutocompleteManager()
-    return @autocompleteManager
-
-  #  |||              |||
-  #  vvv PROVIDER API vvv
-
-  # Private: Consumes the given provider, from package.json configuration.
-  # Do not use this directly or depend on `autocomplete-plus` directly.
-  #
-  # service - The service to consume
-  consumeProvider: (service) ->
-    return unless service?.provider?
-    service.providers = [service.provider]
-    return @consumeProviders(service)
-
-  # Private: Consumes the given provider, from package.json configuration.
-  # Do not use this directly or depend on `autocomplete-plus` directly.
-  #
-  # service - The service to consume
-  consumeProviders: (service) ->
-    return unless service?.providers?.length > 0
-    registrations = for provider in service.providers
-      @getAutocompleteManager().providerManager.registerProvider(provider)
-    if registrations?.length > 0
-      return new Disposable(->
-        for registration in registrations
-          registration?.dispose?()
-      )
+    unless @autocompleteManager?
+      AutocompleteManager = require './autocomplete-manager'
+      @autocompleteManager = new AutocompleteManager()
+      @subscriptions.add(@autocompleteManager)
+    @autocompleteManager
 
   consumeSnippets: (snippetsManager) ->
-    @getAutocompleteManager().setSnippetsManager(snippetsManager)
+    @requireAutocompleteManagerAsync (autocompleteManager) ->
+      autocompleteManager.setSnippetsManager(snippetsManager)
+
+  ###
+  Section: Provider API
+  ###
+
+  # 1.0.0 API
+  # service - {provider: provider1}
+  consumeProviderLegacy: (service) ->
+    # TODO API: Deprecate, tell them to upgrade to 2.0
+    return unless service?.provider?
+    @consumeProvider([service.provider], '1.0.0')
+
+  # 1.1.0 API
+  # service - {providers: [provider1, provider2, ...]}
+  consumeProvidersLegacy: (service) ->
+    # TODO API: Deprecate, tell them to upgrade to 2.0
+    @consumeProvider(service?.providers, '1.1.0')
+
+  # 2.0.0 API
+  # providers - either a provider or a list of providers
+  consumeProvider: (providers, apiVersion='2.0.0') ->
+    providers = [providers] if providers? and not Array.isArray(providers)
+    return unless providers?.length > 0
+    registrations = new CompositeDisposable
+    @requireAutocompleteManagerAsync (autocompleteManager) ->
+      for provider in providers
+        registrations.add autocompleteManager.providerManager.registerProvider(provider, apiVersion)
+      return
+    registrations

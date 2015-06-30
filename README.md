@@ -1,4 +1,4 @@
-# autocomplete+ [![OS X Build Status](https://travis-ci.org/atom/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom/autocomplete-plus) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/4faqdkcw2d0ybgiv/branch/master?svg=true)](https://ci.appveyor.com/project/joefitzgerald/autocomplete-plus/branch/master) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/atom/autocomplete-plus)
+# autocomplete+ [![OS X Build Status](https://travis-ci.org/atom/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom/autocomplete-plus) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/4faqdkcw2d0ybgiv/branch/master?svg=true)](https://ci.appveyor.com/project/joefitzgerald/autocomplete-plus/branch/master) [![Slack](https://img.shields.io/badge/chat-atomio%2Eslack%2Ecom-blue.svg?style=flat-square)](http://atom-slack.herokuapp.com/)
 
 Displays possible autocomplete suggestions on keystroke (or manually by typing `ctrl-space`) and inserts a suggestion in the editor if confirmed.
 
@@ -22,7 +22,6 @@ Just type some stuff, and autocomplete+ will automatically show you some suggest
 Press `UP` and `DOWN` to select another suggestion, press `TAB` or `ENTER` to confirm your selection. You can change the default keymap in `Preferences`:
 
 * Keymap For Confirming A Suggestion
-* Keymap For Navigating The Suggestion List
 
 Additionally, the keymap can be customized in your keymap.cson:
 

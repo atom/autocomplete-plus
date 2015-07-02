@@ -49,7 +49,7 @@ class ProviderManager
       {provider} = providerMetadata
       if providerMetadata.matchesScopeChain(scopeChain)
         matchingProviders.push(provider)
-        if provider.excludeLowerPriority?
+        if provider.excludeLowerPriority ? false
           lowestIncludedPriority = Math.max(lowestIncludedPriority, provider.inclusionPriority ? 0)
         if providerMetadata.shouldDisableDefaultProvider(scopeChain)
           disableDefaultProvider = true

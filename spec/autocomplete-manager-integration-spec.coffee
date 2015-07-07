@@ -225,7 +225,7 @@ describe 'Autocomplete Manager', ->
     describe "when the type option has a space in it", ->
       it 'does not display empty suggestions', ->
         spyOn(provider, 'getSuggestions').andCallFake ->
-          [{text: 'ab', type: 'local function'}, {text: 'abc', type: ' another ~ function   ' }]
+          [{text: 'ab', type: 'local function'}, {text: 'abc', type: ' another ~ function   '}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         editor.insertText('a')
@@ -241,7 +241,7 @@ describe 'Autocomplete Manager', ->
     describe "when the className option has a space in it", ->
       it 'does not display empty suggestions', ->
         spyOn(provider, 'getSuggestions').andCallFake ->
-          [{text: 'ab', className: 'local function'}, {text: 'abc', className: ' another  ~ function   ' }]
+          [{text: 'ab', className: 'local function'}, {text: 'abc', className: ' another  ~ function   '}]
 
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         editor.insertText('a')

@@ -65,14 +65,14 @@ class SymbolProvider
       bufferSubscriptions = new CompositeDisposable
       bufferSubscriptions.add buffer.onWillChange ({oldRange, newRange}) =>
         editors = @watchedBuffers.get(buffer)
-        if editors and editors.length
-          @symbolStore.removeTokensInBufferRange(editors[0], oldRange)
-          @symbolStore.adjustBufferRows(editors[0], oldRange, newRange)
+        if editors and editors.length and editor = editors[0]
+          @symbolStore.removeTokensInBufferRange(editor, oldRange)
+          @symbolStore.adjustBufferRows(editor, oldRange, newRange)
 
       bufferSubscriptions.add buffer.onDidChange ({newRange}) =>
         editors = @watchedBuffers.get(buffer)
-        if editors and editors.length
-          @symbolStore.addTokensInBufferRange(editors[0], newRange)
+        if editors and editors.length and editor = editors[0]
+          @symbolStore.addTokensInBufferRange(editor, newRange)
 
       bufferSubscriptions.add buffer.onDidDestroy =>
         @symbolStore.clear(buffer)

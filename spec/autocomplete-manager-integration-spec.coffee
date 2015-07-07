@@ -183,6 +183,45 @@ describe 'Autocomplete Manager', ->
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         expect(editorView2.querySelector('.autocomplete-plus')).not.toExist()
 
+    it 'does not display empty suggestions', ->
+      spyOn(provider, 'getSuggestions').andCallFake ->
+        list = ['ab', '', 'abcd', null]
+        ({text} for text in list)
+
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      editor.insertText('a')
+      waitForAutocomplete()
+
+      runs ->
+        expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 2
+
+    describe "when filterSuggestions option is true", ->
+      beforeEach ->
+        provider =
+          selector: '*'
+          filterSuggestions: true
+          inclusionPriority: 3
+          excludeLowerPriority: true
+
+          getSuggestions: ({prefix}) ->
+            list = ['ab', 'abc', 'abcd', 'abcde']
+            ({text} for text in list)
+        mainModule.consumeProvider(provider)
+
+      it 'does not display empty suggestions', ->
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          list = ['ab', '', 'abcd', null]
+          ({text} for text in list)
+
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        editor.insertText('a')
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 2
+
     describe 'when multiple cursors are defined', ->
       it 'autocompletes word when there is only a prefix', ->
         spyOn(provider, 'getSuggestions').andCallFake ->

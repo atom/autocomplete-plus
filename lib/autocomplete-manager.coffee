@@ -176,12 +176,14 @@ class AutocompleteManager
             newSuggestion.rightLabel = suggestion.label if not newSuggestion.rightLabel? and not suggestion.renderLabelAsHtml
             newSuggestion
 
-        # FIXME: Cycling through the suggestions again is not ideal :/
+        hasEmpty = false # Optimization: only create another array when there are empty items
         for suggestion in providerSuggestions
+          hasEmpty = true unless suggestion.snippet or suggestion.text
           suggestion.replacementPrefix ?= @getDefaultReplacementPrefix(options.prefix)
           suggestion.provider = provider
           @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if options.activatedManually
 
+        providerSuggestions = (suggestion for suggestion in providerSuggestions when (suggestion.snippet or suggestion.text)) if hasEmpty
         providerSuggestions = @filterSuggestions(providerSuggestions, options) if provider.filterSuggestions
         providerSuggestions
 

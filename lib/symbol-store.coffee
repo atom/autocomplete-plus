@@ -9,34 +9,28 @@ class Symbol
   type: null
 
   constructor: (@text) ->
-    @metadataByPath = {}
+    @metadataByPath = new Map
 
   getCount: -> @count
 
-  bufferRowsForBufferPath: (bufferPath) ->
-    @metadataByPath[bufferPath]?.bufferRows
+  bufferRowsForBuffer: (buffer) ->
+    @metadataByPath.get(buffer)?.bufferRows
 
-  countForBufferPath: (bufferPath) ->
-    metadata = @metadataByPath[bufferPath]
-    bufferPathCount = 0
+  countForBuffer: (buffer) ->
+    metadata = @metadataByPath.get(buffer)
+    bufferCount = 0
     if metadata?
-      bufferPathCount += scopeCount for scopeChain, scopeCount of metadata.scopeChains
-    bufferPathCount
+      bufferCount += scopeCount for scopeChain, scopeCount of metadata.scopeChains
+    bufferCount
 
-  clearForBufferPath: (bufferPath) ->
-    bufferPathCount = @countForBufferPath(bufferPath)
-    if bufferPathCount > 0
-      @count -= bufferPathCount
-      delete @metadataByPath[bufferPath]
+  clearForBuffer: (buffer) ->
+    bufferCount = @countForBuffer(buffer)
+    if bufferCount > 0
+      @count -= bufferCount
+      delete @metadataByPath.get(buffer)
 
-  updateForPathChange: (oldPath, newPath) ->
-    if @metadataByPath[oldPath]?
-      # Each symbol may not be in each path
-      @metadataByPath[newPath] = @metadataByPath[oldPath]
-    delete @metadataByPath[oldPath]
-
-  adjustBufferRows: (bufferPath, adjustmentStartRow, adjustmentDelta) ->
-    bufferRows = @metadataByPath[bufferPath]?.bufferRows
+  adjustBufferRows: (buffer, adjustmentStartRow, adjustmentDelta) ->
+    bufferRows = @metadataByPath.get(buffer)?.bufferRows
     return unless bufferRows?
     index = binaryIndexOf(bufferRows, adjustmentStartRow)
     length = bufferRows.length
@@ -45,40 +39,46 @@ class Symbol
       index++
     return
 
-  addInstance: (bufferPath, bufferRow, scopeChain) ->
-    @metadataByPath[bufferPath] ?= {}
-    @addBufferRow(bufferPath, bufferRow)
-    @metadataByPath[bufferPath].scopeChains ?= {}
-    unless @metadataByPath[bufferPath].scopeChains[scopeChain]?
+  addInstance: (buffer, bufferRow, scopeChain) ->
+    metadata = @metadataByPath.get(buffer)
+    unless metadata?
+      metadata ?= {}
+      @metadataByPath.set(buffer, metadata)
+
+    @addBufferRow(buffer, bufferRow)
+    metadata.scopeChains ?= {}
+    unless metadata.scopeChains[scopeChain]?
       @type = null
-      @metadataByPath[bufferPath].scopeChains[scopeChain] = 0
-    @metadataByPath[bufferPath].scopeChains[scopeChain] += 1
+      metadata.scopeChains[scopeChain] = 0
+    metadata.scopeChains[scopeChain] += 1
     @count += 1
 
-  removeInstance: (bufferPath, bufferRow, scopeChain) ->
-    return unless @metadataByPath[bufferPath]?
+  removeInstance: (buffer, bufferRow, scopeChain) ->
+    return unless metadata = @metadataByPath.get(buffer)
 
-    @removeBufferRow(bufferPath, bufferRow)
+    @removeBufferRow(buffer, bufferRow)
 
-    if @metadataByPath[bufferPath].scopeChains[scopeChain]?
+    if metadata.scopeChains[scopeChain]?
       @count -= 1
-      @metadataByPath[bufferPath].scopeChains[scopeChain] -= 1
+      metadata.scopeChains[scopeChain] -= 1
 
-      if @metadataByPath[bufferPath].scopeChains[scopeChain] is 0
-        delete @metadataByPath[bufferPath].scopeChains[scopeChain]
+      if metadata.scopeChains[scopeChain] is 0
+        delete metadata.scopeChains[scopeChain]
         @type = null
 
-      if getObjectLength(@metadataByPath[bufferPath].scopeChains) is 0
-        delete @metadataByPath[bufferPath]
+      if getObjectLength(metadata.scopeChains) is 0
+        @metadataByPath.delete(buffer)
 
-  addBufferRow: (bufferPath, row) ->
-    @metadataByPath[bufferPath].bufferRows ?= []
-    bufferRows = @metadataByPath[bufferPath].bufferRows
+  addBufferRow: (buffer, row) ->
+    metadata = @metadataByPath.get(buffer)
+    metadata.bufferRows ?= []
+    bufferRows = metadata.bufferRows
     index = binaryIndexOf(bufferRows, row)
     bufferRows.splice(index, 0, row)
 
-  removeBufferRow: (bufferPath, row) ->
-    bufferRows = @metadataByPath[bufferPath].bufferRows
+  removeBufferRow: (buffer, row) ->
+    metadata = @metadataByPath.get(buffer)
+    bufferRows = metadata.bufferRows
     return unless bufferRows
     index = binaryIndexOf(bufferRows, row)
     bufferRows.splice(index, 1) if bufferRows[index] is row
@@ -86,22 +86,22 @@ class Symbol
   isSingleInstanceOf: (word) ->
     @text is word and @count is 1
 
-  appliesToConfig: (config, bufferPath) ->
+  appliesToConfig: (config, buffer) ->
     @type = null if @cachedConfig isnt config
 
     unless @type?
       typePriority = 0
       for type, options of config
         continue unless options.selectors?
-        for filePath, {scopeChains} of @metadataByPath
+        @metadataByPath.forEach ({scopeChains}) =>
           for scopeChain, __ of scopeChains
             if (not @type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
               @type = type
               typePriority = options.typePriority
       @cachedConfig = config
 
-    if bufferPath?
-      @type? and @countForBufferPath(bufferPath) > 0
+    if buffer?
+      @type? and @countForBuffer(buffer) > 0
     else
       @type?
 
@@ -112,10 +112,10 @@ class SymbolStore
   constructor: (@wordRegex) ->
     @clear()
 
-  clear: (bufferPath) ->
-    if bufferPath?
+  clear: (buffer) ->
+    if buffer?
       for symbolKey, symbol of @symbolMap
-        symbol.clearForBufferPath(bufferPath)
+        symbol.clearForBuffer(buffer)
         delete @symbolMap[symbolKey] if symbol.getCount() is 0
     else
       @symbolMap = {}
@@ -127,10 +127,10 @@ class SymbolStore
     symbolKey = @getKey(symbolKey)
     @symbolMap[symbolKey]
 
-  symbolsForConfig: (config, bufferPath, wordUnderCursor) ->
+  symbolsForConfig: (config, buffer, wordUnderCursor) ->
     symbols = []
     for symbolKey, symbol of @symbolMap
-      symbols.push(symbol) if symbol.appliesToConfig(config, bufferPath) and not symbol.isSingleInstanceOf(wordUnderCursor)
+      symbols.push(symbol) if symbol.appliesToConfig(config, buffer) and not symbol.isSingleInstanceOf(wordUnderCursor)
     for type, options of config
       symbols = symbols.concat(options.suggestions) if options.suggestions
     symbols
@@ -139,26 +139,21 @@ class SymbolStore
     adjustmentStartRow = oldRange.end.row + 1
     adjustmentDelta = newRange.getRowCount() - oldRange.getRowCount()
     for key, symbol of @symbolMap
-      symbol.adjustBufferRows(editor.getPath(), adjustmentStartRow, adjustmentDelta)
+      symbol.adjustBufferRows(editor.getBuffer(), adjustmentStartRow, adjustmentDelta)
     return
 
-  updateForPathChange: (oldPath, newPath) ->
-    for key, symbol of @symbolMap
-      symbol.updateForPathChange(oldPath, newPath)
-    return
-
-  addToken: (text, scopeChain, bufferPath, bufferRow) =>
+  addToken: (text, scopeChain, buffer, bufferRow) =>
     # This could be made async...
     matches = text.match(@wordRegex)
     if matches?
-      @addSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
+      @addSymbol(symbolText, buffer, bufferRow, scopeChain) for symbolText in matches
     return
 
-  removeToken: (text, scopeChain, bufferPath, bufferRow) =>
+  removeToken: (text, scopeChain, buffer, bufferRow) =>
     # This could be made async...
     matches = text.match(@wordRegex)
     if matches?
-      @removeSymbol(symbolText, bufferPath, bufferRow, scopeChain) for symbolText in matches
+      @removeSymbol(symbolText, buffer, bufferRow, scopeChain) for symbolText in matches
     return
 
   addTokensInBufferRange: (editor, bufferRange) ->
@@ -180,10 +175,10 @@ class SymbolStore
       if useTokenIterator
         iterator = tokenizedLine.getTokenIterator?()
         while iterator.next()
-          operatorFunc(iterator.getText(), @buildScopeChainString(iterator.getScopes()), editor.getPath(), bufferRow)
+          operatorFunc(iterator.getText(), @buildScopeChainString(iterator.getScopes()), editor.getBuffer(), bufferRow)
       else
         for token in tokenizedLine.tokens
-          operatorFunc(token.value, @buildScopeChainString(token.scopes), editor.getPath(), bufferRow)
+          operatorFunc(token.value, @buildScopeChainString(token.scopes), editor.getBuffer(), bufferRow)
 
     return
 
@@ -191,20 +186,20 @@ class SymbolStore
   Private Methods
   ###
 
-  addSymbol: (symbolText, bufferPath, bufferRow, scopeChain) ->
+  addSymbol: (symbolText, buffer, bufferRow, scopeChain) ->
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     unless symbol?
       @symbolMap[symbolKey] = symbol = new Symbol(symbolText)
       @count += 1
 
-    symbol.addInstance(bufferPath, bufferRow, scopeChain)
+    symbol.addInstance(buffer, bufferRow, scopeChain)
 
-  removeSymbol: (symbolText, bufferPath, bufferRow, scopeChain) =>
+  removeSymbol: (symbolText, buffer, bufferRow, scopeChain) =>
     symbolKey = @getKey(symbolText)
     symbol = @symbolMap[symbolKey]
     if symbol?
-      symbol.removeInstance(bufferPath, bufferRow, scopeChain)
+      symbol.removeInstance(buffer, bufferRow, scopeChain)
       if symbol.getCount() is 0
         delete @symbolMap[symbolKey]
         @count -= 1

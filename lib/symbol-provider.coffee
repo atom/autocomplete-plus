@@ -37,7 +37,7 @@ class SymbolProvider
       typePriority: 1
 
   constructor: ->
-    @watchedBuffers = {}
+    @watchedBuffers = new WeakMap
     @symbolStore = new SymbolStore(@wordRegex)
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
@@ -49,57 +49,47 @@ class SymbolProvider
     @subscriptions.dispose()
 
   watchEditor: (editor) =>
-    bufferPath = editor.getPath()
+    buffer = editor.getBuffer()
     editorSubscriptions = new CompositeDisposable
     editorSubscriptions.add editor.displayBuffer.onDidTokenize =>
       @buildWordListOnNextTick(editor)
     editorSubscriptions.add editor.onDidDestroy =>
       index = @getWatchedEditorIndex(editor)
-      editors = @watchedBuffers[editor.getPath()]?.editors
+      editors = @watchedBuffers.get(editor.getBuffer())
       editors.splice(index, 1) if index > -1
       editorSubscriptions.dispose()
 
-    if @watchedBuffers[bufferPath]?
-      @watchedBuffers[bufferPath].editors.push(editor)
+    if bufferEditors = @watchedBuffers.get(buffer)
+      bufferEditors.push(editor)
     else
-      buffer = editor.getBuffer()
       bufferSubscriptions = new CompositeDisposable
       bufferSubscriptions.add buffer.onWillChange ({oldRange, newRange}) =>
-        bufferPath = buffer.getPath()
-        editor = @watchedBuffers[bufferPath].editors[0]
-        @symbolStore.removeTokensInBufferRange(editor, oldRange)
-        @symbolStore.adjustBufferRows(editor, oldRange, newRange)
+        editors = @watchedBuffers.get(buffer)
+        if editors and editors.length
+          @symbolStore.removeTokensInBufferRange(editors[0], oldRange)
+          @symbolStore.adjustBufferRows(editors[0], oldRange, newRange)
 
       bufferSubscriptions.add buffer.onDidChange ({newRange}) =>
-        bufferPath = buffer.getPath()
-        editor = @watchedBuffers[bufferPath].editors[0]
-        @symbolStore.addTokensInBufferRange(editor, newRange)
-
-      bufferSubscriptions.add buffer.onDidChangePath =>
-        return unless @watchedBuffers[bufferPath]?
-        oldBufferPath = bufferPath
-        bufferPath = buffer.getPath()
-        @watchedBuffers[bufferPath] = @watchedBuffers[oldBufferPath]
-        @symbolStore.updateForPathChange(oldBufferPath, bufferPath)
-        delete @watchedBuffers[oldBufferPath]
+        editors = @watchedBuffers.get(buffer)
+        if editors and editors.length
+          @symbolStore.addTokensInBufferRange(editors[0], newRange)
 
       bufferSubscriptions.add buffer.onDidDestroy =>
-        bufferPath = buffer.getPath()
-        @symbolStore.clear(bufferPath)
+        @symbolStore.clear(buffer)
         bufferSubscriptions.dispose()
-        delete @watchedBuffers[bufferPath]
+        @watchedBuffers.delete(buffer)
 
-      @watchedBuffers[bufferPath] = editors: [editor]
+      @watchedBuffers.set(buffer, [editor])
       @buildWordListOnNextTick(editor)
 
   isWatchingEditor: (editor) ->
     @getWatchedEditorIndex(editor) > -1
 
   isWatchingBuffer: (buffer) ->
-    @watchedBuffers[buffer.getPath()]?
+    @watchedBuffers.get(buffer)?
 
   getWatchedEditorIndex: (editor) ->
-    if editors = @watchedBuffers[editor.getPath()]?.editors
+    if editors = @watchedBuffers.get(editor.getBuffer())
       editors.indexOf(editor)
     else
       -1
@@ -185,14 +175,14 @@ class SymbolProvider
     wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
 
-    bufferPath = if @includeCompletionsFromAllBuffers then null else @editor.getPath()
-    symbolList = @symbolStore.symbolsForConfig(@config, bufferPath, wordUnderCursor)
+    buffer = if @includeCompletionsFromAllBuffers then null else @editor.getBuffer()
+    symbolList = @symbolStore.symbolsForConfig(@config, buffer, wordUnderCursor)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
         symbolList.filter((match) -> match.text?.indexOf(options.prefix) is 0)
       else
-        @fuzzyFilter(symbolList, @editor.getPath(), options)
+        @fuzzyFilter(symbolList, @editor.getBuffer(), options)
 
     for word in words
       word.replacementPrefix = options.prefix
@@ -204,14 +194,14 @@ class SymbolProvider
     suffix = lineFromPosition.match(@beginningOfLineWordRegex)?[0] or ''
     prefix + suffix
 
-  fuzzyFilter: (symbolList, bufferPath, {bufferPosition, prefix}) ->
+  fuzzyFilter: (symbolList, buffer, {bufferPosition, prefix}) ->
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
       text = (symbol.snippet or symbol.text)
       continue unless text and prefix[0].toLowerCase() is text[0].toLowerCase() # must match the first char!
       score = fuzzaldrin.score(text, prefix)
-      score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBufferPath?(bufferPath))
+      score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
     candidates.sort(@symbolSortReverseIterator)
@@ -250,7 +240,7 @@ class SymbolProvider
 
   buildSymbolList: (editor) =>
     return unless editor?.isAlive()
-    @symbolStore.clear(editor.getPath())
+    @symbolStore.clear(editor.getBuffer())
     @symbolStore.addTokensInBufferRange(editor, editor.getBuffer().getRange())
 
   # FIXME: this should go in the core ScopeDescriptor class

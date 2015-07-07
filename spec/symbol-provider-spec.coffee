@@ -170,8 +170,23 @@ describe 'SymbolProvider', ->
       editor.insertText('function aNewFunction(){};')
       advanceClock provider.changeUpdateDelay
 
+      expect(suggestionsForPrefix(provider, editor, '')).not.toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'a')).not.toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'an')).not.toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'ane')).toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
+
+  describe "when autocomplete-plus.minimumWordLength is 0", ->
+    beforeEach ->
+      atom.config.set('autocomplete-plus.minimumWordLength', 0)
+
+    it "only returns results when the prefix is at least the min word length", ->
+      editor.insertText('function aNewFunction(){};')
+      advanceClock provider.changeUpdateDelay
+
+      expect(suggestionsForPrefix(provider, editor, '')).not.toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'a')).toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'an')).toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'ane')).toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 

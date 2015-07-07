@@ -169,7 +169,7 @@ class SymbolProvider
 
   getSuggestions: (options) =>
     prefix = options.prefix?.trim()
-    return unless prefix?.length >= @minimumWordLength
+    return unless prefix?.length and prefix?.length >= @minimumWordLength
     return unless @symbolStore.getLength()
 
     wordUnderCursor = @wordAtBufferPosition(options)

@@ -43,7 +43,7 @@ describe 'SymbolStore', ->
 
   it "keeps track of token buffer rows after changes to the buffer", ->
     getSymbolBufferRows = (symbol) ->
-      store.getSymbol(symbol).bufferRowsForBufferPath(editor.getPath())
+      store.getSymbol(symbol).bufferRowsForBuffer(editor.getBuffer())
 
     editor.setText('\n\nabc = ->')
     expect(getSymbolBufferRows('abc')).toEqual [2]
@@ -174,47 +174,36 @@ describe 'SymbolStore', ->
       expect(symbols[0].type).toBe 'newtype'
 
   describe "when there are multiple files with tokens in the store", ->
-    config = null
+    [config, oneTxt, twoTxt] = []
     beforeEach ->
       config = stuff: selectors: Selector.create('.source')
 
-      store.addToken('one', '.source.coffee', 'one.txt', 1)
-      store.addToken('ok', '.source.coffee', 'one.txt', 1)
-      store.addToken('wow', '.source.coffee', 'one.txt', 2)
-      store.addToken('wow', '.source.coffee', 'one.txt', 2)
+      waitsForPromise ->
+        Promise.all [
+          atom.workspace.open('one.txt').then (file) -> oneTxt = file.getBuffer()
+          atom.workspace.open('two.txt').then (file) -> twoTxt = file.getBuffer()
+        ]
 
-      store.addToken('two', '.source.coffee', 'two.txt', 1)
-      store.addToken('ok', '.source.coffee', 'two.txt', 1)
-      store.addToken('wow', '.source.coffee', 'two.txt', 2)
+      runs ->
+        store.addToken('one', '.source.coffee', oneTxt, 1)
+        store.addToken('ok', '.source.coffee', oneTxt, 1)
+        store.addToken('wow', '.source.coffee', oneTxt, 2)
+        store.addToken('wow', '.source.coffee', oneTxt, 2)
 
-    describe "when a path changes", ->
-      it "returns the symbols transferred to the new path", ->
-        store.updateForPathChange('one.txt', 'newone.txt')
-        symbols = store.symbolsForConfig(config, 'newone.txt')
-        expect(symbols).toHaveLength 3
-        expect(symbols[0].text).toBe 'one'
-        expect(symbols[1].text).toBe 'ok'
-        expect(symbols[2].text).toBe 'wow'
-
-        store.updateForPathChange('nope.txt', 'another.txt')
-        symbols = store.symbolsForConfig(config, 'another.txt')
-        expect(symbols).toHaveLength 0
-        symbols = store.symbolsForConfig(config, 'newone.txt')
-        expect(symbols).toHaveLength 3
-        expect(symbols[0].text).toBe 'one'
-        expect(symbols[1].text).toBe 'ok'
-        expect(symbols[2].text).toBe 'wow'
+        store.addToken('two', '.source.coffee', twoTxt, 1)
+        store.addToken('ok', '.source.coffee', twoTxt, 1)
+        store.addToken('wow', '.source.coffee', twoTxt, 2)
 
     describe "::symbolsForConfig(config)", ->
       it "returs symbols based on path", ->
-        symbols = store.symbolsForConfig(config, 'one.txt')
+        symbols = store.symbolsForConfig(config, oneTxt)
         expect(symbols).toHaveLength 3
         expect(symbols[0].text).toBe 'one'
         expect(symbols[1].text).toBe 'ok'
         expect(symbols[2].text).toBe 'wow'
 
     describe "::clear()", ->
-      describe "when an bufferPaths is specified", ->
+      describe "when a buffer is specified", ->
         it "removes only the path specified", ->
           symbols = store.symbolsForConfig(config)
           expect(symbols).toHaveLength 4
@@ -228,7 +217,7 @@ describe 'SymbolStore', ->
           expect(store.getSymbol('ok').getCount()).toBe 2
           expect(store.getSymbol('wow').getCount()).toBe 3
 
-          store.clear('one.txt')
+          store.clear(oneTxt)
           symbols = store.symbolsForConfig(config)
           expect(symbols).toHaveLength 3
           expect(symbols[0].text).toBe 'ok'

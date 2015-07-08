@@ -242,6 +242,14 @@ class SuggestionListElement extends HTMLElement
       @style['margin-left'] = "#{@uiProps.marginLeft}px"
     @updateDescription()
 
+  # Splits the classes on spaces so as not to anger the DOM gods
+  addClassToElement: (element, classNames) ->
+    if classNames and classes = classNames.split(' ')
+      for className in classes
+        className = className.trim()
+        element.classList.add(className) if className
+    return
+
   renderItem: ({iconHTML, type, snippet, text, displayText, className, replacementPrefix, leftLabel, leftLabelHTML, rightLabel, rightLabelHTML}, index) ->
     li = @ol.childNodes[index]
     unless li
@@ -254,8 +262,8 @@ class SuggestionListElement extends HTMLElement
       @ol.appendChild(li)
 
     li.className = ''
-    li.classList.add(className) if className
     li.classList.add('selected') if index is @selectedIndex
+    @addClassToElement(li, className) if className
     @selectedLi = li if index is @selectedIndex
 
     typeIconContainer = li.querySelector('.icon-container')
@@ -269,7 +277,7 @@ class SuggestionListElement extends HTMLElement
       typeIconContainer.innerHTML = IconTemplate
       typeIcon = typeIconContainer.childNodes[0]
       typeIcon.innerHTML = sanitizedIconHTML ? defaultIconHTML
-      typeIcon.classList.add(type) if type
+      @addClassToElement(typeIcon, type) if type
 
     wordSpan = li.querySelector('.word')
     wordSpan.innerHTML = @getDisplayHTML(text, snippet, displayText, replacementPrefix)

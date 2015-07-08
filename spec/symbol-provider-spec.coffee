@@ -111,24 +111,24 @@ describe 'SymbolProvider', ->
     editor.setText('function abc(){}\nfunction abc(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [0, 1]
+    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [0, 1]
 
     editor.setCursorBufferPosition([2, 100])
     editor.insertText('\n\nfunction omg(){}; function omg(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3, 3]
+    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3, 3]
 
     editor.selectLeft(16)
     editor.backspace()
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3]
+    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3]
 
     editor.insertText('\nfunction omg(){}')
     advanceClock(provider.changeUpdateDelay)
     suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toEqual [3, 4]
+    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3, 4]
 
     editor.setText('')
     advanceClock(provider.changeUpdateDelay)
@@ -147,7 +147,7 @@ describe 'SymbolProvider', ->
     # rows when there are several changes before the change delay is
     # triggered. So we're just making sure the row is in there.
     suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForBufferPath(editor.getPath())).toContain 3
+    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toContain 3
 
   it "does not output suggestions from the other buffer", ->
     [results, coffeeEditor] = []
@@ -170,8 +170,23 @@ describe 'SymbolProvider', ->
       editor.insertText('function aNewFunction(){};')
       advanceClock provider.changeUpdateDelay
 
+      expect(suggestionsForPrefix(provider, editor, '')).not.toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'a')).not.toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'an')).not.toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'ane')).toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
+
+  describe "when autocomplete-plus.minimumWordLength is 0", ->
+    beforeEach ->
+      atom.config.set('autocomplete-plus.minimumWordLength', 0)
+
+    it "only returns results when the prefix is at least the min word length", ->
+      editor.insertText('function aNewFunction(){};')
+      advanceClock provider.changeUpdateDelay
+
+      expect(suggestionsForPrefix(provider, editor, '')).not.toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'a')).toContain 'aNewFunction'
+      expect(suggestionsForPrefix(provider, editor, 'an')).toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'ane')).toContain 'aNewFunction'
       expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 

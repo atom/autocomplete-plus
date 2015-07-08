@@ -147,7 +147,7 @@ class FuzzyProvider
     # dont show matches that are the same as the prefix
     for word in words when word isnt prefix
       # must match the first char!
-      continue unless prefix[0].toLowerCase() is word[0].toLowerCase()
+      continue unless word and prefix and prefix[0].toLowerCase() is word[0].toLowerCase()
       results.push {text: word, replacementPrefix: prefix}
     results
 

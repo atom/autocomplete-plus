@@ -212,13 +212,13 @@ class SuggestionListElement extends HTMLElement
     selectedItemTop = @selectedLi.offsetTop
     if selectedItemTop < scrollTop
       # scroll up
-      return @selectedLi.scrollIntoView(true)
+      return @scroller.scrollTop = selectedItemTop
 
     itemHeight = @uiProps.itemHeight
     scrollerHeight = @maxVisibleSuggestions * itemHeight + @uiProps.paddingHeight
     if selectedItemTop + itemHeight > scrollTop + scrollerHeight
       # scroll down
-      @selectedLi.scrollIntoView(false)
+      @scroller.scrollTop = selectedItemTop - scrollerHeight + itemHeight
 
   readUIPropsFromDOM: ->
     wordContainer = @selectedLi?.querySelector('.word-container')

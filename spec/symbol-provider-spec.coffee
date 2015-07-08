@@ -70,11 +70,13 @@ describe 'SymbolProvider', ->
     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
 
     editor.insertText('function aNewFunction(){};')
+    editor.moveToEndOfLine()
     advanceClock provider.changeUpdateDelay
     expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 
     editor.setCursorBufferPosition([13, 21])
     editor.backspace()
+    editor.moveToTop()
     advanceClock provider.changeUpdateDelay
 
     expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunctio'
@@ -88,13 +90,22 @@ describe 'SymbolProvider', ->
     editor.insertText(' qu')
     expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'qu'
 
-  it "does not return the word under the cursor when there is a suffix only one instance of the word", ->
+  it "does not return the word under the cursor when there is a suffix and only one instance of the word", ->
     editor.moveToBottom()
     editor.insertText('catscats')
     editor.moveToBeginningOfLine()
     editor.insertText('omg')
     expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain 'omg'
     expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain 'omgcatscats'
+
+  it "does not return the word under the cursors when are multiple cursors", ->
+    editor.moveToBottom()
+    editor.setText('\n\n\n')
+    editor.setCursorBufferPosition([0, 0])
+    editor.addCursorAtBufferPosition([1, 0])
+    editor.addCursorAtBufferPosition([2, 0])
+    editor.insertText('omg')
+    expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain 'omg'
 
   it "returns the word under the cursor when there is a suffix and there are multiple instances of the word", ->
     editor.moveToBottom()
@@ -311,13 +322,15 @@ describe 'SymbolProvider', ->
 
       # Using the string config
       editor.setCursorBufferPosition([1, 20])
+      editor.insertText(' ')
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 1
       expect(suggestions[0].text).toBe 'in-a-string'
       expect(suggestions[0].type).toBe 'instring'
 
       # Using the default config
-      editor.setCursorBufferPosition([1, 5])
+      editor.setCursorBufferPosition([1, Infinity])
+      editor.insertText(' ')
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 3
       expect(suggestions[0].text).toBe 'invar'

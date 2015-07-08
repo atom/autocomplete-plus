@@ -10,6 +10,7 @@ module.exports =
 class SymbolProvider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
   beginningOfLineWordRegex: /^\w*[a-zA-Z_-]+\w*\b/g
+  endOfLineWordRegex: /\b\w*[a-zA-Z_-]+\w*$/g
   symbolStore: null
   editor: null
   buffer: null
@@ -172,11 +173,18 @@ class SymbolProvider
     return unless prefix?.length and prefix?.length >= @minimumWordLength
     return unless @symbolStore.getLength()
 
-    wordUnderCursor = @wordAtBufferPosition(options)
     @buildConfigIfScopeChanged(options)
 
+    {editor, prefix, bufferPosition} = options
+    numberOfWordsMatchingPrefix = 1
+    wordUnderCursor = @wordAtBufferPosition(editor, bufferPosition)
+    for cursor in editor.getCursors()
+      continue if cursor is editor.getLastCursor()
+      word = @wordAtBufferPosition(editor, cursor.getBufferPosition())
+      numberOfWordsMatchingPrefix += 1 if word is wordUnderCursor
+
     buffer = if @includeCompletionsFromAllBuffers then null else @editor.getBuffer()
-    symbolList = @symbolStore.symbolsForConfig(@config, buffer, wordUnderCursor)
+    symbolList = @symbolStore.symbolsForConfig(@config, buffer, wordUnderCursor, numberOfWordsMatchingPrefix)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
@@ -189,7 +197,9 @@ class SymbolProvider
 
     return words
 
-  wordAtBufferPosition: ({editor, prefix, bufferPosition}) ->
+  wordAtBufferPosition: (editor, bufferPosition) ->
+    lineToPosition = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
+    prefix = lineToPosition.match(@endOfLineWordRegex)?[0] or ''
     lineFromPosition = editor.getTextInRange([bufferPosition, [bufferPosition.row, Infinity]])
     suffix = lineFromPosition.match(@beginningOfLineWordRegex)?[0] or ''
     prefix + suffix

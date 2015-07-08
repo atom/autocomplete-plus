@@ -83,8 +83,14 @@ class Symbol
     index = binaryIndexOf(bufferRows, row)
     bufferRows.splice(index, 1) if bufferRows[index] is row
 
-  isSingleInstanceOf: (word) ->
-    @text is word and @count is 1
+  isEqualToWord: (word) ->
+    @text is word
+
+  instancesForWord: (word) ->
+    if @text is word
+      @count
+    else
+      0
 
   appliesToConfig: (config, buffer) ->
     @type = null if @cachedConfig isnt config
@@ -127,10 +133,11 @@ class SymbolStore
     symbolKey = @getKey(symbolKey)
     @symbolMap[symbolKey]
 
-  symbolsForConfig: (config, buffer, wordUnderCursor) ->
+  symbolsForConfig: (config, buffer, wordUnderCursor, numberOfCursors) ->
     symbols = []
     for symbolKey, symbol of @symbolMap
-      symbols.push(symbol) if symbol.appliesToConfig(config, buffer) and not symbol.isSingleInstanceOf(wordUnderCursor)
+      if symbol.appliesToConfig(config, buffer) and (not symbol.isEqualToWord(wordUnderCursor) or symbol.instancesForWord(wordUnderCursor) > numberOfCursors)
+        symbols.push(symbol)
     for type, options of config
       symbols = symbols.concat(options.suggestions) if options.suggestions
     symbols

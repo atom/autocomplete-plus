@@ -466,6 +466,50 @@ describe 'Autocomplete Manager', ->
       beforeEach ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
 
+      it "scrolls the list always showing the selected item", ->
+        triggerAutocompletion(editor, true, 'a')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
+
+          suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          scroller = suggestionList.querySelector('.suggestion-list-scroller')
+
+          expect(scroller.scrollTop).toBe 0
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe 0
+
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe itemHeight
+
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe itemHeight * 2
+
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe 0
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe itemHeight * 2
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe itemHeight * 2
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe itemHeight
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass 'selected'
+          expect(scroller.scrollTop).toBe 0
+
       describe "when a suggestion description is not specified", ->
         it "only shows the maxVisibleSuggestions in the suggestion popup", ->
           triggerAutocompletion(editor, true, 'a')

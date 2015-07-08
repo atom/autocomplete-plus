@@ -10,6 +10,29 @@ describe 'Suggestion List Element', ->
     suggestionListElement?.dispose()
     suggestionListElement = null
 
+  describe 'renderItem', ->
+    beforeEach ->
+      jasmine.attachToDOM(suggestionListElement)
+
+    it "HTML escapes displayText", ->
+      suggestion = text: 'Animal<Cat>'
+      suggestionListElement.renderItem(suggestion)
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
+
+      suggestion = text: 'Animal<Cat>', displayText: 'Animal<Cat>'
+      suggestionListElement.renderItem(suggestion)
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
+
+      suggestion = snippet: 'Animal<Cat>', displayText: 'Animal<Cat>'
+      suggestionListElement.renderItem(suggestion)
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
+
+    it "HTML escapes labels", ->
+      suggestion = text: 'something', leftLabel: 'Animal<Cat>', rightLabel: 'Animal<Dog>'
+      suggestionListElement.renderItem(suggestion)
+      expect(suggestionListElement.selectedLi.querySelector('.left-label').innerHTML).toContain 'Animal&lt;Cat&gt;'
+      expect(suggestionListElement.selectedLi.querySelector('.right-label').innerHTML).toContain 'Animal&lt;Dog&gt;'
+
   describe 'getDisplayHTML', ->
     it 'uses displayText over text or snippet', ->
       text = 'abcd()'

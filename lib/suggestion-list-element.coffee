@@ -269,7 +269,7 @@ class SuggestionListElement extends HTMLElement
     typeIconContainer = li.querySelector('.icon-container')
     typeIconContainer.innerHTML = ''
 
-    sanitizedType = if isString(type) then type else ''
+    sanitizedType = escapeHtml(if isString(type) then type else '')
     sanitizedIconHTML = if isString(iconHTML) then iconHTML else undefined
     defaultLetterIconHTML = if sanitizedType then "<span class=\"icon-letter\">#{sanitizedType[0]}</span>" else ''
     defaultIconHTML = DefaultSuggestionTypeIconHTML[sanitizedType] ? defaultLetterIconHTML
@@ -314,9 +314,9 @@ class SuggestionListElement extends HTMLElement
       if snippetIndices?[index] in [SnippetStart, SnippetStartAndEnd]
         displayHTML += '<span class="snippet-completion">'
       if characterMatchIndices?[index]
-        displayHTML += '<span class="character-match">' + replacementText[index] + '</span>'
+        displayHTML += '<span class="character-match">' + escapeHtml(replacementText[index]) + '</span>'
       else
-        displayHTML += replacementText[index]
+        displayHTML += escapeHtml(replacementText[index])
       if snippetIndices?[index] in [SnippetEnd, SnippetStartAndEnd]
         displayHTML += '</span>'
     displayHTML
@@ -391,5 +391,14 @@ class SuggestionListElement extends HTMLElement
   dispose: ->
     @subscriptions.dispose()
     @parentNode?.removeChild(this)
+
+# https://github.com/component/escape-html/blob/master/index.js
+escapeHtml = (html) ->
+  String(html)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 
 module.exports = SuggestionListElement = document.registerElement('autocomplete-suggestion-list', {prototype: SuggestionListElement.prototype})

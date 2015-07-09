@@ -365,6 +365,7 @@ describe 'Provider Manager', ->
       accessoryProvider2 =
         selector: '.source.js'
         inclusionPriority: 2
+        excludeLowerPriority: false
         getSuggestions: (options) ->
         dispose: ->
 

@@ -42,7 +42,7 @@ Additionally, the keymap can be customized in your keymap.cson:
   * Wordlist generation happens when you open a file, while editing the file, and on save
   * Suggestions are calculated using `fuzzaldrin`
 * Exposes a provider API which can be used to extend the functionality of the package and provide targeted / contextually correct suggestions
-* Disable autocomplete for file(s) via blacklisting
+* Disable autocomplete for file(s) via blacklisting, e.g. `*.md` to blacklist Markdown files
 * Disable autocomplete for editor scope(s) via blacklisting
 * Expands a snippet if an autocomplete+ provider includes one in a suggestion
 

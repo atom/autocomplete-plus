@@ -27,6 +27,21 @@ describe 'Suggestion List Element', ->
       suggestionListElement.renderItem(suggestion)
       expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
 
+    it "HTML escapes snippets", ->
+      suggestion = snippet: 'Animal<Cat>(${1:omg<wow>}, ${2:ok<yeah>})'
+      suggestionListElement.renderItem(suggestion)
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'omg&lt;wow&gt;'
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'ok&lt;yeah&gt;'
+
+      suggestion =
+        snippet: 'Animal<Cat>(${1:omg<wow>}, ${2:ok<yeah>})'
+        displayText: 'Animal<Cat>(omg<wow>, ok<yeah>)'
+      suggestionListElement.renderItem(suggestion)
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'omg&lt;wow&gt;'
+      expect(suggestionListElement.selectedLi.innerHTML).toContain 'ok&lt;yeah&gt;'
+
     it "HTML escapes labels", ->
       suggestion = text: 'something', leftLabel: 'Animal<Cat>', rightLabel: 'Animal<Dog>'
       suggestionListElement.renderItem(suggestion)

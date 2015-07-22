@@ -11,30 +11,41 @@ class SuggestionList
     @subscriptions.add atom.commands.add 'atom-text-editor.autocomplete-active',
       'autocomplete-plus:confirm': @confirmSelection,
       'autocomplete-plus:cancel': @cancel
-      'core:move-up': (event) =>
-        if @isActive() and @items?.length > 1
-          @selectPrevious()
-          event.stopImmediatePropagation()
-      'core:move-down': (event) =>
-        if @isActive() and @items?.length > 1
-          @selectNext()
-          event.stopImmediatePropagation()
-      'core:page-up': (event) =>
-        if @isActive() and @items?.length > 1
-          @selectPageUp()
-          event.stopImmediatePropagation()
-      'core:page-down': (event) =>
-        if @isActive() and @items?.length > 1
-          @selectPageDown()
-          event.stopImmediatePropagation()
-      'core:move-to-top': (event) =>
-        if @isActive() and @items?.length > 1
-          @selectTop()
-          event.stopImmediatePropagation()
-      'core:move-to-bottom': (event) =>
-        if @isActive() and @items?.length > 1
-          @selectBottom()
-          event.stopImmediatePropagation()
+    @subscriptions.add atom.config.observe 'autocomplete-plus.useCoreMovementCommands', => @bindToMovementCommands()
+
+  bindToMovementCommands: ->
+    useCoreMovementCommands = atom.config.get('autocomplete-plus.useCoreMovementCommands')
+    commandNamespace = if useCoreMovementCommands then 'core' else 'autocomplete-plus'
+
+    commands = {}
+    commands["#{commandNamespace}:move-up"] = (event) =>
+      if @isActive() and @items?.length > 1
+        @selectPrevious()
+        event.stopImmediatePropagation()
+    commands["#{commandNamespace}:move-down"] = (event) =>
+      if @isActive() and @items?.length > 1
+        @selectNext()
+        event.stopImmediatePropagation()
+    commands["#{commandNamespace}:page-up"] = (event) =>
+      if @isActive() and @items?.length > 1
+        @selectPageUp()
+        event.stopImmediatePropagation()
+    commands["#{commandNamespace}:page-down"] = (event) =>
+      if @isActive() and @items?.length > 1
+        @selectPageDown()
+        event.stopImmediatePropagation()
+    commands["#{commandNamespace}:move-to-top"] = (event) =>
+      if @isActive() and @items?.length > 1
+        @selectTop()
+        event.stopImmediatePropagation()
+    commands["#{commandNamespace}:move-to-bottom"] = (event) =>
+      if @isActive() and @items?.length > 1
+        @selectBottom()
+        event.stopImmediatePropagation()
+
+    @movementCommandSubscriptions?.dispose()
+    @movementCommandSubscriptions = new CompositeDisposable
+    @movementCommandSubscriptions.add atom.commands.add('atom-text-editor.autocomplete-active', commands)
 
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
@@ -185,5 +196,6 @@ class SuggestionList
   # Public: Clean up, stop listening to events
   dispose: ->
     @subscriptions.dispose()
+    @movementCommandSubscriptions?.dispose()
     @emitter.emit('did-dispose')
     @emitter.dispose()

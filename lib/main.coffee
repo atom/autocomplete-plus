@@ -28,6 +28,12 @@ module.exports =
       default: 'tab and enter'
       enum: ['tab', 'enter', 'tab and enter']
       order: 4
+    useCoreMovementCommands:
+      title: 'Use Core Movement Commands'
+      description: 'Disable this if you want to bind your own keystrokes to move around the suggestion list. You will also need to add definitions to your keymap. See: https://github.com/atom/autocomplete-plus#usage'
+      type: 'boolean'
+      default: true
+      order: 5
     fileBlacklist:
       title: 'File Blacklist'
       description: 'Suggestions will not be provided for files matching this list, e.g. *.md for Markdown files.'
@@ -35,7 +41,7 @@ module.exports =
       default: ['.*']
       items:
         type: 'string'
-      order: 5
+      order: 6
     scopeBlacklist:
       title: 'Scope Blacklist'
       description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors'
@@ -43,55 +49,55 @@ module.exports =
       default: []
       items:
         type: 'string'
-      order: 6
+      order: 7
     includeCompletionsFromAllBuffers:
       title: 'Include Completions From All Buffers'
       description: 'For grammars with no registered provider(s), the default provider will include completions from all buffers, instead of just the buffer you are currently editing.'
       type: 'boolean'
       default: true
-      order: 7
+      order: 8
     strictMatching:
       title: 'Use Strict Matching For Built-In Provider'
       description: 'Fuzzy searching is performed if this is disabled; if it is enabled, suggestions must begin with the prefix from the current word.'
       type: 'boolean'
       default: false
-      order: 8
+      order: 9
     minimumWordLength:
       description: "Only autocomplete when you've typed at least this many characters."
       type: 'integer'
       default: 3
-      order: 9
+      order: 10
     enableBuiltinProvider:
       title: 'Enable Built-In Provider'
       description: 'The package comes with a built-in provider that will provide suggestions using the words in your current buffer or all open buffers. You will get better suggestions by installing additional autocomplete+ providers. To stop using the built-in provider, disable this option.'
       type: 'boolean'
       default: true
-      order: 10
+      order: 11
     builtinProviderBlacklist:
       title: 'Built-In Provider Blacklist'
       description: 'Don\'t use the built-in provider for these selector(s).'
       type: 'string'
       default: '.source.gfm'
-      order: 11
+      order: 12
     backspaceTriggersAutocomplete:
       title: 'Allow Backspace To Trigger Autocomplete'
       description: 'If enabled, typing `backspace` will show the suggestion list if suggestions are available. If disabled, suggestions will not be shown while backspacing.'
       type: 'boolean'
       default: false
-      order: 12
+      order: 13
     suggestionListFollows:
       title: 'Suggestions List Follows'
       description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appears at the beginning of the word that\'s being completed.'
       type: 'string'
       default: 'Word'
       enum: ['Word', 'Cursor']
-      order: 13
+      order: 14
     defaultProvider:
       description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
       type: 'string'
       default: 'Symbol'
       enum: ['Fuzzy', 'Symbol']
-      order: 14
+      order: 15
     suppressActivationForEditorClasses:
       title: 'Suppress Activation For Editor Classes'
       description: 'Don\'t auto-activate when any of these classes are present in the editor.'
@@ -99,7 +105,7 @@ module.exports =
       default: ['vim-mode.command-mode', 'vim-mode.visual-mode', 'vim-mode.operator-pending-mode']
       items:
         type: 'string'
-      order: 15
+      order: 16
 
   autocompleteManager: null
   subscriptions: null

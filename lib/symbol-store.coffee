@@ -145,6 +145,7 @@ class SymbolStore
   adjustBufferRows: (editor, oldRange, newRange) ->
     adjustmentStartRow = oldRange.end.row + 1
     adjustmentDelta = newRange.getRowCount() - oldRange.getRowCount()
+    return if adjustmentDelta is 0
     for key, symbol of @symbolMap
       symbol.adjustBufferRows(editor.getBuffer(), adjustmentStartRow, adjustmentDelta)
     return

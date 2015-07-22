@@ -49,11 +49,9 @@ class SuggestionList
 
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
-    keys =
-      'escape': 'autocomplete-plus:cancel'
-
     completionKey = atom.config.get('autocomplete-plus.confirmCompletion') or ''
 
+    keys = {}
     keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     keys['enter'] = 'autocomplete-plus:confirm' if completionKey.indexOf('enter') > -1
 

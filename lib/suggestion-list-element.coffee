@@ -63,6 +63,8 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.add @model.onDidChangeItems(@itemsChanged.bind(this))
     @subscriptions.add @model.onDidSelectNext(@moveSelectionDown.bind(this))
     @subscriptions.add @model.onDidSelectPrevious(@moveSelectionUp.bind(this))
+    @subscriptions.add @model.onDidSelectPageUp(@moveSelectionPageUp.bind(this))
+    @subscriptions.add @model.onDidSelectPageDown(@moveSelectionPageDown.bind(this))
     @subscriptions.add @model.onDidConfirmSelection(@confirmSelection.bind(this))
     @subscriptions.add @model.onDidDispose(@dispose.bind(this))
 
@@ -138,6 +140,15 @@ class SuggestionListElement extends HTMLElement
       @setSelectedIndex(@selectedIndex + 1)
     else
       @setSelectedIndex(0)
+
+  moveSelectionPageUp: ->
+    newIndex = Math.max(0, @selectedIndex - @maxVisibleSuggestions)
+    @setSelectedIndex(newIndex) if @selectedIndex isnt newIndex
+
+  moveSelectionPageDown: ->
+    itemsLength = @visibleItems().length
+    newIndex = Math.min(itemsLength - 1, @selectedIndex + @maxVisibleSuggestions)
+    @setSelectedIndex(newIndex) if @selectedIndex isnt newIndex
 
   setSelectedIndex: (index) ->
     @selectedIndex = index

@@ -19,6 +19,14 @@ class SuggestionList
         if @isActive() and @items?.length > 1
           @selectNext()
           event.stopImmediatePropagation()
+      'core:page-up': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectPageUp()
+          event.stopImmediatePropagation()
+      'core:page-down': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectPageDown()
+          event.stopImmediatePropagation()
 
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
@@ -38,35 +46,61 @@ class SuggestionList
     @keymaps = null
     @subscriptions.remove(@keymaps)
 
-  confirmSelection: =>
-    @emitter.emit('did-confirm-selection')
-
-  onDidConfirmSelection: (fn) ->
-    @emitter.on('did-confirm-selection', fn)
-
-  confirm: (match) =>
-    @emitter.emit('did-confirm', match)
-
-  onDidConfirm: (fn) ->
-    @emitter.on('did-confirm', fn)
-
-  selectNext: ->
-    @emitter.emit('did-select-next')
-
-  onDidSelectNext: (fn) ->
-    @emitter.on('did-select-next', fn)
-
-  selectPrevious: ->
-    @emitter.emit('did-select-previous')
-
-  onDidSelectPrevious: (fn) ->
-    @emitter.on('did-select-previous', fn)
+  ###
+  Section: Event Triggers
+  ###
 
   cancel: =>
     @emitter.emit('did-cancel')
 
+  confirm: (match) =>
+    @emitter.emit('did-confirm', match)
+
+  confirmSelection: =>
+    @emitter.emit('did-confirm-selection')
+
+  selectNext: ->
+    @emitter.emit('did-select-next')
+
+  selectPrevious: ->
+    @emitter.emit('did-select-previous')
+
+  selectPageUp: ->
+    @emitter.emit('did-select-page-up')
+
+  selectPageDown: ->
+    @emitter.emit('did-select-page-down')
+
+  ###
+  Section: Events
+  ###
+
+  onDidConfirmSelection: (fn) ->
+    @emitter.on('did-confirm-selection', fn)
+
+  onDidConfirm: (fn) ->
+    @emitter.on('did-confirm', fn)
+
+  onDidSelectNext: (fn) ->
+    @emitter.on('did-select-next', fn)
+
+  onDidSelectPrevious: (fn) ->
+    @emitter.on('did-select-previous', fn)
+
+  onDidSelectPageUp: (fn) ->
+    @emitter.on('did-select-page-up', fn)
+
+  onDidSelectPageDown: (fn) ->
+    @emitter.on('did-select-page-down', fn)
+
   onDidCancel: (fn) ->
     @emitter.on('did-cancel', fn)
+
+  onDidDispose: (fn) ->
+    @emitter.on('did-dispose', fn)
+
+  onDidChangeItems: (fn) ->
+    @emitter.on('did-change-items', fn)
 
   isActive: ->
     @active
@@ -128,14 +162,8 @@ class SuggestionList
   changeItems: (@items) ->
     @emitter.emit('did-change-items', items)
 
-  onDidChangeItems: (fn) ->
-    @emitter.on('did-change-items', fn)
-
   # Public: Clean up, stop listening to events
   dispose: ->
     @subscriptions.dispose()
     @emitter.emit('did-dispose')
     @emitter.dispose()
-
-  onDidDispose: (fn) ->
-    @emitter.on('did-dispose', fn)

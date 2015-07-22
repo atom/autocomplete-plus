@@ -27,6 +27,14 @@ class SuggestionList
         if @isActive() and @items?.length > 1
           @selectPageDown()
           event.stopImmediatePropagation()
+      'core:move-to-top': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectTop()
+          event.stopImmediatePropagation()
+      'core:move-to-bottom': (event) =>
+        if @isActive() and @items?.length > 1
+          @selectBottom()
+          event.stopImmediatePropagation()
 
   addKeyboardInteraction: ->
     @removeKeyboardInteraction()
@@ -71,6 +79,12 @@ class SuggestionList
   selectPageDown: ->
     @emitter.emit('did-select-page-down')
 
+  selectTop: ->
+    @emitter.emit('did-select-top')
+
+  selectBottom: ->
+    @emitter.emit('did-select-bottom')
+
   ###
   Section: Events
   ###
@@ -92,6 +106,12 @@ class SuggestionList
 
   onDidSelectPageDown: (fn) ->
     @emitter.on('did-select-page-down', fn)
+
+  onDidSelectTop: (fn) ->
+    @emitter.on('did-select-top', fn)
+
+  onDidSelectBottom: (fn) ->
+    @emitter.on('did-select-bottom', fn)
 
   onDidCancel: (fn) ->
     @emitter.on('did-cancel', fn)

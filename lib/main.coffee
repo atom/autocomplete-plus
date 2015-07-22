@@ -30,7 +30,7 @@ module.exports =
       order: 4
     useCoreMovementCommands:
       title: 'Use Core Movement Commands'
-      description: 'Disable this if you want to bind your own keystrokes to move around the suggestion list. You will also need to add definitions to your keymap. See: https://github.com/atom/autocomplete-plus#usage'
+      description: 'Disable this if you want to bind your own keystrokes to move around the suggestion list. You will also need to add definitions to your keymap. See: https://github.com/atom/autocomplete-plus#remapping-movement-commands'
       type: 'boolean'
       default: true
       order: 5

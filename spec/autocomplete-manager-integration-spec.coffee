@@ -196,6 +196,58 @@ describe 'Autocomplete Manager', ->
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 2
 
+    describe 'when the fileBlacklist option is set', ->
+      beforeEach ->
+        atom.config.set('autocomplete-plus.fileBlacklist', ['.*', '*.md'])
+        editor.getBuffer().setPath('blacklisted.md')
+
+      it 'does not show suggestions when working with files that match the blacklist', ->
+        editor.insertText('a')
+        waitForAutocomplete()
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+      it 'caches the blacklist result', ->
+        spyOn(path, 'basename').andCallThrough()
+
+        editor.insertText('a')
+        waitForAutocomplete()
+
+        runs ->
+          editor.insertText('b')
+          waitForAutocomplete()
+
+        runs ->
+          editor.insertText('c')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          expect(path.basename.callCount).toBe 1
+
+      it 'shows suggestions when the path is changed to not match the blacklist', ->
+        editor.insertText('a')
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
+
+          editor.getBuffer().setPath('not-blackslisted.txt')
+          editor.insertText('a')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
+
+          editor.getBuffer().setPath('blackslisted.md')
+          editor.insertText('a')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
     describe "when filterSuggestions option is true", ->
       beforeEach ->
         provider =

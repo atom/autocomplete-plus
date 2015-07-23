@@ -23,16 +23,40 @@ Press `UP` and `DOWN` to select another suggestion, press `TAB` or `ENTER` to co
 
 * Keymap For Confirming A Suggestion
 
-Additionally, the keymap can be customized in your keymap.cson:
+Additionally, the confirm keymap can be customized in your keymap.cson:
 
 ```coffeescript
-'atom-text-editor:not(mini).autocomplete-active':
+'atom-text-editor.autocomplete-active':
   'tab': 'unset!'
-  'enter': 'autocomplete-plus:confirm'
-  'up': 'unset!'
-  'down': 'unset!'
-  'ctrl-p': 'core:move-up'
-  'ctrl-n': 'core:move-down'
+  'ctrl-shift-a': 'autocomplete-plus:confirm'
+```
+
+### Remapping Movement Commands
+
+By default, autocomplete-plus commandeers the editor's core movement commands when the suggestion list is open. You may want to change these movement commands to use your own keybindings.
+
+First you need to set the `autocomplete-plus.useCoreMovementCommands` setting to `false`, which you can do from the `autocomplete-plus` settings in the settings view.
+
+![core-movement](https://cloud.githubusercontent.com/assets/69169/8839134/72a9c7e6-3087-11e5-9d1f-8d3d15961327.jpg)
+
+Or by adding this to your config file:
+
+```coffee
+"*":
+  "autocomplete-plus":
+    "useCoreMovementCommands": false
+```
+
+Then add these to your keymap file:
+
+```coffeescript
+'body atom-text-editor.autocomplete-active':
+  'ctrl-p': 'autocomplete-plus:move-up'
+  'ctrl-n': 'autocomplete-plus:move-down'
+  'pageup': 'autocomplete-plus:page-up'
+  'pagedown': 'autocomplete-plus:page-down'
+  'home': 'autocomplete-plus:move-to-top'
+  'end': 'autocomplete-plus:move-to-bottom'
 ```
 
 ## Features

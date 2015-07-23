@@ -627,6 +627,67 @@ describe 'Autocomplete Manager', ->
             expect(newWidth).toBeGreaterThan 0
             expect(newWidth).toBeLessThan listWidth
 
+    describe "when number of useCoreMovementCommands is toggled", ->
+      [suggestionList] = []
+
+      beforeEach ->
+        triggerAutocompletion(editor, true, 'a')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+
+      it "binds to custom commands when unset, and binds back to core commands when set", ->
+        atom.commands.dispatch(suggestionList, 'core:move-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass 'selected'
+
+        atom.config.set('autocomplete-plus.useCoreMovementCommands', false)
+
+        atom.commands.dispatch(suggestionList, 'core:move-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass 'selected'
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:move-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass 'selected'
+
+        atom.config.set('autocomplete-plus.useCoreMovementCommands', true)
+
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:move-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass 'selected'
+        atom.commands.dispatch(suggestionList, 'core:move-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass 'selected'
+
+    describe "when number of useCoreMovementCommands is false", ->
+      [suggestionList] = []
+
+      beforeEach ->
+        atom.config.set('autocomplete-plus.useCoreMovementCommands', false)
+        triggerAutocompletion(editor, true, 'a')
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+
+      it "responds to all the custom movement commands and to no core commands", ->
+        atom.commands.dispatch(suggestionList, 'core:move-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass 'selected'
+
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:move-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass 'selected'
+
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:move-up')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass 'selected'
+
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:page-down')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).not.toHaveClass 'selected'
+
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:page-up')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass 'selected'
+
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:move-to-bottom')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass 'selected'
+
+        atom.commands.dispatch(suggestionList, 'autocomplete-plus:move-to-top')
+        expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass 'selected'
+
     describe "when match.snippet is used", ->
       beforeEach ->
         spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->

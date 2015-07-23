@@ -1,2 +1,5 @@
 'atom-text-editor':
   'ctrl-space': 'autocomplete-plus:activate'
+
+'atom-text-editor.autocomplete-active':
+  'escape': 'autocomplete-plus:cancel'

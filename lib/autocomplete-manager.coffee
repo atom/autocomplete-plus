@@ -87,6 +87,8 @@ class AutocompleteManager
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
     @editorSubscriptions.add(@editor.onDidChangeCursorPosition(@cursorMoved))
+    @editorSubscriptions.add @editor.onDidChangePath =>
+      @isCurrentFileBlackListedCache = null
 
   paneItemIsValid: (paneItem) ->
     return false unless paneItem?

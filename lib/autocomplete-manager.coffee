@@ -29,7 +29,6 @@ class AutocompleteManager
   suggestionList: null
   suppressForClasses: []
   shouldDisplaySuggestions: false
-  manualActivationStrictPrefixes: null
   prefixRegex: /(\b|['"~`!@#\$%^&*\(\)\{\}\[\]=\+,/\?>])((\w+[\w-]*)|([.:;[{(< ]+))$/
   wordPrefixRegex: /^\w+[\w-]*$/
 
@@ -187,7 +186,6 @@ class AutocompleteManager
           hasEmpty = true unless suggestion.snippet or suggestion.text
           suggestion.replacementPrefix ?= @getDefaultReplacementPrefix(options.prefix)
           suggestion.provider = provider
-          @addManualActivationStrictPrefix(provider, suggestion.replacementPrefix) if options.activatedManually
 
         providerSuggestions = (suggestion for suggestion in providerSuggestions when (suggestion.snippet or suggestion.text)) if hasEmpty
         providerSuggestions = @filterSuggestions(providerSuggestions, options) if provider.filterSuggestions
@@ -198,7 +196,6 @@ class AutocompleteManager
       .then(@mergeSuggestionsFromProviders)
       .then (suggestions) =>
         return unless @currentSuggestionsPromise is suggestionsPromise
-        suggestions = @filterForManualActivationStrictPrefix(suggestions)
         if options.activatedManually and @shouldDisplaySuggestions and suggestions.length is 1
           # When there is one suggestion in manual mode, just confirm it
           @confirm(suggestions[0])
@@ -344,7 +341,6 @@ class AutocompleteManager
 
   hideSuggestionList: =>
     return if @disposed
-    @clearManualActivationStrictPrefixes()
     @suggestionList.changeItems(null)
     @suggestionList.hide()
     @shouldDisplaySuggestions = false
@@ -498,24 +494,3 @@ class AutocompleteManager
     @subscriptions = null
     @suggestionList = null
     @providerManager = null
-
-  clearManualActivationStrictPrefixes: ->
-    @manualActivationStrictPrefixes = null
-
-  addManualActivationStrictPrefix: (provider, prefix) ->
-    return if @manualActivationStrictPrefixes?.has(provider) or not prefix?
-    @manualActivationStrictPrefixes ?= new WeakMap
-    @manualActivationStrictPrefixes.set(provider, prefix.toLowerCase())
-
-  filterForManualActivationStrictPrefix: (suggestions) ->
-    return suggestions unless @manualActivationStrictPrefixes?
-
-    results = []
-    for suggestion in suggestions
-      lowercaseText = (suggestion.snippet ? suggestion.text).toLowerCase()
-      if lowercaseText[0] is suggestion.replacementPrefix.toLowerCase()[0]
-        strictPrefix = @manualActivationStrictPrefixes.get(suggestion.provider)
-        results.push(suggestion) if strictPrefix? and lowercaseText.startsWith(strictPrefix)
-      else
-        results.push(suggestion)
-    results

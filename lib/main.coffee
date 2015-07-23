@@ -100,6 +100,12 @@ module.exports =
       items:
         type: 'string'
       order: 15
+    typingConfirmsSelection:
+      title: 'Confirm Selection By Typing'
+      description: 'If enabled, typing a key that doesn\'t match any binding will confirm your selection in case you made any. Nothing will be selected by default. If disabled, you\'ll just continue typing.'
+      type: 'boolean'
+      default: false
+      order: 16
 
   autocompleteManager: null
   subscriptions: null

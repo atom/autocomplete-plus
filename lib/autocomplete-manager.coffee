@@ -15,6 +15,7 @@ module.exports =
 class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
+  typingConfirmsSelection: false
   bracketMatcherPairs: ['()', '[]', '{}', '""', "''", '``', "“”", '‘’', "«»", "‹›"]
   buffer: null
   compositionInProgress: false
@@ -310,7 +311,7 @@ class AutocompleteManager
   # Private: Gets called when the user successfully confirms a suggestion
   #
   # match - An {Object} representing the confirmed suggestion
-  confirm: (suggestion) =>
+  confirm: (suggestion, keystroke) =>
     return unless @editor? and suggestion? and not @disposed
 
     apiVersion = @providerManager.apiVersionForProvider(suggestion.provider)
@@ -330,6 +331,7 @@ class AutocompleteManager
       suggestion.provider.onDidInsertSuggestion?({@editor, suggestion, triggerPosition})
     else
       suggestion.onDidConfirm?()
+      @editor.insertText(keystroke) if keystroke?
 
   showSuggestionList: (suggestions, options) ->
     return if @disposed

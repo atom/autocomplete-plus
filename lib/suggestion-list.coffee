@@ -61,8 +61,8 @@ class SuggestionList
   cancel: =>
     @emitter.emit('did-cancel')
 
-  confirm: (match) =>
-    @emitter.emit('did-confirm', match)
+  confirm: (match, keystroke) =>
+    @emitter.emit('did-confirm', match, keystroke)
 
   confirmSelection: =>
     @emitter.emit('did-confirm-selection')

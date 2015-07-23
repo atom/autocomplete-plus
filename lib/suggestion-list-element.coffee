@@ -70,9 +70,14 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.add @model.onDidConfirmSelection(@confirmSelection.bind(this))
     @subscriptions.add @model.onDidDispose(@dispose.bind(this))
 
+    @subscriptions.add atom.keymaps.onDidFailToMatchBinding ({keystrokes, keyboardEventTarget}) =>
+      if atom.config.get('autocomplete-plus.typingConfirmsSelection') and not (keystrokes in ["cmd", "alt", "shift", "ctrl"])
+        @confirmSelection(keystrokes)
+
     @subscriptions.add atom.config.observe 'autocomplete-plus.suggestionListFollows', (@suggestionListFollows) =>
     @subscriptions.add atom.config.observe 'autocomplete-plus.maxVisibleSuggestions', (@maxVisibleSuggestions) =>
     this
+
 
   # This should be unnecessary but the events we need to override
   # are handled at a level that can't be blocked by react synthetic
@@ -118,7 +123,7 @@ class SuggestionListElement extends HTMLElement
       @returnItemsToPool(0)
 
   render: ->
-    @selectedIndex = 0
+    @selectedIndex = if atom.config.get('autocomplete-plus.typingConfirmsSelection') then -1 else 0
     atom.views.pollAfterNextUpdate?()
     atom.views.updateDocument @renderItems.bind(this)
     atom.views.readDocument @readUIPropsFromDOM.bind(this)
@@ -141,7 +146,7 @@ class SuggestionListElement extends HTMLElement
     unless @selectedIndex >= (@visibleItems().length - 1)
       @setSelectedIndex(@selectedIndex + 1)
     else
-      @setSelectedIndex(0)
+      @setSelectedIndex(if atom.config.get('autocomplete-plus.typingConfirmsSelection') then -1 else 0)
 
   moveSelectionPageUp: ->
     newIndex = Math.max(0, @selectedIndex - @maxVisibleSuggestions)
@@ -175,11 +180,11 @@ class SuggestionListElement extends HTMLElement
 
   # Private: Confirms the currently selected item or cancels the list view
   # if no item has been selected
-  confirmSelection: ->
+  confirmSelection: (keystroke) ->
     return unless @model.isActive()
     item = @getSelectedItem()
     if item?
-      @model.confirm(item)
+      @model.confirm(item, keystroke)
     else
       @model.cancel()
 
@@ -220,6 +225,7 @@ class SuggestionListElement extends HTMLElement
     count
 
   renderSelectedItem: ->
+    return if @selectedIndex is -1
     @selectedLi?.classList.remove('selected')
     @selectedLi = @ol.childNodes[@selectedIndex]
     if @selectedLi?
@@ -229,6 +235,7 @@ class SuggestionListElement extends HTMLElement
 
   # This is reading the DOM in the updateDOM cycle. If we dont, there is a flicker :/
   scrollSelectedItemIntoView: ->
+    return if @selectedIndex is -1
     scrollTop = @scroller.scrollTop
     selectedItemTop = @selectedLi.offsetTop
     if selectedItemTop < scrollTop
@@ -242,6 +249,7 @@ class SuggestionListElement extends HTMLElement
       @scroller.scrollTop = selectedItemTop - scrollerHeight + itemHeight
 
   readUIPropsFromDOM: ->
+    return if @selectedIndex is -1
     wordContainer = @selectedLi?.querySelector('.word-container')
 
     @uiProps ?= {}
@@ -257,6 +265,7 @@ class SuggestionListElement extends HTMLElement
       @updateUIForChangedProps()
 
   updateUIForChangedProps: ->
+    return if @selectedIndex is -1
     @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"
     @style.width = "#{@uiProps.width}px"
     if @suggestionListFollows is 'Word'

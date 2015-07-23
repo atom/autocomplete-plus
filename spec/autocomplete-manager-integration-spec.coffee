@@ -274,6 +274,44 @@ describe 'Autocomplete Manager', ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 2
 
+    describe "when there is only one suggestion", ->
+      beforeEach ->
+        provider =
+          selector: '*'
+          filterSuggestions: true
+          inclusionPriority: 3
+          excludeLowerPriority: true
+
+          getSuggestions: ({prefix}) ->
+            list = ['ab', 'abc', 'abcd', 'abcde']
+            ({text} for text in list)
+        mainModule.consumeProvider(provider)
+
+      it 'does not display the suggestion list when the prefix strictly equals the only suggestion', ->
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        editor.insertText('a')
+        waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
+
+          editor.insertText('b')
+          editor.insertText('c')
+          editor.insertText('d')
+          editor.insertText('e')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+          editor.backspace()
+          editor.insertText('E') # does not strictly match
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
     describe "when the type option has a space in it", ->
       it 'does not display empty suggestions', ->
         spyOn(provider, 'getSuggestions').andCallFake ->

@@ -59,6 +59,7 @@ class AutocompleteManager
     @editor = null
     @editorView = null
     @buffer = null
+    @isCurrentFileBlackListedCache = null
 
     return unless @paneItemIsValid(currentPaneItem)
 
@@ -86,6 +87,8 @@ class AutocompleteManager
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
     @editorSubscriptions.add(@editor.onDidChangeCursorPosition(@cursorMoved))
+    @editorSubscriptions.add @editor.onDidChangePath =>
+      @isCurrentFileBlackListedCache = null
 
   paneItemIsValid: (paneItem) ->
     return false unless paneItem?
@@ -100,6 +103,9 @@ class AutocompleteManager
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
+    @subscriptions.add atom.config.observe 'autocomplete-plus.fileBlacklist', (value) =>
+      @fileBlacklist = value?.map((s) -> s.trim())
+      @isCurrentFileBlackListedCache = null
     @subscriptions.add atom.config.observe 'autocomplete-plus.suppressActivationForEditorClasses', (value) =>
       @suppressForClasses = []
       for selector in value
@@ -392,15 +398,21 @@ class AutocompleteManager
   #
   # Returns {Boolean} that defines whether the current file is blacklisted
   isCurrentFileBlackListed: =>
-    blacklist = atom.config.get('autocomplete-plus.fileBlacklist')?.map((s) -> s.trim())
-    return false unless blacklist?.length > 0
+    # minimatch is slow. Not necessary to do this computation on every request for suggestions
+    return @isCurrentFileBlackListedCache if @isCurrentFileBlackListedCache?
+
+    if not @fileBlacklist? or @fileBlacklist.length is 0
+      @isCurrentFileBlackListedCache = false
+      return @isCurrentFileBlackListedCache
 
     minimatch ?= require('minimatch')
     fileName = path.basename(@buffer.getPath())
-    for blacklistGlob in blacklist
-      return true if minimatch(fileName, blacklistGlob)
+    for blacklistGlob in @fileBlacklist
+      if minimatch(fileName, blacklistGlob)
+        @isCurrentFileBlackListedCache = true
+        return @isCurrentFileBlackListedCache
 
-    return false
+    @isCurrentFileBlackListedCache = false
 
   # Private: Gets called when the content has been modified
   requestNewSuggestions: =>

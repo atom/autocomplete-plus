@@ -125,7 +125,6 @@ class SymbolProvider
         addedConfigEntry = true
 
     @addConfigEntry(@defaultConfig) unless addedConfigEntry
-    @config.builtin.suggestions = _.uniq(@config.builtin.suggestions, @uniqueFilter) if @config.builtin?.suggestions?
 
   addLegacyConfigEntry: (suggestions) ->
     suggestions = ({text: suggestion, type: 'builtin'} for suggestion in suggestions)

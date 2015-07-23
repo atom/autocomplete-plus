@@ -679,7 +679,7 @@ describe 'Autocomplete Manager', ->
             expect(newWidth).toBeGreaterThan 0
             expect(newWidth).toBeLessThan listWidth
 
-    describe "when number of useCoreMovementCommands is toggled", ->
+    describe "when useCoreMovementCommands is toggled", ->
       [suggestionList] = []
 
       beforeEach ->
@@ -707,7 +707,7 @@ describe 'Autocomplete Manager', ->
         atom.commands.dispatch(suggestionList, 'core:move-down')
         expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass 'selected'
 
-    describe "when number of useCoreMovementCommands is false", ->
+    describe "when useCoreMovementCommands is false", ->
       [suggestionList] = []
 
       beforeEach ->

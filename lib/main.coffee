@@ -44,7 +44,7 @@ module.exports =
       order: 6
     scopeBlacklist:
       title: 'Scope Blacklist'
-      description: 'Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors'
+      description: 'Suggestions will not be provided for scopes matching this list. See: <a href="https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors">https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors</a>'
       type: 'array'
       default: []
       items:

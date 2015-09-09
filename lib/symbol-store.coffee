@@ -104,6 +104,7 @@ class Symbol
             if (not @type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
               @type = type
               typePriority = options.typePriority
+          return
       @cachedConfig = config
 
     if buffer?

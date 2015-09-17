@@ -97,10 +97,11 @@ class Symbol
 
     unless @type?
       typePriority = 0
-      for type, options of config
+      for type in Object.keys(config)
+        options = config[type]
         continue unless options.selectors?
         @metadataByPath.forEach ({scopeChains}) =>
-          for scopeChain, __ of scopeChains
+          for scopeChain in Object.keys(scopeChains)
             if (not @type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
               @type = type
               typePriority = options.typePriority
@@ -136,7 +137,8 @@ class SymbolStore
 
   symbolsForConfig: (config, buffer, wordUnderCursor, numberOfCursors) ->
     symbols = []
-    for symbolKey, symbol of @symbolMap
+    for symbolKey in Object.keys(@symbolMap)
+      symbol = @symbolMap[symbolKey]
       if symbol.appliesToConfig(config, buffer) and (not symbol.isEqualToWord(wordUnderCursor) or symbol.instancesForWord(wordUnderCursor) > numberOfCursors)
         symbols.push(symbol)
     for type, options of config

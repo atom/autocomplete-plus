@@ -1264,6 +1264,21 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
+      it 'does not accept the suggestion if auto-confirm single suggestion is disabled', ->
+        spyOn(provider, 'getSuggestions').andCallFake (options) ->
+          [text: 'omgok']
+
+        triggerAutocompletion(editor)
+
+        runs ->
+          atom.config.set('autocomplete-plus.enableAutoConfirmSingleSuggestion', false)
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:activate')
+          waitForAutocomplete()
+
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
       it 'includes the correct value for activatedManually when explicitly triggered', ->
         spyOn(provider, 'getSuggestions').andCallFake (o) ->
           options = o

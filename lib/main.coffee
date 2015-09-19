@@ -85,19 +85,25 @@ module.exports =
       type: 'boolean'
       default: false
       order: 13
+    enableAutoConfirmSingleSuggestion:
+      title: 'Automatically Confirm Single Suggestion'
+      description: 'If enabled, automatically insert suggestion on manual activation with autocomplete-plus:activate when there is only one match.'
+      type: 'boolean'
+      default: true
+      order: 14
     suggestionListFollows:
       title: 'Suggestions List Follows'
       description: 'With "Cursor" the suggestion list appears at the cursor\'s position. With "Word" it appears at the beginning of the word that\'s being completed.'
       type: 'string'
       default: 'Word'
       enum: ['Word', 'Cursor']
-      order: 14
+      order: 15
     defaultProvider:
       description: 'Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.'
       type: 'string'
       default: 'Symbol'
       enum: ['Fuzzy', 'Symbol']
-      order: 15
+      order: 16
     suppressActivationForEditorClasses:
       title: 'Suppress Activation For Editor Classes'
       description: 'Don\'t auto-activate when any of these classes are present in the editor.'
@@ -105,7 +111,7 @@ module.exports =
       default: ['vim-mode.command-mode', 'vim-mode.visual-mode', 'vim-mode.operator-pending-mode']
       items:
         type: 'string'
-      order: 16
+      order: 17
 
   autocompleteManager: null
   subscriptions: null

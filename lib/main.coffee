@@ -112,6 +112,12 @@ module.exports =
       items:
         type: 'string'
       order: 17
+    consumeSuffixWords:
+      title: 'Consume suggestion text following the cursor'
+      description: 'Completing a suggestion will delete all identical text after the cursor'
+      type: 'boolean'
+      default: true
+      order: 18
 
   autocompleteManager: null
   subscriptions: null

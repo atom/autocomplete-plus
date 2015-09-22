@@ -111,6 +111,12 @@ module.exports =
       default: ['vim-mode.command-mode', 'vim-mode.visual-mode', 'vim-mode.operator-pending-mode']
       items:
         type: 'string'
+      order: 16
+    wrapSuggestions:
+      title: 'Wrap Selections to Top & Bottom'
+      description: 'Disable this if you want the auto suggestion list to automatically dismiss when reaching the beginning or end of the list.'
+      type: 'boolean'
+      default: 'true'
       order: 17
 
   autocompleteManager: null

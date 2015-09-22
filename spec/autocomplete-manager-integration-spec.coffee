@@ -25,6 +25,8 @@ describe 'Autocomplete Manager', ->
 
       atom.config.set('autocomplete-plus.maxVisibleSuggestions', 10)
 
+      atom.config.set('autocomplete-plus.wrapSuggestions', true)
+
   describe "when an external provider is registered", ->
     [provider] = []
 
@@ -1485,6 +1487,41 @@ describe 'Autocomplete Manager', ->
 
           atom.commands.dispatch(suggestionListView, 'core:move-down')
           expect(items[0]).toHaveClass('selected')
+
+      it 'dismisses instead of wrapping when wrapSuggestions is disabled', ->
+        atom.config.set('autocomplete-plus.wrapSuggestions', false)
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [{text: 'ab'}, {text: 'abc'}, {text: 'abcd'}]
+
+        # Dismisses up
+        runs ->
+          triggerAutocompletion(editor, false, 'a')
+          waitForAutocomplete()
+
+        runs ->
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).toExist()
+
+          atom.commands.dispatch(editorView, 'core:move-up')
+          advanceClock(1)
+
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        # Dismisses down
+        runs ->
+          triggerAutocompletion(editor, false, 'a')
+          waitForAutocomplete()
+
+        runs ->
+          autocomplete = editorView.querySelector('.autocomplete-plus')
+          expect(autocomplete).toExist()
+
+          atom.commands.dispatch(editorView, 'core:move-down')
+          atom.commands.dispatch(editorView, 'core:move-down')
+          atom.commands.dispatch(editorView, 'core:move-down')
+          advanceClock(1)
+
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
     describe "label rendering", ->
       describe "when no labels are specified", ->

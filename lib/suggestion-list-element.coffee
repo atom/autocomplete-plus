@@ -72,6 +72,7 @@ class SuggestionListElement extends HTMLElement
 
     @subscriptions.add atom.config.observe 'autocomplete-plus.suggestionListFollows', (@suggestionListFollows) =>
     @subscriptions.add atom.config.observe 'autocomplete-plus.maxVisibleSuggestions', (@maxVisibleSuggestions) =>
+    @subscriptions.add atom.config.observe 'autocomplete-plus.wrapSuggestions', (@wrapSuggestions) =>
     this
 
   # This should be unnecessary but the events we need to override
@@ -134,14 +135,18 @@ class SuggestionListElement extends HTMLElement
   moveSelectionUp: ->
     unless @selectedIndex <= 0
       @setSelectedIndex(@selectedIndex - 1)
-    else
+    else if @wrapSuggestions
       @setSelectedIndex(@visibleItems().length - 1)
+    else
+      @model.cancel()
 
   moveSelectionDown: ->
     unless @selectedIndex >= (@visibleItems().length - 1)
       @setSelectedIndex(@selectedIndex + 1)
-    else
+    else if @wrapSuggestions
       @setSelectedIndex(0)
+    else
+      @model.cancel()
 
   moveSelectionPageUp: ->
     newIndex = Math.max(0, @selectedIndex - @maxVisibleSuggestions)

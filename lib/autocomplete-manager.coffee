@@ -15,6 +15,7 @@ module.exports =
 class AutocompleteManager
   autosaveEnabled: false
   backspaceTriggersAutocomplete: true
+  autoConfirmSingleSuggestionEnabled: true
   bracketMatcherPairs: ['()', '[]', '{}', '""', "''", '``', "“”", '‘’', "«»", "‹›"]
   buffer: null
   compositionInProgress: false
@@ -102,6 +103,7 @@ class AutocompleteManager
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoConfirmSingleSuggestion', (value) => @autoConfirmSingleSuggestionEnabled = value))
     @subscriptions.add atom.config.observe 'autocomplete-plus.fileBlacklist', (value) =>
       @fileBlacklist = value?.map((s) -> s.trim())
       @isCurrentFileBlackListedCache = null
@@ -196,7 +198,7 @@ class AutocompleteManager
       .then(@mergeSuggestionsFromProviders)
       .then (suggestions) =>
         return unless @currentSuggestionsPromise is suggestionsPromise
-        if options.activatedManually and @shouldDisplaySuggestions and suggestions.length is 1
+        if options.activatedManually and @shouldDisplaySuggestions and @autoConfirmSingleSuggestionEnabled and suggestions.length is 1
           # When there is one suggestion in manual mode, just confirm it
           @confirm(suggestions[0])
         else

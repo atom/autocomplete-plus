@@ -1,6 +1,7 @@
 {CompositeDisposable} = require 'atom'
 SnippetParser = require './snippet-parser'
 {isString} = require('./type-helpers')
+fuzzaldrinPlus = require 'fuzzaldrin-plus'
 
 ItemTemplate = """
   <span class="icon-container"></span>
@@ -72,6 +73,7 @@ class SuggestionListElement extends HTMLElement
 
     @subscriptions.add atom.config.observe 'autocomplete-plus.suggestionListFollows', (@suggestionListFollows) =>
     @subscriptions.add atom.config.observe 'autocomplete-plus.maxVisibleSuggestions', (@maxVisibleSuggestions) =>
+    @subscriptions.add atom.config.observe 'autocomplete-plus.useAlternateScoring', (@useAlternateScoring) =>
     this
 
   # This should be unnecessary but the events we need to override
@@ -400,13 +402,17 @@ class SuggestionListElement extends HTMLElement
   findCharacterMatchIndices: (text, replacementPrefix) ->
     return unless text?.length and replacementPrefix?.length
     matches = {}
-    wordIndex = 0
-    for ch, i in replacementPrefix
-      while wordIndex < text.length and text[wordIndex].toLowerCase() isnt ch.toLowerCase()
+    if @useAlternateScoring
+      fpm = fuzzaldrinPlus.match(text, replacementPrefix)
+      matches[pos] = true for pos in fpm
+    else
+      wordIndex = 0
+      for ch, i in replacementPrefix
+        while wordIndex < text.length and text[wordIndex].toLowerCase() isnt ch.toLowerCase()
+          wordIndex += 1
+        break if wordIndex >= text.length
+        matches[wordIndex] = true
         wordIndex += 1
-      break if wordIndex >= text.length
-      matches[wordIndex] = true
-      wordIndex += 1
     matches
 
   dispose: ->

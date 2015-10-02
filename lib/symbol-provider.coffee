@@ -2,6 +2,7 @@
 
 _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
+fuzzaldrinPlus = require 'fuzzaldrin-plus'
 {TextEditor, CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 SymbolStore = require './symbol-store'
@@ -43,6 +44,8 @@ class SymbolProvider
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (@useAlternateScoring) => ))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useBufferProximity', (@useBufferProximity) => ))
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @subscriptions.add(atom.workspace.observeTextEditors(@watchEditor))
 
@@ -206,11 +209,21 @@ class SymbolProvider
   fuzzyFilter: (symbolList, buffer, {bufferPosition, prefix}) ->
     # Probably inefficient to do a linear search
     candidates = []
+
+    if @useAlternateScoring
+      fuzzaldrinProvider = fuzzaldrinPlus
+      # This allows to pre-compute and re-use some quantities derived from prefix such as
+      # Uppercase, lowercase and a version of prefix without optional characters.
+      prefixCache = fuzzaldrinPlus.prepQuery(prefix)
+    else
+     fuzzaldrinProvider = fuzzaldrin
+     prefixCache = null
+
     for symbol in symbolList
       text = (symbol.snippet or symbol.text)
       continue unless text and prefix[0].toLowerCase() is text[0].toLowerCase() # must match the first char!
-      score = fuzzaldrin.score(text, prefix)
-      score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
+      score = fuzzaldrinProvider.score(text, prefix, prefixCache)
+      if @useBufferProximity then score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
       candidates.push({symbol, score, locality, rowDifference}) if score > 0
 
     candidates.sort(@symbolSortReverseIterator)

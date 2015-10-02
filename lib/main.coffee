@@ -123,8 +123,8 @@ module.exports =
       type: 'boolean'
       default: false
       order: 19
-    useBufferProximity:
-      description: "Prefers words that are closer to insertion point"
+    useLocalityBonus:
+      description: "Gives words near the cursor position a higher score than those far away"
       type: 'boolean'
       default: true
       order: 20

@@ -247,8 +247,16 @@ class SymbolProvider
 
   computeLocalityModifier: (rowDifference) ->
     rowDifference = Math.abs(rowDifference)
-    # Will be between 1 and ~2.75
-    1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)
+    if @useAlternateScoring
+      # Between 1 and 1 + strength. (here between 1.0 and 2.0)
+      # Avoid a pow and a branching max.
+      # 25 is the number of row where the bonus is 3/4 faded away.
+      # strength is the factor in front of fade*fade. Here it is 1.0
+      fade = 25.0/(25.0+rowDifference)
+      1.0 + fade*fade
+    else
+      # Will be between 1 and ~2.75
+      1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     atom.config.getAll(keyPath, scope: scopeDescriptor)

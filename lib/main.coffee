@@ -113,8 +113,7 @@ module.exports =
         type: 'string'
       order: 16
     wrapSuggestions:
-      title: 'Wrap Selections to Top & Bottom'
-      description: 'Disable this if you want the auto suggestion list to automatically dismiss when reaching the beginning or end of the list.'
+      description: 'Disabling this will dismiss the suggestion list when arrowing past the beginning or end of the list.'
       type: 'boolean'
       default: 'true'
       order: 17

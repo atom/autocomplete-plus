@@ -1488,12 +1488,12 @@ describe 'Autocomplete Manager', ->
           atom.commands.dispatch(suggestionListView, 'core:move-down')
           expect(items[0]).toHaveClass('selected')
 
-      it 'dismisses instead of wrapping when wrapSuggestions is disabled', ->
+    describe 'when wrapSuggestions is disabled', ->
+      it 'dismisses suggestion dialog via moving up', ->
         atom.config.set('autocomplete-plus.wrapSuggestions', false)
         spyOn(provider, 'getSuggestions').andCallFake ->
           [{text: 'ab'}, {text: 'abc'}, {text: 'abcd'}]
 
-        # Dismisses up
         runs ->
           triggerAutocompletion(editor, false, 'a')
           waitForAutocomplete()
@@ -1507,7 +1507,11 @@ describe 'Autocomplete Manager', ->
 
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        # Dismisses down
+      it 'dismisses suggestion dialog via moving down', ->
+        atom.config.set('autocomplete-plus.wrapSuggestions', false)
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [{text: 'ab'}, {text: 'abc'}, {text: 'abcd'}]
+
         runs ->
           triggerAutocompletion(editor, false, 'a')
           waitForAutocomplete()

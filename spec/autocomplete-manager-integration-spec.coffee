@@ -1945,4 +1945,4 @@ describe 'Autocomplete Manager', ->
     left = editorView.pixelPositionForBufferPosition(bufferPosition).left
     left += editorView.offsetLeft
     left = gutterWidth + left if requiresGutter()
-    "#{left}px"
+    "#{Math.round(left)}px"

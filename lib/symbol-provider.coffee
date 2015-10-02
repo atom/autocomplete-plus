@@ -216,8 +216,8 @@ class SymbolProvider
       # Uppercase, lowercase and a version of prefix without optional characters.
       prefixCache = fuzzaldrinPlus.prepQuery(prefix)
     else
-     fuzzaldrinProvider = fuzzaldrin
-     prefixCache = null
+      fuzzaldrinProvider = fuzzaldrin
+      prefixCache = null
 
     for symbol in symbolList
       text = (symbol.snippet or symbol.text)
@@ -239,7 +239,7 @@ class SymbolProvider
   getLocalityScore: (bufferPosition, bufferRowsContainingSymbol) ->
     if bufferRowsContainingSymbol?
       rowDifference = Number.MAX_VALUE
-      rowDifference = Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in bufferRowsContainingSymbol
+      rowDifference = (Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in bufferRowsContainingSymbol)
       locality = @computeLocalityModifier(rowDifference)
       locality
     else

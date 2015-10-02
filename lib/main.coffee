@@ -112,6 +112,12 @@ module.exports =
       items:
         type: 'string'
       order: 17
+    consumeSuffix:
+      title: 'Consume suggestion text following the cursor'
+      description: 'Completing a suggestion consumes text following the cursor matching the suffix of the chosen suggestion.'
+      type: 'boolean'
+      default: true
+      order: 18
 
   autocompleteManager: null
   subscriptions: null

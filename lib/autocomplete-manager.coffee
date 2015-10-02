@@ -104,6 +104,7 @@ class AutocompleteManager
     @subscriptions.add(atom.config.observe('autocomplete-plus.backspaceTriggersAutocomplete', (value) => @backspaceTriggersAutocomplete = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoConfirmSingleSuggestion', (value) => @autoConfirmSingleSuggestionEnabled = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.consumeSuffix', (value) => @consumeSuffix = value))
     @subscriptions.add atom.config.observe 'autocomplete-plus.fileBlacklist', (value) =>
       @fileBlacklist = value?.map((s) -> s.trim())
       @isCurrentFileBlackListedCache = null
@@ -375,7 +376,7 @@ class AutocompleteManager
         beginningPosition = [endPosition.row, endPosition.column - suggestion.replacementPrefix.length]
 
         if @editor.getTextInBufferRange([beginningPosition, endPosition]) is suggestion.replacementPrefix
-          suffix = @getSuffix(@editor, endPosition, suggestion)
+          suffix = if @consumeSuffix then @getSuffix(@editor, endPosition, suggestion) else ''
           cursor.moveRight(suffix.length) if suffix.length
           cursor.selection.selectLeft(suggestion.replacementPrefix.length + suffix.length)
 

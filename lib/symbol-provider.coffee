@@ -45,7 +45,7 @@ class SymbolProvider
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (@useAlternateScoring) => ))
-    @subscriptions.add(atom.config.observe('autocomplete-plus.useBufferProximity', (@useBufferProximity) => ))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useLocalityBonus', (@useLocalityBonus) => ))
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @subscriptions.add(atom.workspace.observeTextEditors(@watchEditor))
 
@@ -223,13 +223,13 @@ class SymbolProvider
       text = (symbol.snippet or symbol.text)
       continue unless text and prefix[0].toLowerCase() is text[0].toLowerCase() # must match the first char!
       score = fuzzaldrinProvider.score(text, prefix, prefixCache)
-      if @useBufferProximity then score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
-      candidates.push({symbol, score, locality, rowDifference}) if score > 0
+      if @useLocalityBonus then score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
+      candidates.push({symbol, score}) if score > 0
 
     candidates.sort(@symbolSortReverseIterator)
 
     results = []
-    for {symbol, score, locality, rowDifference}, index in candidates
+    for {symbol, score}, index in candidates
       break if index is 20
       results.push(symbol)
     results
@@ -252,8 +252,8 @@ class SymbolProvider
       # Avoid a pow and a branching max.
       # 25 is the number of row where the bonus is 3/4 faded away.
       # strength is the factor in front of fade*fade. Here it is 1.0
-      fade = 25.0/(25.0+rowDifference)
-      1.0 + fade*fade
+      fade = 25.0 / (25.0 + rowDifference)
+      1.0 + fade * fade
     else
       # Will be between 1 and ~2.75
       1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)

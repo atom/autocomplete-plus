@@ -403,8 +403,8 @@ class SuggestionListElement extends HTMLElement
     return unless text?.length and replacementPrefix?.length
     matches = {}
     if @useAlternateScoring
-      fpm = fuzzaldrinPlus.match(text, replacementPrefix)
-      matches[pos] = true for pos in fpm
+      matchIndices = fuzzaldrinPlus.match(text, replacementPrefix)
+      matches[i] = true for i in matchIndices
     else
       wordIndex = 0
       for ch, i in replacementPrefix

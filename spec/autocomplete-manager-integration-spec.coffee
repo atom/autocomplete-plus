@@ -24,7 +24,7 @@ describe 'Autocomplete Manager', ->
       jasmine.attachToDOM(workspaceElement)
 
       atom.config.set('autocomplete-plus.maxVisibleSuggestions', 10)
-      atom.config.set('autocomplete-plus.consumeSuffixWords', true)
+      atom.config.set('autocomplete-plus.consumeSuffix', true)
 
   describe "when an external provider is registered", ->
     [provider] = []
@@ -1180,8 +1180,8 @@ describe 'Autocomplete Manager', ->
 
             expect(editor.getText()).toBe 'oneomgtwothree'
 
-        it 'does not replace the suffix text when consumeSuffixWords is disabled', ->
-          atom.config.set('autocomplete-plus.consumeSuffixWords', false)
+        it 'does not replace the suffix text when consumeSuffix is disabled', ->
+          atom.config.set('autocomplete-plus.consumeSuffix', false)
 
           editor.setText('ontwothree')
           editor.setCursorBufferPosition([0, 2])
@@ -1192,7 +1192,6 @@ describe 'Autocomplete Manager', ->
             atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
             expect(editor.getText()).toBe 'oneomgtwotwothree'
-
 
       describe "when the cursor suffix does not match the replacement", ->
         beforeEach ->

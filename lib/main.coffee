@@ -112,9 +112,9 @@ module.exports =
       items:
         type: 'string'
       order: 17
-    consumeSuffixWords:
+    consumeSuffix:
       title: 'Consume suggestion text following the cursor'
-      description: 'Completing a suggestion will delete all identical text after the cursor'
+      description: 'Completing a suggestion consumes text following the cursor matching the suffix of the chosen suggestion.'
       type: 'boolean'
       default: true
       order: 18

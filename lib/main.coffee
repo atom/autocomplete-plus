@@ -111,6 +111,11 @@ module.exports =
       default: ['vim-mode.command-mode', 'vim-mode.visual-mode', 'vim-mode.operator-pending-mode']
       items:
         type: 'string'
+      order: 16
+    wrapSuggestions:
+      description: 'Disabling this will dismiss the suggestion list when arrowing past the beginning or end of the list.'
+      type: 'boolean'
+      default: 'true'
       order: 17
     consumeSuffix:
       title: 'Consume suggestion text following the cursor'

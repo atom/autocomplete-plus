@@ -118,6 +118,16 @@ module.exports =
       type: 'boolean'
       default: true
       order: 18
+    useAlternateScoring:
+      description: "Prefers runs of consecutive characters, acronyms and start of words. (Experimental)"
+      type: 'boolean'
+      default: false
+      order: 19
+    useLocalityBonus:
+      description: "Gives words near the cursor position a higher score than those far away"
+      type: 'boolean'
+      default: true
+      order: 20
 
   autocompleteManager: null
   subscriptions: null

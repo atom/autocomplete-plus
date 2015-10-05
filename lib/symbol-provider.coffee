@@ -2,6 +2,7 @@
 
 _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
+fuzzaldrinPlus = require 'fuzzaldrin-plus'
 {TextEditor, CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 SymbolStore = require './symbol-store'
@@ -43,6 +44,8 @@ class SymbolProvider
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (@useAlternateScoring) => ))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useLocalityBonus', (@useLocalityBonus) => ))
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @subscriptions.add(atom.workspace.observeTextEditors(@watchEditor))
 
@@ -206,17 +209,27 @@ class SymbolProvider
   fuzzyFilter: (symbolList, buffer, {bufferPosition, prefix}) ->
     # Probably inefficient to do a linear search
     candidates = []
+
+    if @useAlternateScoring
+      fuzzaldrinProvider = fuzzaldrinPlus
+      # This allows to pre-compute and re-use some quantities derived from prefix such as
+      # Uppercase, lowercase and a version of prefix without optional characters.
+      prefixCache = fuzzaldrinPlus.prepQuery(prefix)
+    else
+      fuzzaldrinProvider = fuzzaldrin
+      prefixCache = null
+
     for symbol in symbolList
       text = (symbol.snippet or symbol.text)
       continue unless text and prefix[0].toLowerCase() is text[0].toLowerCase() # must match the first char!
-      score = fuzzaldrin.score(text, prefix)
-      score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
-      candidates.push({symbol, score, locality, rowDifference}) if score > 0
+      score = fuzzaldrinProvider.score(text, prefix, prefixCache)
+      if @useLocalityBonus then score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
+      candidates.push({symbol, score}) if score > 0
 
     candidates.sort(@symbolSortReverseIterator)
 
     results = []
-    for {symbol, score, locality, rowDifference}, index in candidates
+    for {symbol, score}, index in candidates
       break if index is 20
       results.push(symbol)
     results
@@ -234,8 +247,16 @@ class SymbolProvider
 
   computeLocalityModifier: (rowDifference) ->
     rowDifference = Math.abs(rowDifference)
-    # Will be between 1 and ~2.75
-    1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)
+    if @useAlternateScoring
+      # Between 1 and 1 + strength. (here between 1.0 and 2.0)
+      # Avoid a pow and a branching max.
+      # 25 is the number of row where the bonus is 3/4 faded away.
+      # strength is the factor in front of fade*fade. Here it is 1.0
+      fade = 25.0 / (25.0 + rowDifference)
+      1.0 + fade * fade
+    else
+      # Will be between 1 and ~2.75
+      1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     atom.config.getAll(keyPath, scope: scopeDescriptor)

@@ -2,6 +2,7 @@
 path = require 'path'
 semver = require 'semver'
 fuzzaldrin = require 'fuzzaldrin'
+fuzzaldrinPlus = require 'fuzzaldrin-plus'
 
 ProviderManager = require './provider-manager'
 SuggestionList = require './suggestion-list'
@@ -105,6 +106,7 @@ class AutocompleteManager
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoConfirmSingleSuggestion', (value) => @autoConfirmSingleSuggestionEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.consumeSuffix', (value) => @consumeSuffix = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (value) => @useAlternateScoring = value ))
     @subscriptions.add atom.config.observe 'autocomplete-plus.fileBlacklist', (value) =>
       @fileBlacklist = value?.map((s) -> s.trim())
       @isCurrentFileBlackListedCache = null
@@ -207,6 +209,7 @@ class AutocompleteManager
 
   filterSuggestions: (suggestions, {prefix}) ->
     results = []
+    fuzzaldrinProvider = if @useAlternateScoring then fuzzaldrinPlus else fuzzaldrin
     for suggestion, i in suggestions
       # sortScore mostly preserves in the original sorting. The function is
       # chosen such that suggestions with a very high match score can break out.
@@ -220,7 +223,7 @@ class AutocompleteManager
 
       if prefixIsEmpty
         results.push(suggestion)
-      if firstCharIsMatch and (score = fuzzaldrin.score(text, suggestionPrefix)) > 0
+      if firstCharIsMatch and (score = fuzzaldrinProvider.score(text, suggestionPrefix)) > 0
         suggestion.score = score * suggestion.sortScore
         results.push(suggestion)
 

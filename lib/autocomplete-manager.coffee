@@ -292,10 +292,6 @@ class AutocompleteManager
   displaySuggestions: (suggestions, options) =>
     suggestions = @getUniqueSuggestions(suggestions)
 
-    # When a lone suggestion matches the prefix, there is no need to show the suggestions
-    if suggestions?.length is 1 and (suggestions[0].snippet or suggestions[0].text) is options.prefix
-      return @hideSuggestionList()
-
     if @shouldDisplaySuggestions and suggestions.length
       @showSuggestionList(suggestions, options)
     else

@@ -3,7 +3,7 @@
 _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
-{TextEditor, CompositeDisposable}  = require 'atom'
+{CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 SymbolStore = require './symbol-store'
 
@@ -164,7 +164,7 @@ class SymbolProvider
   paneItemIsValid: (paneItem) ->
     return false unless paneItem?
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
-    return paneItem instanceof TextEditor
+    return paneItem.getText?
 
   ###
   Section: Suggesting Completions

@@ -1,4 +1,4 @@
-{Range, TextEditor, CompositeDisposable, Disposable}  = require 'atom'
+{Range, CompositeDisposable, Disposable}  = require 'atom'
 path = require 'path'
 semver = require 'semver'
 fuzzaldrin = require 'fuzzaldrin'
@@ -94,7 +94,7 @@ class AutocompleteManager
   paneItemIsValid: (paneItem) ->
     return false unless paneItem?
     # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
-    return paneItem instanceof TextEditor
+    return paneItem.getText?
 
   handleEvents: =>
     # Track the current pane item, update current editor

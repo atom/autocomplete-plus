@@ -1,5 +1,4 @@
 SymbolStore = require '../lib/symbol-store'
-{TextEditor} = require 'atom'
 {Selector} = require 'selector-kit'
 
 describe 'SymbolStore', ->

@@ -63,7 +63,7 @@ module.exports =
       default: false
       order: 9
     minimumWordLength:
-      description: "Only autocomplete when you've typed at least this many characters."
+      description: "Only autocomplete when you've typed at least this many characters. Note: May not affect external providers."
       type: 'integer'
       default: 3
       order: 10

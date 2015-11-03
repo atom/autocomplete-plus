@@ -9,9 +9,9 @@ SymbolStore = require './symbol-store'
 
 module.exports =
 class SymbolProvider
-  wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
-  beginningOfLineWordRegex: /^\w*[a-zA-Z_-]+\w*\b/g
-  endOfLineWordRegex: /\b\w*[a-zA-Z_-]+\w*$/g
+  wordRegex: /\b\w*[äöüßÄÖÜa-zA-Z_-]+\w*\b/g
+  beginningOfLineWordRegex: /^\w*[äöüßÄÖÜa-zA-Z_-]+\w*\b/g
+  endOfLineWordRegex: /\b\w*[äöüßÄÖÜa-zA-Z_-]+\w*$/g
   symbolStore: null
   editor: null
   buffer: null

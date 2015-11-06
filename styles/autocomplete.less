@@ -218,7 +218,7 @@ autocomplete-suggestion-list {
 }
 .make-type-icon(@type, @color)
   when (hsvvalue(@color) - hsvvalue(@overlay-background-color) >= 0)
-  and (hsvvalue(@color) - hsvvalue(@overlay-background-color) < 120),
+  and (hsvvalue(@color) - hsvvalue(@overlay-background-color) < 20),
   (hsvvalue(@overlay-background-color) - hsvvalue(@color) > 0)
   and (hsvvalue(@overlay-background-color) - hsvvalue(@color) < 20)
   {

@@ -223,7 +223,7 @@ autocomplete-suggestion-list {
   and (hsvvalue(@overlay-background-color) - hsvvalue(@color) < 20)
   {
   .icon.@{type} {
-    @corrected-color: contrast(@overlay-background-color, darken(@color, 30%), lighten(@color, 30%), 100%);
+    @corrected-color: contrast(@overlay-background-color, darken(@color, 30%), lighten(@color, 30%));
     color: @corrected-color;
     background: fadeout(@corrected-color, 80%);
   }

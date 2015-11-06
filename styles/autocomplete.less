@@ -218,16 +218,8 @@ autocomplete-suggestion-list {
 }
 .make-type-icon(@type, @color)
   when (hsvvalue(@color) - hsvvalue(@overlay-background-color) > 0)
-  and (hsvvalue(@color) - hsvvalue(@overlay-background-color) < 10)
-  {
-  .icon.@{type} {
-    @corrected-color: contrast(@overlay-background-color, darken(@color, 30%), lighten(@color, 30%));
-    color: @corrected-color;
-    background: fadeout(@corrected-color, 80%)
-  }
-}
-.make-type-icon(@type, @color)
-  when (hsvvalue(@overlay-background-color) - hsvvalue(@color) > 0)
+  and (hsvvalue(@color) - hsvvalue(@overlay-background-color) < 10),
+  (hsvvalue(@overlay-background-color) - hsvvalue(@color) > 0)
   and (hsvvalue(@overlay-background-color) - hsvvalue(@color) < 10)
   {
   .icon.@{type} {

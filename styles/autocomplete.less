@@ -22,6 +22,7 @@ autocomplete-suggestion-list.select-list.popover-list {
   max-width: 800px;
   padding: 0;
   overflow: hidden;
+  color: @text-color;
 
   .suggestion-list-scroller {
     overflow-y: auto;
@@ -213,5 +214,14 @@ autocomplete-suggestion-list {
   .icon.@{type} {
     color: @color;
     background: fadeout(@color, 80%)
+  }
+}
+.make-type-icon(@type, @color)
+  when (hsvvalue(@color) - hsvvalue(@overlay-background-color) > -20)
+  and (hsvvalue(@color) - hsvvalue(@overlay-background-color) < 20) {
+  .icon.@{type} {
+    @corrected-color: contrast(@overlay-background-color, darken(@color, 30%), lighten(@color, 30%));
+    color: @corrected-color;
+    background: fadeout(@corrected-color, 80%);
   }
 }

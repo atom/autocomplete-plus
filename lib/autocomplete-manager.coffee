@@ -386,7 +386,10 @@ class AutocompleteManager
           if suggestion.snippet? and @snippetsManager?
             @snippetsManager.insertSnippet(suggestion.snippet, @editor, cursor)
           else
-            cursor.selection.insertText(suggestion.text ? suggestion.snippet)
+            options = {}
+            options.autoIndentNewline = @editor.shouldAutoIndent()
+            options.autoDecreaseIndent = @editor.shouldAutoIndent()
+            cursor.selection.insertText(suggestion.text ? suggestion.snippet, options)
       return
 
   getSuffix: (editor, bufferPosition, suggestion) ->

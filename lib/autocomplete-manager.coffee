@@ -92,6 +92,7 @@ class AutocompleteManager
       @isCurrentFileBlackListedCache = null
 
   paneItemIsValid: (paneItem) ->
+    # TODO: remove conditional when `isTextEditor` is shipped.
     if typeof atom.workspace.isTextEditor is "function"
       atom.workspace.isTextEditor(paneItem)
     else

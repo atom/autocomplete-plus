@@ -92,9 +92,12 @@ class AutocompleteManager
       @isCurrentFileBlackListedCache = null
 
   paneItemIsValid: (paneItem) ->
-    return false unless paneItem?
-    # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
-    return paneItem.getText?
+    if typeof atom.workspace.isTextEditor is "function"
+      atom.workspace.isTextEditor(paneItem)
+    else
+      return false unless paneItem?
+      # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
+      paneItem.getText?
 
   handleEvents: =>
     # Track the current pane item, update current editor

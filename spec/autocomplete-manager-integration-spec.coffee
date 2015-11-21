@@ -25,6 +25,7 @@ describe 'Autocomplete Manager', ->
 
       atom.config.set('autocomplete-plus.maxVisibleSuggestions', 10)
       atom.config.set('autocomplete-plus.consumeSuffix', true)
+      atom.config.set('autocomplete-plus.suffixConsumeBlacklist', [')'])
 
   describe "when an external provider is registered", ->
     [provider] = []
@@ -1127,9 +1128,11 @@ describe 'Autocomplete Manager', ->
             expect(editor.getText()).toBe 'ok then a '
 
       describe "when the cursor suffix matches the replacement", ->
+        fakeSuggestions = null
         beforeEach ->
+          fakeSuggestions = [text: 'oneomgtwo', replacementPrefix: 'one']
           spyOn(provider, 'getSuggestions').andCallFake ->
-            [text: 'oneomgtwo', replacementPrefix: 'one']
+            fakeSuggestions
 
         it 'replaces the suffix with the replacement', ->
           editor.setText('ontwothree')
@@ -1154,6 +1157,44 @@ describe 'Autocomplete Manager', ->
             atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
             expect(editor.getText()).toBe 'oneomgtwotwothree'
+
+
+        it 'does not replace the suffix if it contains a close paren, by default', ->
+          fakeSuggestions = [text: 'foo()', replacementPrefix: 'fo']
+
+          editor.setText('bar(f)')
+          editor.setCursorBufferPosition([0, 5])
+          triggerAutocompletion(editor, false, 'o')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe 'bar(foo())'
+
+        # Run the tests with two blacklisting functions, one that changes the global setting and the other that changes the provider
+        [
+          (characterArray) -> provider.suffixConsumeBlacklist = new Set(characterArray)
+          (characterArray) -> atom.config.set('autocomplete-plus.suffixConsumeBlacklist', characterArray)
+        ].forEach((blacklistFunction) ->
+          describe 'custom blacklist characters', ->
+
+            beforeEach ->
+              blacklistFunction(['j', 'k'])
+
+            it 'does not replace a blacklisted character', ->
+              fakeSuggestions = [text: 'fooj', replacementPrefix: 'fo']
+
+              editor.setText('bar(fj')
+              editor.setCursorBufferPosition([0, 5])
+              triggerAutocompletion(editor, false, 'o')
+
+              runs ->
+                suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+                atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+                expect(editor.getText()).toBe 'bar(foojj'
+        )
 
       describe "when the cursor suffix does not match the replacement", ->
         beforeEach ->

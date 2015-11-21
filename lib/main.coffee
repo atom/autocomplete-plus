@@ -118,16 +118,24 @@ module.exports =
       type: 'boolean'
       default: true
       order: 18
+    suffixConsumeBlacklist:
+      title: 'Blacklist for suffix consumption'
+      description: 'If the above box is checked, do not consume suffixes containing these characters. Should be a comma-separated list of single characters'
+      type: 'array'
+      default: [')']
+      items:
+        type: 'string'
+      order: 19
     useAlternateScoring:
       description: "Prefers runs of consecutive characters, acronyms and start of words. (Experimental)"
       type: 'boolean'
       default: false
-      order: 19
+      order: 20
     useLocalityBonus:
       description: "Gives words near the cursor position a higher score than those far away"
       type: 'boolean'
       default: true
-      order: 20
+      order: 21
 
   autocompleteManager: null
   subscriptions: null

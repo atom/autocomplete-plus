@@ -392,8 +392,10 @@ class AutocompleteManager
     suffix = (suggestion.snippet ? suggestion.text)
     endPosition = [bufferPosition.row, bufferPosition.column + suffix.length]
     endOfLineText = editor.getTextInBufferRange([bufferPosition, endPosition])
+    isLegalSuffix = (suffix) ->
+      endOfLineText.startsWith(suffix) and /^[^)]*$/.test(suffix)
     while suffix
-      return suffix if endOfLineText.startsWith(suffix)
+      return suffix if isLegalSuffix(suffix)
       suffix = suffix.slice(1)
     ''
 

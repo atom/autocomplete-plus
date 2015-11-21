@@ -1127,9 +1127,11 @@ describe 'Autocomplete Manager', ->
             expect(editor.getText()).toBe 'ok then a '
 
       describe "when the cursor suffix matches the replacement", ->
+        fakeSuggestions = null
         beforeEach ->
+          fakeSuggestions = [text: 'oneomgtwo', replacementPrefix: 'one']
           spyOn(provider, 'getSuggestions').andCallFake ->
-            [text: 'oneomgtwo', replacementPrefix: 'one']
+            fakeSuggestions
 
         it 'replaces the suffix with the replacement', ->
           editor.setText('ontwothree')
@@ -1154,6 +1156,19 @@ describe 'Autocomplete Manager', ->
             atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
             expect(editor.getText()).toBe 'oneomgtwotwothree'
+
+        it 'does not replace the suffix if it contains a closing parenthesis', ->
+          fakeSuggestions = [text: 'foo()', replacementPrefix: 'fo']
+
+          editor.setText('bar(f)')
+          editor.setCursorBufferPosition([0, 5])
+          triggerAutocompletion(editor, false, 'o')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe 'bar(foo())'
 
       describe "when the cursor suffix does not match the replacement", ->
         beforeEach ->

@@ -375,7 +375,7 @@ class AutocompleteManager
         beginningPosition = [endPosition.row, endPosition.column - suggestion.replacementPrefix.length]
 
         if @editor.getTextInBufferRange([beginningPosition, endPosition]) is suggestion.replacementPrefix
-          suffix = if @consumeSuffix then @getSuffix(@editor, endPosition, suggestion) else ''
+          suffix = if @consumeSuffix and not suggestion.shouldNotReplaceSuffix then @getSuffix(@editor, endPosition, suggestion) else ''
           cursor.moveRight(suffix.length) if suffix.length
           cursor.selection.selectLeft(suggestion.replacementPrefix.length + suffix.length)
 

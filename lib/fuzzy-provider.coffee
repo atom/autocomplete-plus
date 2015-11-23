@@ -55,9 +55,13 @@ class FuzzyProvider
     @buildWordList()
 
   paneItemIsValid: (paneItem) ->
-    return false unless paneItem?
-    # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
-    return paneItem.getText?
+    # TODO: remove conditional when `isTextEditor` is shipped.
+    if typeof atom.workspace.isTextEditor is "function"
+      atom.workspace.isTextEditor(paneItem)
+    else
+      return false unless paneItem?
+      # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
+      paneItem.getText?
 
   # Public:  Gets called when the document has been changed. Returns an array
   # with suggestions. If `exclusive` is set to true and this method returns

@@ -162,9 +162,13 @@ class SymbolProvider
   uniqueFilter: (completion) -> completion.text
 
   paneItemIsValid: (paneItem) ->
-    return false unless paneItem?
-    # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
-    return paneItem.getText?
+    # TODO: remove conditional when `isTextEditor` is shipped.
+    if typeof atom.workspace.isTextEditor is "function"
+      atom.workspace.isTextEditor(paneItem)
+    else
+      return false unless paneItem?
+      # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
+      paneItem.getText?
 
   ###
   Section: Suggesting Completions

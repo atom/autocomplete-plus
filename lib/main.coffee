@@ -36,7 +36,7 @@ module.exports =
       order: 5
     fileBlacklist:
       title: 'File Blacklist'
-      description: 'Suggestions will not be provided for files matching this list, e.g. *.md for Markdown files.'
+      description: 'Suggestions will not be provided for files matching this list, e.g. *.md for Markdown files. To blacklist more than one file extension, use comma as a separator, e.g. *.md, *.txt (both Markdown and text files).'
       type: 'array'
       default: ['.*']
       items:

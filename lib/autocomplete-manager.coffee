@@ -110,6 +110,7 @@ class AutocompleteManager
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoActivation', (value) => @autoActivationEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableAutoConfirmSingleSuggestion', (value) => @autoConfirmSingleSuggestionEnabled = value))
     @subscriptions.add(atom.config.observe('autocomplete-plus.consumeSuffix', (value) => @consumeSuffix = value))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.suffixConsumeBlacklist', (value) => @suffixConsumeBlacklist = new Set(value)))
     @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (value) => @useAlternateScoring = value ))
     @subscriptions.add atom.config.observe 'autocomplete-plus.fileBlacklist', (value) =>
       @fileBlacklist = value?.map((s) -> s.trim())
@@ -396,8 +397,12 @@ class AutocompleteManager
     suffix = (suggestion.snippet ? suggestion.text)
     endPosition = [bufferPosition.row, bufferPosition.column + suffix.length]
     endOfLineText = editor.getTextInBufferRange([bufferPosition, endPosition])
+    isLegalSuffix = (suffix) =>
+      suffixConsumeBlacklist = suggestion.provider.suffixConsumeBlacklist ? @suffixConsumeBlacklist
+      hasBlacklistedCharacters = suffix.split('').some((c) => suffixConsumeBlacklist.has(c))
+      endOfLineText.startsWith(suffix) and not hasBlacklistedCharacters
     while suffix
-      return suffix if endOfLineText.startsWith(suffix)
+      return suffix if isLegalSuffix(suffix)
       suffix = suffix.slice(1)
     ''
 

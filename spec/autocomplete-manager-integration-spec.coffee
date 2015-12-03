@@ -1126,12 +1126,12 @@ describe 'Autocomplete Manager', ->
             atom.keymaps.handleKeyboardEvent(key)
             expect(editor.getText()).toBe 'ok then a '
 
-      describe "when the cursor suffix matches the replacement", ->
-        beforeEach ->
-          spyOn(provider, 'getSuggestions').andCallFake ->
-            [text: 'oneomgtwo', replacementPrefix: 'one']
+      describe "when a suffix of the replacement matches the text after the cursor", ->
+        it 'overwrites that existing text with the replacement', ->
+          spyOn(provider, 'getSuggestions').andCallFake -> [
+            {text: 'oneomgtwo', replacementPrefix: 'one'}
+          ]
 
-        it 'replaces the suffix with the replacement', ->
           editor.setText('ontwothree')
           editor.setCursorBufferPosition([0, 2])
           triggerAutocompletion(editor, false, 'e')
@@ -1142,7 +1142,11 @@ describe 'Autocomplete Manager', ->
 
             expect(editor.getText()).toBe 'oneomgtwothree'
 
-        it 'does not replace the suffix text when consumeSuffix is disabled', ->
+        it 'does not overwrite any text if the "consumeSuffix" setting is disabled', ->
+          spyOn(provider, 'getSuggestions').andCallFake -> [
+            {text: 'oneomgtwo', replacementPrefix: 'one'}
+          ]
+
           atom.config.set('autocomplete-plus.consumeSuffix', false)
 
           editor.setText('ontwothree')
@@ -1154,6 +1158,21 @@ describe 'Autocomplete Manager', ->
             atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
 
             expect(editor.getText()).toBe 'oneomgtwotwothree'
+
+        it 'does not overwrite non-word characters', ->
+          spyOn(provider, 'getSuggestions').andCallFake -> [
+            {text: 'oneomgtwo()', replacementPrefix: 'one'}
+          ]
+
+          editor.setText('(on)three')
+          editor.setCursorBufferPosition([0, 3])
+          triggerAutocompletion(editor, false, 'e')
+
+          runs ->
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+
+            expect(editor.getText()).toBe '(oneomgtwo())three'
 
       describe "when the cursor suffix does not match the replacement", ->
         beforeEach ->

@@ -396,10 +396,11 @@ class AutocompleteManager
     suffix = (suggestion.snippet ? suggestion.text)
     endPosition = [bufferPosition.row, bufferPosition.column + suffix.length]
     endOfLineText = editor.getTextInBufferRange([bufferPosition, endPosition])
+    nonWordCharacters = new Set(atom.config.get('editor.nonWordCharacters').split(''))
     while suffix
-      return suffix if endOfLineText.startsWith(suffix)
+      break if endOfLineText.startsWith(suffix) and not nonWordCharacters.has(suffix[0])
       suffix = suffix.slice(1)
-    ''
+    suffix
 
   # Private: Checks whether the current file is blacklisted.
   #

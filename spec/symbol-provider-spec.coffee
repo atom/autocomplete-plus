@@ -297,8 +297,8 @@ describe 'SymbolProvider', ->
   describe "when the autocomplete.symbols changes between scopes", ->
     beforeEach ->
       editor.setText '''
-        // in0a0comment
-        invar = "in0a0string"
+        // in-a-comment
+        inVar = "in-a-string"
       '''
 
       commentConfig =
@@ -317,7 +317,7 @@ describe 'SymbolProvider', ->
       editor.setCursorBufferPosition([0, 2])
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 1
-      expect(suggestions[0].text).toBe 'in0a0comment'
+      expect(suggestions[0].text).toBe 'in-a-comment'
       expect(suggestions[0].type).toBe 'incomment'
 
       # Using the string config
@@ -325,7 +325,7 @@ describe 'SymbolProvider', ->
       editor.insertText(' ')
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 1
-      expect(suggestions[0].text).toBe 'in0a0string'
+      expect(suggestions[0].text).toBe 'in-a-string'
       expect(suggestions[0].type).toBe 'instring'
 
       # Using the default config
@@ -333,7 +333,7 @@ describe 'SymbolProvider', ->
       editor.insertText(' ')
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 3
-      expect(suggestions[0].text).toBe 'invar'
+      expect(suggestions[0].text).toBe 'inVar'
       expect(suggestions[0].type).toBe '' # the js grammar sucks :(
 
   describe "when the config contains a list of suggestion strings", ->

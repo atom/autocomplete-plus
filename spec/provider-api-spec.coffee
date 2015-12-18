@@ -192,8 +192,8 @@ describe 'Provider API', ->
 
         runs ->
           expect(getSuggestions()).toEqual [
-            {text: 'hai'}
             {text: '::cats'}
+            {text: 'hai'}
             {text: 'something'}
           ]
 

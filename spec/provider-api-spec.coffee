@@ -182,7 +182,7 @@ describe 'Provider API', ->
               {text: 'hai'}
               {text: 'okwow', replacementPrefix: 'k'}
               {text: 'ok', replacementPrefix: 'nope'}
-              {text: '::cats', replacementPrefix: '::'}
+              {text: '::cats', replacementPrefix: '::c'}
               {text: 'something', replacementPrefix: 'sm'}
             ]
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
@@ -192,8 +192,8 @@ describe 'Provider API', ->
 
         runs ->
           expect(getSuggestions()).toEqual [
-            {text: 'hai'}
             {text: '::cats'}
+            {text: 'hai'}
             {text: 'something'}
           ]
 

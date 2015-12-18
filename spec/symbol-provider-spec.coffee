@@ -298,7 +298,7 @@ describe 'SymbolProvider', ->
     beforeEach ->
       editor.setText '''
         // in-a-comment
-        invar = "in-a-string"
+        inVar = "in-a-string"
       '''
 
       commentConfig =
@@ -333,7 +333,7 @@ describe 'SymbolProvider', ->
       editor.insertText(' ')
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 3
-      expect(suggestions[0].text).toBe 'invar'
+      expect(suggestions[0].text).toBe 'inVar'
       expect(suggestions[0].type).toBe '' # the js grammar sucks :(
 
   describe "when the config contains a list of suggestion strings", ->

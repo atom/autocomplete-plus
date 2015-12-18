@@ -121,7 +121,7 @@ module.exports =
     useAlternateScoring:
       description: "Prefers runs of consecutive characters, acronyms and start of words. (Experimental)"
       type: 'boolean'
-      default: false
+      default: true
       order: 19
     useLocalityBonus:
       description: "Gives words near the cursor position a higher score than those far away"

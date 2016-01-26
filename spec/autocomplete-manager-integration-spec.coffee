@@ -966,7 +966,8 @@ describe 'Autocomplete Manager', ->
         runs ->
           suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
           wordContainer = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .word-container')
-          expect(suggestionList.style['margin-left']).toBe "-#{wordContainer.offsetLeft - 1}px"
+          marginLeft = parseInt(suggestionList.style['margin-left'])
+          expect(Math.abs(wordContainer.offsetLeft + marginLeft)).toBeLessThan 2
 
       it "keeps the suggestion list planted at the beginning of the prefix when typing", ->
         overlayElement = null

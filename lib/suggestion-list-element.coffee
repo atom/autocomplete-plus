@@ -252,11 +252,9 @@ class SuggestionListElement extends HTMLElement
     @uiProps.itemHeight ?= @selectedLi.offsetHeight
     @uiProps.paddingHeight ?= (parseInt(getComputedStyle(this)['padding-top']) + parseInt(getComputedStyle(this)['padding-bottom'])) ? 0
 
-    if atom.views.documentReadInProgress?
-      # Run in atom >= 0.193. Will batch write updates and run them immediately after this read
-      atom.views.updateDocument @updateUIForChangedProps.bind(this)
-    else
-      @updateUIForChangedProps()
+    # Update UI during this read, so that when polling the document the latest
+    # changes can be picked up.
+    @updateUIForChangedProps()
 
   updateUIForChangedProps: ->
     @scroller.style['max-height'] = "#{@maxVisibleSuggestions * @uiProps.itemHeight + @uiProps.paddingHeight}px"

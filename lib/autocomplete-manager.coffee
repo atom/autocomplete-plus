@@ -74,6 +74,7 @@ class AutocompleteManager
     # Subscribe to buffer events:
     @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
     @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
+    @editorSubscriptions.add(@buffer.onDidChangeText(@bufferChangedText))
 
     # Watch IME Events To Allow IME To Function Without The Suggestion List Showing
     compositionStart = => @compositionInProgress = true
@@ -442,18 +443,22 @@ class AutocompleteManager
   #
   # data - An {Object} containing information on why the cursor has been moved
   cursorMoved: ({textChanged}) =>
-    # The delay is a workaround for the backspace case. The way atom implements
-    # backspace is to select left 1 char, then delete. This results in a
-    # cursorMoved event with textChanged == false. So we delay, and if the
-    # bufferChanged handler decides to show suggestions, it will cancel the
-    # hideSuggestionList request. If there is no bufferChanged event,
-    # suggestionList will be hidden.
-    @requestHideSuggestionList() unless textChanged
+    @requestHideSuggestionList() if not textChanged and not @shouldActivate
 
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.
   bufferSaved: =>
     @hideSuggestionList() unless @autosaveEnabled
+
+  bufferChangedText: =>
+    if @shouldActivate
+      @cancelHideSuggestionListRequest()
+      @requestNewSuggestions()
+    else
+      @cancelNewSuggestionsRequest()
+      @hideSuggestionList()
+
+    @shouldActivate = false
 
   # Private: Cancels the autocompletion if the user entered more than one
   # character with a single keystroke. (= pasting)
@@ -461,34 +466,27 @@ class AutocompleteManager
   # event - The change {Event}
   bufferChanged: ({newText, newRange, oldText, oldRange}) =>
     return if @disposed
+    return if @shouldActivate
     return @hideSuggestionList() if @compositionInProgress
-    shouldActivate = false
+
     cursorPositions = @editor.getCursorBufferPositions()
 
     if @autoActivationEnabled or @suggestionList.isActive()
-
       # Activate on space, a non-whitespace character, or a bracket-matcher pair.
       if newText.length > 0
-        shouldActivate =
+        @shouldActivate =
           (cursorPositions.some (position) -> newRange.containsPoint(position)) and
           (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs)
 
       # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur.
       # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair.
       else if oldText.length > 0
-        shouldActivate =
+        @shouldActivate =
           (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and
           (cursorPositions.some (position) -> newRange.containsPoint(position)) and
           (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
 
-      shouldActivate = false if shouldActivate and @shouldSuppressActivationForEditorClasses()
-
-    if shouldActivate
-      @cancelHideSuggestionListRequest()
-      @requestNewSuggestions()
-    else
-      @cancelNewSuggestionsRequest()
-      @hideSuggestionList()
+      @shouldActivate = false if @shouldActivate and @shouldSuppressActivationForEditorClasses()
 
   shouldSuppressActivationForEditorClasses: ->
     for classNames in @suppressForClasses

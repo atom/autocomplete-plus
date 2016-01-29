@@ -1,4 +1,4 @@
-{Range, CompositeDisposable, Disposable}  = require 'atom'
+{Point, Range, CompositeDisposable, Disposable}  = require 'atom'
 path = require 'path'
 semver = require 'semver'
 fuzzaldrin = require 'fuzzaldrin'
@@ -450,8 +450,14 @@ class AutocompleteManager
   bufferSaved: =>
     @hideSuggestionList() unless @autosaveEnabled
 
-  bufferChangedText: =>
-    if @shouldActivate
+  bufferChangedText: (changes) =>
+    lastCursorPosition = @editor.getLastCursor().getBufferPosition()
+    changeOccurredNearLastCursor = changes.some ({start, newExtent}) ->
+      start = Point.fromObject(start)
+      newRange = new Range(start, start.traverse(newExtent))
+      newRange.containsPoint(lastCursorPosition)
+
+    if @shouldActivate and changeOccurredNearLastCursor
       @cancelHideSuggestionListRequest()
       @requestNewSuggestions()
     else
@@ -469,21 +475,16 @@ class AutocompleteManager
     return if @shouldActivate
     return @hideSuggestionList() if @compositionInProgress
 
-    cursorPositions = @editor.getCursorBufferPositions()
-
     if @autoActivationEnabled or @suggestionList.isActive()
       # Activate on space, a non-whitespace character, or a bracket-matcher pair.
       if newText.length > 0
-        @shouldActivate =
-          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
-          (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs)
+        @shouldActivate = (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs)
 
       # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur.
       # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair.
       else if oldText.length > 0
         @shouldActivate =
           (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and
-          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
           (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
 
       @shouldActivate = false if @shouldActivate and @shouldSuppressActivationForEditorClasses()

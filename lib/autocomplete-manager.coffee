@@ -449,7 +449,7 @@ class AutocompleteManager
     # bufferChanged handler decides to show suggestions, it will cancel the
     # hideSuggestionList request. If there is no bufferChanged event,
     # suggestionList will be hidden.
-    @requestHideSuggestionList() if not textChanged and not @shouldActivate
+    @requestHideSuggestionList() unless textChanged or @shouldActivate
 
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.

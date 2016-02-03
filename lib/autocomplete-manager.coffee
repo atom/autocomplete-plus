@@ -459,7 +459,6 @@ class AutocompleteManager
   bufferChangedText: (changes) =>
     lastCursorPosition = @editor.getLastCursor().getBufferPosition()
     changeOccurredNearLastCursor = changes.some ({start, newExtent}) ->
-      start = Point.fromObject(start)
       newRange = new Range(start, start.traverse(newExtent))
       newRange.containsPoint(lastCursorPosition)
 

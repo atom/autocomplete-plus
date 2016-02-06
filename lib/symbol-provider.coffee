@@ -3,15 +3,16 @@
 _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
+{XRegExp} = require 'xregexp'
 {CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 SymbolStore = require './symbol-store'
 
 module.exports =
 class SymbolProvider
-  wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
-  beginningOfLineWordRegex: /^\w*[a-zA-Z_-]+\w*\b/g
-  endOfLineWordRegex: /\b\w*[a-zA-Z_-]+\w*$/g
+  wordRegex: XRegExp '[\\p{L}\\d_]*[\\p{L}_-]+[\\p{L}\\d_]*(?=[^\\p{L}\\d_]|$)', 'g'
+  beginningOfLineWordRegex: XRegExp '^[\\p{L}\\d_]*[\\p{L}_-]+[\\p{L}\\d_]*(?=[^\\p{L}\\d_]|$)', 'g'
+  endOfLineWordRegex: XRegExp '[\\p{L}\\d_]*[\\p{L}_-]+[\\p{L}\\d_]*$', 'g'
   symbolStore: null
   editor: null
   buffer: null

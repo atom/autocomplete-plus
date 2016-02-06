@@ -1,8 +1,9 @@
 {Emitter, CompositeDisposable} = require 'atom'
+{XRegExp} = require 'xregexp'
 
 module.exports =
 class SuggestionList
-  wordPrefixRegex: /^[\w-]/
+  wordPrefixRegex: XRegExp '^[\\p{L}-\\d_]'
 
   constructor: ->
     @active = false

@@ -1,4 +1,5 @@
 fuzzaldrin = require 'fuzzaldrin'
+{XRegExp} = require 'xregexp'
 {CompositeDisposable}  = require 'atom'
 RefCountedTokenList = require './ref-counted-token-list'
 
@@ -7,7 +8,7 @@ class FuzzyProvider
   deferBuildWordListInterval: 300
   updateBuildWordListTimeout: null
   updateCurrentEditorTimeout: null
-  wordRegex: /\b\w+[\w-]*\b/g
+  wordRegex: XRegExp '[\\p{L}\\d_]+[\\p{L}-\\d_]*(?=[^\\p{L}\\d_]|$)', 'g'
   tokenList: new RefCountedTokenList()
   currentEditorSubscriptions: null
   editor: null

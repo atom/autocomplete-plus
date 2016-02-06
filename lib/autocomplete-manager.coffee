@@ -3,6 +3,7 @@ path = require 'path'
 semver = require 'semver'
 fuzzaldrin = require 'fuzzaldrin'
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
+{XRegExp} = require 'xregexp'
 
 ProviderManager = require './provider-manager'
 SuggestionList = require './suggestion-list'
@@ -31,8 +32,8 @@ class AutocompleteManager
   suggestionList: null
   suppressForClasses: []
   shouldDisplaySuggestions: false
-  prefixRegex: /(\b|['"~`!@#\$%^&*\(\)\{\}\[\]=\+,/\?>])((\w+[\w-]*)|([.:;[{(< ]+))$/
-  wordPrefixRegex: /^\w+[\w-]*$/
+  prefixRegex: XRegExp '''(['"~`!@#\\$%^&*\\(\\)\\{\\}\\[\\]=\+,/\\?>])?(([\\p{L}\\d_]+[\\p{L}-\\d_]*)|([.:;[{(< ]+))$'''
+  wordPrefixRegex: XRegExp '^[\\p{L}\\d_]+[\\p{L}-\\d_]*$'
 
   constructor: ->
     @subscriptions = new CompositeDisposable

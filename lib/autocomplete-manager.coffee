@@ -456,7 +456,7 @@ class AutocompleteManager
   bufferSaved: =>
     @hideSuggestionList() unless @autosaveEnabled
 
-  bufferChangedText: (changes) =>
+  bufferChangedText: ({changes}) =>
     lastCursorPosition = @editor.getLastCursor().getBufferPosition()
     changeOccurredNearLastCursor = changes.some ({start, newExtent}) ->
       newRange = new Range(start, start.traverse(newExtent))

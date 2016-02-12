@@ -99,10 +99,10 @@ class Symbol
       typePriority = 0
       for type in Object.keys(config)
         options = config[type]
-        continue unless options.selectors?
+        continue unless options.selector?
         @metadataByPath.forEach ({scopeChains}) =>
           for scopeChain in Object.keys(scopeChains)
-            if (not @type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selectors, scopeChain)
+            if (not @type or options.typePriority > typePriority) and selectorsMatchScopeChain(options.selector, scopeChain)
               @type = type
               typePriority = options.typePriority
           return
@@ -130,6 +130,8 @@ class SymbolStore
     return
 
   getLength: -> @count
+
+  isEmpty: -> @count is 0
 
   getSymbol: (symbolKey) ->
     symbolKey = @getKey(symbolKey)

@@ -7,6 +7,8 @@ fuzzaldrinPlus = require 'fuzzaldrin-plus'
 {Selector} = require 'selector-kit'
 SymbolStore = require './symbol-store'
 
+# TODO: extract SymbolQuery object.
+
 module.exports =
 class SymbolProvider
   wordRegex: /\b\w*[a-zA-Z_-]+\w*\b/g
@@ -23,8 +25,8 @@ class SymbolProvider
 
   watchedBuffers: null
 
-  config: null
-  defaultConfig:
+  symbolQuery: null
+  defaultSymbolSelectors:
     class:
       selector: '.class.name, .inherited-class, .instance.type'
       typePriority: 4
@@ -104,45 +106,36 @@ class SymbolProvider
     @editor = null
     @editor = currentPaneItem if @paneItemIsValid(currentPaneItem)
 
-  buildConfigIfScopeChanged: ({editor, scopeDescriptor}) ->
-    unless @scopeDescriptorsEqual(@configScopeDescriptor, scopeDescriptor)
-      @buildConfig(scopeDescriptor)
-      @configScopeDescriptor = scopeDescriptor
-
-  buildConfig: (scopeDescriptor) ->
-    @config = {}
+  rebuildSymbolQueryForScopeDescriptor: (scopeDescriptor) ->
+    @symbolQuery = {}
     legacyCompletions = @settingsForScopeDescriptor(scopeDescriptor, 'editor.completions')
-    allConfigEntries = @settingsForScopeDescriptor(scopeDescriptor, 'autocomplete.symbols')
-
-    # Config entries are reverse sorted in order of specificity. We want most
-    # specific to win; this simplifies the loop.
-    allConfigEntries.reverse()
+    scopeDescriptorSymbolSelectors = @settingsForScopeDescriptor(scopeDescriptor, 'autocomplete.symbols')
 
     for {value} in legacyCompletions
-      @addLegacyConfigEntry(value) if Array.isArray(value) and value.length
+      @addBuiltinSuggestionsToSymbolQuery(value) if Array.isArray(value) and value.length
 
-    addedConfigEntry = false
-    for {value} in allConfigEntries
+    hasAddedSelectors = false
+    # Iterate in reverse because more specific entries win over less specific ones.
+    for {value} in scopeDescriptorSymbolSelectors by -1
       if not Array.isArray(value) and typeof value is 'object'
-        @addConfigEntry(value)
-        addedConfigEntry = true
+        @addSymbolSelectorsToQuery(value)
+        hasAddedSelectors = true
 
-    @addConfigEntry(@defaultConfig) unless addedConfigEntry
+    @addSymbolSelectorsToQuery(@defaultSymbolSelectors) unless hasAddedSelectors
 
-  addLegacyConfigEntry: (suggestions) ->
+  addBuiltinSuggestionsToSymbolQuery: (suggestions) ->
     suggestions = ({text: suggestion, type: 'builtin'} for suggestion in suggestions)
-    @config.builtin ?= {suggestions: []}
-    @config.builtin.suggestions = @config.builtin.suggestions.concat(suggestions)
+    @symbolQuery.builtin ?= {suggestions: []}
+    @symbolQuery.builtin.suggestions = @symbolQuery.builtin.suggestions.concat(suggestions)
 
-  addConfigEntry: (config) ->
+  addSymbolSelectorsToQuery: (config) ->
     for type, options of config
-      @config[type] ?= {}
-      @config[type].selectors = Selector.create(options.selector) if options.selector?
-      @config[type].typePriority = options.typePriority ? 1
-      @config[type].wordRegex = @wordRegex
+      @symbolQuery[type] ?= {}
+      @symbolQuery[type].selector = Selector.create(options.selector) if options.selector?
+      @symbolQuery[type].typePriority = options.typePriority ? 1
 
       suggestions = @sanitizeSuggestionsFromConfig(options.suggestions, type)
-      @config[type].suggestions = suggestions if suggestions? and suggestions.length
+      @symbolQuery[type].suggestions = suggestions if suggestions? and suggestions.length
     return
 
   sanitizeSuggestionsFromConfig: (suggestions, type) ->
@@ -174,14 +167,15 @@ class SymbolProvider
   Section: Suggesting Completions
   ###
 
-  getSuggestions: (options) =>
-    prefix = options.prefix?.trim()
-    return unless prefix?.length and prefix?.length >= @minimumWordLength
-    return unless @symbolStore.getLength()
+  getSuggestions: ({prefix, scopeDescriptor, editor, bufferPosition}) =>
+    prefix = prefix?.trim() ? ""
+    return if prefix.length is 0 or prefix.length < @minimumWordLength
+    return if @symbolStore.isEmpty()
 
-    @buildConfigIfScopeChanged(options)
+    unless @scopeDescriptorsEqual(@previousSuggestionsScopeDescriptor, scopeDescriptor)
+      @rebuildSymbolQueryForScopeDescriptor(scopeDescriptor)
+      @previousSuggestionsScopeDescriptor = scopeDescriptor
 
-    {editor, prefix, bufferPosition} = options
     numberOfWordsMatchingPrefix = 1
     wordUnderCursor = @wordAtBufferPosition(editor, bufferPosition)
     for cursor in editor.getCursors()
@@ -190,17 +184,15 @@ class SymbolProvider
       numberOfWordsMatchingPrefix += 1 if word is wordUnderCursor
 
     buffer = if @includeCompletionsFromAllBuffers then null else @editor.getBuffer()
-    symbolList = @symbolStore.symbolsForConfig(@config, buffer, wordUnderCursor, numberOfWordsMatchingPrefix)
+    symbolList = @symbolStore.symbolsForConfig(@symbolQuery, buffer, wordUnderCursor, numberOfWordsMatchingPrefix)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
-        symbolList.filter((match) -> match.text?.indexOf(options.prefix) is 0)
+        symbolList.filter((match) -> match.text?.indexOf(prefix) is 0)
       else
-        @fuzzyFilter(symbolList, @editor.getBuffer(), options)
+        @fuzzyFilter(symbolList, @editor.getBuffer(), bufferPosition, prefix)
 
-    for word in words
-      word.replacementPrefix = options.prefix
-
+    word.replacementPrefix = prefix for word in words
     return words
 
   wordAtBufferPosition: (editor, bufferPosition) ->
@@ -210,7 +202,7 @@ class SymbolProvider
     suffix = lineFromPosition.match(@beginningOfLineWordRegex)?[0] or ''
     prefix + suffix
 
-  fuzzyFilter: (symbolList, buffer, {bufferPosition, prefix}) ->
+  fuzzyFilter: (symbolList, buffer, bufferPosition, prefix) ->
     # Probably inefficient to do a linear search
     candidates = []
 

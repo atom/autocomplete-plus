@@ -1077,6 +1077,48 @@ describe 'Autocomplete Manager', ->
 
             expect(editor.getText()).toBe 'ok then a.someMethod()'
 
+      describe "when the alternate keyboard integration is used", ->
+        beforeEach ->
+          atom.config.set('autocomplete-plus.confirmCompletion', 'tab and enter')
+          atom.config.set('autocomplete-plus.alternateCompletion', true)
+
+        it 'inserts the word on tab and moves the cursor to the end of the word', ->
+          triggerAutocompletion(editor, false, 'a')
+
+          runs ->
+            key = atom.keymaps.constructor.buildKeydownEvent('tab', {target: document.activeElement})
+            atom.keymaps.handleKeyboardEvent(key)
+
+            expect(editor.getText()).toBe 'ok then ab'
+
+            bufferPosition = editor.getCursorBufferPosition()
+            expect(bufferPosition.row).toEqual(0)
+            expect(bufferPosition.column).toEqual(10)
+
+        it 'does not insert the word on enter', ->
+          triggerAutocompletion(editor, false, 'a')
+
+          runs ->
+            key = atom.keymaps.constructor.buildKeydownEvent('enter', {keyCode: 13, target: document.activeElement})
+            atom.keymaps.handleKeyboardEvent(key)
+            expect(editor.getText()).toBe 'ok then a\n'
+
+        it 'inserts the word on enter after the selection has been changed and moves the cursor to the end of the word', ->
+          triggerAutocompletion(editor, false, 'a')
+
+          runs ->
+            editorView = atom.views.getView(editor)
+            atom.commands.dispatch(editorView, 'core:move-down')
+            key = atom.keymaps.constructor.buildKeydownEvent('enter', {keyCode: 13, target: document.activeElement})
+            atom.keymaps.handleKeyboardEvent(key)
+
+            expect(editor.getText()).toBe 'ok then abc'
+
+            bufferPosition = editor.getCursorBufferPosition()
+            expect(bufferPosition.row).toEqual(0)
+            expect(bufferPosition.column).toEqual(11)
+
+
       describe 'when tab is used to accept suggestions', ->
         beforeEach ->
           atom.config.set('autocomplete-plus.confirmCompletion', 'tab')

@@ -69,7 +69,7 @@ class SuggestionListElement extends HTMLElement
     @subscriptions.add @model.onDidSelectTop(@moveSelectionToTop.bind(this))
     @subscriptions.add @model.onDidSelectBottom(@moveSelectionToBottom.bind(this))
     @subscriptions.add @model.onDidConfirmSelection(@confirmSelection.bind(this))
-    @subscriptions.add @model.onDidConfirmSelectionIf(@confirmSelectionIf.bind(this))
+    @subscriptions.add @model.onDidconfirmSelectionIfNonDefault(@confirmSelectionIfNonDefault.bind(this))
     @subscriptions.add @model.onDidDispose(@dispose.bind(this))
 
     @subscriptions.add atom.config.observe 'autocomplete-plus.suggestionListFollows', (@suggestionListFollows) =>
@@ -188,10 +188,14 @@ class SuggestionListElement extends HTMLElement
     else
       @model.cancel()
 
-  confirmSelectionIf: (event) ->
+  # Private: Confirms the currently selected item only if it is not the default
+  # item or cancels the view if none has been selected.
+  confirmSelectionIfNonDefault: (event) ->
+    return unless @model.isActive()
     if @nonDefaultIndex
       @confirmSelection()
     else
+      @model.cancel()
       event.abortKeyBinding()
 
   renderList: ->

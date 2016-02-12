@@ -75,7 +75,7 @@
     },
     "alternateCompletion": {
       "title": "Alternate Completion Keybindings",
-      "description": "If this setting is true, enter will only confirm the selection if it has been changed by the user.",
+      "description": "If this setting is true, enter will only confirm the selected suggestion if it has been changed by the user (e.g. by using the movement keys).",
       "type": "boolean",
       "default": false,
       "order": 4.5

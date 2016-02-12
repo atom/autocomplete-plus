@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-plus",
-  "version": "2.26.0",
+  "version": "2.26.1",
   "main": "./lib/main",
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/atom/autocomplete-plus",
@@ -66,7 +66,11 @@
       "description": "You should use the key(s) indicated here to confirm a suggestion from the suggestion list and have it inserted into the file.",
       "type": "string",
       "default": "tab and enter",
-      "enum": ["tab", "enter", "tab and enter"],
+      "enum": [
+        "tab",
+        "enter",
+        "tab and enter"
+      ],
       "order": 4
     },
     "useCoreMovementCommands": {
@@ -80,7 +84,9 @@
       "title": "File Blacklist",
       "description": "Suggestions will not be provided for files matching this list, e.g. *.md for Markdown files. To blacklist more than one file extension, use comma as a separator, e.g. *.md, *.txt (both Markdown and text files).",
       "type": "array",
-      "default": [".*"],
+      "default": [
+        ".*"
+      ],
       "items": {
         "type": "string"
       },
@@ -149,21 +155,31 @@
       "description": "With 'Cursor' the suggestion list appears at the cursor's position. With 'Word' it appears at the beginning of the word that's being completed.",
       "type": "string",
       "default": "Word",
-      "enum": ["Word", "Cursor"],
+      "enum": [
+        "Word",
+        "Cursor"
+      ],
       "order": 15
     },
     "defaultProvider": {
       "description": "Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.",
       "type": "string",
       "default": "Symbol",
-      "enum": ["Fuzzy", "Symbol"],
+      "enum": [
+        "Fuzzy",
+        "Symbol"
+      ],
       "order": 16
     },
     "suppressActivationForEditorClasses": {
       "title": "Suppress Activation For Editor Classes",
       "description": "Don't auto-activate when any of these classes are present in the editor.",
       "type": "array",
-      "default": ["vim-mode.command-mode", "vim-mode.visual-mode", "vim-mode.operator-pending-mode"],
+      "default": [
+        "vim-mode.command-mode",
+        "vim-mode.visual-mode",
+        "vim-mode.operator-pending-mode"
+      ],
       "items": {
         "type": "string"
       },

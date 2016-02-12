@@ -40,4 +40,7 @@ selectorForScopeChain = (selectors, scopeChain) ->
 selectorsMatchScopeChain = (selectors, scopeChain) ->
   selectorForScopeChain(selectors, scopeChain)?
 
-module.exports = {parseScopeChain, selectorsMatchScopeChain, selectorForScopeChain}
+buildScopeChainString = (scopes) ->
+  '.' + scopes.join(' .')
+
+module.exports = {parseScopeChain, selectorsMatchScopeChain, selectorForScopeChain, buildScopeChainString}

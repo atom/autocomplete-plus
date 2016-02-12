@@ -1,4 +1,4 @@
-{Range, CompositeDisposable, Disposable}  = require 'atom'
+{Point, Range, CompositeDisposable, Disposable}  = require 'atom'
 path = require 'path'
 semver = require 'semver'
 fuzzaldrin = require 'fuzzaldrin'
@@ -73,7 +73,12 @@ class AutocompleteManager
 
     # Subscribe to buffer events:
     @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
-    @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
+    if typeof @buffer.onDidChangeText is "function"
+      @editorSubscriptions.add(@buffer.onDidChange(@toggleActivationForBufferChange))
+      @editorSubscriptions.add(@buffer.onDidChangeText(@showOrHideSuggestionListForBufferChanges))
+    else
+      # TODO: Remove this after `TextBuffer.prototype.onDidChangeText` lands on Atom stable.
+      @editorSubscriptions.add(@buffer.onDidChange(@showOrHideSuggestionListForBufferChange))
 
     # Watch IME Events To Allow IME To Function Without The Suggestion List Showing
     compositionStart = => @compositionInProgress = true
@@ -448,18 +453,48 @@ class AutocompleteManager
     # bufferChanged handler decides to show suggestions, it will cancel the
     # hideSuggestionList request. If there is no bufferChanged event,
     # suggestionList will be hidden.
-    @requestHideSuggestionList() unless textChanged
+    @requestHideSuggestionList() unless textChanged or @shouldActivate
 
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.
   bufferSaved: =>
     @hideSuggestionList() unless @autosaveEnabled
 
-  # Private: Cancels the autocompletion if the user entered more than one
-  # character with a single keystroke. (= pasting)
-  #
-  # event - The change {Event}
-  bufferChanged: ({newText, newRange, oldText, oldRange}) =>
+  toggleActivationForBufferChange: ({newText, newRange, oldText, oldRange}) =>
+    return if @disposed
+    return if @shouldActivate
+    return @hideSuggestionList() if @compositionInProgress
+
+    if @autoActivationEnabled or @suggestionList.isActive()
+      # Activate on space, a non-whitespace character, or a bracket-matcher pair.
+      if newText.length > 0
+        @shouldActivate = (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs)
+
+      # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur.
+      # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair.
+      else if oldText.length > 0
+        @shouldActivate =
+          (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and
+          (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
+
+      @shouldActivate = false if @shouldActivate and @shouldSuppressActivationForEditorClasses()
+
+  showOrHideSuggestionListForBufferChanges: ({changes}) =>
+    lastCursorPosition = @editor.getLastCursor().getBufferPosition()
+    changeOccurredNearLastCursor = changes.some ({start, newExtent}) ->
+      newRange = new Range(start, start.traverse(newExtent))
+      newRange.containsPoint(lastCursorPosition)
+
+    if @shouldActivate and changeOccurredNearLastCursor
+      @cancelHideSuggestionListRequest()
+      @requestNewSuggestions()
+    else
+      @cancelNewSuggestionsRequest()
+      @hideSuggestionList()
+
+    @shouldActivate = false
+
+  showOrHideSuggestionListForBufferChange: ({newText, newRange, oldText, oldRange}) =>
     return if @disposed
     return @hideSuggestionList() if @compositionInProgress
     shouldActivate = false

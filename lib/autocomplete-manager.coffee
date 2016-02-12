@@ -73,8 +73,12 @@ class AutocompleteManager
 
     # Subscribe to buffer events:
     @editorSubscriptions.add(@buffer.onDidSave(@bufferSaved))
-    @editorSubscriptions.add(@buffer.onDidChange(@bufferChanged))
-    @editorSubscriptions.add(@buffer.onDidChangeText(@bufferChangedText))
+    if typeof @buffer.onDidChangeText is "function"
+      @editorSubscriptions.add(@buffer.onDidChange(@toggleActivationForBufferChange))
+      @editorSubscriptions.add(@buffer.onDidChangeText(@showOrHideSuggestionListForBufferChanges))
+    else
+      # TODO: Remove this after `TextBuffer.prototype.onDidChangeText` lands on Atom stable.
+      @editorSubscriptions.add(@buffer.onDidChange(@showOrHideSuggestionListForBufferChange))
 
     # Watch IME Events To Allow IME To Function Without The Suggestion List Showing
     compositionStart = => @compositionInProgress = true
@@ -456,26 +460,7 @@ class AutocompleteManager
   bufferSaved: =>
     @hideSuggestionList() unless @autosaveEnabled
 
-  bufferChangedText: ({changes}) =>
-    lastCursorPosition = @editor.getLastCursor().getBufferPosition()
-    changeOccurredNearLastCursor = changes.some ({start, newExtent}) ->
-      newRange = new Range(start, start.traverse(newExtent))
-      newRange.containsPoint(lastCursorPosition)
-
-    if @shouldActivate and changeOccurredNearLastCursor
-      @cancelHideSuggestionListRequest()
-      @requestNewSuggestions()
-    else
-      @cancelNewSuggestionsRequest()
-      @hideSuggestionList()
-
-    @shouldActivate = false
-
-  # Private: Cancels the autocompletion if the user entered more than one
-  # character with a single keystroke. (= pasting)
-  #
-  # event - The change {Event}
-  bufferChanged: ({newText, newRange, oldText, oldRange}) =>
+  toggleActivationForBufferChange: ({newText, newRange, oldText, oldRange}) =>
     return if @disposed
     return if @shouldActivate
     return @hideSuggestionList() if @compositionInProgress
@@ -493,6 +478,52 @@ class AutocompleteManager
           (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
 
       @shouldActivate = false if @shouldActivate and @shouldSuppressActivationForEditorClasses()
+
+  showOrHideSuggestionListForBufferChanges: ({changes}) =>
+    lastCursorPosition = @editor.getLastCursor().getBufferPosition()
+    changeOccurredNearLastCursor = changes.some ({start, newExtent}) ->
+      newRange = new Range(start, start.traverse(newExtent))
+      newRange.containsPoint(lastCursorPosition)
+
+    if @shouldActivate and changeOccurredNearLastCursor
+      @cancelHideSuggestionListRequest()
+      @requestNewSuggestions()
+    else
+      @cancelNewSuggestionsRequest()
+      @hideSuggestionList()
+
+    @shouldActivate = false
+
+  showOrHideSuggestionListForBufferChange: ({newText, newRange, oldText, oldRange}) =>
+    return if @disposed
+    return @hideSuggestionList() if @compositionInProgress
+    shouldActivate = false
+    cursorPositions = @editor.getCursorBufferPositions()
+
+    if @autoActivationEnabled or @suggestionList.isActive()
+
+      # Activate on space, a non-whitespace character, or a bracket-matcher pair.
+      if newText.length > 0
+        shouldActivate =
+          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
+          (newText is ' ' or newText.trim().length is 1 or newText in @bracketMatcherPairs)
+
+      # Suggestion list must be either active or backspaceTriggersAutocomplete must be true for activation to occur.
+      # Activate on removal of a space, a non-whitespace character, or a bracket-matcher pair.
+      else if oldText.length > 0
+        shouldActivate =
+          (@backspaceTriggersAutocomplete or @suggestionList.isActive()) and
+          (cursorPositions.some (position) -> newRange.containsPoint(position)) and
+          (oldText is ' ' or oldText.trim().length is 1 or oldText in @bracketMatcherPairs)
+
+      shouldActivate = false if shouldActivate and @shouldSuppressActivationForEditorClasses()
+
+    if shouldActivate
+      @cancelHideSuggestionListRequest()
+      @requestNewSuggestions()
+    else
+      @cancelNewSuggestionsRequest()
+      @hideSuggestionList()
 
   shouldSuppressActivationForEditorClasses: ->
     for classNames in @suppressForClasses

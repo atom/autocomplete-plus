@@ -53,7 +53,7 @@ class SuggestionList
     completionKey = atom.config.get('autocomplete-plus.confirmCompletion') or ''
 
     keys = {}
-    keys['tab']   = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
+    keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     if completionKey.indexOf('enter') > -1
       if completionKey.indexOf('always') > -1
         keys['enter'] = 'autocomplete-plus:confirmIfNonDefault'

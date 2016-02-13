@@ -69,16 +69,10 @@
       "enum": [
         "tab",
         "enter",
-        "tab and enter"
+        "tab and enter",
+        "tab always, enter when suggestion explicitly selected"
       ],
       "order": 4
-    },
-    "alternateCompletion": {
-      "title": "Alternate Completion Keybindings",
-      "description": "If this setting is true, enter will only confirm the selected suggestion if it has been changed by the user (e.g. by using the movement keys).",
-      "type": "boolean",
-      "default": false,
-      "order": 4.5
     },
     "useCoreMovementCommands": {
       "title": "Use Core Movement Commands",

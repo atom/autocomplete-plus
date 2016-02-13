@@ -10,7 +10,7 @@ class SuggestionList
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-text-editor.autocomplete-active',
       'autocomplete-plus:confirm': @confirmSelection,
-      'autocomplete-plus:confirmIf': @confirmSelectionIfNonDefault,
+      'autocomplete-plus:confirmIfNonDefault': @confirmSelectionIfNonDefault,
       'autocomplete-plus:cancel': @cancel
     @subscriptions.add atom.config.observe 'autocomplete-plus.useCoreMovementCommands', => @bindToMovementCommands()
 
@@ -53,10 +53,10 @@ class SuggestionList
     completionKey = atom.config.get('autocomplete-plus.confirmCompletion') or ''
 
     keys = {}
-    keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
+    keys['tab']   = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
     if completionKey.indexOf('enter') > -1
-      if atom.config.get('autocomplete-plus.alternateCompletion')
-        keys['enter'] = 'autocomplete-plus:confirmIf'
+      if completionKey.indexOf('always') > -1
+        keys['enter'] = 'autocomplete-plus:confirmIfNonDefault'
       else
         keys['enter'] = 'autocomplete-plus:confirm'
 

@@ -1079,8 +1079,7 @@ describe 'Autocomplete Manager', ->
 
       describe "when the alternate keyboard integration is used", ->
         beforeEach ->
-          atom.config.set('autocomplete-plus.confirmCompletion', 'tab and enter')
-          atom.config.set('autocomplete-plus.alternateCompletion', true)
+          atom.config.set('autocomplete-plus.confirmCompletion', 'tab always, enter when suggestion explicitly selected')
 
         it 'inserts the word on tab and moves the cursor to the end of the word', ->
           triggerAutocompletion(editor, false, 'a')

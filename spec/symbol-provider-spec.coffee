@@ -1,9 +1,6 @@
 {Point} = require 'atom'
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
 
-suggestionForWord = (suggestionList, word) ->
-  suggestionList.getSymbol(word)
-
 suggestionsForPrefix = (provider, editor, prefix, options) ->
   bufferPosition = editor.getCursorBufferPosition()
   scopeDescriptor = editor.getLastCursor().getScopeDescriptor()
@@ -43,7 +40,7 @@ describe 'SymbolProvider', ->
       provider = autocompleteManager.providerManager.defaultProvider
 
   it "runs a completion ", ->
-    expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+    expect(suggestionsForPrefix(provider, editor, 'quick')).toContain 'quicksort'
 
   it "adds words to the symbol list after they have been written", ->
     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
@@ -202,7 +199,7 @@ describe 'SymbolProvider', ->
       expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain 'someNewFunction'
 
     it "stops watching editors and removes content from symbol store as they are destroyed", ->
-      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+      expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
 
       buffer = editor.getBuffer()
       editor.destroy()
@@ -210,19 +207,19 @@ describe 'SymbolProvider', ->
       expect(provider.isWatchingEditor(editor)).toBe false
       expect(provider.isWatchingEditor(rightEditor)).toBe true
 
-      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
 
       rightEditor.insertText('function aNewFunction(){};')
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
 
       rightPane.destroy()
       expect(provider.isWatchingBuffer(buffer)).toBe false
       expect(provider.isWatchingEditor(editor)).toBe false
       expect(provider.isWatchingEditor(rightEditor)).toBe false
 
-      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeFalsy()
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      expect(suggestionsForPrefix(provider, editor, 'quick')).not.toContain('quicksort')
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
 
   describe "when includeCompletionsFromAllBuffers is enabled", ->
     beforeEach ->

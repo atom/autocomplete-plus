@@ -1,8 +1,6 @@
 # This provider is currently experimental.
 
 _ = require 'underscore-plus'
-fuzzaldrin = require 'fuzzaldrin'
-fuzzaldrinPlus = require 'fuzzaldrin-plus'
 {Range, CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 SymbolStore = require './symbol-store'
@@ -68,10 +66,13 @@ class SymbolProvider
       bufferEditors.push(editor)
     else
       bufferSubscriptions = new CompositeDisposable
-      bufferSubscriptions.add buffer.onDidChange ({oldRange, newRange}) =>
+      bufferSubscriptions.add buffer.onDidStopChanging ({changes}) =>
         editors = @watchedBuffers.get(buffer)
         if editors and editors.length and editor = editors[0]
-          @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, oldRange, newRange)
+          for {start, oldExtent, newExtent} in changes
+            oldRange = Range(start, start.traverse(oldExtent))
+            newRange = Range(start, start.traverse(newExtent))
+            @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, oldRange, newRange)
 
       bufferSubscriptions.add buffer.onDidDestroy =>
         @symbolStore.clear(buffer)
@@ -209,12 +210,9 @@ class SymbolProvider
   ###
 
   buildWordListOnNextTick: (editor) =>
-    _.defer => @buildSymbolList(editor)
-
-  buildSymbolList: (editor) =>
-    return unless editor?.isAlive()
-    @symbolStore.clear(editor.getBuffer())
-    @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, new Range(), editor.getBuffer().getRange())
+    _.defer =>
+      return unless editor?.isAlive()
+      @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, new Range(), editor.getBuffer().getRange())
 
   # FIXME: this should go in the core ScopeDescriptor class
   scopeDescriptorsEqual: (a, b) ->

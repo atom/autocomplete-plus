@@ -1,5 +1,7 @@
-{Point} = require 'atom'
+{Point, TextBuffer} = require 'atom'
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
+
+waitForBufferToStopChanging = -> advanceClock(TextBuffer::stoppedChangingDelay)
 
 suggestionsForPrefix = (provider, editor, prefix, options) ->
   bufferPosition = editor.getCursorBufferPosition()
@@ -82,9 +84,11 @@ describe 'SymbolProvider', ->
   it "does not return the word under the cursor when there is only a prefix", ->
     editor.moveToBottom()
     editor.insertText('qu')
+    waitForBufferToStopChanging()
     expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain 'qu'
 
     editor.insertText(' qu')
+    waitForBufferToStopChanging()
     expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'qu'
 
   it "does not return the word under the cursor when there is a suffix and only one instance of the word", ->
@@ -107,8 +111,11 @@ describe 'SymbolProvider', ->
   it "returns the word under the cursor when there is a suffix and there are multiple instances of the word", ->
     editor.moveToBottom()
     editor.insertText('icksort')
+    waitForBufferToStopChanging()
     editor.moveToBeginningOfLine()
     editor.insertText('qu')
+    waitForBufferToStopChanging()
+
     expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain 'qu'
     expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
 
@@ -171,6 +178,7 @@ describe 'SymbolProvider', ->
       expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
       expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
       editor.insertText('function aNewFunction(){};')
+      waitForBufferToStopChanging()
       expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 
   describe "when multiple editors track the same buffer", ->
@@ -189,6 +197,7 @@ describe 'SymbolProvider', ->
 
       expect(suggestionsForPrefix(provider, rightEditor, 'anew')).not.toContain 'aNewFunction'
       rightEditor.insertText('function aNewFunction(){};')
+      waitForBufferToStopChanging()
       expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain 'aNewFunction'
 
       editor.moveToBottom()
@@ -196,6 +205,7 @@ describe 'SymbolProvider', ->
 
       expect(suggestionsForPrefix(provider, editor, 'somenew')).not.toContain 'someNewFunction'
       editor.insertText('function someNewFunction(){};')
+      waitForBufferToStopChanging()
       expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain 'someNewFunction'
 
     it "stops watching editors and removes content from symbol store as they are destroyed", ->
@@ -211,6 +221,7 @@ describe 'SymbolProvider', ->
       expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
 
       rightEditor.insertText('function aNewFunction(){};')
+      waitForBufferToStopChanging()
       expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
 
       rightPane.destroy()
@@ -252,6 +263,7 @@ describe 'SymbolProvider', ->
         // in-a-comment
         inVar = "in-a-string"
       '''
+      waitForBufferToStopChanging()
 
       commentConfig =
         incomment:
@@ -275,6 +287,7 @@ describe 'SymbolProvider', ->
       # Using the string config
       editor.setCursorBufferPosition([1, 20])
       editor.insertText(' ')
+      waitForBufferToStopChanging()
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 1
       expect(suggestions[0].text).toBe 'in-a-string'
@@ -283,6 +296,7 @@ describe 'SymbolProvider', ->
       # Using the default config
       editor.setCursorBufferPosition([1, Infinity])
       editor.insertText(' ')
+      waitForBufferToStopChanging()
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 3
       expect(suggestions[0].text).toBe 'inVar'
@@ -291,6 +305,8 @@ describe 'SymbolProvider', ->
   describe "when the config contains a list of suggestion strings", ->
     beforeEach ->
       editor.setText '// abcomment'
+      waitForBufferToStopChanging()
+
       commentConfig =
         comment: selector: '.comment'
         builtin:
@@ -311,6 +327,8 @@ describe 'SymbolProvider', ->
   describe "when the symbols config contains a list of suggestion objects", ->
     beforeEach ->
       editor.setText '// abcomment'
+      waitForBufferToStopChanging()
+
       commentConfig =
         comment: selector: '.comment'
         builtin:
@@ -335,6 +353,7 @@ describe 'SymbolProvider', ->
   describe "when the legacy completions array is used", ->
     beforeEach ->
       editor.setText '// abcomment'
+      waitForBufferToStopChanging()
       atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], scopeSelector: '.source.js .comment')
 
     it "uses the config for the scope under the cursor", ->

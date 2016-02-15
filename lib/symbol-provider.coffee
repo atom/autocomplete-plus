@@ -42,9 +42,9 @@ class SymbolProvider
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
-    @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (@useAlternateScoring) => @symbolStore.setUseAlternateScoring(@useAlternateScoring)))
-    @subscriptions.add(atom.config.observe('autocomplete-plus.useLocalityBonus', (@useLocalityBonus) => @symbolStore.setUseLocalityBonus(@useLocalityBonus)))
-    @subscriptions.add(atom.config.observe('autocomplete-plus.strictMatching', (@useStrictMatching) => @symbolStore.setUseStrictMatching(@useStrictMatching)))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (useAlternateScoring) => @symbolStore.setUseAlternateScoring(useAlternateScoring)))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useLocalityBonus', (useLocalityBonus) => @symbolStore.setUseLocalityBonus(useLocalityBonus)))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.strictMatching', (useStrictMatching) => @symbolStore.setUseStrictMatching(useStrictMatching)))
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @subscriptions.add(atom.workspace.observeTextEditors(@watchEditor))
 

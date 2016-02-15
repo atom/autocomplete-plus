@@ -70,9 +70,7 @@ class SymbolProvider
         editors = @watchedBuffers.get(buffer)
         if editors and editors.length and editor = editors[0]
           for {start, oldExtent, newExtent} in changes
-            oldRange = Range(start, start.traverse(oldExtent))
-            newRange = Range(start, start.traverse(newExtent))
-            @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, oldRange, newRange)
+            @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
 
       bufferSubscriptions.add buffer.onDidDestroy =>
         @symbolStore.clear(buffer)
@@ -212,7 +210,10 @@ class SymbolProvider
   buildWordListOnNextTick: (editor) =>
     _.defer =>
       return unless editor?.isAlive()
-      @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, new Range(), editor.getBuffer().getRange())
+      start = {row: 0, column: 0}
+      oldExtent = {row: 0, column: 0}
+      newExtent = editor.getBuffer().getRange().getExtent()
+      @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
 
   # FIXME: this should go in the core ScopeDescriptor class
   scopeDescriptorsEqual: (a, b) ->

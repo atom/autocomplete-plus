@@ -16,7 +16,7 @@ describe 'SymbolStore', ->
 
       editor.setText('')
       editor.getBuffer().onDidChange ({oldRange, newRange}) ->
-        store.recomputeSymbolsForEditorInBufferRange(editor, oldRange, newRange)
+        store.recomputeSymbolsForEditorInBufferRange(editor, oldRange.start, oldRange.getExtent(), newRange.getExtent())
 
   describe "::symbolsForConfig(config)", ->
     it "gets a list of symbols matching the passed in configuration", ->
@@ -119,8 +119,10 @@ describe 'SymbolStore', ->
         editor2.moveToBottom()
         editor2.insertText(" hello hola")
 
-        store.recomputeSymbolsForEditorInBufferRange(editor1, new Range(), editor1.getBuffer().getRange())
-        store.recomputeSymbolsForEditorInBufferRange(editor2, new Range(), editor2.getBuffer().getRange())
+        start = {row: 0, column: 0}
+        oldExtent = {row: 0, column: 0}
+        store.recomputeSymbolsForEditorInBufferRange(editor1, start, oldExtent, editor1.getBuffer().getRange().getExtent())
+        store.recomputeSymbolsForEditorInBufferRange(editor2, start, oldExtent, editor2.getBuffer().getRange().getExtent())
 
     describe "::symbolsForConfig(config)", ->
       it "returs symbols based on path", ->

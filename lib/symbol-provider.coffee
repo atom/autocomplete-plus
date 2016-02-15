@@ -1,9 +1,12 @@
 # This provider is currently experimental.
 
 _ = require 'underscore-plus'
-{Range, CompositeDisposable}  = require 'atom'
+{TextBuffer, Range, CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 SymbolStore = require './symbol-store'
+
+# TODO: remove this when `onDidStopChanging(changes)` ships on stable.
+bufferSupportsStopChanging = -> typeof TextBuffer::onDidChangeText is "function"
 
 module.exports =
 class SymbolProvider
@@ -66,10 +69,19 @@ class SymbolProvider
       bufferEditors.push(editor)
     else
       bufferSubscriptions = new CompositeDisposable
-      bufferSubscriptions.add buffer.onDidStopChanging ({changes}) =>
-        editors = @watchedBuffers.get(buffer)
-        if editors and editors.length and editor = editors[0]
-          for {start, oldExtent, newExtent} in changes
+      if bufferSupportsStopChanging()
+        bufferSubscriptions.add buffer.onDidStopChanging ({changes}) =>
+          editors = @watchedBuffers.get(buffer)
+          if editors and editors.length and editor = editors[0]
+            for {start, oldExtent, newExtent} in changes
+              @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
+      else
+        bufferSubscriptions.add buffer.onDidChange ({oldRange, newRange}) =>
+          editors = @watchedBuffers.get(buffer)
+          if editors and editors.length and editor = editors[0]
+            start = oldRange.start
+            oldExtent = oldRange.getExtent()
+            newExtent = newRange.getExtent()
             @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
 
       bufferSubscriptions.add buffer.onDidDestroy =>

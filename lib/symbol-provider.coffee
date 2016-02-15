@@ -5,7 +5,7 @@ fuzzaldrin = require 'fuzzaldrin'
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
 {Range, CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
-SymbolStore = require './alternative-symbol-store'
+SymbolStore = require './symbol-store'
 
 module.exports =
 class SymbolProvider
@@ -71,7 +71,7 @@ class SymbolProvider
       bufferSubscriptions.add buffer.onDidChange ({oldRange, newRange}) =>
         editors = @watchedBuffers.get(buffer)
         if editors and editors.length and editor = editors[0]
-          @symbolStore.splice(editor, oldRange, newRange)
+          @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, oldRange, newRange)
 
       bufferSubscriptions.add buffer.onDidDestroy =>
         @symbolStore.clear(buffer)
@@ -214,7 +214,7 @@ class SymbolProvider
   buildSymbolList: (editor) =>
     return unless editor?.isAlive()
     @symbolStore.clear(editor.getBuffer())
-    @symbolStore.splice(editor, new Range(), editor.getBuffer().getRange())
+    @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, new Range(), editor.getBuffer().getRange())
 
   # FIXME: this should go in the core ScopeDescriptor class
   scopeDescriptorsEqual: (a, b) ->

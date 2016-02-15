@@ -3,9 +3,9 @@
 _ = require 'underscore-plus'
 fuzzaldrin = require 'fuzzaldrin'
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
-{CompositeDisposable}  = require 'atom'
+{Range, CompositeDisposable}  = require 'atom'
 {Selector} = require 'selector-kit'
-SymbolStore = require './symbol-store'
+SymbolStore = require './alternative-symbol-store'
 
 module.exports =
 class SymbolProvider
@@ -44,8 +44,9 @@ class SymbolProvider
     @subscriptions = new CompositeDisposable
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
-    @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (@useAlternateScoring) => ))
-    @subscriptions.add(atom.config.observe('autocomplete-plus.useLocalityBonus', (@useLocalityBonus) => ))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (@useAlternateScoring) => @symbolStore.setUseAlternateScoring(@useAlternateScoring)))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.useLocalityBonus', (@useLocalityBonus) => @symbolStore.setUseLocalityBonus(@useLocalityBonus)))
+    @subscriptions.add(atom.config.observe('autocomplete-plus.strictMatching', (@useStrictMatching) => @symbolStore.setUseStric(@useStrictMatching)))
     @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
     @subscriptions.add(atom.workspace.observeTextEditors(@watchEditor))
 
@@ -67,16 +68,10 @@ class SymbolProvider
       bufferEditors.push(editor)
     else
       bufferSubscriptions = new CompositeDisposable
-      bufferSubscriptions.add buffer.onWillChange ({oldRange, newRange}) =>
+      bufferSubscriptions.add buffer.onDidChange ({oldRange, newRange}) =>
         editors = @watchedBuffers.get(buffer)
         if editors and editors.length and editor = editors[0]
-          @symbolStore.removeTokensInBufferRange(editor, oldRange)
-          @symbolStore.adjustBufferRows(editor, oldRange, newRange)
-
-      bufferSubscriptions.add buffer.onDidChange ({newRange}) =>
-        editors = @watchedBuffers.get(buffer)
-        if editors and editors.length and editor = editors[0]
-          @symbolStore.addTokensInBufferRange(editor, newRange)
+          @symbolStore.splice(editor, oldRange, newRange)
 
       bufferSubscriptions.add buffer.onDidDestroy =>
         @symbolStore.clear(buffer)
@@ -177,7 +172,6 @@ class SymbolProvider
   getSuggestions: (options) =>
     prefix = options.prefix?.trim()
     return unless prefix?.length and prefix?.length >= @minimumWordLength
-    return unless @symbolStore.getLength()
 
     @buildConfigIfScopeChanged(options)
 
@@ -189,19 +183,16 @@ class SymbolProvider
       word = @wordAtBufferPosition(editor, cursor.getBufferPosition())
       numberOfWordsMatchingPrefix += 1 if word is wordUnderCursor
 
-    buffer = if @includeCompletionsFromAllBuffers then null else @editor.getBuffer()
-    symbolList = @symbolStore.symbolsForConfig(@config, buffer, wordUnderCursor, numberOfWordsMatchingPrefix)
+    buffers = if @includeCompletionsFromAllBuffers then null else [@editor.getBuffer()]
+    symbolList = @symbolStore.symbolsForConfig(
+      @config, buffers,
+      prefix, wordUnderCursor,
+      bufferPosition.row,
+      numberOfWordsMatchingPrefix
+    )
 
-    words =
-      if atom.config.get("autocomplete-plus.strictMatching")
-        symbolList.filter((match) -> match.text?.indexOf(options.prefix) is 0)
-      else
-        @fuzzyFilter(symbolList, @editor.getBuffer(), options)
-
-    for word in words
-      word.replacementPrefix = options.prefix
-
-    return words
+    symbolList.sort (a, b) -> (b.score * b.localityScore) - (a.score * a.localityScore)
+    symbolList.slice(0, 20).map (a) -> a.symbol
 
   wordAtBufferPosition: (editor, bufferPosition) ->
     lineToPosition = editor.getTextInRange([[bufferPosition.row, 0], bufferPosition])
@@ -209,58 +200,6 @@ class SymbolProvider
     lineFromPosition = editor.getTextInRange([bufferPosition, [bufferPosition.row, Infinity]])
     suffix = lineFromPosition.match(@beginningOfLineWordRegex)?[0] or ''
     prefix + suffix
-
-  fuzzyFilter: (symbolList, buffer, {bufferPosition, prefix}) ->
-    # Probably inefficient to do a linear search
-    candidates = []
-
-    if @useAlternateScoring
-      fuzzaldrinProvider = fuzzaldrinPlus
-      # This allows to pre-compute and re-use some quantities derived from prefix such as
-      # Uppercase, lowercase and a version of prefix without optional characters.
-      prefixCache = fuzzaldrinPlus.prepQuery(prefix)
-    else
-      fuzzaldrinProvider = fuzzaldrin
-      prefixCache = null
-
-    for symbol in symbolList
-      text = (symbol.snippet or symbol.text)
-      continue unless text and prefix[0].toLowerCase() is text[0].toLowerCase() # must match the first char!
-      score = fuzzaldrinProvider.score(text, prefix, prefixCache)
-      if @useLocalityBonus then score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBuffer?(buffer))
-      candidates.push({symbol, score}) if score > 0
-
-    candidates.sort(@symbolSortReverseIterator)
-
-    results = []
-    for {symbol, score}, index in candidates
-      break if index is 20
-      results.push(symbol)
-    results
-
-  symbolSortReverseIterator: (a, b) -> b.score - a.score
-
-  getLocalityScore: (bufferPosition, bufferRowsContainingSymbol) ->
-    if bufferRowsContainingSymbol?
-      rowDifference = Number.MAX_VALUE
-      rowDifference = Math.min(rowDifference, bufferRow - bufferPosition.row) for bufferRow in bufferRowsContainingSymbol
-      locality = @computeLocalityModifier(rowDifference)
-      locality
-    else
-      1
-
-  computeLocalityModifier: (rowDifference) ->
-    rowDifference = Math.abs(rowDifference)
-    if @useAlternateScoring
-      # Between 1 and 1 + strength. (here between 1.0 and 2.0)
-      # Avoid a pow and a branching max.
-      # 25 is the number of row where the bonus is 3/4 faded away.
-      # strength is the factor in front of fade*fade. Here it is 1.0
-      fade = 25.0 / (25.0 + rowDifference)
-      1.0 + fade * fade
-    else
-      # Will be between 1 and ~2.75
-      1 + Math.max(-Math.pow(.2 * rowDifference - 3, 3) / 25 + .5, 0)
 
   settingsForScopeDescriptor: (scopeDescriptor, keyPath) ->
     atom.config.getAll(keyPath, scope: scopeDescriptor)
@@ -275,7 +214,7 @@ class SymbolProvider
   buildSymbolList: (editor) =>
     return unless editor?.isAlive()
     @symbolStore.clear(editor.getBuffer())
-    @symbolStore.addTokensInBufferRange(editor, editor.getBuffer().getRange())
+    @symbolStore.splice(editor, new Range(), editor.getBuffer().getRange())
 
   # FIXME: this should go in the core ScopeDescriptor class
   scopeDescriptorsEqual: (a, b) ->

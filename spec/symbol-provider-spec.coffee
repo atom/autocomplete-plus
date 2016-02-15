@@ -115,51 +115,6 @@ describe 'SymbolProvider', ->
     expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain 'qu'
     expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
 
-  it "correctly tracks the buffer row associated with symbols as they change", ->
-    editor.setText('')
-    advanceClock(provider.changeUpdateDelay)
-
-    editor.setText('function abc(){}\nfunction abc(){}')
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [0, 1]
-
-    editor.setCursorBufferPosition([2, 100])
-    editor.insertText('\n\nfunction omg(){}; function omg(){}')
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3, 3]
-
-    editor.selectLeft(16)
-    editor.backspace()
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3]
-
-    editor.insertText('\nfunction omg(){}')
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3, 4]
-
-    editor.setText('')
-    advanceClock(provider.changeUpdateDelay)
-
-    expect(suggestionForWord(provider.symbolStore, 'abc')).toBeUndefined()
-    expect(suggestionForWord(provider.symbolStore, 'omg')).toBeUndefined()
-
-    editor.setText('function abc(){}\nfunction abc(){}')
-    editor.setCursorBufferPosition([0, 0])
-    editor.insertText('\n')
-    editor.setCursorBufferPosition([2, 100])
-    editor.insertText('\nfunction abc(){}')
-    advanceClock(provider.changeUpdateDelay)
-
-    # This is kind of a mess right now. it does not correctly track buffer
-    # rows when there are several changes before the change delay is
-    # triggered. So we're just making sure the row is in there.
-    suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toContain 3
-
   it "does not output suggestions from the other buffer", ->
     [results, coffeeEditor] = []
 

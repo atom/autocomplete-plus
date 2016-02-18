@@ -17,8 +17,7 @@
     "selector-kit": "^0.1",
     "semver": "^4.3.3",
     "stable": "^0.1.5",
-    "underscore-plus": "^1.6.6",
-    "xregexp": ">=2.0.0"
+    "underscore-plus": "^1.6.6"
   },
   "devDependencies": {
     "coffeelint": "^1.9.7",

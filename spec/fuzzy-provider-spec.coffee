@@ -82,6 +82,7 @@ describe 'FuzzyProvider', ->
       expect(results).toBeUndefined()
 
     it 'adds words to the wordlist with unicode characters', ->
+      atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
       provider = autocompleteManager.providerManager.defaultProvider

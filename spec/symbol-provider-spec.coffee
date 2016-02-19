@@ -396,6 +396,7 @@ describe 'SymbolProvider', ->
       expect(suggestions[1].type).toBe 'builtin'
 
   it 'adds words to the wordlist with unicode characters', ->
+    atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
     expect(suggestionForWord(provider.symbolStore, 'somēthingNew')).toBeFalsy()
     editor.insertText('somēthingNew')
     editor.insertText(' ')

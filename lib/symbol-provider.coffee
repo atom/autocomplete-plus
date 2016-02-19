@@ -50,9 +50,11 @@ class SymbolProvider
         @wordRegex = /\b\w*[a-zA-Z_-]+\w*\b/g
         @beginningOfLineWordRegex = /^\w*[a-zA-Z_-]+\w*\b/g
         @endOfLineWordRegex = /\b\w*[a-zA-Z_-]+\w*$/g
+      
+      @symbolStore = new SymbolStore(@wordRegex)
     ))
     @watchedBuffers = new WeakMap
-    @symbolStore = new SymbolStore(@wordRegex)
+
     @subscriptions.add(atom.config.observe('autocomplete-plus.minimumWordLength', (@minimumWordLength) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.includeCompletionsFromAllBuffers', (@includeCompletionsFromAllBuffers) => ))
     @subscriptions.add(atom.config.observe('autocomplete-plus.useAlternateScoring', (@useAlternateScoring) => ))

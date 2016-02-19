@@ -395,9 +395,8 @@ describe 'SymbolProvider', ->
       expect(suggestions[1].text).toBe 'abcd'
       expect(suggestions[1].type).toBe 'builtin'
 
-  # Fixing This Fixes #76
-  xit 'adds words to the wordlist with unicode characters', ->
-    expect(provider.symbolStore.indexOf('somēthingNew')).toBeFalsy()
+  it 'adds words to the wordlist with unicode characters', ->
+    expect(suggestionForWord(provider.symbolStore, 'somēthingNew')).toBeFalsy()
     editor.insertText('somēthingNew')
     editor.insertText(' ')
-    expect(provider.symbolStore.indexOf('somēthingNew')).toBeTruthy()
+    expect(suggestionForWord(provider.symbolStore, 'somēthingNew')).toBeTruthy()

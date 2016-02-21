@@ -1,8 +1,7 @@
-{Point} = require 'atom'
+{Point, TextBuffer} = require 'atom'
 {triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
 
-suggestionForWord = (suggestionList, word) ->
-  suggestionList.getSymbol(word)
+waitForBufferToStopChanging = -> advanceClock(TextBuffer::stoppedChangingDelay)
 
 suggestionsForPrefix = (provider, editor, prefix, options) ->
   bufferPosition = editor.getCursorBufferPosition()
@@ -43,7 +42,7 @@ describe 'SymbolProvider', ->
       provider = autocompleteManager.providerManager.defaultProvider
 
   it "runs a completion ", ->
-    expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+    expect(suggestionsForPrefix(provider, editor, 'quick')).toContain 'quicksort'
 
   it "adds words to the symbol list after they have been written", ->
     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
@@ -85,9 +84,11 @@ describe 'SymbolProvider', ->
   it "does not return the word under the cursor when there is only a prefix", ->
     editor.moveToBottom()
     editor.insertText('qu')
+    waitForBufferToStopChanging()
     expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain 'qu'
 
     editor.insertText(' qu')
+    waitForBufferToStopChanging()
     expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'qu'
 
   it "does not return the word under the cursor when there is a suffix and only one instance of the word", ->
@@ -110,55 +111,13 @@ describe 'SymbolProvider', ->
   it "returns the word under the cursor when there is a suffix and there are multiple instances of the word", ->
     editor.moveToBottom()
     editor.insertText('icksort')
+    waitForBufferToStopChanging()
     editor.moveToBeginningOfLine()
     editor.insertText('qu')
+    waitForBufferToStopChanging()
+
     expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain 'qu'
     expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
-
-  it "correctly tracks the buffer row associated with symbols as they change", ->
-    editor.setText('')
-    advanceClock(provider.changeUpdateDelay)
-
-    editor.setText('function abc(){}\nfunction abc(){}')
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [0, 1]
-
-    editor.setCursorBufferPosition([2, 100])
-    editor.insertText('\n\nfunction omg(){}; function omg(){}')
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3, 3]
-
-    editor.selectLeft(16)
-    editor.backspace()
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3]
-
-    editor.insertText('\nfunction omg(){}')
-    advanceClock(provider.changeUpdateDelay)
-    suggestion = suggestionForWord(provider.symbolStore, 'omg')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toEqual [3, 4]
-
-    editor.setText('')
-    advanceClock(provider.changeUpdateDelay)
-
-    expect(suggestionForWord(provider.symbolStore, 'abc')).toBeUndefined()
-    expect(suggestionForWord(provider.symbolStore, 'omg')).toBeUndefined()
-
-    editor.setText('function abc(){}\nfunction abc(){}')
-    editor.setCursorBufferPosition([0, 0])
-    editor.insertText('\n')
-    editor.setCursorBufferPosition([2, 100])
-    editor.insertText('\nfunction abc(){}')
-    advanceClock(provider.changeUpdateDelay)
-
-    # This is kind of a mess right now. it does not correctly track buffer
-    # rows when there are several changes before the change delay is
-    # triggered. So we're just making sure the row is in there.
-    suggestion = suggestionForWord(provider.symbolStore, 'abc')
-    expect(suggestion.bufferRowsForBuffer(editor.getBuffer())).toContain 3
 
   it "does not output suggestions from the other buffer", ->
     [results, coffeeEditor] = []
@@ -219,6 +178,7 @@ describe 'SymbolProvider', ->
       expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
       expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain 'aNewFunction'
       editor.insertText('function aNewFunction(){};')
+      waitForBufferToStopChanging()
       expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 
   describe "when multiple editors track the same buffer", ->
@@ -237,6 +197,7 @@ describe 'SymbolProvider', ->
 
       expect(suggestionsForPrefix(provider, rightEditor, 'anew')).not.toContain 'aNewFunction'
       rightEditor.insertText('function aNewFunction(){};')
+      waitForBufferToStopChanging()
       expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain 'aNewFunction'
 
       editor.moveToBottom()
@@ -244,10 +205,11 @@ describe 'SymbolProvider', ->
 
       expect(suggestionsForPrefix(provider, editor, 'somenew')).not.toContain 'someNewFunction'
       editor.insertText('function someNewFunction(){};')
+      waitForBufferToStopChanging()
       expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain 'someNewFunction'
 
     it "stops watching editors and removes content from symbol store as they are destroyed", ->
-      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
+      expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
 
       buffer = editor.getBuffer()
       editor.destroy()
@@ -255,19 +217,20 @@ describe 'SymbolProvider', ->
       expect(provider.isWatchingEditor(editor)).toBe false
       expect(provider.isWatchingEditor(rightEditor)).toBe true
 
-      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeTruthy()
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
 
       rightEditor.insertText('function aNewFunction(){};')
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeTruthy()
+      waitForBufferToStopChanging()
+      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
 
       rightPane.destroy()
       expect(provider.isWatchingBuffer(buffer)).toBe false
       expect(provider.isWatchingEditor(editor)).toBe false
       expect(provider.isWatchingEditor(rightEditor)).toBe false
 
-      expect(suggestionForWord(provider.symbolStore, 'quicksort')).toBeFalsy()
-      expect(suggestionForWord(provider.symbolStore, 'aNewFunction')).toBeFalsy()
+      expect(suggestionsForPrefix(provider, editor, 'quick')).not.toContain('quicksort')
+      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
 
   describe "when includeCompletionsFromAllBuffers is enabled", ->
     beforeEach ->
@@ -300,6 +263,7 @@ describe 'SymbolProvider', ->
         // in-a-comment
         inVar = "in-a-string"
       '''
+      waitForBufferToStopChanging()
 
       commentConfig =
         incomment:
@@ -323,6 +287,7 @@ describe 'SymbolProvider', ->
       # Using the string config
       editor.setCursorBufferPosition([1, 20])
       editor.insertText(' ')
+      waitForBufferToStopChanging()
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 1
       expect(suggestions[0].text).toBe 'in-a-string'
@@ -331,6 +296,7 @@ describe 'SymbolProvider', ->
       # Using the default config
       editor.setCursorBufferPosition([1, Infinity])
       editor.insertText(' ')
+      waitForBufferToStopChanging()
       suggestions = suggestionsForPrefix(provider, editor, 'in', raw: true)
       expect(suggestions).toHaveLength 3
       expect(suggestions[0].text).toBe 'inVar'
@@ -339,6 +305,8 @@ describe 'SymbolProvider', ->
   describe "when the config contains a list of suggestion strings", ->
     beforeEach ->
       editor.setText '// abcomment'
+      waitForBufferToStopChanging()
+
       commentConfig =
         comment: selector: '.comment'
         builtin:
@@ -359,6 +327,8 @@ describe 'SymbolProvider', ->
   describe "when the symbols config contains a list of suggestion objects", ->
     beforeEach ->
       editor.setText '// abcomment'
+      waitForBufferToStopChanging()
+
       commentConfig =
         comment: selector: '.comment'
         builtin:
@@ -383,6 +353,7 @@ describe 'SymbolProvider', ->
   describe "when the legacy completions array is used", ->
     beforeEach ->
       editor.setText '// abcomment'
+      waitForBufferToStopChanging()
       atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], scopeSelector: '.source.js .comment')
 
     it "uses the config for the scope under the cursor", ->

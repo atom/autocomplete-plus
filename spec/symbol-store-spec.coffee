@@ -1,5 +1,6 @@
 SymbolStore = require '../lib/symbol-store'
 {Selector} = require 'selector-kit'
+{Range} = require 'atom'
 
 describe 'SymbolStore', ->
   [store, editor, buffer] = []
@@ -14,78 +15,8 @@ describe 'SymbolStore', ->
       store = new SymbolStore(/\b\w*[a-zA-Z_-]+\w*\b/g)
 
       editor.setText('')
-      buffer = editor.getBuffer()
-      buffer.onWillChange ({oldRange, newRange}) ->
-        store.removeTokensInBufferRange(editor, oldRange)
-        store.adjustBufferRows(editor, oldRange, newRange)
-      buffer.onDidChange ({newRange}) ->
-        store.addTokensInBufferRange(editor, newRange)
-
-  it "adds and removes symbols and counts references", ->
-    expect(store.getLength()).toBe 0
-
-    editor.setText('\n\nabc = ->')
-    expect(store.getLength()).toBe 1
-    expect(store.getSymbol('abc').getCount()).toBe 1
-
-    editor.setText('')
-    expect(store.getLength()).toBe 0
-    expect(store.getSymbol('abc')).toBeUndefined()
-
-    editor.setText('\n\nabc = ->\nabc = 34')
-    expect(store.getLength()).toBe 1
-    expect(store.getSymbol('abc').getCount()).toBe 2
-
-    editor.setText('\n\nabc = ->')
-    expect(store.getLength()).toBe 1
-    expect(store.getSymbol('abc').getCount()).toBe 1
-
-  it "keeps track of token buffer rows after changes to the buffer", ->
-    getSymbolBufferRows = (symbol) ->
-      store.getSymbol(symbol).bufferRowsForBuffer(editor.getBuffer())
-
-    editor.setText('\n\nabc = ->')
-    expect(getSymbolBufferRows('abc')).toEqual [2]
-
-    editor.setCursorBufferPosition([0, 0])
-    editor.insertNewline()
-    expect(getSymbolBufferRows('abc')).toEqual [3]
-
-    editor.setText """
-      abc: ->
-        onetwo = [one, two]
-        multipleLines = 'multipleLines'
-        yeah = 'ok'
-        multipleLines += 'ok'
-    """
-    expect(getSymbolBufferRows('abc')).toEqual [0]
-    expect(getSymbolBufferRows('onetwo')).toEqual [1]
-    expect(getSymbolBufferRows('one')).toEqual [1]
-    expect(getSymbolBufferRows('two')).toEqual [1]
-    expect(getSymbolBufferRows('multipleLines')).toEqual [2, 2, 4]
-    expect(getSymbolBufferRows('yeah')).toEqual [3]
-    expect(getSymbolBufferRows('ok')).toEqual [3, 4]
-
-    editor.setSelectedBufferRange([[2, 18], [3, 13]])
-    editor.insertText("'ok'")
-
-    expect(getSymbolBufferRows('abc')).toEqual [0]
-    expect(getSymbolBufferRows('onetwo')).toEqual [1]
-    expect(getSymbolBufferRows('one')).toEqual [1]
-    expect(getSymbolBufferRows('two')).toEqual [1]
-    expect(getSymbolBufferRows('multipleLines')).toEqual [2, 3]
-    expect(store.getSymbol('yeah')).toBeUndefined()
-    expect(getSymbolBufferRows('ok')).toEqual [2, 3]
-
-    editor.insertText("\n\nomg = 'ok'; multipleLines += 'wow'\n\n")
-
-    expect(getSymbolBufferRows('abc')).toEqual [0]
-    expect(getSymbolBufferRows('onetwo')).toEqual [1]
-    expect(getSymbolBufferRows('one')).toEqual [1]
-    expect(getSymbolBufferRows('two')).toEqual [1]
-    expect(getSymbolBufferRows('wow')).toEqual [4]
-    expect(getSymbolBufferRows('multipleLines')).toEqual [2, 4, 7]
-    expect(getSymbolBufferRows('ok')).toEqual [2, 4, 7]
+      editor.getBuffer().onDidChange ({oldRange, newRange}) ->
+        store.recomputeSymbolsForEditorInBufferRange(editor, oldRange.start, oldRange.getExtent(), newRange.getExtent())
 
   describe "::symbolsForConfig(config)", ->
     it "gets a list of symbols matching the passed in configuration", ->
@@ -95,13 +26,11 @@ describe 'SymbolStore', ->
           typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
-      expect(store.getLength()).toBe 3
 
-      symbols = store.symbolsForConfig(config)
-
-      expect(symbols.length).toBe 1
-      expect(symbols[0].text).toBe 'abc'
-      expect(symbols[0].type).toBe 'function'
+      occurrences = store.symbolsForConfig(config, null, 'ab')
+      expect(occurrences.length).toBe 1
+      expect(occurrences[0].symbol.text).toBe 'abc'
+      expect(occurrences[0].symbol.type).toBe 'function'
 
     it "updates the symbol types as new tokens come in", ->
       config =
@@ -116,23 +45,23 @@ describe 'SymbolStore', ->
           typePriority: 4
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
-      symbols = store.symbolsForConfig(config)
+      occurrences = store.symbolsForConfig(config, null, 'a')
 
-      expect(symbols.length).toBe 2
-      expect(symbols[0].text).toBe 'abc'
-      expect(symbols[0].type).toBe 'function'
-      expect(symbols[1].text).toBe 'avar'
-      expect(symbols[1].type).toBe 'variable'
+      expect(occurrences.length).toBe 2
+      expect(occurrences[0].symbol.text).toBe 'abc'
+      expect(occurrences[0].symbol.type).toBe 'function'
+      expect(occurrences[1].symbol.text).toBe 'avar'
+      expect(occurrences[1].symbol.type).toBe 'variable'
 
       editor.setCursorBufferPosition([0, 0])
       editor.insertText('class abc')
-      symbols = store.symbolsForConfig(config)
+      occurrences = store.symbolsForConfig(config, null, 'a')
 
-      expect(symbols.length).toBe 2
-      expect(symbols[0].text).toBe 'abc'
-      expect(symbols[0].type).toBe 'class'
-      expect(symbols[1].text).toBe 'avar'
-      expect(symbols[1].type).toBe 'variable'
+      expect(occurrences.length).toBe 2
+      expect(occurrences[0].symbol.text).toBe 'abc'
+      expect(occurrences[0].symbol.type).toBe 'class'
+      expect(occurrences[1].symbol.text).toBe 'avar'
+      expect(occurrences[1].symbol.type).toBe 'variable'
 
     it "returns symbols with an empty type", ->
       config =
@@ -141,11 +70,11 @@ describe 'SymbolStore', ->
           typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
-      symbols = store.symbolsForConfig(config)
+      occurrences = store.symbolsForConfig(config, null, 'a')
 
-      expect(symbols.length).toBe 1
-      expect(symbols[0].text).toBe 'abc'
-      expect(symbols[0].type).toBe ''
+      expect(occurrences.length).toBe 1
+      expect(occurrences[0].symbol.text).toBe 'abc'
+      expect(occurrences[0].symbol.type).toBe ''
 
     it "resets the types when a new config is used", ->
       config =
@@ -154,11 +83,11 @@ describe 'SymbolStore', ->
           typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
-      symbols = store.symbolsForConfig(config)
+      occurrences = store.symbolsForConfig(config, null, 'a')
 
-      expect(symbols.length).toBe 1
-      expect(symbols[0].text).toBe 'abc'
-      expect(symbols[0].type).toBe 'function'
+      expect(occurrences.length).toBe 1
+      expect(occurrences[0].symbol.text).toBe 'abc'
+      expect(occurrences[0].symbol.type).toBe 'function'
 
       config =
         'newtype':
@@ -166,64 +95,60 @@ describe 'SymbolStore', ->
           typePriority: 1
 
       editor.setText('\n\nabc = -> cats\n\navar = 1')
-      symbols = store.symbolsForConfig(config)
+      occurrences = store.symbolsForConfig(config, null, 'a')
 
-      expect(symbols.length).toBe 1
-      expect(symbols[0].text).toBe 'abc'
-      expect(symbols[0].type).toBe 'newtype'
+      expect(occurrences.length).toBe 1
+      expect(occurrences[0].symbol.text).toBe 'abc'
+      expect(occurrences[0].symbol.type).toBe 'newtype'
 
   describe "when there are multiple files with tokens in the store", ->
-    [config, oneTxt, twoTxt] = []
+    [config, editor1, editor2] = []
     beforeEach ->
-      config = stuff: selectors: Selector.create('.source')
+      config = stuff: selectors: Selector.create('.text.plain.null-grammar')
 
       waitsForPromise ->
         Promise.all [
-          atom.workspace.open('one.txt').then (file) -> oneTxt = file.getBuffer()
-          atom.workspace.open('two.txt').then (file) -> twoTxt = file.getBuffer()
+          atom.workspace.open('one.txt').then (editor) -> editor1 = editor
+          atom.workspace.open('two.txt').then (editor) -> editor2 = editor
         ]
 
       runs ->
-        store.addToken('one', '.source.coffee', oneTxt, 1)
-        store.addToken('ok', '.source.coffee', oneTxt, 1)
-        store.addToken('wow', '.source.coffee', oneTxt, 2)
-        store.addToken('wow', '.source.coffee', oneTxt, 2)
+        editor1.moveToBottom()
+        editor1.insertText(" humongous hill")
 
-        store.addToken('two', '.source.coffee', twoTxt, 1)
-        store.addToken('ok', '.source.coffee', twoTxt, 1)
-        store.addToken('wow', '.source.coffee', twoTxt, 2)
+        editor2.moveToBottom()
+        editor2.insertText(" hello hola")
+
+        start = {row: 0, column: 0}
+        oldExtent = {row: 0, column: 0}
+        store.recomputeSymbolsForEditorInBufferRange(editor1, start, oldExtent, editor1.getBuffer().getRange().getExtent())
+        store.recomputeSymbolsForEditorInBufferRange(editor2, start, oldExtent, editor2.getBuffer().getRange().getExtent())
 
     describe "::symbolsForConfig(config)", ->
       it "returs symbols based on path", ->
-        symbols = store.symbolsForConfig(config, oneTxt)
-        expect(symbols).toHaveLength 3
-        expect(symbols[0].text).toBe 'one'
-        expect(symbols[1].text).toBe 'ok'
-        expect(symbols[2].text).toBe 'wow'
+        occurrences = store.symbolsForConfig(config, [editor1.getBuffer()], 'h')
+        expect(occurrences).toHaveLength 2
+        expect(occurrences[0].symbol.text).toBe 'humongous'
+        expect(occurrences[1].symbol.text).toBe 'hill'
+
+        occurrences = store.symbolsForConfig(config, [editor2.getBuffer()], 'h')
+        expect(occurrences).toHaveLength 2
+        expect(occurrences[0].symbol.text).toBe 'hello'
+        expect(occurrences[1].symbol.text).toBe 'hola'
 
     describe "::clear()", ->
       describe "when a buffer is specified", ->
         it "removes only the path specified", ->
-          symbols = store.symbolsForConfig(config)
-          expect(symbols).toHaveLength 4
-          expect(symbols[0].text).toBe 'one'
-          expect(symbols[1].text).toBe 'ok'
-          expect(symbols[2].text).toBe 'wow'
-          expect(symbols[3].text).toBe 'two'
+          occurrences = store.symbolsForConfig(config, null, 'h')
+          expect(occurrences).toHaveLength 4
+          expect(occurrences[0].symbol.text).toBe 'humongous'
+          expect(occurrences[1].symbol.text).toBe 'hill'
+          expect(occurrences[2].symbol.text).toBe 'hello'
+          expect(occurrences[3].symbol.text).toBe 'hola'
 
-          expect(store.getSymbol('one').getCount()).toBe 1
-          expect(store.getSymbol('two').getCount()).toBe 1
-          expect(store.getSymbol('ok').getCount()).toBe 2
-          expect(store.getSymbol('wow').getCount()).toBe 3
+          store.clear(editor1.getBuffer())
 
-          store.clear(oneTxt)
-          symbols = store.symbolsForConfig(config)
-          expect(symbols).toHaveLength 3
-          expect(symbols[0].text).toBe 'ok'
-          expect(symbols[1].text).toBe 'wow'
-          expect(symbols[2].text).toBe 'two'
-
-          expect(store.getSymbol('one')).toBeUndefined()
-          expect(store.getSymbol('two').getCount()).toBe 1
-          expect(store.getSymbol('ok').getCount()).toBe 1
-          expect(store.getSymbol('wow').getCount()).toBe 1
+          occurrences = store.symbolsForConfig(config, null, 'h')
+          expect(occurrences).toHaveLength 2
+          expect(occurrences[0].symbol.text).toBe 'hello'
+          expect(occurrences[1].symbol.text).toBe 'hola'

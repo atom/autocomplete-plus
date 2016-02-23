@@ -368,7 +368,10 @@ describe 'SymbolProvider', ->
 
   it 'adds words to the wordlist with unicode characters', ->
     atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
-    expect(suggestionForWord(provider.symbolStore, 'somēthingNew')).toBeFalsy()
+    suggestions = suggestionsForPrefix(provider, editor, 'somē', raw: true)
+    expect(suggestions).toHaveLength(0)
     editor.insertText('somēthingNew')
     editor.insertText(' ')
-    expect(suggestionForWord(provider.symbolStore, 'somēthingNew')).toBeTruthy()
+    waitForBufferToStopChanging()
+    suggestions = suggestionsForPrefix(provider, editor, 'somē', raw: true)
+    expect(suggestions).toHaveLength(1)

@@ -203,6 +203,12 @@
       "type": "boolean",
       "default": true,
       "order": 20
+    },
+    "enableExtendedUnicodeSupport": {
+      "description": "Identifies non-latin alphabet characters as letters",
+      "type": "boolean",
+      "default": false,
+      "order": 21  
     }
   }
 }

@@ -81,14 +81,15 @@ describe 'FuzzyProvider', ->
       results = provider.getSuggestions({editor, bufferPosition, scopeDescriptor, prefix})
       expect(results).toBeUndefined()
 
-    # Fixing This Fixes #76
-    xit 'adds words to the wordlist with unicode characters', ->
+    it 'adds words to the wordlist with unicode characters', ->
+      atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
+      editor.moveToBottom()
+      editor.moveToBeginningOfLine()
       provider = autocompleteManager.providerManager.defaultProvider
 
-      expect(provider.tokenList.indexOf('somēthingNew')).toEqual(-1)
+      expect(provider.tokenList.getToken('somēthingNew')).toBeUndefined()
       editor.insertText('somēthingNew')
-      editor.insertText(' ')
-      expect(provider.tokenList.indexOf('somēthingNew')).not.toEqual(-1)
+      expect(provider.tokenList.getToken('somēthingNew')).toBe 'somēthingNew'
 
     # Fixing This Fixes #196
     xit 'removes words from the wordlist when they no longer exist in any open buffers', ->

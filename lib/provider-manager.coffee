@@ -36,36 +36,59 @@ class ProviderManager
     @globalBlacklist = null
     @providers = null
 
-  providersForScopeDescriptor: (scopeDescriptor) =>
+  applicableProviders: (editor, scopeDescriptor) =>
+    providers = @filterProvidersByEditor(@providers, editor)
+    providers = @filterProvidersByScopeDescriptor(providers, scopeDescriptor)
+    providers = @sortProviders(providers, scopeDescriptor)
+    providers = @filterProvidersByExcludeLowerPriority(providers)
+    @removeMetadata(providers)
+
+  filterProvidersByScopeDescriptor: (providers, scopeDescriptor) ->
     scopeChain = scopeChainForScopeDescriptor(scopeDescriptor)
     return [] unless scopeChain
     return [] if @globalBlacklistSelectors? and selectorsMatchScopeChain(@globalBlacklistSelectors, scopeChain)
 
     matchingProviders = []
     disableDefaultProvider = false
-    lowestIncludedPriority = 0
-
-    for providerMetadata in @providers
+    defaultProviderMetadata = null
+    for providerMetadata in providers
       {provider} = providerMetadata
+      if provider is @defaultProvider
+        defaultProviderMetadata = providerMetadata
       if providerMetadata.matchesScopeChain(scopeChain)
-        matchingProviders.push(provider)
-        if provider.excludeLowerPriority
-          lowestIncludedPriority = Math.max(lowestIncludedPriority, provider.inclusionPriority ? 0)
+        matchingProviders.push(providerMetadata)
         if providerMetadata.shouldDisableDefaultProvider(scopeChain)
           disableDefaultProvider = true
 
     if disableDefaultProvider
-      index = matchingProviders.indexOf(@defaultProvider)
+      index = matchingProviders.indexOf(defaultProviderMetadata)
       matchingProviders.splice(index, 1) if index > -1
+    matchingProviders
 
-    matchingProviders = (provider for provider in matchingProviders when (provider.inclusionPriority ? 0) >= lowestIncludedPriority)
-    stableSort matchingProviders, (providerA, providerB) =>
-      difference = (providerB.suggestionPriority ? 1) - (providerA.suggestionPriority ? 1)
+  sortProviders: (providers, scopeDescriptor) ->
+    scopeChain = scopeChainForScopeDescriptor(scopeDescriptor)
+    stableSort providers, (providerA, providerB) ->
+      difference = (providerB.provider.suggestionPriority ? 1) - (providerA.provider.suggestionPriority ? 1)
       if difference is 0
-        specificityA = @metadataForProvider(providerA).getSpecificity(scopeChain)
-        specificityB = @metadataForProvider(providerB).getSpecificity(scopeChain)
+        specificityA = providerA.getSpecificity(scopeChain)
+        specificityB = providerB.getSpecificity(scopeChain)
         difference = specificityB - specificityA
       difference
+
+  filterProvidersByEditor: (providers, editor) ->
+    providers.filter((providerMetadata) ->
+      providerMetadata.matchesEditor(editor))
+
+  filterProvidersByExcludeLowerPriority: (providers) ->
+    lowestAllowedPriority = 0
+    for providerMetadata in providers
+      {provider} = providerMetadata
+      if provider.excludeLowerPriority
+        lowestAllowedPriority = Math.max(lowestAllowedPriority, provider.inclusionPriority ? 0)
+    providerMetadata for providerMetadata in providers when (providerMetadata.provider.inclusionPriority ? 0) >= lowestAllowedPriority
+
+  removeMetadata: (providers) ->
+    providers.map((providerMetadata) -> providerMetadata.provider)
 
   toggleDefaultProvider: (enabled) =>
     return unless enabled?
@@ -93,7 +116,10 @@ class ProviderManager
   isValidProvider: (provider, apiVersion) ->
     # TODO API: Check based on the apiVersion
     if semver.satisfies(apiVersion, '>=2.0.0')
-      provider? and isFunction(provider.getSuggestions) and isString(provider.selector) and !!provider.selector.length
+      provider? and
+      isFunction(provider.getSuggestions) and
+      ((isString(provider.selector) and !!provider.selector.length) or
+       (isString(provider.scopeSelector) and !!provider.scopeSelector.length))
     else
       provider? and isFunction(provider.requestHandler) and isString(provider.selector) and !!provider.selector.length
 

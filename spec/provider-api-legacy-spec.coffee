@@ -131,7 +131,7 @@ describe 'Provider API Legacy', ->
 
   describe 'Provider API v1.1.0', ->
     it 'registers the provider specified by {providers: [provider]}', ->
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
 
       testProvider =
         selector: '.source.js,.source.coffee'
@@ -139,7 +139,7 @@ describe 'Provider API Legacy', ->
 
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.1.0', {providers: [testProvider]})
 
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
 
   describe 'Provider API v1.0.0', ->
     [registration1, registration2, registration3] = []
@@ -170,10 +170,10 @@ describe 'Provider API Legacy', ->
 
     it 'should allow registration of a provider', ->
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       testProvider =
         requestHandler: (options) ->
@@ -189,13 +189,13 @@ describe 'Provider API Legacy', ->
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(2)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(testProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(testProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(testProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(testProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.go')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       triggerAutocompletion(editor, true, 'o')
 
@@ -207,10 +207,10 @@ describe 'Provider API Legacy', ->
 
     it 'should dispose a provider registration correctly', ->
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       testProvider =
         requestHandler: (options) ->
@@ -223,36 +223,36 @@ describe 'Provider API Legacy', ->
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(2)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(testProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(testProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(testProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(testProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.go')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       registration.dispose()
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       registration.dispose()
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
     it 'should remove a providers registration if the provider is disposed', ->
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       testProvider =
         requestHandler: (options) ->
@@ -267,18 +267,18 @@ describe 'Provider API Legacy', ->
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(2)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(testProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(testProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.go')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(testProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(testProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[1]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.go')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       testProvider.dispose()
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee').length).toEqual(1)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
-      expect(autocompleteManager.providerManager.providersForScopeDescriptor('.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)

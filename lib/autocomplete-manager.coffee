@@ -115,8 +115,18 @@ class AutocompleteManager
       paneItem.getText?
 
   handleEvents: =>
-    # Track the current pane item, update current editor
-    @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
+    # Observe `TextEditors` in the `TextEditorRegistry` and listen for focus,
+    # or observe active `Pane` items respectively.
+    # TODO: remove conditional when `TextEditorRegistry` is shipped.
+    if atom.textEditors?
+      @subscriptions.add(atom.textEditors.observe (editor) =>
+        view = atom.views.getView(editor)
+        if view is document.activeElement
+          @updateCurrentEditor(editor)
+        view.addEventListener 'focus', (element) =>
+          @updateCurrentEditor(editor))
+    else
+      @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
 
     # Watch config values
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))
@@ -161,7 +171,7 @@ class AutocompleteManager
     @getSuggestionsFromProviders({@editor, bufferPosition, scopeDescriptor, prefix, activatedManually})
 
   getSuggestionsFromProviders: (options) =>
-    providers = @providerManager.providersForScopeDescriptor(options.scopeDescriptor)
+    providers = @providerManager.applicableProviders(options.editor, options.scopeDescriptor)
 
     providerPromises = []
     providers.forEach (provider) =>

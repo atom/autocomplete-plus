@@ -14,7 +14,7 @@ class FuzzyProvider
   editor: null
   buffer: null
 
-  selector: '*'
+  scopeSelector: '*'
   inclusionPriority: 0
   suggestionPriority: 0
 

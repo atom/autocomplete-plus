@@ -3,3 +3,4 @@
 
 'atom-text-editor.autocomplete-active':
   'escape': 'autocomplete-plus:cancel'
+  'f1': 'autocomplete-plus:navigate-to-more-url'

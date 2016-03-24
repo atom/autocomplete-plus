@@ -156,9 +156,10 @@ class AutocompleteManager
         @findSuggestions(event.detail?.activatedManually ? true)
 
       'autocomplete-plus:navigate-to-more-url': =>
-        moreLinkElement = @editorView.querySelector('.suggestion-description-more-link')
-        moreLinkURL = moreLinkElement.href
-        require('shell').openExternal(moreLinkURL)
+        descriptionContainer = @editorView.querySelector('.suggestion-description')
+        if descriptionContainer.style.display is 'block'
+          descriptionMoreLink = @editorView.querySelector('.suggestion-description-more-link')
+          require('shell').openExternal(descriptionMoreLink.href)
 
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it

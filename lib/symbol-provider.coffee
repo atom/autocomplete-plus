@@ -70,7 +70,11 @@ class SymbolProvider
   watchEditor: (editor) =>
     buffer = editor.getBuffer()
     editorSubscriptions = new CompositeDisposable
-    editorSubscriptions.add editor.displayBuffer.onDidTokenize =>
+
+    # TODO: Remove this conditional once atom/ns-use-display-layers reaches stable and editor.onDidTokenize is always available
+    onDidTokenizeProvider = if editor.onDidTokenize? then editor else editor.displayBuffer
+
+    editorSubscriptions.add onDidTokenizeProvider.onDidTokenize =>
       @buildWordListOnNextTick(editor)
     editorSubscriptions.add editor.onDidDestroy =>
       index = @getWatchedEditorIndex(editor)

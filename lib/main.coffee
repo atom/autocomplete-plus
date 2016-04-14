@@ -40,20 +40,28 @@ module.exports =
 
   # 1.0.0 API
   # service - {provider: provider1}
-  consumeProviderLegacy: (service) ->
-    # TODO API: Deprecate, tell them to upgrade to 2.0
+  consumeProvider_1_0: (service) ->
+    # TODO API: Deprecate, tell them to upgrade to 2.1
     return unless service?.provider?
     @consumeProvider([service.provider], '1.0.0')
 
   # 1.1.0 API
   # service - {providers: [provider1, provider2, ...]}
-  consumeProvidersLegacy: (service) ->
-    # TODO API: Deprecate, tell them to upgrade to 2.0
+  consumeProvider_1_1: (service) ->
+    # TODO API: Deprecate, tell them to upgrade to 2.1
     @consumeProvider(service?.providers, '1.1.0')
 
   # 2.0.0 API
   # providers - either a provider or a list of providers
-  consumeProvider: (providers, apiVersion='2.0.0') ->
+  consumeProvider_2_0: (providers) ->
+    @consumeProvider(providers, '2.0.0')
+
+  # 2.1.0 API
+  # providers - either a provider or a list of providers
+  consumeProvider_2_1: (providers) ->
+    @consumeProvider(providers, '2.1.0')
+
+  consumeProvider: (providers, apiVersion='2.1.0') ->
     providers = [providers] if providers? and not Array.isArray(providers)
     return unless providers?.length > 0
     registrations = new CompositeDisposable

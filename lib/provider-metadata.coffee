@@ -1,5 +1,8 @@
 {Selector} = require 'selector-kit'
+semver = require 'semver'
 {selectorForScopeChain, selectorsMatchScopeChain} = require './scope-helpers'
+
+{API_VERSION} = require './private-symbols'
 
 # Deferred requires
 grim = null
@@ -7,35 +10,26 @@ grim = null
 module.exports =
 class ProviderMetadata
   constructor: (@provider, @apiVersion) ->
+    # TODO API: remove this when 2.0 support is removed
     if @provider.selector?
-      grim ?= require 'grim'
-      grim.deprecate """
-        Autocomplete provider '#{@provider.constructor.name}(#{@provider.id})'
-        specifies `selector` instead of the `scopeSelector` attribute.
-        See https://github.com/atom/autocomplete-plus/wiki/Provider-API.
-      """
       @scopeSelectors = Selector.create(@provider.selector)
     else
       @scopeSelectors = Selector.create(@provider.scopeSelector)
 
+    # TODO API: remove this when 2.0 support is removed
     if @provider.disableForSelector?
-      grim ?= require 'grim'
-      grim.deprecate """
-        Autocomplete provider '#{@provider.constructor.name}(#{@provider.id})'
-        specifies `disableForSelector` instead of the `disableForScopeSelector`
-        attribute.
-        See https://github.com/atom/autocomplete-plus/wiki/Provider-API.
-      """
       @disableForScopeSelectors = Selector.create(@provider.disableForSelector)
     else if @provider.disableForScopeSelector?
       @disableForScopeSelectors = Selector.create(@provider.disableForScopeSelector)
 
-    # TODO API: remove this when 1.0 is pulled out
+    # TODO API: remove this when 1.0 support is removed
     if providerBlacklist = @provider.providerblacklist?['autocomplete-plus-fuzzyprovider']
       @disableDefaultProviderSelectors = Selector.create(providerBlacklist)
 
+    @enableCustorTextEditorSelector = semver.satisfies(@provider[API_VERSION], '>=2.1.0')
+
   matchesEditor: (editor) ->
-    if @provider.getTextEditorSelector?
+    if @enableCustorTextEditorSelector and @provider.getTextEditorSelector?
       atom.views.getView(editor).matches(@provider.getTextEditorSelector())
     else
       # Backwards compatibility.

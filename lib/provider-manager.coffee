@@ -5,6 +5,7 @@ semver = require 'semver'
 stableSort = require 'stable'
 
 {selectorsMatchScopeChain} = require('./scope-helpers')
+{API_VERSION} = require './private-symbols'
 
 # Deferred requires
 SymbolProvider = null
@@ -151,9 +152,12 @@ class ProviderManager
   registerProvider: (provider, apiVersion='2.0.0') =>
     return unless provider?
 
-    apiIs20 = semver.satisfies(apiVersion, '>=2.0.0')
+    provider[API_VERSION] = apiVersion
 
-    if apiIs20
+    apiIs2_0 = semver.satisfies(apiVersion, '>=2.0.0')
+    apiIs2_1 = semver.satisfies(apiVersion, '>=2.1.0')
+
+    if apiIs2_0
       if provider.id? and provider isnt @defaultProvider
         grim ?= require 'grim'
         grim.deprecate """
@@ -177,6 +181,24 @@ class ProviderManager
           contains a `blacklist` property.
           `blacklist` has been renamed to `disableForScopeSelector`.
           See https://github.com/atom/autocomplete-plus/wiki/Provider-API
+        """
+
+    if apiIs2_1
+      if provider.selector?
+        grim ?= require 'grim'
+        grim.deprecate """
+          Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+          specifies `selector` instead of the `scopeSelector` attribute.
+          See https://github.com/atom/autocomplete-plus/wiki/Provider-API.
+        """
+
+      if provider.disableForSelector?
+        grim ?= require 'grim'
+        grim.deprecate """
+          Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
+          specifies `disableForSelector` instead of the `disableForScopeSelector`
+          attribute.
+          See https://github.com/atom/autocomplete-plus/wiki/Provider-API.
         """
 
     unless @isValidProvider(provider, apiVersion)

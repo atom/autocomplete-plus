@@ -1,7 +1,7 @@
 # This provider is currently experimental.
 
 _ = require 'underscore-plus'
-{TextBuffer, Range, CompositeDisposable}  = require 'atom'
+{TextBuffer, Range, CompositeDisposable, Disposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 {UnicodeLetters} = require './unicode-helpers'
 SymbolStore = require './symbol-store'
@@ -19,7 +19,8 @@ class SymbolProvider
   buffer: null
   changeUpdateDelay: 300
 
-  selector: '*'
+  textEditorSelectors: new Set(['atom-pane > .item-views > atom-text-editor'])
+  scopeSelector: '*'
   inclusionPriority: 0
   suggestionPriority: 0
 
@@ -66,6 +67,13 @@ class SymbolProvider
 
   dispose: =>
     @subscriptions.dispose()
+
+  addTextEditorSelector: (selector) ->
+    @textEditorSelectors.add(selector)
+    new Disposable => @textEditorSelectors.delete(selector)
+
+  getTextEditorSelector: ->
+    Array.from(@textEditorSelectors).join(', ')
 
   watchEditor: (editor) =>
     buffer = editor.getBuffer()

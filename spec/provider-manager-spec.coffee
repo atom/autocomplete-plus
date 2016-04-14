@@ -1,7 +1,7 @@
 ProviderManager = require '../lib/provider-manager'
 
 describe 'Provider Manager', ->
-  [providerManager, testProvider, registration] = []
+  [providerManager, testProvider, paneItemEditor, registration] = []
 
   beforeEach ->
     atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
@@ -12,8 +12,13 @@ describe 'Provider Manager', ->
           text: 'ohai',
           replacementPrefix: 'ohai'
         }]
-      selector: '.source.js'
+      scopeSelector: '.source.js'
       dispose: ->
+
+    paneItemEditor = atom.workspace.buildTextEditor()
+    paneElement = document.createElement('atom-pane')
+    editorElement = atom.views.getView(paneItemEditor)
+    paneElement.itemViews.appendChild(editorElement)
 
   afterEach ->
     registration?.dispose?()
@@ -39,8 +44,8 @@ describe 'Provider Manager', ->
       expect(providerManager.defaultProvider).toBeNull()
 
     it 'registers the default provider for all scopes', ->
-      expect(providerManager.providersForScopeDescriptor('*').length).toBe(1)
-      expect(providerManager.providersForScopeDescriptor('*')[0]).toBe(providerManager.defaultProvider)
+      expect(providerManager.applicableProviders(paneItemEditor, '*').length).toBe(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '*')[0]).toBe(providerManager.defaultProvider)
 
     it 'adds providers', ->
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
@@ -67,7 +72,7 @@ describe 'Provider Manager', ->
     it 'can identify a provider with a missing getSuggestions', ->
       bogusProvider =
         badgetSuggestions: (options) ->
-        selector: '.source.js'
+        scopeSelector: '.source.js'
         dispose: ->
       expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
       expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
@@ -76,13 +81,13 @@ describe 'Provider Manager', ->
     it 'can identify a provider with an invalid getSuggestions', ->
       bogusProvider =
         getSuggestions: 'yo, this is a bad handler'
-        selector: '.source.js'
+        scopeSelector: '.source.js'
         dispose: ->
       expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
       expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
       expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
-    it 'can identify a provider with a missing selector', ->
+    it 'can identify a provider with a missing scope selector', ->
       bogusProvider =
         getSuggestions: (options) ->
         aSelector: '.source.js'
@@ -90,17 +95,17 @@ describe 'Provider Manager', ->
       expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
       expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
-    it 'can identify a provider with an invalid selector', ->
+    it 'can identify a provider with an invalid scope selector', ->
       bogusProvider =
         getSuggestions: (options) ->
-        selector: ''
+        scopeSelector: ''
         dispose: ->
       expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
       expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
       bogusProvider =
         getSuggestions: (options) ->
-        selector: false
+        scopeSelector: false
         dispose: ->
 
       expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
@@ -120,64 +125,64 @@ describe 'Provider Manager', ->
       expect(providerManager.isValidProvider(legitProvider, '1.0.0')).toEqual(true)
 
     it 'registers a valid provider', ->
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'removes a registration', ->
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
       registration.dispose()
 
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
     it 'does not create duplicate registrations for the same scope', ->
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
     it 'does not register an invalid provider', ->
       bogusProvider =
         getSuggestions: 'yo, this is a bad handler'
-        selector: '.source.js'
+        scopeSelector: '.source.js'
         dispose: ->
           return
 
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(bogusProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(bogusProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(bogusProvider)
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(bogusProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(bogusProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
     it 'registers a provider with a blacklist', ->
@@ -187,20 +192,20 @@ describe 'Provider Manager', ->
             text: 'ohai',
             replacementPrefix: 'ohai'
           }]
-        selector: '.source.js'
-        disableForSelector: '.source.js .comment'
+        scopeSelector: '.source.js'
+        disableForScopeSelector: '.source.js .comment'
         dispose: ->
           return
 
       expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
 
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(1)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.providersForScopeDescriptor('.source.js').length).toEqual(2)
-      expect(providerManager.providersForScopeDescriptor('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
   describe 'when no providers have been registered, and enableBuiltinProvider is false', ->
@@ -209,19 +214,19 @@ describe 'Provider Manager', ->
       atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
 
     it 'does not register the default provider for all scopes', ->
-      expect(providerManager.providersForScopeDescriptor('*').length).toBe(0)
+      expect(providerManager.applicableProviders(paneItemEditor, '*').length).toBe(0)
       expect(providerManager.defaultProvider).toEqual(null)
       expect(providerManager.defaultProviderRegistration).toEqual(null)
 
   describe 'when providers have been registered', ->
-    [testProvider1, testProvider2, testProvider3, testProvider4] = []
+    [testProvider1, testProvider2, testProvider3, testProvider4, testProvider5] = []
 
     beforeEach ->
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
 
       testProvider1 =
-        selector: '.source.js'
+        scopeSelector: '.source.js'
         getSuggestions: (options) ->
           [{
             text: 'ohai2',
@@ -230,8 +235,8 @@ describe 'Provider Manager', ->
         dispose: ->
 
       testProvider2 =
-        selector: '.source.js .variable.js'
-        disableForSelector: '.source.js .variable.js .comment2'
+        scopeSelector: '.source.js .variable.js'
+        disableForScopeSelector: '.source.js .variable.js .comment2'
         providerblacklist:
           'autocomplete-plus-fuzzyprovider': '.source.js .variable.js .comment3'
         getSuggestions: (options) ->
@@ -242,7 +247,8 @@ describe 'Provider Manager', ->
         dispose: ->
 
       testProvider3 =
-        selector: '*'
+        getTextEditorSelector: -> 'atom-text-editor:not(.mini)'
+        scopeSelector: '*'
         getSuggestions: (options) ->
           [{
             text: 'ohai3',
@@ -251,7 +257,7 @@ describe 'Provider Manager', ->
         dispose: ->
 
       testProvider4 =
-        selector: '.source.js .comment'
+        scopeSelector: '.source.js .comment'
         getSuggestions: (options) ->
           [{
             text: 'ohai4',
@@ -259,90 +265,111 @@ describe 'Provider Manager', ->
           }]
         dispose: ->
 
+      testProvider5 =
+        getTextEditorSelector: -> 'atom-text-editor.mini'
+        scopeSelector: '*'
+        getSuggestions: (options) ->
+          [{
+            text: 'ohai5',
+            replacementPrefix: 'ohai5'
+          }]
+        dispose: ->
+
       providerManager.registerProvider(testProvider1)
       providerManager.registerProvider(testProvider2)
       providerManager.registerProvider(testProvider3)
       providerManager.registerProvider(testProvider4)
+      providerManager.registerProvider(testProvider5)
 
-    it 'returns providers in the correct order for the given scope chain', ->
+    it 'returns providers in the correct order for the given scope chain and editor', ->
       defaultProvider = providerManager.defaultProvider
 
-      providers = providerManager.providersForScopeDescriptor('.source.other')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.other')
       expect(providers).toHaveLength 2
       expect(providers[0]).toEqual testProvider3
       expect(providers[1]).toEqual defaultProvider
 
-      providers = providerManager.providersForScopeDescriptor('.source.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual testProvider1
       expect(providers[1]).toEqual testProvider3
       expect(providers[2]).toEqual defaultProvider
 
-      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .comment')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual testProvider4
       expect(providers[1]).toEqual testProvider1
       expect(providers[2]).toEqual testProvider3
       expect(providers[3]).toEqual defaultProvider
 
-      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .variable.js')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual testProvider2
       expect(providers[1]).toEqual testProvider1
       expect(providers[2]).toEqual testProvider3
       expect(providers[3]).toEqual defaultProvider
 
-      providers = providerManager.providersForScopeDescriptor('.source.js .other.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .other.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual testProvider1
       expect(providers[1]).toEqual testProvider3
       expect(providers[2]).toEqual defaultProvider
 
+      plainEditor = atom.workspace.buildTextEditor()
+      providers = providerManager.applicableProviders(plainEditor, '.source.js')
+      expect(providers).toHaveLength 1
+      expect(providers[0]).toEqual testProvider3
+
+      miniEditor = atom.workspace.buildTextEditor({mini: true})
+      providers = providerManager.applicableProviders(miniEditor, '.source.js')
+      expect(providers).toHaveLength 1
+      expect(providers[0]).toEqual testProvider5
+
     it 'does not return providers if the scopeChain exactly matches a global blacklist item', ->
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js .comment'])
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 0
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment')).toHaveLength 0
 
     it 'does not return providers if the scopeChain matches a global blacklist item with a wildcard', ->
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 0
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment')).toHaveLength 0
 
     it 'does not return providers if the scopeChain matches a global blacklist item with a wildcard one level of depth below the current scope', ->
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment .other')).toHaveLength 0
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment .other')).toHaveLength 0
 
     it 'does return providers if the scopeChain does not match a global blacklist item with a wildcard', ->
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment')).toHaveLength 4
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.coffee *'])
-      expect(providerManager.providersForScopeDescriptor('.source.js .comment')).toHaveLength 4
+      expect(providerManager.applicableProviders(paneItemEditor, '.source.js .comment')).toHaveLength 4
 
     it 'filters a provider if the scopeChain matches a provider blacklist item', ->
       defaultProvider = providerManager.defaultProvider
 
-      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .other.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .variable.js .other.js')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual testProvider2
       expect(providers[1]).toEqual testProvider1
       expect(providers[2]).toEqual testProvider3
       expect(providers[3]).toEqual defaultProvider
 
-      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .comment2.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .variable.js .comment2.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual testProvider1
       expect(providers[1]).toEqual testProvider3
       expect(providers[2]).toEqual defaultProvider
 
     it 'filters a provider if the scopeChain matches a provider providerblacklist item', ->
-      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .other.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .variable.js .other.js')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual(testProvider2)
       expect(providers[1]).toEqual(testProvider1)
       expect(providers[2]).toEqual(testProvider3)
       expect(providers[3]).toEqual(providerManager.defaultProvider)
 
-      providers = providerManager.providersForScopeDescriptor('.source.js .variable.js .comment3.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .variable.js .comment3.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual(testProvider2)
       expect(providers[1]).toEqual(testProvider1)
@@ -357,27 +384,27 @@ describe 'Provider Manager', ->
       defaultProvider = providerManager.defaultProvider
 
       accessoryProvider1 =
-        selector: '*'
+        scopeSelector: '*'
         inclusionPriority: 2
         getSuggestions: (options) ->
         dispose: ->
 
       accessoryProvider2 =
-        selector: '.source.js'
+        scopeSelector: '.source.js'
         inclusionPriority: 2
         excludeLowerPriority: false
         getSuggestions: (options) ->
         dispose: ->
 
       verySpecificProvider =
-        selector: '.source.js .comment'
+        scopeSelector: '.source.js .comment'
         inclusionPriority: 2
         excludeLowerPriority: true
         getSuggestions: (options) ->
         dispose: ->
 
       mainProvider =
-        selector: '.source.js'
+        scopeSelector: '.source.js'
         inclusionPriority: 1
         excludeLowerPriority: true
         getSuggestions: (options) ->
@@ -389,20 +416,20 @@ describe 'Provider Manager', ->
       providerManager.registerProvider(mainProvider)
 
     it 'returns the default provider and higher when nothing with a higher proirity is excluding the lower', ->
-      providers = providerManager.providersForScopeDescriptor('.source.coffee')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.coffee')
       expect(providers).toHaveLength 2
       expect(providers[0]).toEqual accessoryProvider1
       expect(providers[1]).toEqual defaultProvider
 
     it 'exclude the lower priority provider, the default, when one with a higher proirity excludes the lower', ->
-      providers = providerManager.providersForScopeDescriptor('.source.js')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual accessoryProvider2
       expect(providers[1]).toEqual mainProvider
       expect(providers[2]).toEqual accessoryProvider1
 
     it 'excludes the all lower priority providers when multiple providers of lower priority', ->
-      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .comment')
       expect(providers).toHaveLength 3
       expect(providers[0]).toEqual verySpecificProvider
       expect(providers[1]).toEqual accessoryProvider2
@@ -416,19 +443,19 @@ describe 'Provider Manager', ->
       defaultProvider = providerManager.defaultProvider
 
       provider1 =
-        selector: '*'
+        scopeSelector: '*'
         suggestionPriority: 2
         getSuggestions: (options) ->
         dispose: ->
 
       provider2 =
-        selector: '.source.js'
+        scopeSelector: '.source.js'
         suggestionPriority: 3
         getSuggestions: (options) ->
         dispose: ->
 
       provider3 =
-        selector: '.source.js .comment'
+        scopeSelector: '.source.js .comment'
         suggestionPriority: 2
         getSuggestions: (options) ->
         dispose: ->
@@ -438,7 +465,7 @@ describe 'Provider Manager', ->
       providerManager.registerProvider(provider3)
 
     it 'sorts by specificity', ->
-      providers = providerManager.providersForScopeDescriptor('.source.js .comment')
+      providers = providerManager.applicableProviders(paneItemEditor, '.source.js .comment')
       expect(providers).toHaveLength 4
       expect(providers[0]).toEqual provider2
       expect(providers[1]).toEqual provider3

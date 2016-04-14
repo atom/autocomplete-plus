@@ -44,7 +44,7 @@ describe 'Autocomplete Manager', ->
 
       runs ->
         provider =
-          selector: '*'
+          scopeSelector: '*'
           inclusionPriority: 2
           excludeLowerPriority: true
           getSuggestions: ({prefix}) ->
@@ -252,7 +252,7 @@ describe 'Autocomplete Manager', ->
     describe "when filterSuggestions option is true", ->
       beforeEach ->
         provider =
-          selector: '*'
+          scopeSelector: '*'
           filterSuggestions: true
           inclusionPriority: 3
           excludeLowerPriority: true

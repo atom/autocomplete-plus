@@ -175,7 +175,7 @@ class ProviderManager
         grim.deprecate """
           Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
           contains a `blacklist` property.
-          `blacklist` has been renamed to `disableForSelector`.
+          `blacklist` has been renamed to `disableForScopeSelector`.
           See https://github.com/atom/autocomplete-plus/wiki/Provider-API
         """
 

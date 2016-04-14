@@ -38,7 +38,7 @@ describe 'Provider API', ->
   describe 'Provider API v2.0.0', ->
     it 'registers the provider specified by [provider]', ->
       testProvider =
-        selector: '.source.js,.source.coffee'
+        scopeSelector: '.source.js,.source.coffee'
         getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
@@ -47,7 +47,7 @@ describe 'Provider API', ->
 
     it 'registers the provider specified by the naked provider', ->
       testProvider =
-        selector: '.source.js,.source.coffee'
+        scopeSelector: '.source.js,.source.coffee'
         getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
@@ -56,7 +56,7 @@ describe 'Provider API', ->
 
     it 'passes the correct parameters to getSuggestions for the version', ->
       testProvider =
-        selector: '.source.js,.source.coffee'
+        scopeSelector: '.source.js,.source.coffee'
         getSuggestions: (options) -> [text: 'ohai', replacementPrefix: 'ohai']
 
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
@@ -78,7 +78,7 @@ describe 'Provider API', ->
 
     it 'correctly displays the suggestion options', ->
       testProvider =
-        selector: '.source.js, .source.coffee'
+        scopeSelector: '.source.js, .source.coffee'
         getSuggestions: (options) ->
           [
             text: 'ohai',
@@ -99,7 +99,7 @@ describe 'Provider API', ->
 
     it "favors the `displayText` over text or snippet suggestion options", ->
       testProvider =
-        selector: '.source.js, .source.coffee'
+        scopeSelector: '.source.js, .source.coffee'
         getSuggestions: (options) ->
           [
             text: 'ohai',
@@ -119,7 +119,7 @@ describe 'Provider API', ->
 
     it 'correctly displays the suggestion description and More link', ->
       testProvider =
-        selector: '.source.js, .source.coffee'
+        scopeSelector: '.source.js, .source.coffee'
         getSuggestions: (options) ->
           [
             text: 'ohai',
@@ -150,7 +150,7 @@ describe 'Provider API', ->
 
       it 'filters suggestions based on the default prefix', ->
         testProvider =
-          selector: '.source.js'
+          scopeSelector: '.source.js'
           filterSuggestions: true
           getSuggestions: (options) ->
             [
@@ -174,7 +174,7 @@ describe 'Provider API', ->
 
       it 'filters suggestions based on the specified replacementPrefix for each suggestion', ->
         testProvider =
-          selector: '.source.js'
+          scopeSelector: '.source.js'
           filterSuggestions: true
           getSuggestions: (options) ->
             [
@@ -199,7 +199,7 @@ describe 'Provider API', ->
 
       it 'allows all suggestions when the prefix is an empty string / space', ->
         testProvider =
-          selector: '.source.js'
+          scopeSelector: '.source.js'
           filterSuggestions: true
           getSuggestions: (options) ->
             [

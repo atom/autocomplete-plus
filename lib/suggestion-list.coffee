@@ -13,7 +13,6 @@ class SuggestionList
       'autocomplete-plus:confirm': @confirmSelection,
       'autocomplete-plus:confirmIfNonDefault': @confirmSelectionIfNonDefault,
       'autocomplete-plus:cancel': @cancel
-    @subscriptions.add atom.config.observe 'autocomplete-plus.useCoreMovementCommands', => @bindToMovementCommands()
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableExtendedUnicodeSupport', (enableExtendedUnicodeSupport) =>
       if enableExtendedUnicodeSupport
         @wordPrefixRegex = new RegExp("^[#{UnicodeLetters}\\d_-]")
@@ -21,7 +20,24 @@ class SuggestionList
         @wordPrefixRegex = /^[\w-]/
     ))
 
-  bindToMovementCommands: ->
+  addBindings: (editor) ->
+    @bindings?.dispose()
+    @bindings = new CompositeDisposable
+
+    completionKey = atom.config.get('autocomplete-plus.confirmCompletion') or ''
+
+    keys = {}
+    keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
+    if completionKey.indexOf('enter') > -1
+      if completionKey.indexOf('always') > -1
+        keys['enter'] = 'autocomplete-plus:confirmIfNonDefault'
+      else
+        keys['enter'] = 'autocomplete-plus:confirm'
+
+    @bindings.add atom.keymaps.add(
+      'atom-text-editor.autocomplete-active',
+      {'atom-text-editor.autocomplete-active': keys})
+
     useCoreMovementCommands = atom.config.get('autocomplete-plus.useCoreMovementCommands')
     commandNamespace = if useCoreMovementCommands then 'core' else 'autocomplete-plus'
 
@@ -51,29 +67,12 @@ class SuggestionList
         @selectBottom()
         event.stopImmediatePropagation()
 
-    @movementCommandSubscriptions?.dispose()
-    @movementCommandSubscriptions = new CompositeDisposable
-    @movementCommandSubscriptions.add atom.commands.add('atom-text-editor.autocomplete-active', commands)
+    @bindings.add atom.commands.add(
+      atom.views.getView(editor), commands)
 
-  addKeyboardInteraction: ->
-    @removeKeyboardInteraction()
-    completionKey = atom.config.get('autocomplete-plus.confirmCompletion') or ''
-
-    keys = {}
-    keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
-    if completionKey.indexOf('enter') > -1
-      if completionKey.indexOf('always') > -1
-        keys['enter'] = 'autocomplete-plus:confirmIfNonDefault'
-      else
-        keys['enter'] = 'autocomplete-plus:confirm'
-
-    @keymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
-    @subscriptions.add(@keymaps)
-
-  removeKeyboardInteraction: ->
-    @keymaps?.dispose()
-    @keymaps = null
-    @subscriptions.remove(@keymaps)
+    @bindings.add(
+      atom.config.onDidChange 'autocomplete-plus.useCoreMovementCommands', =>
+        @addBindings(editor))
 
   ###
   Section: Event Triggers
@@ -181,7 +180,7 @@ class SuggestionList
       @displayBufferPosition = bufferPosition
       marker = @suggestionMarker = editor.markBufferRange([bufferPosition, bufferPosition])
       @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this, position: 'tail'})
-      @addKeyboardInteraction()
+      @addBindings(editor)
 
   showAtCursorPosition: (editor) =>
     return if @activeEditor is editor or not editor?
@@ -190,12 +189,12 @@ class SuggestionList
     if marker = editor.getLastCursor()?.getMarker()
       @activeEditor = editor
       @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
-      @addKeyboardInteraction()
+      @addBindings(editor)
 
   hide: =>
     return if @activeEditor is null
     @destroyOverlay()
-    @removeKeyboardInteraction()
+    @bindings?.dispose()
     @activeEditor = null
 
   destroyOverlay: =>
@@ -212,6 +211,6 @@ class SuggestionList
   # Public: Clean up, stop listening to events
   dispose: ->
     @subscriptions.dispose()
-    @movementCommandSubscriptions?.dispose()
+    @bindings?.dispose()
     @emitter.emit('did-dispose')
     @emitter.dispose()

@@ -1,4 +1,4 @@
-{CompositeDisposable} = require 'atom'
+{Disposable, CompositeDisposable} = require 'atom'
 SnippetParser = require './snippet-parser'
 {isString} = require('./type-helpers')
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
@@ -57,7 +57,7 @@ class SuggestionListElement extends HTMLElement
     @itemsChanged()
 
   detachedCallback: ->
-    @removeActiveClassFromEditor()
+    @activeClassDisposable?.dispose()
 
   initialize: (@model) ->
     return unless model?
@@ -126,12 +126,10 @@ class SuggestionListElement extends HTMLElement
     atom.views.readDocument @readUIPropsFromDOM.bind(this)
 
   addActiveClassToEditor: ->
-    editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
+    editorElement = atom.views.getView(@model?.activeEditor)
     editorElement?.classList?.add 'autocomplete-active'
-
-  removeActiveClassFromEditor: ->
-    editorElement = atom.views.getView(atom.workspace.getActiveTextEditor())
-    editorElement?.classList?.remove 'autocomplete-active'
+    @activeClassDisposable = new Disposable ->
+      editorElement?.classList?.remove 'autocomplete-active'
 
   moveSelectionUp: ->
     unless @selectedIndex <= 0

@@ -26,10 +26,10 @@ class ProviderMetadata
     if providerBlacklist = @provider.providerblacklist?['autocomplete-plus-fuzzyprovider']
       @disableDefaultProviderSelectors = Selector.create(providerBlacklist)
 
-    @enableCustorTextEditorSelector = semver.satisfies(@provider[API_VERSION], '>=2.1.0')
+    @enableCustomTextEditorSelector = semver.satisfies(@provider[API_VERSION], '>=2.1.0')
 
   matchesEditor: (editor) ->
-    if @enableCustorTextEditorSelector and @provider.getTextEditorSelector?
+    if @enableCustomTextEditorSelector and @provider.getTextEditorSelector?
       atom.views.getView(editor).matches(@provider.getTextEditorSelector())
     else
       # Backwards compatibility.

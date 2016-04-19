@@ -59,8 +59,8 @@ class AutocompleteManager
 
   setSnippetsManager: (@snippetsManager) ->
 
-  updateCurrentEditor: (currentPaneItem) =>
-    return if not currentPaneItem? or currentPaneItem is @editor
+  updateCurrentEditor: (currentEditor) =>
+    return if not currentEditor? or currentEditor is @editor
 
     @editorSubscriptions?.dispose()
     @editorSubscriptions = null
@@ -71,10 +71,10 @@ class AutocompleteManager
     @buffer = null
     @isCurrentFileBlackListedCache = null
 
-    return unless @paneItemIsValid(currentPaneItem)
+    return unless @editorIsValid(currentEditor)
 
     # Track the new editor, editorView, and buffer
-    @editor = currentPaneItem
+    @editor = currentEditor
     @editorView = atom.views.getView(@editor)
     @buffer = @editor.getBuffer()
 
@@ -105,14 +105,14 @@ class AutocompleteManager
     @editorSubscriptions.add @editor.onDidChangePath =>
       @isCurrentFileBlackListedCache = null
 
-  paneItemIsValid: (paneItem) ->
+  editorIsValid: (editor) ->
     # TODO: remove conditional when `isTextEditor` is shipped.
     if typeof atom.workspace.isTextEditor is "function"
-      atom.workspace.isTextEditor(paneItem)
+      atom.workspace.isTextEditor(editor)
     else
-      return false unless paneItem?
+      return false unless editor?
       # Should we disqualify TextEditors with the Grammar text.plain.null-grammar?
-      paneItem.getText?
+      editor.getText?
 
   handleEvents: =>
     # Observe `TextEditors` in the `TextEditorRegistry` and listen for focus,

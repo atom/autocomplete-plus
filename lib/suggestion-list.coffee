@@ -6,7 +6,7 @@ class SuggestionList
   wordPrefixRegex: null
 
   constructor: ->
-    @active = false
+    @activeEditor = null
     @emitter = new Emitter
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-text-editor.autocomplete-active',
@@ -139,7 +139,7 @@ class SuggestionList
     @emitter.on('did-change-items', fn)
 
   isActive: ->
-    @active
+    @activeEditor?
 
   show: (editor, options) =>
     if atom.config.get('autocomplete-plus.suggestionListFollows') is 'Cursor'
@@ -160,32 +160,32 @@ class SuggestionList
     bufferPosition = editor.getCursorBufferPosition()
     bufferPosition = bufferPosition.translate([0, -prefix.length]) if followRawPrefix or @wordPrefixRegex.test(prefix)
 
-    if @active
+    if @activeEditor is editor
       unless bufferPosition.isEqual(@displayBufferPosition)
         @displayBufferPosition = bufferPosition
         @suggestionMarker?.setBufferRange([bufferPosition, bufferPosition])
     else
       @destroyOverlay()
+      @activeEditor = editor
       @displayBufferPosition = bufferPosition
       marker = @suggestionMarker = editor.markBufferRange([bufferPosition, bufferPosition])
       @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this, position: 'tail'})
       @addKeyboardInteraction()
-      @active = true
 
   showAtCursorPosition: (editor) =>
-    return if @active or not editor?
+    return if @activeEditor is editor or not editor?
     @destroyOverlay()
 
     if marker = editor.getLastCursor()?.getMarker()
+      @activeEditor = editor
       @overlayDecoration = editor.decorateMarker(marker, {type: 'overlay', item: this})
       @addKeyboardInteraction()
-      @active = true
 
   hide: =>
-    return unless @active
+    return if @activeEditor is null
     @destroyOverlay()
     @removeKeyboardInteraction()
-    @active = false
+    @activeEditor = null
 
   destroyOverlay: =>
     if @suggestionMarker?

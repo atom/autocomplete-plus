@@ -51,10 +51,10 @@ describe 'Provider Manager', ->
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
       expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe false
 
-      providerManager.addProvider(testProvider, '2.0.0')
+      providerManager.addProvider(testProvider, '3.0.0')
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(true)
       apiVersion = providerManager.apiVersionForProvider(testProvider)
-      expect(apiVersion).toEqual('2.0.0')
+      expect(apiVersion).toEqual('3.0.0')
       expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe true
 
     it 'removes providers', ->
@@ -74,41 +74,41 @@ describe 'Provider Manager', ->
         badgetSuggestions: (options) ->
         scopeSelector: '.source.js'
         dispose: ->
-      expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider({}, '3.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
 
     it 'can identify a provider with an invalid getSuggestions', ->
       bogusProvider =
         getSuggestions: 'yo, this is a bad handler'
         scopeSelector: '.source.js'
         dispose: ->
-      expect(providerManager.isValidProvider({}, '2.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider({}, '3.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
 
     it 'can identify a provider with a missing scope selector', ->
       bogusProvider =
         getSuggestions: (options) ->
         aSelector: '.source.js'
         dispose: ->
-      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
 
     it 'can identify a provider with an invalid scope selector', ->
       bogusProvider =
         getSuggestions: (options) ->
         scopeSelector: ''
         dispose: ->
-      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
 
       bogusProvider =
         getSuggestions: (options) ->
         scopeSelector: false
         dispose: ->
 
-      expect(providerManager.isValidProvider(bogusProvider, '2.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
 
     it 'correctly identifies a 1.0 provider', ->
       bogusProvider =
@@ -197,7 +197,7 @@ describe 'Provider Manager', ->
         dispose: ->
           return
 
-      expect(providerManager.isValidProvider(testProvider, '2.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
 
       expect(providerManager.applicableProviders(paneItemEditor, '.source.js').length).toEqual(1)
       expect(providerManager.applicableProviders(paneItemEditor, '.source.js').indexOf(testProvider)).toBe(-1)

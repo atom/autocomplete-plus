@@ -135,7 +135,7 @@ class ProviderManager
   isProviderRegistered: (provider) ->
     @metadataForProvider(provider)?
 
-  addProvider: (provider, apiVersion='2.0.0') =>
+  addProvider: (provider, apiVersion='3.0.0') =>
     return if @isProviderRegistered(provider)
     ProviderMetadata ?= require './provider-metadata'
     @providers.push new ProviderMetadata(provider, apiVersion)
@@ -149,13 +149,13 @@ class ProviderManager
         break
     @subscriptions?.remove(provider) if provider.dispose?
 
-  registerProvider: (provider, apiVersion='2.0.0') =>
+  registerProvider: (provider, apiVersion='3.0.0') =>
     return unless provider?
 
     provider[API_VERSION] = apiVersion
 
     apiIs2_0 = semver.satisfies(apiVersion, '>=2.0.0')
-    apiIs2_1 = semver.satisfies(apiVersion, '>=2.1.0')
+    apiIs3_0 = semver.satisfies(apiVersion, '>=3.0.0')
 
     if apiIs2_0
       if provider.id? and provider isnt @defaultProvider
@@ -183,23 +183,21 @@ class ProviderManager
           See https://github.com/atom/autocomplete-plus/wiki/Provider-API
         """
 
-    if apiIs2_1
+    if apiIs3_0
       if provider.selector?
-        grim ?= require 'grim'
-        grim.deprecate """
+        throw new Error("""
           Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
           specifies `selector` instead of the `scopeSelector` attribute.
           See https://github.com/atom/autocomplete-plus/wiki/Provider-API.
-        """
+        """)
 
       if provider.disableForSelector?
-        grim ?= require 'grim'
-        grim.deprecate """
+        throw new Error("""
           Autocomplete provider '#{provider.constructor.name}(#{provider.id})'
           specifies `disableForSelector` instead of the `disableForScopeSelector`
           attribute.
           See https://github.com/atom/autocomplete-plus/wiki/Provider-API.
-        """
+        """)
 
     unless @isValidProvider(provider, apiVersion)
       console.warn "Provider #{provider.constructor.name} is not valid", provider

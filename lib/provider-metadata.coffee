@@ -26,7 +26,7 @@ class ProviderMetadata
     if providerBlacklist = @provider.providerblacklist?['autocomplete-plus-fuzzyprovider']
       @disableDefaultProviderSelectors = Selector.create(providerBlacklist)
 
-    @enableCustomTextEditorSelector = semver.satisfies(@provider[API_VERSION], '>=2.1.0')
+    @enableCustomTextEditorSelector = semver.satisfies(@provider[API_VERSION], '>=3.0.0')
 
   matchesEditor: (editor) ->
     if @enableCustomTextEditorSelector and @provider.getTextEditorSelector?

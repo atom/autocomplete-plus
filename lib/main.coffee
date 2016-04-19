@@ -56,12 +56,12 @@ module.exports =
   consumeProvider_2_0: (providers) ->
     @consumeProvider(providers, '2.0.0')
 
-  # 2.1.0 API
+  # 3.0.0 API
   # providers - either a provider or a list of providers
-  consumeProvider_2_1: (providers) ->
-    @consumeProvider(providers, '2.1.0')
+  consumeProvider_3_0: (providers) ->
+    @consumeProvider(providers, '3.0.0')
 
-  consumeProvider: (providers, apiVersion='2.1.0') ->
+  consumeProvider: (providers, apiVersion='3.0.0') ->
     providers = [providers] if providers? and not Array.isArray(providers)
     return unless providers?.length > 0
     registrations = new CompositeDisposable

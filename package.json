@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "atom-slick": "^2.0.0",
-    "fuzzaldrin": "^3.0.0",
+    "fuzzaldrin": "^2.1.0",
     "fuzzaldrin-plus": "^0.1.0",
     "grim": "^1.4.0",
     "minimatch": "^2.0.1",

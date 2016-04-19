@@ -27,9 +27,10 @@
   "consumedServices": {
     "autocomplete.provider": {
       "versions": {
-        "1.0.0": "consumeProviderLegacy",
-        "1.1.0": "consumeProvidersLegacy",
-        "2.0.0": "consumeProvider"
+        "1.0.0": "consumeProvider_1_0",
+        "1.1.0": "consumeProvider_1_1",
+        "2.0.0": "consumeProvider_2_0",
+        "3.0.0": "consumeProvider_3_0"
       }
     },
     "snippets": {

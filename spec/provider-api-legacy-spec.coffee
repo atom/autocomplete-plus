@@ -47,6 +47,22 @@ describe 'Provider API Legacy', ->
     testProvider?.dispose() if testProvider?.dispose?
     testProvider = null
 
+  describe "Provider with API v2.0 registered as 3.0", ->
+    it "throws exceptions for renamed provider properties on registration", ->
+      expect(->
+        mainModule.consumeProvider_3_0({
+          selector: '*'
+          getSuggestions: ->
+        })
+      ).toThrow()
+
+      expect(->
+        mainModule.consumeProvider_3_0({
+          disableForSelector: '*'
+          getSuggestions: ->
+        })
+      ).toThrow()
+
   describe 'Provider with API v1.0 registered as 2.0', ->
     it "raises deprecations for provider attributes on registration", ->
       numberDeprecations = grim.getDeprecationsLength()

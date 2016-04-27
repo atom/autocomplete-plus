@@ -11,6 +11,7 @@ class SuggestionList
     @subscriptions = new CompositeDisposable
     @subscriptions.add atom.commands.add 'atom-text-editor.autocomplete-active',
       'autocomplete-plus:confirm': @confirmSelection,
+      'autocomplete-plus:confirmIfNonDefault': @confirmSelectionIfNonDefault,
       'autocomplete-plus:cancel': @cancel
     @subscriptions.add atom.config.observe 'autocomplete-plus.useCoreMovementCommands', => @bindToMovementCommands()
     @subscriptions.add(atom.config.observe('autocomplete-plus.enableExtendedUnicodeSupport', (enableExtendedUnicodeSupport) =>
@@ -60,7 +61,11 @@ class SuggestionList
 
     keys = {}
     keys['tab'] = 'autocomplete-plus:confirm' if completionKey.indexOf('tab') > -1
-    keys['enter'] = 'autocomplete-plus:confirm' if completionKey.indexOf('enter') > -1
+    if completionKey.indexOf('enter') > -1
+      if completionKey.indexOf('always') > -1
+        keys['enter'] = 'autocomplete-plus:confirmIfNonDefault'
+      else
+        keys['enter'] = 'autocomplete-plus:confirm'
 
     @keymaps = atom.keymaps.add('atom-text-editor.autocomplete-active', {'atom-text-editor.autocomplete-active': keys})
     @subscriptions.add(@keymaps)
@@ -82,6 +87,9 @@ class SuggestionList
 
   confirmSelection: =>
     @emitter.emit('did-confirm-selection')
+
+  confirmSelectionIfNonDefault: (event) =>
+    @emitter.emit('did-confirm-selection-if-non-default', event)
 
   selectNext: ->
     @emitter.emit('did-select-next')
@@ -107,6 +115,9 @@ class SuggestionList
 
   onDidConfirmSelection: (fn) ->
     @emitter.on('did-confirm-selection', fn)
+
+  onDidconfirmSelectionIfNonDefault: (fn) ->
+    @emitter.on('did-confirm-selection-if-non-default', fn)
 
   onDidConfirm: (fn) ->
     @emitter.on('did-confirm', fn)

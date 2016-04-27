@@ -70,7 +70,8 @@
       "enum": [
         "tab",
         "enter",
-        "tab and enter"
+        "tab and enter",
+        "tab always, enter when suggestion explicitly selected"
       ],
       "order": 4
     },

@@ -101,7 +101,12 @@ class AutocompleteManager
 
     # Subscribe to editor events:
     # Close the overlay when the cursor moved without changing any text
-    @editorSubscriptions.add(@editor.onDidChangeCursorPosition(@cursorMoved))
+    if @editor.onDidUpdateCursors?
+      @editorSubscriptions.add(@editor.onDidUpdateCursors((event) =>
+        @cursorMoved({textChanged: event.touched.size isnt 0})
+      ))
+    else
+      @editorSubscriptions.add(@editor.onDidChangeCursorPosition(@cursorMoved))
     @editorSubscriptions.add @editor.onDidChangePath =>
       @isCurrentFileBlackListedCache = null
 
@@ -380,10 +385,6 @@ class AutocompleteManager
     @suggestionList.hide()
     @shouldDisplaySuggestions = false
 
-  requestHideSuggestionList: (command) ->
-    @hideTimeout = setTimeout(@hideSuggestionList, 0)
-    @shouldDisplaySuggestions = false
-
   cancelHideSuggestionListRequest: ->
     clearTimeout(@hideTimeout)
 
@@ -466,13 +467,9 @@ class AutocompleteManager
   #
   # data - An {Object} containing information on why the cursor has been moved
   cursorMoved: ({textChanged}) =>
-    # The delay is a workaround for the backspace case. The way atom implements
-    # backspace is to select left 1 char, then delete. This results in a
-    # cursorMoved event with textChanged == false. So we delay, and if the
-    # bufferChanged handler decides to show suggestions, it will cancel the
-    # hideSuggestionList request. If there is no bufferChanged event,
-    # suggestionList will be hidden.
-    @requestHideSuggestionList() unless textChanged or @shouldActivate
+    unless textChanged or @shouldActivate
+      @hideSuggestionList()
+      @shouldDisplaySuggestions = false
 
   # Private: Gets called when the user saves the document. Cancels the
   # autocompletion.

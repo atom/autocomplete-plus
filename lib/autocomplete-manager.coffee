@@ -155,12 +155,13 @@ class AutocompleteManager
         @shouldDisplaySuggestions = true
         @findSuggestions(event.detail?.activatedManually ? true)
 
-      'autocomplete-plus:navigate-to-more-url': =>
-        descriptionContainer = @editorView.querySelector('.suggestion-description')
+      'autocomplete-plus:navigate-to-description-more-link': =>
+        suggestionList = atom.views.getView(@suggestionList)
+        descriptionContainer = suggestionList.querySelector('.suggestion-description')
         if descriptionContainer.style.display is 'block'
-          descriptionMoreLink = @editorView.querySelector('.suggestion-description-more-link')
+          descriptionMoreLink = descriptionContainer.querySelector('.suggestion-description-more-link')
           require('shell').openExternal(descriptionMoreLink.href)
-
+          
   # Private: Finds suggestions for the current prefix, sets the list items,
   # positions the overlay and shows it
   findSuggestions: (activatedManually) =>

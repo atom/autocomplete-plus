@@ -442,7 +442,7 @@ class AutocompleteManager
 
     minimatch ?= require('minimatch')
     fullpath = @buffer.getPath()
-    if (!fullpath)
+    if not fullpath
       return false
     fileName = path.basename(fullpath)
     for blacklistGlob in @fileBlacklist

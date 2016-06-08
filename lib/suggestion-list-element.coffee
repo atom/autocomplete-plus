@@ -8,8 +8,8 @@ ItemTemplate = """
   <span class="left-label"></span>
   <span class="word-container">
     <span class="word"></span>
-    <span class="right-label"></span>
   </span>
+  <span class="right-label"></span>
 """
 
 ListTemplate = """

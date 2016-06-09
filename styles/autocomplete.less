@@ -26,7 +26,6 @@ autocomplete-suggestion-list.select-list.popover-list {
 
   .suggestion-list-scroller {
     overflow-y: auto;
-    margin-right: 10px;
   }
 
   .suggestion-description {
@@ -139,21 +138,22 @@ autocomplete-suggestion-list {
     color: @text-color-subtle;
 
     &:empty {
-      padding: 0;
+      padding-right: 0;
     }
   }
 
   .right-label {
-    padding-left: @item-padding;
-    padding-right: @item-side-padding;
-
+    padding-right: @item-padding;
     font-size: @font-size-small;
     color: @text-color-subtle;
 
     &:empty {
-      width: @item-side-padding;
-      padding: 0;
+      padding-right: 0;
     }
+  }
+
+  .word-container {
+    padding-right: @item-padding;
   }
 
   .word {
@@ -185,7 +185,7 @@ autocomplete-suggestion-list {
   }
 
   .word {
-    max-width: 500px;
+    max-width: 430px; // magic number to also fit the icon-container + scrollbar in the 800px max-width
   }
 
   .make-type-icon(attribute, @syntax-color-attribute);

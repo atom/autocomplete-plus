@@ -102,17 +102,22 @@ class SuggestionListElement extends HTMLElement
   updateDescription: (item) ->
     item = item ? @model?.items?[@selectedIndex]
     return unless item?
-    if item.description? and item.description.length > 0
+    if item.descriptionHTML?.length > 0
+      @descriptionContainer.style.display = 'block'
+      @descriptionContent.innerHTML = item.descriptionHTML
+    else if item.description?.length > 0
       @descriptionContainer.style.display = 'block'
       @descriptionContent.textContent = item.description
-      if item.descriptionMoreURL? and item.descriptionMoreURL.length?
+    else
+      @descriptionContainer.style.display = 'none'
+
+    if @descriptionContent.innerHTML or @descriptionContent.textContent
+      if item.descriptionMoreURL?.length > 0
         @descriptionMoreLink.style.display = 'inline'
         @descriptionMoreLink.setAttribute('href', item.descriptionMoreURL)
       else
         @descriptionMoreLink.style.display = 'none'
         @descriptionMoreLink.setAttribute('href', '#')
-    else
-      @descriptionContainer.style.display = 'none'
 
   itemsChanged: ->
     if @model?.items?.length
@@ -226,7 +231,11 @@ class SuggestionListElement extends HTMLElement
 
   descriptionLength: (item) ->
     count = 0
-    if item.description?
+    if item.descriptionHTML?
+      template = document.createElement('template')
+      template.innerHTML = item.descriptionHTML
+      count += template.content.textContent.length
+    else if item.description?
       count += item.description.length
     if item.descriptionMoreURL?
       count += 6

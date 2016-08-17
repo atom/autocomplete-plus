@@ -96,7 +96,7 @@
     },
     "scopeBlacklist": {
       "title": "Scope Blacklist",
-      "description": "Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors",
+      "description": "Suggestions will not be provided for scopes matching this list. See: http://flight-manual.atom.io/behind-atom/sections/scoped-settings-scopes-and-scope-descriptors/",
       "type": "array",
       "default": [],
       "items": {

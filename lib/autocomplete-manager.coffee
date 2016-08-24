@@ -441,7 +441,7 @@ class AutocompleteManager
       return @isCurrentFileBlackListedCache
 
     minimatch ?= require('minimatch')
-    fileName = path.basename(@buffer.getPath())
+    fileName = path.basename(@buffer.getPath() ? '')
     for blacklistGlob in @fileBlacklist
       if minimatch(fileName, blacklistGlob)
         @isCurrentFileBlackListedCache = true

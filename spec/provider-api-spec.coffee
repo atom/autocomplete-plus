@@ -139,7 +139,7 @@ describe 'Provider API', ->
         expect(content).toHaveText('There be documentation')
         expect(moreLink).toHaveText('More..')
         expect(moreLink.style.display).toBe 'inline'
-        expect(moreLink.getAttribute('href')).toBe 'http://google.com'
+        expect(moreLink.onclick).toBeDefined()
 
     describe "when the filterSuggestions option is set to true", ->
       getSuggestions = ->

@@ -1,9 +1,8 @@
 SymbolStore = require '../lib/symbol-store'
 {Selector} = require 'selector-kit'
-{Range} = require 'atom'
 
 describe 'SymbolStore', ->
-  [store, editor, buffer] = []
+  [store, editor] = []
   beforeEach ->
     waitsForPromise ->
       Promise.all [

@@ -436,11 +436,10 @@ describe 'Provider Manager', ->
       expect(providers[2]).toEqual accessoryProvider1
 
   describe "when suggestionPriorities are the same", ->
-    [provider1, provider2, provider3, defaultProvider] = []
+    [provider1, provider2, provider3] = []
     beforeEach ->
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
-      defaultProvider = providerManager.defaultProvider
 
       provider1 =
         scopeSelector: '*'

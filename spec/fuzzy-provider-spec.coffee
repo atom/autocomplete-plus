@@ -1,7 +1,5 @@
-{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
-
 describe 'FuzzyProvider', ->
-  [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
+  [completionDelay, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
     # Set to live completion
@@ -29,7 +27,6 @@ describe 'FuzzyProvider', ->
       runs ->
         autocompleteManager = mainModule.autocompleteManager
         advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
-        editorView = atom.views.getView(editor)
 
     it 'adds words to the wordlist after they have been written', ->
       editor.moveToBottom()

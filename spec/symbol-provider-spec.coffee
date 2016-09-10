@@ -1,5 +1,4 @@
-{Point, TextBuffer} = require 'atom'
-{triggerAutocompletion, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
+{TextBuffer} = require 'atom'
 
 waitForBufferToStopChanging = -> advanceClock(TextBuffer::stoppedChangingDelay)
 
@@ -13,7 +12,7 @@ suggestionsForPrefix = (provider, editor, prefix, options) ->
     if suggestions then (sug.text for sug in suggestions) else []
 
 describe 'SymbolProvider', ->
-  [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
+  [completionDelay, editor, mainModule, autocompleteManager, provider] = []
 
   beforeEach ->
     # Set to live completion
@@ -38,7 +37,6 @@ describe 'SymbolProvider', ->
     runs ->
       autocompleteManager = mainModule.autocompleteManager
       advanceClock 1
-      editorView = atom.views.getView(editor)
       provider = autocompleteManager.providerManager.defaultProvider
 
   it "runs a completion ", ->
@@ -120,7 +118,7 @@ describe 'SymbolProvider', ->
     expect(suggestionsForPrefix(provider, editor, 'qu')).toContain 'quicksort'
 
   it "does not output suggestions from the other buffer", ->
-    [results, coffeeEditor] = []
+    [coffeeEditor] = []
 
     waitsForPromise ->
       Promise.all [
@@ -182,7 +180,7 @@ describe 'SymbolProvider', ->
       expect(suggestionsForPrefix(provider, editor, 'anew')).toContain 'aNewFunction'
 
   describe "when multiple editors track the same buffer", ->
-    [leftPane, rightPane, rightEditor] = []
+    [rightPane, rightEditor] = []
     beforeEach ->
       pane = atom.workspace.paneForItem(editor)
       rightPane = pane.splitRight(copyActiveItem: true)

@@ -1,7 +1,7 @@
 # This provider is currently experimental.
 
 _ = require 'underscore-plus'
-{TextBuffer, Range, CompositeDisposable, Disposable}  = require 'atom'
+{TextBuffer, CompositeDisposable, Disposable}  = require 'atom'
 {Selector} = require 'selector-kit'
 {UnicodeLetters} = require './unicode-helpers'
 SymbolStore = require './symbol-store'

@@ -46,8 +46,6 @@ describe 'Autocomplete', ->
   describe '@deactivate()', ->
     it 'removes all autocomplete views', ->
       runs ->
-        buffer = editor.getBuffer()
-
         # Trigger an autocompletion
         editor.moveToBottom()
         editor.insertText('A')

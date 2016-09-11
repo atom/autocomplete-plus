@@ -1,5 +1,4 @@
 {triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent} = require './spec-helper'
-{KeymapManager} = require 'atom'
 temp = require('temp').track()
 path = require 'path'
 
@@ -1026,7 +1025,6 @@ describe 'Autocomplete Manager', ->
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
-          left = editorView.pixelPositionForBufferPosition([0, 12]).left
           expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
           editor.insertText(' ')

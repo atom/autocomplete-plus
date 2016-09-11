@@ -1,4 +1,4 @@
-{Point, Range, CompositeDisposable, Disposable}  = require 'atom'
+{Range, CompositeDisposable, Disposable}  = require 'atom'
 path = require 'path'
 semver = require 'semver'
 fuzzaldrin = require 'fuzzaldrin'
@@ -392,7 +392,6 @@ class AutocompleteManager
   # match - The match to replace the current prefix with
   replaceTextWithMatch: (suggestion) =>
     return unless @editor?
-    newSelectedBufferRanges = []
 
     cursors = @editor.getCursors()
     return unless cursors?

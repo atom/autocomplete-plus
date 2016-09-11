@@ -60,7 +60,7 @@ class SuggestionListElement extends HTMLElement
     @activeClassDisposable?.dispose()
 
   initialize: (@model) ->
-    return unless model?
+    return unless @model?
     @subscriptions.add @model.onDidChangeItems(@itemsChanged.bind(this))
     @subscriptions.add @model.onDidSelectNext(@moveSelectionDown.bind(this))
     @subscriptions.add @model.onDidSelectPrevious(@moveSelectionUp.bind(this))

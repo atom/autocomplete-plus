@@ -206,7 +206,7 @@ class SuggestionList
     @overlayDecoration = undefined
 
   changeItems: (@items) ->
-    @emitter.emit('did-change-items', items)
+    @emitter.emit('did-change-items', @items)
 
   # Public: Clean up, stop listening to events
   dispose: ->

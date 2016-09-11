@@ -1,4 +1,4 @@
-{waitForAutocomplete, triggerAutocompletion} = require './spec-helper'
+{triggerAutocompletion} = require './spec-helper'
 grim = require 'grim'
 
 class MockDeprecation

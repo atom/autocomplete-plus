@@ -743,7 +743,7 @@ describe 'Autocomplete Manager', ->
     describe "when match.snippet is used", ->
       beforeEach ->
         spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
-          list = ['method(${1:something})', 'method2(${1:something})', 'method3(${1:something})']
+          list = ['method(${1:something})', 'method2(${1:something})', 'method3(${1:something})', 'namespace\\\\method4(${1:something})']
           ({snippet, replacementPrefix: prefix} for snippet in list)
 
       describe "when the snippets package is enabled", ->
@@ -760,7 +760,7 @@ describe 'Autocomplete Manager', ->
             expect(wordElement.querySelector('.snippet-completion').textContent).toBe 'something'
 
             wordElements = editorView.querySelectorAll('.autocomplete-plus span.word')
-            expect(wordElements).toHaveLength 3
+            expect(wordElements).toHaveLength 4
 
         it "accepts the snippet when autocomplete-plus:confirm is triggered", ->
           triggerAutocompletion(editor, true, 'm')
@@ -770,6 +770,24 @@ describe 'Autocomplete Manager', ->
             atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
             expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
             expect(editor.getSelectedText()).toBe 'something'
+
+        it "unescapes \\ in list to match snippet behavior", ->
+          triggerAutocompletion(editor, true, 'm')
+
+          runs ->
+            # Value in list
+            wordElements = editorView.querySelectorAll('.autocomplete-plus span.word')
+            expect(wordElements).toHaveLength 4
+            expect(wordElements[3].textContent).toBe 'namespace\\method4(something)'
+
+            # Select last item
+            atom.commands.dispatch(editorView, 'core:move-up')
+
+            # Value in editor
+            suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+            expect(editor.getText()).toBe 'namespace\\method4(something)'
 
     describe "when the matched prefix is highlighted", ->
       it 'highlights the prefix of the word in the suggestion list', ->

@@ -771,7 +771,7 @@ describe 'Autocomplete Manager', ->
             expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
             expect(editor.getSelectedText()).toBe 'something'
 
-        it "unescapes \\ in list to match snippet behavior", ->
+        it "escapes \\ in list to match snippet behavior", ->
           triggerAutocompletion(editor, true, 'm')
 
           runs ->

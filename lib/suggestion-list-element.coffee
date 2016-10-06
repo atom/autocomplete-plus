@@ -40,6 +40,7 @@ SnippetStartAndEnd = 3
 class SuggestionListElement extends HTMLElement
   maxItems: 200
   emptySnippetGroupRegex: /(\$\{\d+\:\})|(\$\{\d+\})|(\$\d+)/ig
+  slashesInSnippetRegex: /\\\\/g
   nodePool: null
 
   createdCallback: ->
@@ -371,6 +372,7 @@ class SuggestionListElement extends HTMLElement
       result += text.slice(index, snippetStart) + body
       index = snippetEnd + 1
     result += text.slice(index, text.length) if index isnt text.length
+    result = result.replace(@slashesInSnippetRegex, '\\')
     result
 
   # Computes the indices of snippets in the resulting string from

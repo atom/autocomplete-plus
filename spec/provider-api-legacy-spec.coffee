@@ -9,26 +9,19 @@ describe 'Provider API Legacy', ->
   [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
 
   beforeEach ->
-    runs ->
-      deprecations = []
-      spyOn(grim, 'deprecate').andCallFake (message) ->
-        deprecations.push new MockDeprecation(message)
-      spyOn(grim, 'getDeprecationsLength').andCallFake ->
-        deprecations.length
-      spyOn(grim, 'getDeprecations').andCallFake ->
-        deprecations
+    jasmine.snapshotDeprecations()
 
-      # Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
-      atom.config.set('editor.fontSize', '16')
+    # Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    atom.config.set('editor.fontSize', '16')
 
-      # Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 # Rendering
+    # Set the completion delay
+    completionDelay = 100
+    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
+    completionDelay += 100 # Rendering
 
-      workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
+    workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
     waitsForPromise ->
       Promise.all [
@@ -46,6 +39,7 @@ describe 'Provider API Legacy', ->
     registration = null
     testProvider?.dispose() if testProvider?.dispose?
     testProvider = null
+    jasmine.restoreDeprecationsSnapshot()
 
   describe "Provider with API v2.0 registered as 3.0", ->
     it "throws exceptions for renamed provider properties on registration", ->

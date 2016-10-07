@@ -1994,7 +1994,7 @@ describe 'Autocomplete Manager', ->
     editorView.component?.overlayManager?
 
   pixelLeftForBufferPosition = (bufferPosition) ->
-    gutterWidth ?= editorView.shadowRoot.querySelector('.gutter').offsetWidth
+    gutterWidth ?= editorView.querySelector('.gutter').offsetWidth
     left = editorView.pixelPositionForBufferPosition(bufferPosition).left
     left += editorView.offsetLeft
     left = gutterWidth + left if requiresGutter()

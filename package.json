@@ -216,6 +216,8 @@
   },
   "standard": {
     "globals": [
+      "CustomEvent",
+      "advanceClock",
       "atom",
       "waitsForPromise"
     ],

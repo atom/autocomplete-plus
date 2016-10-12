@@ -6,9 +6,6 @@ _ = require 'underscore-plus'
 {UnicodeLetters} = require './unicode-helpers'
 SymbolStore = require './symbol-store'
 
-# TODO: remove this when `onDidStopChanging(changes)` ships on stable.
-bufferSupportsStopChanging = -> typeof TextBuffer::onDidChangeText is "function"
-
 module.exports =
 class SymbolProvider
   wordRegex: null
@@ -78,11 +75,7 @@ class SymbolProvider
   watchEditor: (editor) =>
     buffer = editor.getBuffer()
     editorSubscriptions = new CompositeDisposable
-
-    # TODO: Remove this conditional once atom/ns-use-display-layers reaches stable and editor.onDidTokenize is always available
-    onDidTokenizeProvider = if editor.onDidTokenize? then editor else editor.displayBuffer
-
-    editorSubscriptions.add onDidTokenizeProvider.onDidTokenize =>
+    editorSubscriptions.add editor.onDidTokenize =>
       @buildWordListOnNextTick(editor)
     editorSubscriptions.add editor.onDidDestroy =>
       index = @getWatchedEditorIndex(editor)
@@ -94,21 +87,12 @@ class SymbolProvider
       bufferEditors.push(editor)
     else
       bufferSubscriptions = new CompositeDisposable
-      if bufferSupportsStopChanging()
-        bufferSubscriptions.add buffer.onDidStopChanging ({changes}) =>
-          editors = @watchedBuffers.get(buffer)
-          if editors and editors.length and editor = editors[0]
-            for {start, oldExtent, newExtent} in changes
-              @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
-      else
-        bufferSubscriptions.add buffer.onDidChange ({oldRange, newRange}) =>
-          editors = @watchedBuffers.get(buffer)
-          if editors and editors.length and editor = editors[0]
-            start = oldRange.start
-            oldExtent = oldRange.getExtent()
-            newExtent = newRange.getExtent()
+      bufferSubscriptions.add buffer.onDidStopChanging ({changes}) =>
+        editors = @watchedBuffers.get(buffer) ? []
+        editor = editors[0]
+        if editor? and not editor.largeFileMode
+          for {start, oldExtent, newExtent} in changes
             @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
-
       bufferSubscriptions.add buffer.onDidDestroy =>
         @symbolStore.clear(buffer)
         bufferSubscriptions.dispose()
@@ -246,11 +230,11 @@ class SymbolProvider
 
   buildWordListOnNextTick: (editor) =>
     _.defer =>
-      return unless editor?.isAlive()
-      start = {row: 0, column: 0}
-      oldExtent = {row: 0, column: 0}
-      newExtent = editor.getBuffer().getRange().getExtent()
-      @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
+      if editor? and editor.isAlive() and not editor.largeFileMode
+        start = {row: 0, column: 0}
+        oldExtent = {row: 0, column: 0}
+        newExtent = editor.getBuffer().getRange().getExtent()
+        @symbolStore.recomputeSymbolsForEditorInBufferRange(editor, start, oldExtent, newExtent)
 
   # FIXME: this should go in the core ScopeDescriptor class
   scopeDescriptorsEqual: (a, b) ->

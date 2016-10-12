@@ -130,6 +130,27 @@ describe 'SymbolProvider', ->
       advanceClock 1 # build the new wordlist
       expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength 0
 
+  describe "when `editor.largeFileMode` is true", ->
+    it "doesn't recompute symbols when the buffer changes", ->
+      coffeeEditor = null
+
+      waitsForPromise ->
+        atom.packages.activatePackage("language-coffee-script")
+
+      waitsForPromise ->
+        atom.workspace.open('sample.coffee').then (e) ->
+          coffeeEditor = e
+          coffeeEditor.largeFileMode = true
+
+      runs ->
+        waitForBufferToStopChanging()
+        coffeeEditor.setCursorBufferPosition([2, 0])
+        expect(suggestionsForPrefix(provider, coffeeEditor, 'Some')).toEqual([])
+
+        coffeeEditor.getBuffer().setTextInRange([[0, 0], [0, 0]], 'abc')
+        waitForBufferToStopChanging()
+        expect(suggestionsForPrefix(provider, coffeeEditor, 'abc')).toEqual([])
+
   describe "when autocomplete-plus.minimumWordLength is > 1", ->
     beforeEach ->
       atom.config.set('autocomplete-plus.minimumWordLength', 3)

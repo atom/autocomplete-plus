@@ -217,8 +217,10 @@
   "standard": {
     "globals": [
       "CustomEvent",
+      "HTMLElement",
       "advanceClock",
       "atom",
+      "getComputedStyle",
       "waitsForPromise"
     ],
     "ignore": [

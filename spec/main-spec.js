@@ -3,11 +3,11 @@
 
 import { waitForAutocomplete } from './spec-helper'
 
-describe('Autocomplete', function () {
+describe('Autocomplete', () => {
   let [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
 
-  beforeEach(function () {
-    runs(function () {
+  beforeEach(() => {
+    runs(() => {
       // Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('autocomplete-plus.fileBlacklist', ['.*', '*.md'])
@@ -18,7 +18,7 @@ describe('Autocomplete', function () {
       completionDelay += 100 // Rendering delay
 
       let workspaceElement = atom.views.getView(atom.workspace)
-      return jasmine.attachToDOM(workspaceElement)
+      jasmine.attachToDOM(workspaceElement)
     })
 
     waitsForPromise(() => {
@@ -55,30 +55,28 @@ describe('Autocomplete', function () {
 
   describe('@activate()', () =>
     it('activates autocomplete and initializes AutocompleteManager', () =>
-      runs(function () {
+      runs(() => {
         expect(autocompleteManager).toBeDefined()
-        return expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
       })
-
     )
-
   )
 
-  return describe('@deactivate()', () =>
+  describe('@deactivate()', () =>
     it('removes all autocomplete views', () =>
-      runs(function () {
+      runs(() => {
         // Trigger an autocompletion
         editor.moveToBottom()
         editor.insertText('A')
 
         waitForAutocomplete()
 
-        return runs(() => {
+        runs(() => {
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
           // Deactivate the package
           atom.packages.deactivatePackage('autocomplete-plus')
-          return expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         })
       })
     )

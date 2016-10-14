@@ -2,6 +2,8 @@ describe 'FuzzyProvider', ->
   [completionDelay, editor, mainModule, autocompleteManager] = []
 
   beforeEach ->
+    atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false)
+
     # Set to live completion
     atom.config.set('autocomplete-plus.enableAutoActivation', true)
     atom.config.set('autocomplete-plus.defaultProvider', 'Fuzzy')
@@ -36,6 +38,27 @@ describe 'FuzzyProvider', ->
       expect(provider.tokenList.getToken('somethingNew')).toBeUndefined()
       editor.insertText('somethingNew')
       expect(provider.tokenList.getToken('somethingNew')).toBe 'somethingNew'
+
+    describe "when `editor.largeFileMode` is true", ->
+      it "doesn't add words to the wordlist when the buffer changes", ->
+        provider = autocompleteManager.providerManager.defaultProvider
+        coffeeEditor = null
+
+        waitsForPromise ->
+          atom.packages.activatePackage("language-coffee-script")
+
+        waitsForPromise ->
+          atom.workspace.open('sample.coffee').then (e) ->
+            coffeeEditor = e
+            coffeeEditor.largeFileMode = true
+
+        runs ->
+          advanceClock(provider.deferBuildWordListInterval)
+          expect(provider.tokenList.getToken('SomeModule')).toBeUndefined()
+
+          coffeeEditor.getBuffer().insert([0, 0], 'abc')
+          advanceClock(provider.deferBuildWordListInterval)
+          expect(provider.tokenList.getToken('abcSomeModule')).toBeUndefined()
 
     it 'removes words that are no longer in the buffer', ->
       editor.moveToBottom()

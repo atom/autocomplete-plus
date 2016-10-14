@@ -56,10 +56,11 @@ class FuzzyProvider
 
     # Subscribe to buffer events:
     @currentEditorSubscriptions = new CompositeDisposable
-    @currentEditorSubscriptions.add @buffer.onDidSave(@bufferSaved)
-    @currentEditorSubscriptions.add @buffer.onWillChange(@bufferWillChange)
-    @currentEditorSubscriptions.add @buffer.onDidChange(@bufferDidChange)
-    @buildWordList()
+    unless @editor.largeFileMode
+      @currentEditorSubscriptions.add @buffer.onDidSave(@bufferSaved)
+      @currentEditorSubscriptions.add @buffer.onWillChange(@bufferWillChange)
+      @currentEditorSubscriptions.add @buffer.onDidChange(@bufferDidChange)
+      @buildWordList()
 
   paneItemIsValid: (paneItem) ->
     # TODO: remove conditional when `isTextEditor` is shipped.

@@ -3,7 +3,7 @@
 
 import { waitForAutocomplete } from './spec-helper'
 
-describe('Autocomplete Manager', function () {
+describe('Autocomplete Manager', () => {
   let [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach(() =>

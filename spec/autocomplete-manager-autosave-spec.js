@@ -5,11 +5,11 @@ let temp = require('temp').track()
 import path from 'path'
 import fs from 'fs-plus'
 
-describe('Autocomplete Manager', function () {
+describe('Autocomplete Manager', () => {
   let [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager, didAutocomplete] = []
 
-  beforeEach(function () {
-    runs(function () {
+  beforeEach(() => {
+    runs(() => {
       directory = temp.mkdirSync()
       let sample = `var quicksort = function () {
   var sort = function(items) {
@@ -69,7 +69,7 @@ describe('Autocomplete Manager', function () {
       advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
       autocompleteManager = mainModule.autocompleteManager
       let { displaySuggestions } = autocompleteManager
-      spyOn(autocompleteManager, 'displaySuggestions').andCallFake(function (suggestions, options) {
+      spyOn(autocompleteManager, 'displaySuggestions').andCallFake((suggestions, options) => {
         displaySuggestions(suggestions, options)
         didAutocomplete = true
       })

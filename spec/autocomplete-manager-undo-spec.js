@@ -7,7 +7,7 @@ describe('Autocomplete Manager', function () {
   let [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach(() =>
-    runs(function () {
+    runs(() => {
       // Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('editor.fontSize', '16')
@@ -18,12 +18,12 @@ describe('Autocomplete Manager', function () {
       completionDelay += 100 // Rendering
 
       let workspaceElement = atom.views.getView(atom.workspace)
-      return jasmine.attachToDOM(workspaceElement)
+      jasmine.attachToDOM(workspaceElement)
     })
   )
 
-  return describe('Undo a completion', function () {
-    beforeEach(function () {
+  describe('Undo a completion', () => {
+    beforeEach(() => {
       runs(() => atom.config.set('autocomplete-plus.enableAutoActivation', true))
 
       waitsForPromise(() => atom.workspace.open('sample.js').then((e) => {
@@ -44,13 +44,13 @@ describe('Autocomplete Manager', function () {
         return mainModule.autocompleteManager.ready
       })
 
-      return runs(function () {
-        ({ autocompleteManager } = mainModule)
-        return advanceClock(autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
+      return runs(() => {
+        autocompleteManager = mainModule.autocompleteManager
+        advanceClock(autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
       })
     })
 
-    return it('restores the previous state', function () {
+    it('restores the previous state', () => {
       // Trigger an autocompletion
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
@@ -58,7 +58,7 @@ describe('Autocomplete Manager', function () {
 
       waitForAutocomplete()
 
-      return runs(function () {
+      runs(() => {
         // Accept suggestion
         editorView = atom.views.getView(editor)
         atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
@@ -67,7 +67,7 @@ describe('Autocomplete Manager', function () {
 
         editor.undo()
 
-        return expect(editor.getBuffer().getLastLine()).toEqual('f')
+        expect(editor.getBuffer().getLastLine()).toEqual('f')
       })
     })
   })

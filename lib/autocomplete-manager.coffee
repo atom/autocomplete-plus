@@ -117,16 +117,12 @@ class AutocompleteManager
   handleEvents: =>
     # Observe `TextEditors` in the `TextEditorRegistry` and listen for focus,
     # or observe active `Pane` items respectively.
-    # TODO: remove conditional when `TextEditorRegistry` is shipped.
-    if atom.textEditors?
-      @subscriptions.add(atom.textEditors.observe (editor) =>
-        view = atom.views.getView(editor)
-        if view is document.activeElement
-          @updateCurrentEditor(editor)
-        view.addEventListener 'focus', (element) =>
-          @updateCurrentEditor(editor))
-    else
-      @subscriptions.add(atom.workspace.observeActivePaneItem(@updateCurrentEditor))
+    @subscriptions.add(atom.textEditors.observe (editor) =>
+      view = atom.views.getView(editor)
+      if view is document.activeElement.closest('atom-text-editor')
+        @updateCurrentEditor(editor)
+      view.addEventListener 'focus', (element) =>
+        @updateCurrentEditor(editor))
 
     # Watch config values
     @subscriptions.add(atom.config.observe('autosave.enabled', (value) => @autosaveEnabled = value))

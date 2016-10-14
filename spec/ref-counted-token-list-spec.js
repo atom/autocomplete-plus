@@ -3,14 +3,14 @@
 
 import RefCountedTokenList from '../lib/ref-counted-token-list'
 
-describe('RefCountedTokenList', function () {
+describe('RefCountedTokenList', () => {
   let [list] = []
   beforeEach(() => {
     list = new RefCountedTokenList()
   })
 
   describe('::refCountForToken()', () =>
-    it('returns the correct count', function () {
+    it('returns the correct count', () => {
       list.addToken('abc')
       expect(list.refCountForToken('abc')).toBe(1)
 
@@ -25,12 +25,12 @@ describe('RefCountedTokenList', function () {
       expect(list.refCountForToken('abc')).toBe(0)
 
       list.removeToken('abc')
-      return expect(list.refCountForToken('abc')).toBe(0)
+      expect(list.refCountForToken('abc')).toBe(0)
     })
   )
 
   describe('when tokens are added to and removed from the list', () =>
-    it('maintains the token in the list until there are no more references', function () {
+    it('maintains the token in the list until there are no more references', () => {
       expect(list.getTokens()).toEqual([])
 
       list.addToken('abc')
@@ -53,13 +53,13 @@ describe('RefCountedTokenList', function () {
       expect(list.getTokens()).toEqual([])
 
       list.removeToken('abc')
-      return expect(list.getTokens()).toEqual([])
+      expect(list.getTokens()).toEqual([])
     })
   )
 
-  return describe('when object tokens are added to and removed from the list', function () {
+  describe('when object tokens are added to and removed from the list', () => {
     describe('when the same tokens are used', () =>
-      it('maintains the token in the list until there are no more references', function () {
+      it('maintains the token in the list until there are no more references', () => {
         expect(list.getTokens()).toEqual([])
 
         let abcToken = {text: 'abc'}
@@ -81,12 +81,12 @@ describe('RefCountedTokenList', function () {
         expect(list.getTokens()).toEqual([])
 
         list.removeToken(abcToken, 'abc')
-        return expect(list.getTokens()).toEqual([])
+        expect(list.getTokens()).toEqual([])
       })
     )
 
-    return describe('when tokens with the same key are used', () =>
-      it('maintains the token in the list until there are no more references', function () {
+    describe('when tokens with the same key are used', () =>
+      it('maintains the token in the list until there are no more references', () => {
         expect(list.getTokens()).toEqual([])
 
         list.addToken({text: 'abc'}, 'abc')
@@ -106,7 +106,7 @@ describe('RefCountedTokenList', function () {
         expect(list.getTokens()).toEqual([])
 
         expect(list.removeToken('abc')).toBe(false)
-        return expect(list.getTokens()).toEqual([])
+        expect(list.getTokens()).toEqual([])
       })
     )
   })

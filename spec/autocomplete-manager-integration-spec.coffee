@@ -679,6 +679,29 @@ describe 'Autocomplete Manager', ->
             expect(newWidth).toBeGreaterThan 0
             expect(newWidth).toBeLessThan listWidth
 
+        it "opens the suggestion description url in an external browser", ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+              list =[
+                {text: 'ab',    description: 'ab yeah ok',   descriptionMoreURL: 'https://github.com'}
+                {text: 'abc',   description: 'abc yeah ok',  descriptionMoreURL: 'https://atom.io'}
+                {text: 'abcd',  description: 'abcd yeah ok', descriptionMoreURL: 'https://github.com/atom/atom'}
+              ]
+          shell = require 'shell'
+          spyOn(shell, 'openExternal')
+
+          triggerAutocompletion(editor, true, 'a')
+
+          runs ->
+            atom.commands.dispatch(editorView, 'autocomplete-plus:navigate-to-description-more-link')
+            expect(shell.openExternal).toHaveBeenCalled()
+            expect(shell.openExternal.argsForCall[0][0]).toBe "https://github.com/"
+            shell.openExternal.reset()
+
+            atom.commands.dispatch(editorView, 'core:move-down')
+            atom.commands.dispatch(editorView, 'autocomplete-plus:navigate-to-description-more-link')
+            expect(shell.openExternal).toHaveBeenCalled()
+            expect(shell.openExternal.argsForCall[0][0]).toBe "https://atom.io/"
+
     describe "when useCoreMovementCommands is toggled", ->
       [suggestionList] = []
 

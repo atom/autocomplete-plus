@@ -1,175 +1,218 @@
-{triggerAutocompletion} = require './spec-helper'
-grim = require 'grim'
+'use babel'
+/* eslint-env jasmine */
 
-class MockDeprecation
-  constructor: (@message) ->
-  getMessage: -> @message
+import { triggerAutocompletion } from './spec-helper'
+import grim from 'grim'
 
-describe 'Provider API Legacy', ->
-  [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
+describe('Provider API Legacy', () => {
+  let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
 
-  beforeEach ->
+  beforeEach(() => {
     jasmine.snapshotDeprecations()
 
-    # Set to live completion
+    // Set to live completion
     atom.config.set('autocomplete-plus.enableAutoActivation', true)
     atom.config.set('editor.fontSize', '16')
 
-    # Set the completion delay
+    // Set the completion delay
     completionDelay = 100
     atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-    completionDelay += 100 # Rendering
+    completionDelay += 100 // Rendering
 
-    workspaceElement = atom.views.getView(atom.workspace)
+    let workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise ->
-      Promise.all [
-        atom.packages.activatePackage('language-javascript')
-        atom.workspace.open('sample.js').then (e) -> editor = e
-        atom.packages.activatePackage('autocomplete-plus').then (a) ->
+    waitsForPromise(() =>
+      Promise.all([
+        atom.packages.activatePackage('language-javascript'),
+        atom.workspace.open('sample.js').then(e => {
+          editor = e
+        }),
+        atom.packages.activatePackage('autocomplete-plus').then(a => {
           mainModule = a.mainModule
-      ]
+        })
+      ]))
 
-    waitsFor ->
+    waitsFor(() => {
       autocompleteManager = mainModule.autocompleteManager
+      return autocompleteManager
+    })
+  })
 
-  afterEach ->
-    registration?.dispose() if registration?.dispose?
+  afterEach(() => {
+    if (registration && registration.dispose) {
+      registration.dispose()
+    }
     registration = null
-    testProvider?.dispose() if testProvider?.dispose?
+    if (testProvider && testProvider.dispose) {
+      testProvider.dispose()
+    }
     testProvider = null
     jasmine.restoreDeprecationsSnapshot()
+  })
 
-  describe "Provider with API v2.0 registered as 3.0", ->
-    it "throws exceptions for renamed provider properties on registration", ->
-      expect(->
+  describe('Provider with API v2.0 registered as 3.0', () =>
+    it('throws exceptions for renamed provider properties on registration', () => {
+      expect(() =>
         mainModule.consumeProvider_3_0({
-          selector: '*'
-          getSuggestions: ->
+          selector: '*',
+          getSuggestions () {}
         })
       ).toThrow()
 
-      expect(->
+      expect(() =>
         mainModule.consumeProvider_3_0({
-          disableForSelector: '*'
-          getSuggestions: ->
+          disableForSelector: '*',
+          getSuggestions () {}
         })
       ).toThrow()
+    })
+  )
 
-  describe 'Provider with API v1.0 registered as 2.0', ->
-    it "raises deprecations for provider attributes on registration", ->
-      numberDeprecations = grim.getDeprecationsLength()
+  describe('Provider with API v1.0 registered as 2.0', () => {
+    it('raises deprecations for provider attributes on registration', () => {
+      let numberDeprecations = grim.getDeprecationsLength()
 
-      class SampleProvider
-        id: 'sample-provider'
-        selector: '.source.js,.source.coffee'
-        blacklist: '.comment'
-        requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
+      class SampleProvider {
+        constructor () {
+          this.id = 'sample-provider'
+          this.selector = '.source.js,.source.coffee'
+          this.blacklist = '.comment'
+        }
+        requestHandler (options) { return [{word: 'ohai', prefix: 'ohai'}] }
+      }
 
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider)
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider())
 
-      expect(grim.getDeprecationsLength() - numberDeprecations).toBe 3
+      expect(grim.getDeprecationsLength() - numberDeprecations).toBe(3)
 
-      deprecations = grim.getDeprecations()
+      let deprecations = grim.getDeprecations()
 
-      deprecation = deprecations[deprecations.length - 3]
-      expect(deprecation.getMessage()).toContain '`id`'
-      expect(deprecation.getMessage()).toContain 'SampleProvider'
+      let deprecation = deprecations[deprecations.length - 3]
+      expect(deprecation.getMessage()).toContain('`id`')
+      expect(deprecation.getMessage()).toContain('SampleProvider')
 
       deprecation = deprecations[deprecations.length - 2]
-      expect(deprecation.getMessage()).toContain '`requestHandler`'
+      expect(deprecation.getMessage()).toContain('`requestHandler`')
 
       deprecation = deprecations[deprecations.length - 1]
-      expect(deprecation.getMessage()).toContain '`blacklist`'
+      expect(deprecation.getMessage()).toContain('`blacklist`')
+    })
 
-    it "raises deprecations when old API parameters are used in the 2.0 API", ->
-      class SampleProvider
-        selector: '.source.js,.source.coffee'
-        getSuggestions: (options) ->
-          [
+    it('raises deprecations when old API parameters are used in the 2.0 API', () => {
+      class SampleProvider {
+        constructor () {
+          this.selector = '.source.js,.source.coffee'
+        }
+        getSuggestions (options) {
+          return [{
             word: 'ohai',
             prefix: 'ohai',
             label: '<span style="color: red">ohai</span>',
             renderLabelAsHtml: true,
             className: 'ohai'
+          }
           ]
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider)
-      numberDeprecations = grim.getDeprecationsLength()
+        }
+      }
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider())
+      let numberDeprecations = grim.getDeprecationsLength()
       triggerAutocompletion(editor, true, 'o')
 
-      runs ->
-        expect(grim.getDeprecationsLength() - numberDeprecations).toBe 3
+      runs(() => {
+        expect(grim.getDeprecationsLength() - numberDeprecations).toBe(3)
 
-        deprecations = grim.getDeprecations()
+        let deprecations = grim.getDeprecations()
 
-        deprecation = deprecations[deprecations.length - 3]
-        expect(deprecation.getMessage()).toContain '`word`'
-        expect(deprecation.getMessage()).toContain 'SampleProvider'
+        let deprecation = deprecations[deprecations.length - 3]
+        expect(deprecation.getMessage()).toContain('`word`')
+        expect(deprecation.getMessage()).toContain('SampleProvider')
 
         deprecation = deprecations[deprecations.length - 2]
-        expect(deprecation.getMessage()).toContain '`prefix`'
+        expect(deprecation.getMessage()).toContain('`prefix`')
 
         deprecation = deprecations[deprecations.length - 1]
-        expect(deprecation.getMessage()).toContain '`label`'
+        expect(deprecation.getMessage()).toContain('`label`')
+      })
+    })
 
-    it "raises deprecations when hooks are passed via each suggestion", ->
-      class SampleProvider
-        selector: '.source.js,.source.coffee'
-        getSuggestions: (options) ->
-          [
+    it('raises deprecations when hooks are passed via each suggestion', () => {
+      class SampleProvider {
+        constructor () {
+          this.selector = '.source.js,.source.coffee'
+        }
+
+        getSuggestions (options) {
+          return [{
             text: 'ohai',
-            replacementPrefix: 'ohai'
-            onWillConfirm: ->
-            onDidConfirm: ->
+            replacementPrefix: 'ohai',
+            onWillConfirm () {},
+            onDidConfirm () {}
+          }
           ]
-      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider)
-      numberDeprecations = grim.getDeprecationsLength()
+        }
+      }
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider())
+      let numberDeprecations = grim.getDeprecationsLength()
       triggerAutocompletion(editor, true, 'o')
 
-      runs ->
-        expect(grim.getDeprecationsLength() - numberDeprecations).toBe 2
+      runs(() => {
+        expect(grim.getDeprecationsLength() - numberDeprecations).toBe(2)
 
-        deprecations = grim.getDeprecations()
+        let deprecations = grim.getDeprecations()
 
-        deprecation = deprecations[deprecations.length - 2]
-        expect(deprecation.getMessage()).toContain '`onWillConfirm`'
-        expect(deprecation.getMessage()).toContain 'SampleProvider'
+        let deprecation = deprecations[deprecations.length - 2]
+        expect(deprecation.getMessage()).toContain('`onWillConfirm`')
+        expect(deprecation.getMessage()).toContain('SampleProvider')
 
         deprecation = deprecations[deprecations.length - 1]
-        expect(deprecation.getMessage()).toContain '`onDidConfirm`'
+        expect(deprecation.getMessage()).toContain('`onDidConfirm`')
+      })
+    })
+  })
 
-  describe 'Provider API v1.1.0', ->
-    it 'registers the provider specified by {providers: [provider]}', ->
+  describe('Provider API v1.1.0', () =>
+    it('registers the provider specified by {providers: [provider]}', () => {
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
 
-      testProvider =
-        selector: '.source.js,.source.coffee'
-        requestHandler: (options) -> [word: 'ohai', prefix: 'ohai']
+      testProvider = {
+        selector: '.source.js,.source.coffee',
+        requestHandler (options) { return [{word: 'ohai', prefix: 'ohai'}] }
+      }
 
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.1.0', {providers: [testProvider]})
 
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+    })
+  )
 
-  describe 'Provider API v1.0.0', ->
-    [registration1, registration2, registration3] = []
+  describe('Provider API v1.0.0', () => {
+    let [registration1, registration2, registration3] = []
 
-    afterEach ->
-      registration1?.dispose()
-      registration2?.dispose()
-      registration3?.dispose()
+    afterEach(() => {
+      if (registration1) {
+        registration1.dispose()
+      }
+      if (registration2) {
+        registration2.dispose()
+      }
+      if (registration3) {
+        registration3.dispose()
+      }
+    })
 
-    it 'passes the correct parameters to requestHandler', ->
-      testProvider =
-        selector: '.source.js,.source.coffee'
-        requestHandler: (options) -> [ word: 'ohai', prefix: 'ohai' ]
+    it('passes the correct parameters to requestHandler', () => {
+      testProvider = {
+        selector: '.source.js,.source.coffee',
+        requestHandler (options) { return [ {word: 'ohai', prefix: 'ohai'} ] }
+      }
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       spyOn(testProvider, 'requestHandler')
       triggerAutocompletion(editor, true, 'o')
 
-      runs ->
-        args = testProvider.requestHandler.mostRecentCall.args[0]
+      runs(() => {
+        let args = testProvider.requestHandler.mostRecentCall.args[0]
         expect(args.editor).toBeDefined()
         expect(args.buffer).toBeDefined()
         expect(args.cursor).toBeDefined()
@@ -177,25 +220,30 @@ describe 'Provider API Legacy', ->
         expect(args.scope).toBeDefined()
         expect(args.scopeChain).toBeDefined()
         expect(args.prefix).toBeDefined()
+      })
+    })
 
-    it 'should allow registration of a provider', ->
+    it('should allow registration of a provider', () => {
       expect(autocompleteManager.providerManager.store).toBeDefined()
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
-      testProvider =
-        requestHandler: (options) ->
-          [
+      testProvider = {
+        requestHandler (options) {
+          return [{
             word: 'ohai',
             prefix: 'ohai',
             label: '<span style="color: red">ohai</span>',
             renderLabelAsHtml: true,
             className: 'ohai'
+          }
           ]
+        },
         selector: '.source.js,.source.coffee'
-      # Register the test provider
+      }
+      // Register the test provider
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
@@ -209,27 +257,31 @@ describe 'Provider API Legacy', ->
 
       triggerAutocompletion(editor, true, 'o')
 
-      runs ->
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+      runs(() => {
+        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
 
         expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
         expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+      })
+    })
 
-    it 'should dispose a provider registration correctly', ->
+    it('should dispose a provider registration correctly', () => {
       expect(autocompleteManager.providerManager.store).toBeDefined()
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
-      testProvider =
-        requestHandler: (options) ->
-          [{
+      testProvider = {
+        requestHandler (options) {
+          return [{
             word: 'ohai',
             prefix: 'ohai'
           }]
+        },
         selector: '.source.js,.source.coffee'
-      # Register the test provider
+      }
+      // Register the test provider
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
@@ -256,24 +308,26 @@ describe 'Provider API Legacy', ->
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+    })
 
-    it 'should remove a providers registration if the provider is disposed', ->
+    it('should remove a providers registration if the provider is disposed', () => {
       expect(autocompleteManager.providerManager.store).toBeDefined()
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
-      testProvider =
-        requestHandler: (options) ->
-          [{
+      testProvider = {
+        requestHandler (options) {
+          return [{
             word: 'ohai',
             prefix: 'ohai'
           }]
-        selector: '.source.js,.source.coffee'
-        dispose: ->
-          return
-      # Register the test provider
+        },
+        selector: '.source.js,.source.coffee',
+        dispose () { }
+      }
+      // Register the test provider
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '1.0.0', {provider: testProvider})
 
       expect(autocompleteManager.providerManager.store).toBeDefined()
@@ -292,3 +346,6 @@ describe 'Provider API Legacy', ->
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
       expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.coffee')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
+    })
+  })
+})

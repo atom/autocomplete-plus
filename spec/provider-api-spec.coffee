@@ -1,4 +1,5 @@
 {waitForAutocomplete, triggerAutocompletion} = require './spec-helper'
+shell = require('electron').shell
 
 describe 'Provider API', ->
   [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
@@ -16,6 +17,8 @@ describe 'Provider API', ->
 
       workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
+      
+      spyOn(shell, "openExternal")
 
     # Activate the package
     waitsForPromise ->
@@ -139,7 +142,29 @@ describe 'Provider API', ->
         expect(content).toHaveText('There be documentation')
         expect(moreLink).toHaveText('More..')
         expect(moreLink.style.display).toBe 'inline'
-        expect(moreLink.getAttribute('href')).toBe 'http://google.com'
+        expect(moreLink.onclick).toBeDefined()
+
+    it 'correctly handles More link', ->
+      testProvider =
+        scopeSelector: '.source.js, .source.coffee'
+        getSuggestions: (options) ->
+          [
+            text: 'ohai',
+            replacementPrefix: 'o',
+            rightLabelHTML: '<span style="color: red">ohai</span>',
+            description: 'There be documentation'
+            descriptionMoreURL: 'http://google.com'
+          ]
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      triggerAutocompletion(editor, true, 'o')
+
+      runs ->
+        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        moreLink = suggestionListView.querySelector('.suggestion-description-more-link')
+        expect(moreLink.onclick).toBeDefined()
+        moreLink.onclick(stopPropagation: ->)
+        expect(shell.openExternal).toHaveBeenCalledWith('http://google.com')
 
     describe "when the filterSuggestions option is set to true", ->
       getSuggestions = ->

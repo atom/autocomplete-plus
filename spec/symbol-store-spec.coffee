@@ -100,6 +100,29 @@ describe 'SymbolStore', ->
       expect(occurrences[0].symbol.text).toBe 'abc'
       expect(occurrences[0].symbol.type).toBe 'newtype'
 
+    it "dont override description of built-in function", ->
+      config =
+        function:
+          selectors: Selector.create('.function')
+          typePriority: 1
+        builtins:
+          suggestions: [
+            {
+              'type': 'function'
+              'rightLabel': 'global function'
+              'text': 'ValueFromFile'
+              'description': 'Test description.'
+            }]
+
+      editor.moveToBottom()
+      editor.insertText('ValueFromFile()')
+
+      occurrences = store.symbolsForConfig(config, [editor.getBuffer()], 'value')
+      expect(occurrences.length).toBe 1
+      expect(occurrences[0].symbol.text).toBe 'ValueFromFile'
+      expect(occurrences[0].symbol.description).toBe 'Test description.'
+      expect(occurrences[0].symbol.rightLabel).toBe 'global function'
+
   describe "when there are multiple files with tokens in the store", ->
     [config, editor1, editor2] = []
     beforeEach ->

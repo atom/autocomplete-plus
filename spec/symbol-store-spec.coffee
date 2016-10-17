@@ -100,7 +100,7 @@ describe 'SymbolStore', ->
       expect(occurrences[0].symbol.text).toBe 'abc'
       expect(occurrences[0].symbol.type).toBe 'newtype'
 
-    it "dont override description of built-in function", ->
+    it "doesn't override built-in suggestions with the symbols found in the buffer", ->
       config =
         function:
           selectors: Selector.create('.function')

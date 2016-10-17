@@ -679,6 +679,56 @@ describe 'Autocomplete Manager', ->
             expect(newWidth).toBeGreaterThan 0
             expect(newWidth).toBeLessThan listWidth
 
+      describe "when a suggestion descriptionHTML is specified", ->
+        it "shows the maxVisibleSuggestions in the suggestion popup, but with extra height for the descriptionHTML", ->
+          spyOn(provider, 'getSuggestions').andCallFake ->
+            list = ['ab', 'abc', 'abcd', 'abcde']
+            ({text, descriptionHTML: "<i class='something'>#{text} yeah ok</i>"} for text in list)
+
+          triggerAutocompletion(editor, true, 'a')
+
+          runs ->
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+            itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
+            expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
+
+            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            descriptionHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus .suggestion-description')).height)
+            expect(suggestionList.offsetHeight).toBe(2 * itemHeight + descriptionHeight)
+            expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
+
+        it "adjusts the width when the descriptionHTML changes", ->
+          listWidth = null
+          spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
+            list =[
+              {text: 'ab',    descriptionHTML: '<i class="something">mmmmmmmmmmmmmmmmmmmmmmmmmm</i>'}
+              {text: 'abc',   descriptionHTML: '<i class="something">mmmmmmmmmmmmmmmmmmmmmm</i>'}
+              {text: 'abcd',  descriptionHTML: '<i class="something">mmmmmmmmmmmmmmmmmm</i>'}
+              {text: 'abcde', descriptionHTML: '<i class="something">mmmmmmmmmmmmmm</i>'}
+            ]
+            (item for item in list when item.text.startsWith(prefix))
+
+          triggerAutocompletion(editor, true, 'a')
+
+          runs ->
+            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList).toExist()
+
+            listWidth = parseInt(suggestionList.style.width)
+            expect(listWidth).toBeGreaterThan 0
+
+            editor.insertText('b')
+            editor.insertText('c')
+            waitForAutocomplete()
+
+          runs ->
+            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList).toExist()
+
+            newWidth = parseInt(suggestionList.style.width)
+            expect(newWidth).toBeGreaterThan 0
+            expect(newWidth).toBeLessThan listWidth
+
     describe "when useCoreMovementCommands is toggled", ->
       [suggestionList] = []
 

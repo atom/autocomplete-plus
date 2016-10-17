@@ -22,6 +22,7 @@
   "devDependencies": {
     "coffeelint": "^1.9.7",
     "fs-plus": ">=2.4.0",
+    "standard": "^8.3.0",
     "temp": ">=0.7.0"
   },
   "consumedServices": {
@@ -212,5 +213,18 @@
       "default": false,
       "order": 21
     }
+  },
+  "standard": {
+    "globals": [
+      "CustomEvent",
+      "HTMLElement",
+      "advanceClock",
+      "atom",
+      "getComputedStyle",
+      "waitsForPromise"
+    ],
+    "ignore": [
+      "**/spec/fixtures/**"
+    ]
   }
 }

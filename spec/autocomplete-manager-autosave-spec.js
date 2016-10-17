@@ -1,15 +1,17 @@
-temp = require('temp').track()
-path = require 'path'
-fs = require 'fs-plus'
+'use babel'
+/* eslint-env jasmine */
 
-describe 'Autocomplete Manager', ->
-  [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager, didAutocomplete] = []
+let temp = require('temp').track()
+import path from 'path'
+import fs from 'fs-plus'
 
-  beforeEach ->
-    runs ->
+describe('Autocomplete Manager', () => {
+  let [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager, didAutocomplete] = []
+
+  beforeEach(() => {
+    runs(() => {
       directory = temp.mkdirSync()
-      sample = '''
-var quicksort = function () {
+      let sample = `var quicksort = function () {
   var sort = function(items) {
     if (items.length <= 1) return items;
     var pivot = items.shift(), current, left = [], right = [];
@@ -22,82 +24,94 @@ var quicksort = function () {
 
   return sort(Array.apply(this, arguments));
 };
-
-      '''
+`
       filePath = path.join(directory, 'sample.js')
       fs.writeFileSync(filePath, sample)
 
-      # Enable autosave
+      // Enable autosave
       atom.config.set('autosave.enabled', true)
 
-      # Set to live completion
+      // Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
       atom.config.set('editor.fontSize', '16')
 
-      # Set the completion delay
+      // Set the completion delay
       completionDelay = 100
       atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 # Rendering
+      completionDelay += 100 // Rendering
 
-      workspaceElement = atom.views.getView(atom.workspace)
+      let workspaceElement = atom.views.getView(atom.workspace)
       jasmine.attachToDOM(workspaceElement)
+    })
 
-    waitsForPromise ->
-      atom.packages.activatePackage('autosave')
+    waitsForPromise(() => atom.packages.activatePackage('autosave'))
 
-    waitsForPromise -> atom.workspace.open(filePath).then (e) ->
+    waitsForPromise(() => atom.workspace.open(filePath).then((e) => {
       editor = e
       editorView = atom.views.getView(editor)
+    }))
 
-    waitsForPromise ->
-      atom.packages.activatePackage('language-javascript')
+    waitsForPromise(() => atom.packages.activatePackage('language-javascript'))
 
-    # Activate the package
-    waitsForPromise -> atom.packages.activatePackage('autocomplete-plus').then (a) ->
+    // Activate the package
+    waitsForPromise(() => atom.packages.activatePackage('autocomplete-plus').then((a) => {
       mainModule = a.mainModule
+    }))
 
-    waitsFor ->
-      mainModule.autocompleteManager?.ready
+    waitsFor(() => {
+      if (!mainModule || !mainModule.autocompleteManager) {
+        return false
+      }
+      return mainModule.autocompleteManager.ready
+    })
 
-    runs ->
+    runs(() => {
       advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
       autocompleteManager = mainModule.autocompleteManager
-      displaySuggestions = autocompleteManager.displaySuggestions
-      spyOn(autocompleteManager, 'displaySuggestions').andCallFake (suggestions, options) ->
+      let { displaySuggestions } = autocompleteManager
+      spyOn(autocompleteManager, 'displaySuggestions').andCallFake((suggestions, options) => {
         displaySuggestions(suggestions, options)
         didAutocomplete = true
+      })
+    })
+  })
 
-  afterEach ->
+  afterEach(() => {
     didAutocomplete = false
+  })
 
-  describe 'autosave compatibility', ->
-    it 'keeps the suggestion list open while saving', ->
-      runs ->
+  describe('autosave compatibility', () =>
+    it('keeps the suggestion list open while saving', () => {
+      runs(() => {
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-        # Trigger an autocompletion
+        // Trigger an autocompletion
         editor.moveToBottom()
         editor.moveToBeginningOfLine()
         editor.insertText('f')
         advanceClock(completionDelay)
+      })
 
-      waitsFor ->
-        didAutocomplete is true
+      waitsFor(() => didAutocomplete === true)
 
-      runs ->
+      runs(() => {
         editor.save()
         didAutocomplete = false
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         editor.insertText('u')
         advanceClock(completionDelay)
+      })
 
-      waitsFor ->
-        didAutocomplete is true
+      waitsFor(() => didAutocomplete === true)
 
-      runs ->
+      runs(() => {
         editor.save()
         didAutocomplete = false
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
-        # Accept suggestion
-        suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        // Accept suggestion
+        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
         expect(editor.getBuffer().getLastLine()).toEqual('function')
+      })
+    })
+  )
+})

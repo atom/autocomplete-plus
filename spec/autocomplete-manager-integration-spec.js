@@ -737,6 +737,39 @@ describe('Autocomplete Manager', () => {
           })
         })
 
+        it('parses markdown in the description', () => {
+          let listWidth = null
+          spyOn(provider, 'getSuggestions').andCallFake(({prefix}) => {
+            let list = [
+              {text: 'ab', descriptionMarkdown: '**mmmmmmmmmmmmmmmmmmmmmmmmmm**'},
+              {text: 'abc', descriptionMarkdown: '**mmmmmmmmmmmmmmmmmmmmmm**'},
+              {text: 'abcd', descriptionMarkdown: '**mmmmmmmmmmmmmmmmmm**'},
+              {text: 'abcde', descriptionMarkdown: '**mmmmmmmmmmmmmm**'}
+            ]
+            return (list.filter((item) => item.text.startsWith(prefix)).map((item) => item))
+          })
+
+          triggerAutocompletion(editor, true, 'a')
+
+          runs(() => {
+            let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList).toExist()
+
+            expect(editorView.querySelector('.autocomplete-plus .suggestion-description strong').textContent).toEqual('mmmmmmmmmmmmmmmmmmmmmmmmmm');
+
+            editor.insertText('b')
+            editor.insertText('c')
+            waitForAutocomplete()
+          })
+
+          runs(() => {
+            let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            expect(suggestionList).toExist()
+
+            expect(editorView.querySelector('.autocomplete-plus .suggestion-description strong').textContent).toEqual('mmmmmmmmmmmmmmmmmmmmmm');
+          })
+        })
+
         it('adjusts the width when the description changes', () => {
           let listWidth = null
           spyOn(provider, 'getSuggestions').andCallFake(({prefix}) => {

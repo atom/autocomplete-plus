@@ -131,6 +131,14 @@ describe 'Suggestion List Element', ->
       replacementPrefix = 'a'
       expect(suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f')
 
+    # <span class="character-match">R</span><span class="character-match">o</span>ute<span class="character-match">:</span>:<span class="character-match">i</span>nput(<span class="snippet-completion">'${2:name</span>'})
+    # <span class="character-match">R</span><span class="character-match">o</span>ute<span class="character-match">:</span>:<span class="character-match">i</span>nput(<span class="snippet-completion">'<span class="snippet-completion">name</span>'</span>)'.
+    fit 'tolerates :: in a snippet\'s definition', ->
+      text = ''
+      snippet = 'Route::input(${1:\'${2:name}\'})$3'
+      replacementPrefix = 'ro:i'
+      expect(suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)).toBe('<span class="character-match">R</span><span class="character-match">o</span>ute<span class="character-match">:</span>:<span class="character-match">i</span>nput(<span class="snippet-completion">\'<span class="snippet-completion">name</span>\'</span>)')
+
   describe 'findCharacterMatches', ->
     assertMatches = (text, replacementPrefix, truthyIndices) ->
       text = suggestionListElement.removeEmptySnippets(text)

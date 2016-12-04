@@ -371,8 +371,7 @@ inVar = "in-a-string"`
       waitForBufferToStopChanging()
 
       let commentConfig = {
-        comment: { selector: '.comment'
-      },
+        comment: { selector: '.comment' },
         builtin: {
           suggestions: ['abcd', 'abcde', 'abcdef']
         }
@@ -399,8 +398,7 @@ inVar = "in-a-string"`
       waitForBufferToStopChanging()
 
       let commentConfig = {
-        comment: { selector: '.comment'
-      },
+        comment: { selector: '.comment' },
         builtin: {
           suggestions: [
             {nope: 'nope1', rightLabel: 'will not be added to the suggestions'},

@@ -150,8 +150,7 @@ describe('SymbolStore', () => {
   describe('when there are multiple files with tokens in the store', () => {
     let [config, editor1, editor2] = []
     beforeEach(() => {
-      config = {stuff: { selectors: Selector.create('.text.plain.null-grammar')
-    }}
+      config = {stuff: { selectors: Selector.create('.text.plain.null-grammar') }}
 
       waitsForPromise(() =>
         Promise.all([

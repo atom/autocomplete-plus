@@ -51,9 +51,9 @@
     },
     "autoActivationDelay": {
       "title": "Delay Before Suggestions Are Shown",
-      "description": "This prevents suggestions from being shown too frequently. Usually, the default works well. A lower value than the default has performance implications, and is not advised.",
+      "description": "If you are experiencing performance issues when typing, you should try increasing this value to a non-zero number (e.g. 100).",
       "type": "integer",
-      "default": 100,
+      "default": 0,
       "order": 2
     },
     "maxVisibleSuggestions": {

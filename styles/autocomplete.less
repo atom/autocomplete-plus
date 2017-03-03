@@ -19,7 +19,8 @@ autocomplete-suggestion-list.select-list.popover-list {
   width: auto;
   display: inline-block;
   min-width: 200px;
-  max-width: 800px;
+  max-width: 75vw;
+  width: auto;
   padding: 0;
   overflow: hidden;
   color: @text-color;
@@ -175,18 +176,6 @@ autocomplete-suggestion-list {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .left-label {
-    max-width: 150px;
-  }
-
-  .right-label {
-    max-width: 150px;
-  }
-
-  .word {
-    max-width: 430px; // magic number to also fit the icon-container + scrollbar in the 800px max-width
   }
 
   .make-type-icon(attribute, @syntax-color-attribute);

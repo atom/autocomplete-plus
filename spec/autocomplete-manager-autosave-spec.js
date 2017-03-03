@@ -109,7 +109,7 @@ describe('Autocomplete Manager', () => {
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         // Accept suggestion
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
-        atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+        atom.commands.dispatch(suggestionListView.element, 'autocomplete-plus:confirm')
         expect(editor.getBuffer().getLastLine()).toEqual('function')
       })
     })

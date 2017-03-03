@@ -112,10 +112,10 @@ describe('Provider API', () => {
 
       runs(() => {
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
-        expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.querySelector('.word')).toHaveText('ohai')
-        expect(suggestionListView.querySelector('.suggestion-description-content')).toHaveText('There be documentation')
-        expect(suggestionListView.querySelector('.suggestion-description-more-link').style.display).toBe('none')
+        expect(suggestionListView.element.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
+        expect(suggestionListView.element.querySelector('.word')).toHaveText('ohai')
+        expect(suggestionListView.element.querySelector('.suggestion-description-content')).toHaveText('There be documentation')
+        expect(suggestionListView.element.querySelector('.suggestion-description-more-link').style.display).toBe('none')
       })
     })
 
@@ -139,7 +139,7 @@ describe('Provider API', () => {
 
       runs(() => {
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
-        expect(suggestionListView.querySelector('.word')).toHaveText('displayOHAI')
+        expect(suggestionListView.element.querySelector('.word')).toHaveText('displayOHAI')
       })
     })
 
@@ -162,8 +162,8 @@ describe('Provider API', () => {
 
       runs(() => {
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
-        let content = suggestionListView.querySelector('.suggestion-description-content')
-        let moreLink = suggestionListView.querySelector('.suggestion-description-more-link')
+        let content = suggestionListView.element.querySelector('.suggestion-description-content')
+        let moreLink = suggestionListView.element.querySelector('.suggestion-description-more-link')
         expect(content).toHaveText('There be documentation')
         expect(moreLink).toHaveText('More..')
         expect(moreLink.style.display).toBe('inline')

@@ -72,7 +72,7 @@ describe('Async providers', () => {
 
       runs(() => {
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
-        expect(suggestionListView.querySelector('li .right-label')).toHaveText('asyncProvided')
+        expect(suggestionListView.element.querySelector('li .right-label')).toHaveText('asyncProvided')
       })
     })
   })

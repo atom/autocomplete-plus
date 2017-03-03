@@ -17,7 +17,7 @@ describe('Suggestion List Element', () => {
   })
 
   describe('renderItem', () => {
-    beforeEach(() => jasmine.attachToDOM(suggestionListElement))
+    beforeEach(() => jasmine.attachToDOM(suggestionListElement.element))
 
     it('HTML escapes displayText', () => {
       let suggestion = {text: 'Animal<Cat>'}

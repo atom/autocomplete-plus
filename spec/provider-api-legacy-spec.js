@@ -260,8 +260,8 @@ describe('Provider API Legacy', () => {
       runs(() => {
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
 
-        expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.querySelector('li')).toHaveClass('ohai')
+        expect(suggestionListView.element.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
+        expect(suggestionListView.element.querySelector('li')).toHaveClass('ohai')
       })
     })
 

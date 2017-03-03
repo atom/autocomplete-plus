@@ -111,7 +111,7 @@ describe('Provider API', () => {
       triggerAutocompletion(editor, true, 'o')
 
       runs(() => {
-        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
         expect(suggestionListView.querySelector('.word')).toHaveText('ohai')
         expect(suggestionListView.querySelector('.suggestion-description-content')).toHaveText('There be documentation')
@@ -138,7 +138,7 @@ describe('Provider API', () => {
       triggerAutocompletion(editor, true, 'o')
 
       runs(() => {
-        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         expect(suggestionListView.querySelector('.word')).toHaveText('displayOHAI')
       })
     })
@@ -161,7 +161,7 @@ describe('Provider API', () => {
       triggerAutocompletion(editor, true, 'o')
 
       runs(() => {
-        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         let content = suggestionListView.querySelector('.suggestion-description-content')
         let moreLink = suggestionListView.querySelector('.suggestion-description-more-link')
         expect(content).toHaveText('There be documentation')

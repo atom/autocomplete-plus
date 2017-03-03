@@ -71,7 +71,7 @@ describe('Async providers', () => {
       waitForAutocomplete()
 
       runs(() => {
-        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         expect(suggestionListView.querySelector('li .right-label')).toHaveText('asyncProvided')
       })
     })

@@ -258,7 +258,7 @@ describe('Provider API Legacy', () => {
       triggerAutocompletion(editor, true, 'o')
 
       runs(() => {
-        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
 
         expect(suggestionListView.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
         expect(suggestionListView.querySelector('li')).toHaveClass('ohai')

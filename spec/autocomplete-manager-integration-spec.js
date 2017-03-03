@@ -2286,7 +2286,7 @@ defm`
       waitForAutocomplete()
 
       runs(() => {
-        let suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
+        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         expect(suggestionListView.scrollWidth).toBe(suggestionListView.offsetWidth)
       })
     })

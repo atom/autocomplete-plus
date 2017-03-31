@@ -16,10 +16,9 @@ atom-overlay.autocomplete-plus {
 }
 
 autocomplete-suggestion-list.select-list.popover-list {
-  width: auto;
+  width: auto !important; // TODO: Can be removed once the inline style is gone
   display: inline-block;
   min-width: 200px;
-  max-width: 800px;
   padding: 0;
   overflow: hidden;
   color: @text-color;
@@ -34,9 +33,12 @@ autocomplete-suggestion-list.select-list.popover-list {
     padding-right: @item-side-padding;
     min-height: @row-line-height;
     line-height: 1.3;
-
     background: darken(@overlay-background-color, 4%);
     border-radius: 0 0 @component-border-radius @component-border-radius;
+
+    // let the other sibling decide how large the container should be
+    width: min-content;
+    min-width: 100%;
   }
 
   .suggestion-description-content {
@@ -171,22 +173,20 @@ autocomplete-suggestion-list {
   }
 
   // Here we set the max width of the popup
+  .left-label {
+    max-width: 20vw;
+  }
+  .word {
+    max-width: 35vw;
+  }
+  .right-label {
+    max-width: 25vw;
+  }
+
   .word, .left-label, .right-label {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .left-label {
-    max-width: 150px;
-  }
-
-  .right-label {
-    max-width: 150px;
-  }
-
-  .word {
-    max-width: 430px; // magic number to also fit the icon-container + scrollbar in the 800px max-width
   }
 
   .make-type-icon(attribute, @syntax-color-attribute);

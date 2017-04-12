@@ -21,6 +21,7 @@ describe('Autocomplete Manager', () => {
     let left = editorView.pixelPositionForBufferPosition(bufferPosition).left
     left += editorView.offsetLeft
     if (requiresGutter()) { left = gutterWidth + left }
+    left += Math.round(editorView.getBoundingClientRect().left)
     return `${Math.round(left)}px`
   }
 

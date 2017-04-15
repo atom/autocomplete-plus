@@ -237,6 +237,12 @@
         }
       ],
       "order": 22
+    },
+    "cycleSuggestions": {
+      "description": "Cycle through the list when moving up and down instead of dismissing it.",
+      "type": "boolean",
+      "default": true,
+      "order": 23
     }
   },
   "standard": {

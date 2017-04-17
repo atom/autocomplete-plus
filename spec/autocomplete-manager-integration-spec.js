@@ -20,7 +20,7 @@ describe('Autocomplete Manager', () => {
     gutterWidth = gutter.offsetWidth
     let left = editorView.pixelPositionForBufferPosition(bufferPosition).left
     left += editorView.offsetLeft
-    if (requiresGutter()) { left = gutterWidth + left }
+    left += gutterWidth
     left += Math.round(editorView.getBoundingClientRect().left)
     return `${Math.round(left)}px`
   }
@@ -2292,11 +2292,4 @@ defm`
       })
     })
   })
-
-  let requiresGutter = () => {
-    if (!editorView || !editorView.component || !editorView.component.overlayManager) {
-      return false
-    }
-    return true
-  }
 })

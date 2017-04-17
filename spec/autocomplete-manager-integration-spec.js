@@ -2211,7 +2211,7 @@ defm`
         triggerAutocompletion(editor)
 
         // unfortunately, we need to fire IME events from the editor's input node so the editor picks them up
-        let activeElement = editorView.rootElement.querySelector('input')
+        let activeElement = editorView.querySelector('input')
 
         runs(() => {
           spyOn(autocompleteManager.suggestionList, 'changeItems').andCallThrough()

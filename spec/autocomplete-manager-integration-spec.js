@@ -102,10 +102,14 @@ describe('Autocomplete Manager', () => {
       editor.insertText('a')
       waitForAutocomplete()
 
-      runs(() => {
+      waitsFor((done) => {
+        editor.getBuffer().onDidSave(() => {
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          done()
+        })
+
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
         editor.saveAs(path.join(directory, 'spec', 'tmp', 'issue-11.js'))
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
       })
     })
 

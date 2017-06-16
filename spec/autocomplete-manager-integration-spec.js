@@ -1190,7 +1190,7 @@ describe('Autocomplete Manager', () => {
         })
 
         runs(() => {
-          expect(overlayElement.style.left).toBe(pixelLeftForBufferPosition([0, 11]))
+          expect(overlayElement.style.left).toBe(pixelLeftForBufferPosition([0, 12]))
 
           editor.insertText(' ')
           editor.insertText('a')

@@ -1109,6 +1109,46 @@ describe('Autocomplete Manager', () => {
           expect(suggestionList.style['margin-left']).toBeFalsy()
         })
       })
+
+      it('closes the suggestion list if the user keeps typing', () => {
+        spyOn(provider, 'getSuggestions').andCallFake(({prefix}) => ['acd', 'ade'].filter((t) => t.startsWith(prefix)).map((t) => ({text: t})))
+
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        // Trigger an autocompletion
+        editor.moveToBottom()
+        editor.insertText('a')
+        waitForAutocomplete()
+
+        runs(() => {
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          editor.insertText('b')
+          waitForAutocomplete()
+        })
+
+        runs(() => expect(editorView.querySelector('.autocomplete-plus')).not.toExist())
+      })
+
+      it('keeps the suggestion list visible if the user keeps typing', () => {
+        spyOn(provider, 'getSuggestions').andCallFake(({prefix}) => ['acd', 'ade'].filter((t) => t.startsWith(prefix)).map((t) => ({text: t})))
+
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+
+        // Trigger an autocompletion
+        editor.moveToBottom()
+        editor.insertText('a')
+        waitForAutocomplete()
+
+        runs(() => {
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+          editor.insertText('c')
+          waitForAutocomplete()
+        })
+
+        runs(() => expect(editorView.querySelector('.autocomplete-plus')).toExist())
+      })
     })
 
     describe("when autocomplete-plus.suggestionListFollows is 'Word'", () => {

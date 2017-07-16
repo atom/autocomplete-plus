@@ -86,42 +86,6 @@ describe('Provider Manager', () => {
       expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe(false)
     })
 
-    it('can let its providers be observed', () => {
-      let spy = jasmine.createSpy()
-      let disposable = providerManager.observeProviders(spy)
-      expect(spy.calls.length).toBe(1)
-      expect(spy.argsForCall[0][0]).toBe(providerManager.getDefaultProvider())
-
-      let testProvider1 = Object.assign({}, testProvider)
-      providerManager.addProvider(testProvider1)
-      expect(spy.calls.length).toBe(2)
-      expect(spy.argsForCall[1][0]).toBe(testProvider1)
-
-      disposable.dispose()
-
-      let testProvider2 = Object.assign({}, testProvider)
-      providerManager.addProvider(testProvider2)
-      expect(spy.calls.length).toBe(2)
-    })
-
-    it('can execute a callback when removing a provider', () => {
-      providerManager.addProvider(testProvider)
-
-      let spy = jasmine.createSpy()
-      let disposable = providerManager.onDidRemoveProvider(spy)
-
-      providerManager.addProvider(testProvider)
-      providerManager.removeProvider(testProvider)
-      expect(spy.calls.length).toBe(1)
-      expect(spy.argsForCall[0][0]).toBe(testProvider)
-
-      disposable.dispose()
-
-      providerManager.addProvider(testProvider)
-      providerManager.removeProvider(testProvider)
-      expect(spy.calls.length).toBe(1)
-    })
-
     it('can identify a provider with a missing getSuggestions', () => {
       let bogusProvider = {
         badgetSuggestions (options) {},

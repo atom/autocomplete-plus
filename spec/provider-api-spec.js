@@ -53,9 +53,9 @@ describe('Provider API', () => {
         getSuggestions (options) { return [{text: 'ohai', replacementPrefix: 'ohai'}] }
       }
 
-      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders('.source.js').length).toEqual(1)
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
-      return expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+      return expect(autocompleteManager.providerManager.applicableProviders('.source.js').length).toEqual(2)
     })
 
     it('registers the provider specified by the naked provider', () => {
@@ -64,9 +64,9 @@ describe('Provider API', () => {
         getSuggestions (options) { return [{text: 'ohai', replacementPrefix: 'ohai'}] }
       }
 
-      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders('.source.js').length).toEqual(1)
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
-      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders('.source.js').length).toEqual(2)
     })
 
     it('passes the correct parameters to getSuggestions for the version', () => {

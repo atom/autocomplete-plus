@@ -53,8 +53,8 @@ describe('Provider Manager', () => {
     })
 
     it('registers the default provider for all scopes', () => {
-      expect(providerManager.applicableProviders('*').length).toBe(1)
-      expect(providerManager.applicableProviders('*')[0]).toBe(providerManager.defaultProvider)
+      expect(providerManager.applicableProviders(['workspace-center'], '*').length).toBe(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '*')[0]).toBe(providerManager.defaultProvider)
     })
 
     it('adds providers', () => {
@@ -149,50 +149,50 @@ describe('Provider Manager', () => {
     })
 
     it('registers a valid provider', () => {
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(1)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(2)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
     })
 
     it('removes a registration', () => {
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(1)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(2)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
       registration.dispose()
 
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(1)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
     })
 
     it('does not create duplicate registrations for the same scope', () => {
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(1)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(2)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(2)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(2)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
     })
 
@@ -205,13 +205,13 @@ describe('Provider Manager', () => {
         }
       }
 
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(1)
-      expect(providerManager.applicableProviders('.source.js').indexOf(bogusProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(bogusProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(bogusProvider)
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(1)
-      expect(providerManager.applicableProviders('.source.js').indexOf(bogusProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(bogusProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(bogusProvider)).toBeFalsy()
     })
 
@@ -232,13 +232,13 @@ describe('Provider Manager', () => {
 
       expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
 
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(1)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeFalsy()
 
       registration = providerManager.registerProvider(testProvider)
-      expect(providerManager.applicableProviders('.source.js').length).toEqual(2)
-      expect(providerManager.applicableProviders('.source.js').indexOf(testProvider)).not.toBe(-1)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).not.toBe(-1)
       expect(providerManager.metadataForProvider(testProvider)).toBeTruthy()
     })
   })
@@ -247,14 +247,14 @@ describe('Provider Manager', () => {
     beforeEach(() => atom.config.set('autocomplete-plus.enableBuiltinProvider', false))
 
     it('does not register the default provider for all scopes', () => {
-      expect(providerManager.applicableProviders('*').length).toBe(0)
+      expect(providerManager.applicableProviders(['workspace-center'], '*').length).toBe(0)
       expect(providerManager.defaultProvider).toEqual(null)
       expect(providerManager.defaultProviderRegistration).toEqual(null)
     })
   })
 
   describe('when providers have been registered', () => {
-    let [testProvider1, testProvider2, testProvider3, testProvider4] = []
+    let [testProvider1, testProvider2, testProvider3, testProvider4, testProvider5] = []
 
     beforeEach(() => {
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
@@ -298,6 +298,7 @@ describe('Provider Manager', () => {
       }
 
       testProvider4 = {
+        labels: ['workspace-center', 'label1'],
         scopeSelector: '.source.js .comment',
         getSuggestions (options) {
           return [{
@@ -308,82 +309,103 @@ describe('Provider Manager', () => {
         dispose () {}
       }
 
+      testProvider5 = {
+        labels: ['label1'],
+        scopeSelector: '*',
+        getSuggestions (options) {
+          return [{
+            text: 'ohai5',
+            replacementPrefix: 'ohai5'
+          }]
+        },
+        dispose () {}
+      }
+
       providerManager.registerProvider(testProvider1)
       providerManager.registerProvider(testProvider2)
       providerManager.registerProvider(testProvider3)
       providerManager.registerProvider(testProvider4)
+      providerManager.registerProvider(testProvider5)
     })
 
-    it('returns providers in the correct order for the given scope chain', () => {
+    it('returns providers in the correct order for the given scope chain and labels', () => {
       let { defaultProvider } = providerManager
 
-      let providers = providerManager.applicableProviders('.source.other')
+      let providers = providerManager.applicableProviders(['workspace-center'], '.source.other')
       expect(providers).toHaveLength(2)
       expect(providers[0]).toEqual(testProvider3)
       expect(providers[1]).toEqual(defaultProvider)
 
-      providers = providerManager.applicableProviders('.source.js')
+      providers = providerManager.applicableProviders(['workspace-center'], '.source.js')
       expect(providers).toHaveLength(3)
       expect(providers[0]).toEqual(testProvider1)
       expect(providers[1]).toEqual(testProvider3)
       expect(providers[2]).toEqual(defaultProvider)
 
-      providers = providerManager.applicableProviders('.source.js .comment')
+      providers = providerManager.applicableProviders(['workspace-center'], '.source.js .comment')
       expect(providers).toHaveLength(4)
       expect(providers[0]).toEqual(testProvider4)
       expect(providers[1]).toEqual(testProvider1)
       expect(providers[2]).toEqual(testProvider3)
       expect(providers[3]).toEqual(defaultProvider)
 
-      providers = providerManager.applicableProviders('.source.js .variable.js')
+      providers = providerManager.applicableProviders(['workspace-center'], '.source.js .variable.js')
       expect(providers).toHaveLength(4)
       expect(providers[0]).toEqual(testProvider2)
       expect(providers[1]).toEqual(testProvider1)
       expect(providers[2]).toEqual(testProvider3)
       expect(providers[3]).toEqual(defaultProvider)
 
-      providers = providerManager.applicableProviders('.source.js .other.js')
+      providers = providerManager.applicableProviders(['workspace-center'], '.source.js .other.js')
       expect(providers).toHaveLength(3)
       expect(providers[0]).toEqual(testProvider1)
       expect(providers[1]).toEqual(testProvider3)
       expect(providers[2]).toEqual(defaultProvider)
+
+      providers = providerManager.applicableProviders(['label1'], '.source.js .comment')
+      expect(providers).toHaveLength(2)
+      expect(providers[0]).toEqual(testProvider4)
+      expect(providers[1]).toEqual(testProvider5)
+
+      providers = providerManager.applicableProviders(['label1', 'workspace-center'], '.source.js .comment')
+      expect(providers).toHaveLength(5)
     })
 
     it('does not return providers if the scopeChain exactly matches a global blacklist item', () => {
-      expect(providerManager.applicableProviders('.source.js .comment')).toHaveLength(4)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment')).toHaveLength(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js .comment'])
-      expect(providerManager.applicableProviders('.source.js .comment')).toHaveLength(0)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment')).toHaveLength(0)
     })
 
     it('does not return providers if the scopeChain matches a global blacklist item with a wildcard', () => {
-      expect(providerManager.applicableProviders('.source.js .comment')).toHaveLength(4)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment')).toHaveLength(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
-      expect(providerManager.applicableProviders('.source.js .comment')).toHaveLength(0)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment')).toHaveLength(0)
     })
 
     it('does not return providers if the scopeChain matches a global blacklist item with a wildcard one level of depth below the current scope', () => {
-      expect(providerManager.applicableProviders('.source.js .comment')).toHaveLength(4)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment')).toHaveLength(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.js *'])
-      expect(providerManager.applicableProviders('.source.js .comment .other')).toHaveLength(0)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment .other')).toHaveLength(0)
     })
 
     it('does return providers if the scopeChain does not match a global blacklist item with a wildcard', () => {
-      expect(providerManager.applicableProviders('.source.js .comment')).toHaveLength(4)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment')).toHaveLength(4)
       atom.config.set('autocomplete-plus.scopeBlacklist', ['.source.coffee *'])
-      expect(providerManager.applicableProviders('.source.js .comment')).toHaveLength(4)
+      expect(providerManager.applicableProviders(['workspace-center'], '.source.js .comment')).toHaveLength(4)
     })
 
     it('filters a provider if the scopeChain matches a provider blacklist item', () => {
       let { defaultProvider } = providerManager
 
-      let providers = providerManager.applicableProviders('.source.js .variable.js .other.js')
+      let providers = providerManager.applicableProviders(['workspace-center'], '.source.js .variable.js .other.js')
       expect(providers).toHaveLength(4)
       expect(providers[0]).toEqual(testProvider2)
       expect(providers[1]).toEqual(testProvider1)
       expect(providers[2]).toEqual(testProvider3)
       expect(providers[3]).toEqual(defaultProvider)
 
-      providers = providerManager.applicableProviders('.source.js .variable.js .comment2.js')
+      providers = providerManager.applicableProviders(['workspace-center'], '.source.js .variable.js .comment2.js')
       expect(providers).toHaveLength(3)
       expect(providers[0]).toEqual(testProvider1)
       expect(providers[1]).toEqual(testProvider3)
@@ -391,14 +413,14 @@ describe('Provider Manager', () => {
     })
 
     it('filters a provider if the scopeChain matches a provider providerblacklist item', () => {
-      let providers = providerManager.applicableProviders('.source.js .variable.js .other.js')
+      let providers = providerManager.applicableProviders(['workspace-center'], '.source.js .variable.js .other.js')
       expect(providers).toHaveLength(4)
       expect(providers[0]).toEqual(testProvider2)
       expect(providers[1]).toEqual(testProvider1)
       expect(providers[2]).toEqual(testProvider3)
       expect(providers[3]).toEqual(providerManager.defaultProvider)
 
-      providers = providerManager.applicableProviders('.source.js .variable.js .comment3.js')
+      providers = providerManager.applicableProviders(['workspace-center'], '.source.js .variable.js .comment3.js')
       expect(providers).toHaveLength(3)
       expect(providers[0]).toEqual(testProvider2)
       expect(providers[1]).toEqual(testProvider1)
@@ -452,14 +474,14 @@ describe('Provider Manager', () => {
     })
 
     it('returns the default provider and higher when nothing with a higher proirity is excluding the lower', () => {
-      let providers = providerManager.applicableProviders('.source.coffee')
+      let providers = providerManager.applicableProviders(['workspace-center'], '.source.coffee')
       expect(providers).toHaveLength(2)
       expect(providers[0]).toEqual(accessoryProvider1)
       expect(providers[1]).toEqual(defaultProvider)
     })
 
     it('exclude the lower priority provider, the default, when one with a higher proirity excludes the lower', () => {
-      let providers = providerManager.applicableProviders('.source.js')
+      let providers = providerManager.applicableProviders(['workspace-center'], '.source.js')
       expect(providers).toHaveLength(3)
       expect(providers[0]).toEqual(accessoryProvider2)
       expect(providers[1]).toEqual(mainProvider)
@@ -467,7 +489,7 @@ describe('Provider Manager', () => {
     })
 
     it('excludes the all lower priority providers when multiple providers of lower priority', () => {
-      let providers = providerManager.applicableProviders('.source.js .comment')
+      let providers = providerManager.applicableProviders(['workspace-center'], '.source.js .comment')
       expect(providers).toHaveLength(3)
       expect(providers[0]).toEqual(verySpecificProvider)
       expect(providers[1]).toEqual(accessoryProvider2)
@@ -508,7 +530,7 @@ describe('Provider Manager', () => {
     })
 
     it('sorts by specificity', () => {
-      let providers = providerManager.applicableProviders('.source.js .comment')
+      let providers = providerManager.applicableProviders(['workspace-center'], '.source.js .comment')
       expect(providers).toHaveLength(4)
       expect(providers[0]).toEqual(provider2)
       expect(providers[1]).toEqual(provider3)

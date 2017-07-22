@@ -2,6 +2,7 @@
 /* eslint-env jasmine */
 /* eslint-disable no-template-curly-in-string */
 
+import { TextEditor } from 'atom'
 import { triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent } from './spec-helper'
 let temp = require('temp').track()
 import path from 'path'
@@ -2333,6 +2334,67 @@ defm`
       runs(() => {
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         expect(suggestionListView.scrollWidth).toBe(suggestionListView.offsetWidth)
+      })
+    })
+  })
+
+  describe('when watching a text editor for a given set of provider labels', () => {
+    let disposable
+    beforeEach(() => {
+      // Activate package.
+      waitsForPromise(() => atom.packages.activatePackage('autocomplete-plus').then((a) => {
+        mainModule = a.mainModule
+      }))
+
+      waitsFor(() => {
+        autocompleteManager = mainModule.autocompleteManager
+        return autocompleteManager
+      })
+
+      // Create external providers with certain labels.
+      runs(() => {
+        let provider = {
+          labels: ['correct-label'],
+          scopeSelector: '*',
+          getSuggestions (options) { return [{text: 'correct'}] }
+        }
+        mainModule.consumeProvider(provider)
+
+        let providerWithOtherLabel = {
+          labels: ['other-label'],
+          scopeSelector: '*',
+          getSuggestions (options) { return [{text: 'other'}] }
+        }
+        mainModule.consumeProvider(providerWithOtherLabel)
+      })
+
+      // Create watched editor for a given label.
+      runs(() => {
+        editor = new TextEditor()
+        editorView = atom.views.getView(editor)
+        atom.workspace.addBottomPanel({item: editorView, visible: true})
+        editorView.focus()
+        disposable = autocompleteManager.watchEditor(editor, ['correct-label'])
+      })
+    })
+
+    it('provides appropriate autocompletions when the editor is focused.', () => {
+      triggerAutocompletion(editor)
+
+      runs(() => {
+        expect(editorView).toHaveFocus()
+        let items = editorView.querySelectorAll('.autocomplete-plus li')
+        expect(items.length).toEqual(1)
+        expect(items[0].innerText.trim()).toEqual('correct')
+      })
+    })
+
+    it('stops providing autocompletions when disposed.', () => {
+      disposable.dispose()
+      triggerAutocompletion(editor)
+
+      runs(() => {
+        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
       })
     })
   })

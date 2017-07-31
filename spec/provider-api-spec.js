@@ -4,7 +4,7 @@
 import { waitForAutocomplete, triggerAutocompletion } from './spec-helper'
 
 describe('Provider API', () => {
-  let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
+  let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider, testProvider2] = []
 
   beforeEach(() => {
     runs(() => {
@@ -53,9 +53,9 @@ describe('Provider API', () => {
         getSuggestions (options) { return [{text: 'ohai', replacementPrefix: 'ohai'}] }
       }
 
-      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', [testProvider])
-      return expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+      return expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
     })
 
     it('registers the provider specified by the naked provider', () => {
@@ -64,9 +64,28 @@ describe('Provider API', () => {
         getSuggestions (options) { return [{text: 'ohai', replacementPrefix: 'ohai'}] }
       }
 
-      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
-      expect(autocompleteManager.providerManager.applicableProviders(editor, '.source.js').length).toEqual(2)
+      expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+    })
+
+    it('registers the provider under the given list of labels, the default being [\'workspace-center\']', () => {
+      testProvider = {
+        scopeSelector: '.source.js,.source.coffee',
+        getSuggestions (options) { return [{text: 'ohai', replacementPrefix: 'ohai'}] }
+      }
+      testProvider2 = {
+        labels: ['testProvider2'],
+        scopeSelector: '.source.js,.source.coffee',
+        getSuggestions (options) { return [{text: 'ohai', replacementPrefix: 'ohai'}] }
+      }
+
+      expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+      expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(2)
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider2)
+      expect(autocompleteManager.providerManager.applicableProviders(['testProvider2'], '.source.js').length).toEqual(1)
+      expect(autocompleteManager.providerManager.applicableProviders(['testProvider2', 'workspace-center'], '.source.js').length).toEqual(3)
     })
 
     it('passes the correct parameters to getSuggestions for the version', () => {

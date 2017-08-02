@@ -9,6 +9,7 @@ describe('Provider Manager', () => {
   beforeEach(() => {
     atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
     providerManager = new ProviderManager()
+    providerManager.initialize()
     testProvider = {
       getSuggestions (options) {
         return [{
@@ -259,6 +260,7 @@ describe('Provider Manager', () => {
     beforeEach(() => {
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
+      providerManager.initialize()
 
       testProvider1 = {
         scopeSelector: '.source.js',
@@ -434,6 +436,7 @@ describe('Provider Manager', () => {
     beforeEach(() => {
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
+      providerManager.initialize()
       defaultProvider = providerManager.defaultProvider
 
       accessoryProvider1 = {
@@ -502,6 +505,7 @@ describe('Provider Manager', () => {
     beforeEach(() => {
       atom.config.set('autocomplete-plus.enableBuiltinProvider', true)
       providerManager = new ProviderManager()
+      providerManager.initialize()
 
       provider1 = {
         scopeSelector: '*',

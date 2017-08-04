@@ -82,6 +82,27 @@ Great autocomplete depends on having great autocomplete providers. If there is n
 
 If the default `SymbolProvider` is missing useful information for the language / grammar you're working with, please take a look at the [`SymbolProvider` Config API](https://github.com/atom/autocomplete-plus/wiki/SymbolProvider-Config-API).
 
-## `AutocompleteManager` API
+## The `watchEditor` API
 
-The `AutocompleteManager` is exposed as a [provided service](http://flight-manual.atom.io/behind-atom/sections/interacting-with-other-packages-via-services/). Its main public method is `watchEditor` which allows external editors to register for autocompletions from providers with a given set of labels.
+The `watchEditor` method on the `AutocompleteManager` object is exposed as a [provided service](http://flight-manual.atom.io/behind-atom/sections/interacting-with-other-packages-via-services/), named `autocomplete.watchEditor`. The method allows external editors to register for autocompletions from providers with a given set of labels. Disposing the returned object will undo this request. External packages can access this service with the following code.
+
+In `package.json`:
+```
+{
+  "consumedServices": {
+    "autocomplete.watchEditor": {
+      "versions": {
+        "1.0.0": "consumeAutocompleteWatchEditor",
+      }
+    }
+  }
+}
+```
+In the main module file:
+```
+consumeAutocompleteWatchEditor(watchEditor) {
+  this.autocompleteDisposable = watchEditor(
+    this.editor, ['symbol-provider']
+  )
+}
+```

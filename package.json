@@ -26,6 +26,13 @@
     "standard": "^8.3.0",
     "temp": ">=0.7.0"
   },
+  "providedServices": {
+    "autocomplete.watchEditor": {
+      "versions": {
+        "1.0.0": "provideWatchEditor"
+      }
+    }
+  },
   "consumedServices": {
     "autocomplete.provider": {
       "versions": {

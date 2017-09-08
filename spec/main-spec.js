@@ -71,11 +71,11 @@ describe('Autocomplete', () => {
 
         waitForAutocomplete()
 
-        runs(() => {
+        runs(async () => {
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
           // Deactivate the package
-          atom.packages.deactivatePackage('autocomplete-plus')
+          await atom.packages.deactivatePackage('autocomplete-plus')
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
         })
       })

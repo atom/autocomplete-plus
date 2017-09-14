@@ -585,17 +585,33 @@ describe('Autocomplete Manager', () => {
     })
 
     describe('when the character entered is not at the cursor position', () => {
-      beforeEach(() => {
+      it('does not show the suggestion list', () => {
         editor.setText('some text ok')
         editor.setCursorBufferPosition([0, 7])
-      })
 
-      it('does not show the suggestion list', () => {
         let buffer = editor.getBuffer()
         buffer.setTextInRange([[0, 0], [0, 0]], 's')
         waitForAutocomplete()
 
         runs(() => expect(editorView.querySelector('.autocomplete-plus')).not.toExist())
+      })
+
+      it('does not hide the suggestion list', () => {
+        editor.setText(
+          '0\n' +
+          '1\n'
+        )
+        editor.setCursorBufferPosition([2, 0])
+        editor.insertText('2')
+        waitForAutocomplete()
+
+        runs(() => {
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          editor.setTextInBufferRange([[0, 0], [0, 0]], '*')
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          editor.setTextInBufferRange([[0, 0], [0, 0]], '\n')
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+        })
       })
     })
 

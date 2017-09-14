@@ -13,20 +13,20 @@ let suggestionsForPrefix = (provider, editor, prefix, options) => {
     return suggestions
   } else {
     if (suggestions) {
-      return (suggestions.map((sug) => sug.text))
+      return suggestions.then(sugs => sugs.map(sug => sug.text))
     } else {
-      return []
+      return Promise.resolve([])
     }
   }
 }
 
-describe('SymbolProvider', () => {
+describe('SubsequenceProvider', () => {
   let [completionDelay, editor, mainModule, autocompleteManager, provider] = []
 
   beforeEach(() => {
     // Set to live completion
     atom.config.set('autocomplete-plus.enableAutoActivation', true)
-    atom.config.set('autocomplete-plus.defaultProvider', 'Symbol')
+    atom.config.set('autocomplete-plus.defaultProvider', 'Subsequence')
 
     // Set the completion delay
     completionDelay = 100
@@ -52,81 +52,101 @@ describe('SymbolProvider', () => {
     })
   })
 
-  it('runs a completion ', () => expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
-  )
-
-  it('adds words to the symbol list after they have been written', () => {
-    expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-
-    editor.insertText('function aNewFunction(){};')
-    editor.insertText(' ')
-    advanceClock(provider.changeUpdateDelay)
-
-    expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
+  fit('runs a completion ', done => {
+    console.error('kjdfkjdjk')
+    suggestionsForPrefix(provider, editor, 'quick').then(suggestions => {
+      expect(suggestions).toContain('quicksort')
+      done()
+    })
   })
 
-  it('adds words after they have been added to a scope that is not a direct match for the selector', () => {
-    expect(suggestionsForPrefix(provider, editor, 'some')).not.toContain('somestring')
-
-    editor.insertText('abc = "somestring"')
-    editor.insertText(' ')
-    advanceClock(provider.changeUpdateDelay)
-
-    expect(suggestionsForPrefix(provider, editor, 'some')).toContain('somestring')
+  fit('adds words to the symbol list after they have been written', done => {
+    suggestionsForPrefix(provider, editor, 'anew').then(suggestions => {
+      expect(suggestions).not.toContain('aNewFunction')
+      editor.insertText('function aNewFunction(){};')
+      editor.insertText(' ')
+      return suggestionsForPrefix(provider, editor, 'anew')
+    }).then(suggestions => {
+      expect(suggestions).toContain('aNewFunction')
+      done()
+    })
   })
 
-  it('removes words from the symbol list when they do not exist in the buffer', () => {
+  fit('adds words after they have been added to a scope that is not a direct match for the selector', done => {
+    suggestionsForPrefix(provider, editor, 'some').then(sugs => {
+      expect(sugs).not.toContain('somestring')
+      editor.insertText('abc = "somestring"')
+      editor.insertText(' ')
+      return suggestionsForPrefix(provider, editor, 'some')
+    }).then(sugs => {
+      expect(sugs).toContain('somestring')
+      done()
+    })
+  })
+
+  fit('removes words from the symbol list when they do not exist in the buffer', done => {
     editor.moveToBottom()
     editor.moveToBeginningOfLine()
 
-    expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-
-    editor.insertText('function aNewFunction(){};')
-    editor.moveToEndOfLine()
-    advanceClock(provider.changeUpdateDelay)
-    expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
-
-    editor.setCursorBufferPosition([13, 21])
-    editor.backspace()
-    editor.moveToTop()
-    advanceClock(provider.changeUpdateDelay)
-
-    expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunctio')
-    expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
+    suggestionsForPrefix(provider, editor, 'anew').then(sugs => {
+      expect(sugs).not.toContain('aNewFunction')
+      editor.insertText('function aNewFunction(){};')
+      editor.moveToEndOfLine()
+      return suggestionsForPrefix(provider, editor, 'anew')
+    }).then(sugs => {
+      expect(sugs).toContain('aNewFunction')
+      editor.setCursorBufferPosition([13, 21])
+      editor.backspace()
+      editor.moveToTop()
+      return suggestionsForPrefix(provider, editor, 'anew')
+    }).then(sugs => {
+      expect(sugs).toContain('aNewFunctio')
+      expect(sugs).not.toContain('aNewFunction')
+      done()
+    })
   })
 
-  it('does not return the word under the cursor when there is only a prefix', () => {
+  fit('does not return the word under the cursor when there is only a prefix', done => {
     editor.moveToBottom()
     editor.insertText('qu')
     waitForBufferToStopChanging()
-    expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain('qu')
-
-    editor.insertText(' qu')
-    waitForBufferToStopChanging()
-    expect(suggestionsForPrefix(provider, editor, 'qu')).toContain('qu')
+    suggestionsForPrefix(provider, editor, 'qu').then(sugs => {
+      expect(sugs).not.toContain('qu')
+      editor.insertText(' qu')
+      waitForBufferToStopChanging()
+      return suggestionsForPrefix(provider, editor, 'qu')
+    }).then(sugs => {
+      expect(sugs).toContain('qu')
+      done()
+    })
   })
 
-  it('does not return the word under the cursor when there is a suffix and only one instance of the word', () => {
+  fit('does not return the word under the cursor when there is a suffix and only one instance of the word', done => {
     editor.moveToBottom()
     editor.insertText('catscats')
     editor.moveToBeginningOfLine()
     editor.insertText('omg')
-    expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain('omg')
-    expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain('omgcatscats')
-  }
-  )
+    suggestionsForPrefix(provider, editor, 'omg').then(sugs => {
+      expect(sugs).not.toContain('omg')
+      expect(sugs).not.toContain('omgcatscats')
+      done()
+    })
+  })
 
-  it('does not return the word under the cursors when are multiple cursors', () => {
+  fit('does not return the word under the cursors when are multiple cursors', done => {
     editor.moveToBottom()
     editor.setText('\n\n\n')
     editor.setCursorBufferPosition([0, 0])
     editor.addCursorAtBufferPosition([1, 0])
     editor.addCursorAtBufferPosition([2, 0])
     editor.insertText('omg')
-    expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain('omg')
+    suggestionsForPrefix(provider, editor, 'omg').then(sugs => {
+      expect(sugs).not.toContain('omg')
+      done()
+    })
   })
 
-  it('returns the word under the cursor when there is a suffix and there are multiple instances of the word', () => {
+  fit('returns the word under the cursor when there is a suffix and there are multiple instances of the word', done => {
     editor.moveToBottom()
     editor.insertText('icksort')
     waitForBufferToStopChanging()
@@ -134,11 +154,14 @@ describe('SymbolProvider', () => {
     editor.insertText('qu')
     waitForBufferToStopChanging()
 
-    expect(suggestionsForPrefix(provider, editor, 'qu')).not.toContain('qu')
-    expect(suggestionsForPrefix(provider, editor, 'qu')).toContain('quicksort')
+    suggestionsForPrefix(provider, editor, 'qu').then(sugs => {
+      expect(sugs).not.toContain('qu')
+      expect(sugs).toContain('quicksort')
+      done()
+    })
   })
 
-  it('does not output suggestions from the other buffer', () => {
+  fit('does not output suggestions from the other buffer', done => {
     let [coffeeEditor] = []
 
     waitsForPromise(() =>
@@ -149,7 +172,10 @@ describe('SymbolProvider', () => {
 
     runs(() => {
       advanceClock(1) // build the new wordlist
-      expect(suggestionsForPrefix(provider, coffeeEditor, 'item')).toHaveLength(0)
+      suggestionsForPrefix(provider, coffeeEditor, 'item').then(sugs => {
+        expect(sugs).toHaveLength(0)
+        done()
+      })
     })
   })
 

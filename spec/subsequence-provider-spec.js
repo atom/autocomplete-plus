@@ -516,7 +516,7 @@ inVar = "in-a-string"`
     })
   })
 
-  it('adds words to the wordlist with unicode characters', () => {
+  it('adds words to the wordlist with unicode characters', done => {
     atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
     suggestionsForPrefix(provider, editor, 'somē', {raw: true}).then(suggestions => {
       expect(suggestions).toHaveLength(0)

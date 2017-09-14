@@ -52,7 +52,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('runs a completion ', done => {
+  it('runs a completion ', done => {
     console.error('kjdfkjdjk')
     suggestionsForPrefix(provider, editor, 'quick').then(suggestions => {
       expect(suggestions).toContain('quicksort')
@@ -60,7 +60,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('adds words to the symbol list after they have been written', done => {
+  it('adds words to the symbol list after they have been written', done => {
     suggestionsForPrefix(provider, editor, 'anew').then(suggestions => {
       expect(suggestions).not.toContain('aNewFunction')
       editor.insertText('function aNewFunction(){};')
@@ -72,7 +72,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('adds words after they have been added to a scope that is not a direct match for the selector', done => {
+  it('adds words after they have been added to a scope that is not a direct match for the selector', done => {
     suggestionsForPrefix(provider, editor, 'some').then(sugs => {
       expect(sugs).not.toContain('somestring')
       editor.insertText('abc = "somestring"')
@@ -84,7 +84,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('removes words from the symbol list when they do not exist in the buffer', done => {
+  it('removes words from the symbol list when they do not exist in the buffer', done => {
     editor.moveToBottom()
     editor.moveToBeginningOfLine()
 
@@ -106,7 +106,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('does not return the word under the cursor when there is only a prefix', done => {
+  it('does not return the word under the cursor when there is only a prefix', done => {
     editor.moveToBottom()
     editor.insertText('qu')
     waitForBufferToStopChanging()
@@ -121,7 +121,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('does not return the word under the cursor when there is a suffix and only one instance of the word', done => {
+  it('does not return the word under the cursor when there is a suffix and only one instance of the word', done => {
     editor.moveToBottom()
     editor.insertText('catscats')
     editor.moveToBeginningOfLine()
@@ -133,7 +133,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('does not return the word under the cursors when are multiple cursors', done => {
+  it('does not return the word under the cursors when are multiple cursors', done => {
     editor.moveToBottom()
     editor.setText('\n\n\n')
     editor.setCursorBufferPosition([0, 0])
@@ -146,7 +146,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('returns the word under the cursor when there is a suffix and there are multiple instances of the word', done => {
+  it('returns the word under the cursor when there is a suffix and there are multiple instances of the word', done => {
     editor.moveToBottom()
     editor.insertText('icksort')
     waitForBufferToStopChanging()
@@ -161,7 +161,7 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  fit('does not output suggestions from the other buffer', done => {
+  it('does not output suggestions from the other buffer', done => {
     let [coffeeEditor] = []
 
     waitsForPromise(() =>
@@ -180,7 +180,7 @@ describe('SubsequenceProvider', () => {
   })
 
   describe('when `editor.largeFileMode` is true', () =>
-    it("doesn't recompute symbols when the buffer changes", () => {
+    it("doesn't recompute symbols when the buffer changes", done => {
       let coffeeEditor = null
 
       waitsForPromise(() => atom.packages.activatePackage('language-coffee-script'))
@@ -195,11 +195,15 @@ describe('SubsequenceProvider', () => {
       runs(() => {
         waitForBufferToStopChanging()
         coffeeEditor.setCursorBufferPosition([2, 0])
-        expect(suggestionsForPrefix(provider, coffeeEditor, 'Some')).toEqual([])
-
-        coffeeEditor.getBuffer().setTextInRange([[0, 0], [0, 0]], 'abc')
-        waitForBufferToStopChanging()
-        expect(suggestionsForPrefix(provider, coffeeEditor, 'abc')).toEqual([])
+        suggestionsForPrefix(provider, coffeeEditor, 'Some').then(sugs => {
+          expect(sugs).toEqual([])
+          coffeeEditor.getBuffer().setTextInRange([[0, 0], [0, 0]], 'abc')
+          waitForBufferToStopChanging()
+          return suggestionsForPrefix(provider, coffeeEditor, 'abc')
+        }).then(sugs => {
+          expect(sugs).toEqual([])
+          done()
+        })
       })
     })
   )
@@ -207,110 +211,139 @@ describe('SubsequenceProvider', () => {
   describe('when autocomplete-plus.minimumWordLength is > 1', () => {
     beforeEach(() => atom.config.set('autocomplete-plus.minimumWordLength', 3))
 
-    it('only returns results when the prefix is at least the min word length', () => {
+    it('only returns results when the prefix is at least the min word length', done => {
       editor.insertText('function aNewFunction(){};')
-      advanceClock(provider.changeUpdateDelay)
 
-      expect(suggestionsForPrefix(provider, editor, '')).not.toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'a')).not.toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'an')).not.toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'ane')).toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
+      Promise.all([
+        '',
+        'a',
+        'an',
+        'ane',
+        'anew'
+      ].map(suggestionsForPrefix.bind(null, provider, editor))).then(results => {
+        expect(results[0]).not.toContain('aNewFunction')
+        expect(results[1]).not.toContain('aNewFunction')
+        expect(results[2]).not.toContain('aNewFunction')
+        expect(results[3]).toContain('aNewFunction')
+        expect(results[4]).toContain('aNewFunction')
+        done()
+      })
     })
   })
 
   describe('when autocomplete-plus.minimumWordLength is 0', () => {
     beforeEach(() => atom.config.set('autocomplete-plus.minimumWordLength', 0))
 
-    it('only returns results when the prefix is at least the min word length', () => {
+    it('only returns results when the prefix is at least the min word length', done => {
       editor.insertText('function aNewFunction(){};')
-      advanceClock(provider.changeUpdateDelay)
+      const testResultPairs = [
+        ['', false],
+        ['a', true],
+        ['an', true],
+        ['ane', true],
+        ['anew', true]
+      ]
 
-      expect(suggestionsForPrefix(provider, editor, '')).not.toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'a')).toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'an')).toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'ane')).toContain('aNewFunction')
-      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
+      Promise.all(
+        testResultPairs.map(t => suggestionsForPrefix(provider, editor, t[0]))
+      ).then(results => {
+        results.forEach((result, idx) => {
+          if (testResultPairs[idx][1]) {
+            expect(result).toContain('aNewFunction')
+          } else {
+            expect(result).not.toContain('aNewFunction')
+          }
+        })
+
+        done()
+      })
     })
   })
 
   describe("when the editor's path changes", () =>
-    it('continues to track changes on the new path', () => {
+    it('continues to track changes on the new path', done => {
       let buffer = editor.getBuffer()
 
-      expect(provider.isWatchingEditor(editor)).toBe(true)
-      expect(provider.isWatchingBuffer(buffer)).toBe(true)
-      expect(suggestionsForPrefix(provider, editor, 'qu')).toContain('quicksort')
-
-      buffer.setPath('cats.js')
-
-      expect(provider.isWatchingEditor(editor)).toBe(true)
-      expect(provider.isWatchingBuffer(buffer)).toBe(true)
-
-      editor.moveToBottom()
-      editor.moveToBeginningOfLine()
-      expect(suggestionsForPrefix(provider, editor, 'qu')).toContain('quicksort')
-      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-      editor.insertText('function aNewFunction(){};')
-      waitForBufferToStopChanging()
-      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
+      expect(provider.watchedBuffers.get(buffer)).toBe(editor)
+      suggestionsForPrefix(provider, editor, 'qu').then(sugs => {
+        expect(sugs).toContain('quicksort')
+        buffer.setPath('cats.js')
+        expect(provider.watchedBuffers.get(buffer)).toBe(editor)
+        editor.moveToBottom()
+        editor.moveToBeginningOfLine()
+        return Promise.all([
+          suggestionsForPrefix(provider, editor, 'qu'),
+          suggestionsForPrefix(provider, editor, 'anew')
+        ])
+      }).then(results => {
+        expect(results[0]).toContain('quicksort')
+        expect(results[1]).not.toContain('aNewFunction')
+        editor.insertText('function aNewFunction(){};')
+        waitForBufferToStopChanging()
+        return suggestionsForPrefix(provider, editor, 'anew')
+      }).then(sugs => {
+        expect(sugs).toContain('aNewFunction')
+        done()
+      })
     })
   )
 
-  describe('when multiple editors track the same buffer', () => {
-    let [rightPane, rightEditor] = []
-    beforeEach(() => {
-      let pane = atom.workspace.paneForItem(editor)
-      rightPane = pane.splitRight({copyActiveItem: true})
-      rightEditor = rightPane.getItems()[0]
-
-      expect(provider.isWatchingEditor(editor)).toBe(true)
-      expect(provider.isWatchingEditor(rightEditor)).toBe(true)
-    })
-
-    it('watches the both the old and new editor for changes', () => {
-      rightEditor.moveToBottom()
-      rightEditor.moveToBeginningOfLine()
-
-      expect(suggestionsForPrefix(provider, rightEditor, 'anew')).not.toContain('aNewFunction')
-      rightEditor.insertText('function aNewFunction(){};')
-      waitForBufferToStopChanging()
-      expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain('aNewFunction')
-
-      editor.moveToBottom()
-      editor.moveToBeginningOfLine()
-
-      expect(suggestionsForPrefix(provider, editor, 'somenew')).not.toContain('someNewFunction')
-      editor.insertText('function someNewFunction(){};')
-      waitForBufferToStopChanging()
-      expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain('someNewFunction')
-    })
-
-    it('stops watching editors and removes content from symbol store as they are destroyed', () => {
-      expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
-
-      let buffer = editor.getBuffer()
-      editor.destroy()
-      expect(provider.isWatchingBuffer(buffer)).toBe(true)
-      expect(provider.isWatchingEditor(editor)).toBe(false)
-      expect(provider.isWatchingEditor(rightEditor)).toBe(true)
-
-      expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
-      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-
-      rightEditor.insertText('function aNewFunction(){};')
-      waitForBufferToStopChanging()
-      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
-
-      rightPane.destroy()
-      expect(provider.isWatchingBuffer(buffer)).toBe(false)
-      expect(provider.isWatchingEditor(editor)).toBe(false)
-      expect(provider.isWatchingEditor(rightEditor)).toBe(false)
-
-      expect(suggestionsForPrefix(provider, editor, 'quick')).not.toContain('quicksort')
-      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-    })
-  })
+  // TODO: since the subsequene provider doesn't store symbols this test is
+  // superfluous?
+  // describe('when multiple editors track the same buffer', () => {
+  //   let [rightPane, rightEditor] = []
+  //   beforeEach(() => {
+  //     let pane = atom.workspace.paneForItem(editor)
+  //     rightPane = pane.splitRight({copyActiveItem: true})
+  //     rightEditor = rightPane.getItems()[0]
+  //
+  //     expect(provider.isWatchingEditor(editor)).toBe(true)
+  //     expect(provider.isWatchingEditor(rightEditor)).toBe(true)
+  //   })
+  //
+  //   it('watches the both the old and new editor for changes', () => {
+  //     rightEditor.moveToBottom()
+  //     rightEditor.moveToBeginningOfLine()
+  //
+  //     expect(suggestionsForPrefix(provider, rightEditor, 'anew')).not.toContain('aNewFunction')
+  //     rightEditor.insertText('function aNewFunction(){};')
+  //     waitForBufferToStopChanging()
+  //     expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain('aNewFunction')
+  //
+  //     editor.moveToBottom()
+  //     editor.moveToBeginningOfLine()
+  //
+  //     expect(suggestionsForPrefix(provider, editor, 'somenew')).not.toContain('someNewFunction')
+  //     editor.insertText('function someNewFunction(){};')
+  //     waitForBufferToStopChanging()
+  //     expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain('someNewFunction')
+  //   })
+  //
+  //   it('stops watching editors and removes content from symbol store as they are destroyed', () => {
+  //     expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
+  //
+  //     let buffer = editor.getBuffer()
+  //     editor.destroy()
+  //     expect(provider.isWatchingBuffer(buffer)).toBe(true)
+  //     expect(provider.isWatchingEditor(editor)).toBe(false)
+  //     expect(provider.isWatchingEditor(rightEditor)).toBe(true)
+  //
+  //     expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
+  //     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
+  //
+  //     rightEditor.insertText('function aNewFunction(){};')
+  //     waitForBufferToStopChanging()
+  //     expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
+  //
+  //     rightPane.destroy()
+  //     expect(provider.isWatchingBuffer(buffer)).toBe(false)
+  //     expect(provider.isWatchingEditor(editor)).toBe(false)
+  //     expect(provider.isWatchingEditor(rightEditor)).toBe(false)
+  //
+  //     expect(suggestionsForPrefix(provider, editor, 'quick')).not.toContain('quicksort')
+  //     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
+  //   })
+  // })
 
   describe('when includeCompletionsFromAllBuffers is enabled', () => {
     beforeEach(() => {
@@ -327,16 +360,20 @@ describe('SubsequenceProvider', () => {
 
     afterEach(() => atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false))
 
-    it('outputs unique suggestions', () => {
+    it('outputs unique suggestions', done => {
       editor.setCursorBufferPosition([7, 0])
-      let results = suggestionsForPrefix(provider, editor, 'qu')
-      expect(results).toHaveLength(1)
+      suggestionsForPrefix(provider, editor, 'qu').then(sugs => {
+        expect(sugs).toHaveLength(1)
+        done()
+      })
     })
 
-    it('outputs suggestions from the other buffer', () => {
+    it('outputs suggestions from the other buffer', done => {
       editor.setCursorBufferPosition([7, 0])
-      let results = suggestionsForPrefix(provider, editor, 'item')
-      expect(results[0]).toBe('items')
+      suggestionsForPrefix(provider, editor, 'item').then(sugs => {
+        expect(sugs[0]).toBe('items')
+        done()
+      })
     })
   })
 
@@ -363,31 +400,36 @@ inVar = "in-a-string"`
       atom.config.set('autocomplete.symbols', stringConfig, {scopeSelector: '.source.js .string'})
     })
 
-    it('uses the config for the scope under the cursor', () => {
+    it('uses the config for the scope under the cursor', done => {
       // Using the comment config
       editor.setCursorBufferPosition([0, 2])
-      let suggestions = suggestionsForPrefix(provider, editor, 'in', {raw: true})
-      expect(suggestions).toHaveLength(1)
-      expect(suggestions[0].text).toBe('in-a-comment')
-      expect(suggestions[0].type).toBe('incomment')
+      suggestionsForPrefix(provider, editor, 'in', {raw: true}).then(sugs => {
+        expect(sugs).toHaveLength(1)
+        expect(sugs[0].text).toBe('in-a-comment')
+        expect(sugs[0].type).toBe('incomment')
 
-      // Using the string config
-      editor.setCursorBufferPosition([1, 20])
-      editor.insertText(' ')
-      waitForBufferToStopChanging()
-      suggestions = suggestionsForPrefix(provider, editor, 'in', {raw: true})
-      expect(suggestions).toHaveLength(1)
-      expect(suggestions[0].text).toBe('in-a-string')
-      expect(suggestions[0].type).toBe('instring')
+        // Using the string config
+        editor.setCursorBufferPosition([1, 20])
+        editor.insertText(' ')
+        waitForBufferToStopChanging()
 
-      // Using the default config
-      editor.setCursorBufferPosition([1, Infinity])
-      editor.insertText(' ')
-      waitForBufferToStopChanging()
-      suggestions = suggestionsForPrefix(provider, editor, 'in', {raw: true})
-      expect(suggestions).toHaveLength(3)
-      expect(suggestions[0].text).toBe('inVar')
-      expect(suggestions[0].type).toBe('')
+        return suggestionsForPrefix(provider, editor, 'in', {raw: true})
+      }).then(sugs => {
+        expect(sugs).toHaveLength(1)
+        expect(sugs[0].text).toBe('in-a-string')
+        expect(sugs[0].type).toBe('instring')
+
+        editor.setCursorBufferPosition([1, Infinity])
+        editor.insertText(' ')
+        waitForBufferToStopChanging()
+
+        return suggestionsForPrefix(provider, editor, 'in', {raw: true})
+      }).then(sugs => {
+        expect(sugs).toHaveLength(3)
+        expect(sugs[0].text).toBe('inVar')
+        expect(sugs[0].type).toBe('')
+        done()
+      })
     })
   })
 
@@ -406,15 +448,17 @@ inVar = "in-a-string"`
       atom.config.set('autocomplete.symbols', commentConfig, {scopeSelector: '.source.js .comment'})
     })
 
-    it('adds the suggestions to the results', () => {
+    it('adds the suggestions to the results', done => {
       // Using the comment config
       editor.setCursorBufferPosition([0, 2])
-      let suggestions = suggestionsForPrefix(provider, editor, 'ab', {raw: true})
-      expect(suggestions).toHaveLength(4)
-      expect(suggestions[0].text).toBe('abcomment')
-      expect(suggestions[0].type).toBe('comment')
-      expect(suggestions[1].text).toBe('abcd')
-      expect(suggestions[1].type).toBe('builtin')
+      suggestionsForPrefix(provider, editor, 'ab', {raw: true}).then(suggestions => {
+        expect(suggestions).toHaveLength(4)
+        expect(suggestions[0].text).toBe('abcomment')
+        expect(suggestions[0].type).toBe('comment')
+        expect(suggestions[1].text).toBe('abcd')
+        expect(suggestions[1].type).toBe('builtin')
+        done()
+      })
     })
   })
 
@@ -436,16 +480,18 @@ inVar = "in-a-string"`
       atom.config.set('autocomplete.symbols', commentConfig, {scopeSelector: '.source.js .comment'})
     })
 
-    it('adds the suggestion objects to the results', () => {
+    it('adds the suggestion objects to the results', done => {
       // Using the comment config
       editor.setCursorBufferPosition([0, 2])
-      let suggestions = suggestionsForPrefix(provider, editor, 'ab', {raw: true})
-      expect(suggestions).toHaveLength(2)
-      expect(suggestions[0].text).toBe('abcomment')
-      expect(suggestions[0].type).toBe('comment')
-      expect(suggestions[1].text).toBe('abcd')
-      expect(suggestions[1].type).toBe('function')
-      expect(suggestions[1].rightLabel).toBe('one')
+      suggestionsForPrefix(provider, editor, 'ab', {raw: true}).then(suggestions => {
+        expect(suggestions).toHaveLength(2)
+        expect(suggestions[0].text).toBe('abcomment')
+        expect(suggestions[0].type).toBe('comment')
+        expect(suggestions[1].text).toBe('abcd')
+        expect(suggestions[1].type).toBe('function')
+        expect(suggestions[1].rightLabel).toBe('one')
+        done()
+      })
     })
   })
 
@@ -456,26 +502,32 @@ inVar = "in-a-string"`
       atom.config.set('editor.completions', ['abcd', 'abcde', 'abcdef'], {scopeSelector: '.source.js .comment'})
     })
 
-    it('uses the config for the scope under the cursor', () => {
+    it('uses the config for the scope under the cursor', done => {
       // Using the comment config
       editor.setCursorBufferPosition([0, 2])
-      let suggestions = suggestionsForPrefix(provider, editor, 'ab', {raw: true})
-      expect(suggestions).toHaveLength(4)
-      expect(suggestions[0].text).toBe('abcomment')
-      expect(suggestions[0].type).toBe('')
-      expect(suggestions[1].text).toBe('abcd')
-      expect(suggestions[1].type).toBe('builtin')
+      suggestionsForPrefix(provider, editor, 'ab', {raw: true}).then(suggestions => {
+        expect(suggestions).toHaveLength(4)
+        expect(suggestions[0].text).toBe('abcomment')
+        expect(suggestions[0].type).toBe('')
+        expect(suggestions[1].text).toBe('abcd')
+        expect(suggestions[1].type).toBe('builtin')
+        done()
+      })
     })
   })
 
   it('adds words to the wordlist with unicode characters', () => {
     atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
-    let suggestions = suggestionsForPrefix(provider, editor, 'somē', {raw: true})
-    expect(suggestions).toHaveLength(0)
-    editor.insertText('somēthingNew')
-    editor.insertText(' ')
-    waitForBufferToStopChanging()
-    suggestions = suggestionsForPrefix(provider, editor, 'somē', {raw: true})
-    expect(suggestions).toHaveLength(1)
+    suggestionsForPrefix(provider, editor, 'somē', {raw: true}).then(suggestions => {
+      expect(suggestions).toHaveLength(0)
+      editor.insertText('somēthingNew')
+      editor.insertText(' ')
+      waitForBufferToStopChanging()
+
+      return suggestionsForPrefix(provider, editor, 'somē', {raw: true})
+    }).then(suggestions => {
+      expect(suggestions).toHaveLength(1)
+      done()
+    })
   })
 })

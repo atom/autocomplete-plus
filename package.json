@@ -220,6 +220,22 @@
       "type": "boolean",
       "default": false,
       "order": 21
+    },
+    "similarSuggestionRemoval": {
+      "description": "Should similar suggestions be removed from the list? If so how to determine they are similar.",
+      "type": "string",
+      "default": "none",
+      "enum": [
+        {
+          "value": "none",
+          "description": "Do not remove similar suggestions"
+        },
+        {
+          "value": "textOrSnippet",
+          "description": "Remove when the insertion text or snippet match"
+        }
+      ],
+      "order": 22
     }
   },
   "standard": {

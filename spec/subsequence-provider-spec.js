@@ -19,7 +19,7 @@ let suggestionsForPrefix = (provider, editor, prefix, options) => {
   }
 }
 
-fdescribe('SubsequenceProvider', () => {
+describe('SubsequenceProvider', () => {
   let [completionDelay, editor, mainModule, autocompleteManager, provider] = []
 
   beforeEach(() => {

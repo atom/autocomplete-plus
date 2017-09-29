@@ -51,6 +51,8 @@ describe('SubsequenceProvider', () => {
     })
   })
 
+  // TODO: delete me once Atom release includes findWordsWithSubsequence
+  if (TextBuffer.prototype.findWordsWithSubsequence) {
   it('runs a completion ', () => {
     waitsForPromise(() => {
       return suggestionsForPrefix(provider, editor, 'quick').then(suggestions => {
@@ -485,4 +487,5 @@ describe('SubsequenceProvider', () => {
       })
     )
   })
+  }
 })

@@ -178,7 +178,8 @@
       "default": "Symbol",
       "enum": [
         "Fuzzy",
-        "Symbol"
+        "Symbol",
+        "Subsequence"
       ],
       "order": 16
     },

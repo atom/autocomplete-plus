@@ -1,7 +1,6 @@
-'use babel'
 /* eslint-env jasmine */
 
-import { TextBuffer } from 'atom'
+const { TextBuffer } = require('atom')
 
 let waitForBufferToStopChanging = () => advanceClock(TextBuffer.prototype.stoppedChangingDelay)
 
@@ -20,7 +19,7 @@ let suggestionsForPrefix = (provider, editor, prefix, options) => {
   }
 }
 
-describe('SubsequenceProvider', () => {
+fdescribe('SubsequenceProvider', () => {
   let [completionDelay, editor, mainModule, autocompleteManager, provider] = []
 
   beforeEach(() => {
@@ -185,36 +184,23 @@ describe('SubsequenceProvider', () => {
     )
   })
 
-  // TODO: subsequence provider doesn't store symbols like the symbol provider
-  // so this test should be removed?
-  // describe('when `editor.largeFileMode` is true', () =>
-  //   it("doesn't recompute symbols when the buffer changes", done => {
-  //     let coffeeEditor = null
-  //
-  //     waitsForPromise(() => atom.packages.activatePackage('language-coffee-script'))
-  //
-  //     waitsForPromise(() =>
-  //       atom.workspace.open('sample.coffee').then((e) => {
-  //         coffeeEditor = e
-  //         coffeeEditor.largeFileMode = true
-  //       })
-  //     )
-  //
-  //     runs(() => {
-  //       waitForBufferToStopChanging()
-  //       coffeeEditor.setCursorBufferPosition([2, 0])
-  //       suggestionsForPrefix(provider, coffeeEditor, 'Some').then(sugs => {
-  //         expect(sugs).toEqual([])
-  //         coffeeEditor.getBuffer().setTextInRange([[0, 0], [0, 0]], 'abc')
-  //         waitForBufferToStopChanging()
-  //         return suggestionsForPrefix(provider, coffeeEditor, 'abc')
-  //       }).then(sugs => {
-  //         expect(sugs).toEqual([])
-  //         done()
-  //       })
-  //     })
-  //   })
-  // )
+  describe('search range', () => {
+    it('includes the full range when the buffer is smaller than the max range', () => {
+      const range = provider.clampedRange(500, 25, 100)
+      expect(range.start.row).toBeLessThan(0)
+      expect(range.end.row).toBeGreaterThan(100)
+    })
+
+    it('returns the expected result when cursor is close to end of large buffer', () => {
+      const range = provider.clampedRange(100, 450, 500)
+      expect(range.start.row).toBeLessThan(350)
+    })
+
+    it('returns the expected result when cursor is close to beginning of large buffer', () => {
+      const range = provider.clampedRange(100, 50, 500)
+      expect(range.end.row).toBeGreaterThan(100)
+    })
+  })
 
   describe('when autocomplete-plus.minimumWordLength is > 1', () => {
     beforeEach(() => atom.config.set('autocomplete-plus.minimumWordLength', 3))
@@ -299,63 +285,6 @@ describe('SubsequenceProvider', () => {
     })
   )
 
-  // TODO: since the subsequene provider doesn't store symbols this test is
-  // superfluous?
-  // describe('when multiple editors track the same buffer', () => {
-  //   let [rightPane, rightEditor] = []
-  //   beforeEach(() => {
-  //     let pane = atom.workspace.paneForItem(editor)
-  //     rightPane = pane.splitRight({copyActiveItem: true})
-  //     rightEditor = rightPane.getItems()[0]
-  //
-  //     expect(provider.isWatchingEditor(editor)).toBe(true)
-  //     expect(provider.isWatchingEditor(rightEditor)).toBe(true)
-  //   })
-  //
-  //   it('watches the both the old and new editor for changes', () => {
-  //     rightEditor.moveToBottom()
-  //     rightEditor.moveToBeginningOfLine()
-  //
-  //     expect(suggestionsForPrefix(provider, rightEditor, 'anew')).not.toContain('aNewFunction')
-  //     rightEditor.insertText('function aNewFunction(){};')
-  //     waitForBufferToStopChanging()
-  //     expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain('aNewFunction')
-  //
-  //     editor.moveToBottom()
-  //     editor.moveToBeginningOfLine()
-  //
-  //     expect(suggestionsForPrefix(provider, editor, 'somenew')).not.toContain('someNewFunction')
-  //     editor.insertText('function someNewFunction(){};')
-  //     waitForBufferToStopChanging()
-  //     expect(suggestionsForPrefix(provider, editor, 'somenew')).toContain('someNewFunction')
-  //   })
-  //
-  //   it('stops watching editors and removes content from symbol store as they are destroyed', () => {
-  //     expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
-  //
-  //     let buffer = editor.getBuffer()
-  //     editor.destroy()
-  //     expect(provider.isWatchingBuffer(buffer)).toBe(true)
-  //     expect(provider.isWatchingEditor(editor)).toBe(false)
-  //     expect(provider.isWatchingEditor(rightEditor)).toBe(true)
-  //
-  //     expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
-  //     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-  //
-  //     rightEditor.insertText('function aNewFunction(){};')
-  //     waitForBufferToStopChanging()
-  //     expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
-  //
-  //     rightPane.destroy()
-  //     expect(provider.isWatchingBuffer(buffer)).toBe(false)
-  //     expect(provider.isWatchingEditor(editor)).toBe(false)
-  //     expect(provider.isWatchingEditor(rightEditor)).toBe(false)
-  //
-  //     expect(suggestionsForPrefix(provider, editor, 'quick')).not.toContain('quicksort')
-  //     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-  //   })
-  // })
-
   describe('when includeCompletionsFromAllBuffers is enabled', () => {
     beforeEach(() => {
       atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', true)
@@ -392,94 +321,96 @@ describe('SubsequenceProvider', () => {
     })
   })
 
-  describe('when the autocomplete.symbols changes between scopes', () => {
-    beforeEach(() => {
-      editor.setText(`// in-a-comment
-inVar = "in-a-string"`
-      )
-      waitForBufferToStopChanging()
-
-      let commentConfig = {
-        incomment: {
-          selector: '.comment'
-        }
-      }
-
-      let stringConfig = {
-        instring: {
-          selector: '.string'
-        }
-      }
-
-      atom.config.set('autocomplete.symbols', commentConfig, {scopeSelector: '.source.js .comment'})
-      atom.config.set('autocomplete.symbols', stringConfig, {scopeSelector: '.source.js .string'})
-    })
-
-    it('uses the config for the scope under the cursor', () => {
-      // Using the comment config
-      editor.setCursorBufferPosition([0, 2])
-
-      waitsForPromise(() =>
-        suggestionsForPrefix(provider, editor, 'in', {raw: true}).then(sugs => {
-          expect(sugs).toHaveLength(1)
-          expect(sugs[0].text).toBe('in-a-comment')
-          expect(sugs[0].type).toBe('incomment')
-
-          // Using the string config
-          editor.setCursorBufferPosition([1, 20])
-          editor.insertText(' ')
-          waitForBufferToStopChanging()
-
-          return suggestionsForPrefix(provider, editor, 'in', {raw: true})
-        }).then(sugs => {
-          expect(sugs).toHaveLength(1)
-          expect(sugs[0].text).toBe('in-a-string')
-          expect(sugs[0].type).toBe('instring')
-
-          editor.setCursorBufferPosition([1, Infinity])
-          editor.insertText(' ')
-          waitForBufferToStopChanging()
-
-          return suggestionsForPrefix(provider, editor, 'in', {raw: true})
-        }).then(sugs => {
-          expect(sugs).toHaveLength(3)
-          expect(sugs[0].text).toBe('inVar')
-          expect(sugs[0].type).toBe('')
-        })
-      )
-    })
-  })
-
-  describe('when the config contains a list of suggestion strings', () => {
-    beforeEach(() => {
-      editor.setText('// abcomment')
-      waitForBufferToStopChanging()
-
-      let commentConfig = {
-        comment: { selector: '.comment' },
-        builtin: {
-          suggestions: ['abcd', 'abcde', 'abcdef']
-        }
-      }
-
-      atom.config.set('autocomplete.symbols', commentConfig, {scopeSelector: '.source.js .comment'})
-    })
-
-    it('adds the suggestions to the results', () => {
-      // Using the comment config
-      editor.setCursorBufferPosition([0, 2])
-
-      waitsForPromise(() =>
-        suggestionsForPrefix(provider, editor, 'ab', {raw: true}).then(suggestions => {
-          expect(suggestions).toHaveLength(4)
-          expect(suggestions[0].text).toBe('abcomment')
-          expect(suggestions[0].type).toBe('comment')
-          expect(suggestions[1].text).toBe('abcdef')
-          expect(suggestions[1].type).toBe('builtin')
-        })
-      )
-    })
-  })
+// TODO: commenting this out because I'm not sure what it's trying to test
+//       just remove it?
+//   describe('when the autocomplete.symbols changes between scopes', () => {
+//     beforeEach(() => {
+//       editor.setText(`// in-a-comment
+// inVar = "in-a-string"`
+//       )
+//       waitForBufferToStopChanging()
+//
+//       let commentConfig = {
+//         incomment: {
+//           selector: '.comment'
+//         }
+//       }
+//
+//       let stringConfig = {
+//         instring: {
+//           selector: '.string'
+//         }
+//       }
+//
+//       atom.config.set('autocomplete.symbols', commentConfig, {scopeSelector: '.source.js .comment'})
+//       atom.config.set('autocomplete.symbols', stringConfig, {scopeSelector: '.source.js .string'})
+//     })
+//
+//     it('uses the config for the scope under the cursor', () => {
+//       // Using the comment config
+//       editor.setCursorBufferPosition([0, 2])
+//
+//       waitsForPromise(() =>
+//         suggestionsForPrefix(provider, editor, 'in', {raw: true}).then(sugs => {
+//           expect(sugs).toHaveLength(1)
+//           expect(sugs[0].text).toBe('in-a-comment')
+//           expect(sugs[0].type).toBe('incomment')
+//
+//           // Using the string config
+//           editor.setCursorBufferPosition([1, 20])
+//           editor.insertText(' ')
+//           waitForBufferToStopChanging()
+//
+//           return suggestionsForPrefix(provider, editor, 'in', {raw: true})
+//         }).then(sugs => {
+//           expect(sugs).toHaveLength(1)
+//           expect(sugs[0].text).toBe('in-a-string')
+//           expect(sugs[0].type).toBe('instring')
+//
+//           editor.setCursorBufferPosition([1, Infinity])
+//           editor.insertText(' ')
+//           waitForBufferToStopChanging()
+//
+//           return suggestionsForPrefix(provider, editor, 'in', {raw: true})
+//         }).then(sugs => {
+//           expect(sugs).toHaveLength(3)
+//           expect(sugs[0].text).toBe('inVar')
+//           expect(sugs[0].type).toBe('')
+//         })
+//       )
+//     })
+//   })
+//
+//   describe('when the config contains a list of suggestion strings', () => {
+//     beforeEach(() => {
+//       editor.setText('// abcomment')
+//       waitForBufferToStopChanging()
+//
+//       let commentConfig = {
+//         comment: { selector: '.comment' },
+//         builtin: {
+//           suggestions: ['abcd', 'abcde', 'abcdef']
+//         }
+//       }
+//
+//       atom.config.set('autocomplete.symbols', commentConfig, {scopeSelector: '.source.js .comment'})
+//     })
+//
+//     it('adds the suggestions to the results', () => {
+//       // Using the comment config
+//       editor.setCursorBufferPosition([0, 2])
+//
+//       waitsForPromise(() =>
+//         suggestionsForPrefix(provider, editor, 'ab', {raw: true}).then(suggestions => {
+//           expect(suggestions).toHaveLength(4)
+//           expect(suggestions[0].text).toBe('abcomment')
+//           expect(suggestions[0].type).toBe('comment')
+//           expect(suggestions[1].text).toBe('abcdef')
+//           expect(suggestions[1].type).toBe('builtin')
+//         })
+//       )
+//     })
+//   })
 
   describe('when the symbols config contains a list of suggestion objects', () => {
     beforeEach(() => {
@@ -539,19 +470,19 @@ inVar = "in-a-string"`
     })
   })
 
-  // TODO: support unicode
-  // it('adds words to the wordlist with unicode characters', done => {
-  //   atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
-  //   suggestionsForPrefix(provider, editor, 'somē', {raw: true}).then(suggestions => {
-  //     expect(suggestions).toHaveLength(0)
-  //     editor.insertText('somēthingNew')
-  //     editor.insertText(' ')
-  //     waitForBufferToStopChanging()
-  //
-  //     return suggestionsForPrefix(provider, editor, 'somē', {raw: true})
-  //   }).then(suggestions => {
-  //     expect(suggestions).toHaveLength(1)
-  //     done()
-  //   })
-  // })
+  it('adds words to the wordlist with unicode characters', () => {
+    atom.config.set('autocomplete-plus.enableExtendedUnicodeSupport', true)
+    waitsForPromise(() =>
+      suggestionsForPrefix(provider, editor, 'somē', {raw: true}).then(suggestions => {
+        expect(suggestions).toHaveLength(0)
+        editor.insertText('somēthingNew')
+        editor.insertText(' ')
+        waitForBufferToStopChanging()
+
+        return suggestionsForPrefix(provider, editor, 'somē', {raw: true})
+      }).then(suggestions => {
+        expect(suggestions).toHaveLength(1)
+      })
+    )
+  })
 })

@@ -4,6 +4,12 @@
 
 import SuggestionListElement from '../lib/suggestion-list-element'
 
+const fragmentToHtml = fragment => {
+  const el = document.createElement('span')
+  el.appendChild(fragment.cloneNode(true))
+  return el.innerHTML
+}
+
 describe('Suggestion List Element', () => {
   let [suggestionListElement] = []
 
@@ -64,93 +70,96 @@ describe('Suggestion List Element', () => {
       let snippet
       let displayText = 'acd'
       let replacementPrefix = 'a'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, displayText, replacementPrefix)
-      expect(html).toBe('<span class="character-match">a</span>cd')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, displayText, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('<span class="character-match">a</span>cd')
     })
 
     it('handles the empty string in the text field', () => {
       let text = ''
       let snippet
       let replacementPrefix = 'a'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('')
     })
 
     it('handles the empty string in the snippet field', () => {
       let text
       let snippet = ''
       let replacementPrefix = 'a'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('')
     })
 
     it('handles an empty prefix', () => {
       let text
       let snippet = 'abc'
       let replacementPrefix = ''
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('abc')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('abc')
     })
 
     it('outputs correct html when there are no snippets in the snippet field', () => {
       let text = ''
       let snippet = 'abc(d, e)f'
       let replacementPrefix = 'a'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('<span class="character-match">a</span>bc(d, e)f')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('<span class="character-match">a</span>bc(d, e)f')
     })
 
     it('outputs correct html when there are not character matches', () => {
       let text = ''
       let snippet = 'abc(d, e)f'
       let replacementPrefix = 'omg'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('abc(d, e)f')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('abc(d, e)f')
     })
 
     it('outputs correct html when the text field is used', () => {
       let text = 'abc(d, e)f'
       let snippet
       let replacementPrefix = 'a'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('<span class="character-match">a</span>bc(d, e)f')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('<span class="character-match">a</span>bc(d, e)f')
     })
 
     it('replaces a snippet with no escaped right braces', () => {
       let text = ''
       let snippet = 'abc(${1:d}, ${2:e})f'
       let replacementPrefix = 'a'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f')
     })
 
     it('replaces a snippet with no escaped right braces', () => {
       let text = ''
       let snippet = 'text(${1:ab}, ${2:cd})'
       let replacementPrefix = 'ta'
-      let html = suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)
-      expect(html).toBe('<span class="character-match">t</span>ext(<span class="snippet-completion"><span class="character-match">a</span>b</span>, <span class="snippet-completion">cd</span>)')
+      let html = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(html)).toBe('<span class="character-match">t</span>ext(<span class="snippet-completion"><span class="character-match">a</span>b</span>, <span class="snippet-completion">cd</span>)')
     })
 
     it('replaces a snippet with escaped right braces', () => {
       let text = ''
       let snippet = 'abc(${1:d}, ${2:e})f ${3:interface{\\}}'
       let replacementPrefix = 'a'
-      expect(suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f <span class="snippet-completion">interface{}</span>')
+      let display = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(display)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f <span class="snippet-completion">interface{}</span>')
     })
 
     it('replaces a snippet with escaped multiple right braces', () => {
       let text = ''
       let snippet = 'abc(${1:d}, ${2:something{ok\\}}, ${3:e})f ${4:interface{\\}}'
       let replacementPrefix = 'a'
-      expect(suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">something{ok}</span>, <span class="snippet-completion">e</span>)f <span class="snippet-completion">interface{}</span>')
+      let display = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(display)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">something{ok}</span>, <span class="snippet-completion">e</span>)f <span class="snippet-completion">interface{}</span>')
     })
 
     it('replaces a snippet with elements that have no text', () => {
       let text = ''
       let snippet = 'abc(${1:d}, ${2:e})f${3}'
       let replacementPrefix = 'a'
-      expect(suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f')
+      let display = suggestionListElement.getDisplayFragment(text, snippet, null, replacementPrefix)
+      expect(fragmentToHtml(display)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f')
     })
   })
 

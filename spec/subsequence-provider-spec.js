@@ -465,7 +465,7 @@ describe('SubsequenceProvider', () => {
             expect(suggestions).toHaveLength(4)
             expect(suggestions[0].text).toBe('abcomment')
             expect(suggestions[0].type).toBe('')
-            expect(suggestions[1].text).toBe('abcdef')
+            expect(suggestions[1].text).toBe('abcd')
             expect(suggestions[1].type).toBe('builtin')
           })
         )

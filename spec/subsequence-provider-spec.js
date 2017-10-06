@@ -324,7 +324,7 @@ describe('SubsequenceProvider', () => {
     })
 
   // TODO: commenting this out because I'm not sure what it's trying to test
-  //       just remove it?
+  //       just remove it? (This was brought over from the symbol provider spec.)
   //   describe('when the autocomplete.symbols changes between scopes', () => {
   //     beforeEach(() => {
   //       editor.setText(`// in-a-comment
@@ -439,11 +439,11 @@ describe('SubsequenceProvider', () => {
         waitsForPromise(() =>
           suggestionsForPrefix(provider, editor, 'ab', {raw: true}).then(suggestions => {
             expect(suggestions).toHaveLength(2)
-            expect(suggestions[0].text).toBe('abcomment')
-            expect(suggestions[0].type).toBe('comment')
-            expect(suggestions[1].text).toBe('abcd')
-            expect(suggestions[1].type).toBe('function')
-            expect(suggestions[1].rightLabel).toBe('one')
+            expect(suggestions[0].text).toBe('abcd')
+            expect(suggestions[0].type).toBe('function')
+            expect(suggestions[0].rightLabel).toBe('one')
+            expect(suggestions[1].text).toBe('abcomment')
+            expect(suggestions[1].type).toBe('comment')
           })
         )
       })
@@ -463,10 +463,10 @@ describe('SubsequenceProvider', () => {
         waitsForPromise(() =>
           suggestionsForPrefix(provider, editor, 'ab', {raw: true}).then(suggestions => {
             expect(suggestions).toHaveLength(4)
-            expect(suggestions[0].text).toBe('abcomment')
-            expect(suggestions[0].type).toBe('')
-            expect(suggestions[1].text).toBe('abcd')
-            expect(suggestions[1].type).toBe('builtin')
+            expect(suggestions[0].text).toBe('abcd')
+            expect(suggestions[0].type).toBe('builtin')
+            expect(suggestions[3].text).toBe('abcomment')
+            expect(suggestions[3].type).toBe('')
           })
         )
       })

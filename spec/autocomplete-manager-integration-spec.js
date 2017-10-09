@@ -616,7 +616,19 @@ describe('Autocomplete Manager', () => {
     })
 
     describe('when number of suggestions > maxVisibleSuggestions', () => {
-      beforeEach(() => atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2))
+      beforeEach(() => {
+        atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
+        global._requestIdleCallback = global.requestIdleCallback
+        // We changed the rendering logic to render nonvisible suggestions
+        // during idle time, and this is a hackity hack hack dirty hack to keep
+        // these tests working. requestIdleCallback is difficult to test because
+        // we're never idle during tests.
+        global.requestIdleCallback = cb => cb()
+      })
+
+      afterEach(() => {
+        global.requestIdleCallback = global._requestIdleCallback
+      })
 
       it('scrolls the list always showing the selected item', () => {
         triggerAutocompletion(editor, true, 'a')

@@ -1,4 +1,3 @@
-'use babel'
 /* eslint-env jasmine */
 
 let completionDelay = 100
@@ -19,7 +18,7 @@ let triggerAutocompletion = (editor, moveCursor = true, char = 'f') => {
     editor.moveToBeginningOfLine()
   }
   editor.insertText(char)
-  exports.waitForAutocomplete()
+  module.exports.waitForAutocomplete()
 }
 
 let waitForAutocomplete = () => {
@@ -32,6 +31,22 @@ let waitForAutocomplete = () => {
         done()
       })
     })
+  })
+}
+
+let waitForDeferredSuggestions = (editorView, totalSuggestions) => {
+  waitsFor(() => {
+    return editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller')
+  })
+
+  runs(() => {
+    const scroller = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller')
+    scroller.scrollTo(0, 100)
+    scroller.scrollTo(0, 0)
+  })
+
+  waitsFor(() => {
+    return editorView.querySelectorAll('.autocomplete-plus li').length === totalSuggestions
   })
 }
 
@@ -49,4 +64,10 @@ let buildTextInputEvent = ({data, target}) => {
   return event
 }
 
-export {triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent}
+module.exports = {
+  triggerAutocompletion,
+  waitForAutocomplete,
+  buildIMECompositionEvent,
+  buildTextInputEvent,
+  waitForDeferredSuggestions
+}

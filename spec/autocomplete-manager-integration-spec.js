@@ -1,11 +1,16 @@
-'use babel'
 /* eslint-env jasmine */
 /* eslint-disable no-template-curly-in-string */
 
-import { TextEditor } from 'atom'
-import { triggerAutocompletion, waitForAutocomplete, buildIMECompositionEvent, buildTextInputEvent } from './spec-helper'
+const { TextEditor } = require('atom')
+const {
+  triggerAutocompletion,
+  waitForAutocomplete,
+  waitForDeferredSuggestions,
+  buildIMECompositionEvent,
+  buildTextInputEvent
+} = require('./spec-helper')
 let temp = require('temp').track()
-import path from 'path'
+const path = require('path')
 
 let NodeTypeText = 3
 
@@ -618,137 +623,115 @@ describe('Autocomplete Manager', () => {
     describe('when number of suggestions > maxVisibleSuggestions', () => {
       beforeEach(() => {
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
-        global._requestIdleCallback = global.requestIdleCallback
-        // We changed the rendering logic to render nonvisible suggestions
-        // during idle time, and this is a hackity hack hack dirty hack to keep
-        // these tests working. requestIdleCallback is difficult to test because
-        // we're never idle during tests.
-        global.requestIdleCallback = cb => cb()
       })
 
-      afterEach(() => {
-        global.requestIdleCallback = global._requestIdleCallback
-      })
+      describe('when a suggestion description is not specified', () => {
+        beforeEach(() => {
+          triggerAutocompletion(editor, true, 'a')
+          waitForDeferredSuggestions(editorView, 4)
+        })
 
-      it('scrolls the list always showing the selected item', () => {
-        triggerAutocompletion(editor, true, 'a')
+        it('scrolls the list always showing the selected item', () => {
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          let itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
 
-        runs(() => {
+          let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          let scroller = suggestionList.querySelector('.suggestion-list-scroller')
+
+          expect(scroller.scrollTop).toBe(0)
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(0)
+
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight)
+
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight * 2)
+
+          atom.commands.dispatch(suggestionList, 'core:move-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(0)
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight * 2)
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight * 2)
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight)
+
+          atom.commands.dispatch(suggestionList, 'core:move-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(0)
+        })
+
+        it('pages up and down when core:page-up and core:page-down are used', () => {
+          let itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
+          let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          let scroller = suggestionList.querySelector('.suggestion-list-scroller')
+          expect(scroller.scrollTop).toBe(0)
+
+          atom.commands.dispatch(suggestionList, 'core:page-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass('selected')
+
+          atom.commands.dispatch(suggestionList, 'core:page-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
+
+          atom.commands.dispatch(suggestionList, 'core:page-down')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight * 2)
+
+          atom.commands.dispatch(suggestionList, 'core:page-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass('selected')
+
+          atom.commands.dispatch(suggestionList, 'core:page-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
+
+          atom.commands.dispatch(suggestionList, 'core:page-up')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(0)
+        })
+
+        it('moves to the top and bottom when core:move-to-top and core:move-to-bottom are used', () => {
+          let itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
+          let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          let scroller = suggestionList.querySelector('.suggestion-list-scroller')
+          expect(scroller.scrollTop).toBe(0)
+
+          atom.commands.dispatch(suggestionList, 'core:move-to-bottom')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight * 2)
+
+          atom.commands.dispatch(suggestionList, 'core:move-to-bottom')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(itemHeight * 2)
+
+          atom.commands.dispatch(suggestionList, 'core:move-to-top')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(0)
+
+          atom.commands.dispatch(suggestionList, 'core:move-to-top')
+          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
+          expect(scroller.scrollTop).toBe(0)
+        })
+
+        it('only shows the maxVisibleSuggestions in the suggestion popup', () => {
           expect(editorView.querySelector('.autocomplete-plus')).toExist()
           let itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
           expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength(4)
 
           let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          let scroller = suggestionList.querySelector('.suggestion-list-scroller')
-
-          expect(scroller.scrollTop).toBe(0)
-          atom.commands.dispatch(suggestionList, 'core:move-down')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(0)
-
-          atom.commands.dispatch(suggestionList, 'core:move-down')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight)
-
-          atom.commands.dispatch(suggestionList, 'core:move-down')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight * 2)
-
-          atom.commands.dispatch(suggestionList, 'core:move-down')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(0)
-
-          atom.commands.dispatch(suggestionList, 'core:move-up')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight * 2)
-
-          atom.commands.dispatch(suggestionList, 'core:move-up')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight * 2)
-
-          atom.commands.dispatch(suggestionList, 'core:move-up')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight)
-
-          atom.commands.dispatch(suggestionList, 'core:move-up')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(0)
+          expect(suggestionList.offsetHeight).toBe(2 * itemHeight)
+          expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe(`${2 * itemHeight}px`)
         })
       })
-
-      it('pages up and down when core:page-up and core:page-down are used', () => {
-        triggerAutocompletion(editor, true, 'a')
-
-        runs(() => {
-          let itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
-          let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          let scroller = suggestionList.querySelector('.suggestion-list-scroller')
-          expect(scroller.scrollTop).toBe(0)
-
-          atom.commands.dispatch(suggestionList, 'core:page-down')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[2]).toHaveClass('selected')
-
-          atom.commands.dispatch(suggestionList, 'core:page-down')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
-
-          atom.commands.dispatch(suggestionList, 'core:page-down')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight * 2)
-
-          atom.commands.dispatch(suggestionList, 'core:page-up')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[1]).toHaveClass('selected')
-
-          atom.commands.dispatch(suggestionList, 'core:page-up')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
-
-          atom.commands.dispatch(suggestionList, 'core:page-up')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(0)
-        })
-      })
-
-      it('moves to the top and bottom when core:move-to-top and core:move-to-bottom are used', () => {
-        triggerAutocompletion(editor, true, 'a')
-
-        runs(() => {
-          let itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
-          let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          let scroller = suggestionList.querySelector('.suggestion-list-scroller')
-          expect(scroller.scrollTop).toBe(0)
-
-          atom.commands.dispatch(suggestionList, 'core:move-to-bottom')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight * 2)
-
-          atom.commands.dispatch(suggestionList, 'core:move-to-bottom')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[3]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(itemHeight * 2)
-
-          atom.commands.dispatch(suggestionList, 'core:move-to-top')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(0)
-
-          atom.commands.dispatch(suggestionList, 'core:move-to-top')
-          expect(editorView.querySelectorAll('.autocomplete-plus li')[0]).toHaveClass('selected')
-          expect(scroller.scrollTop).toBe(0)
-        })
-      })
-
-      describe('when a suggestion description is not specified', () =>
-        it('only shows the maxVisibleSuggestions in the suggestion popup', () => {
-          triggerAutocompletion(editor, true, 'a')
-
-          runs(() => {
-            expect(editorView.querySelector('.autocomplete-plus')).toExist()
-            let itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
-            expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength(4)
-
-            let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-            expect(suggestionList.offsetHeight).toBe(2 * itemHeight)
-            expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe(`${2 * itemHeight}px`)
-          })
-        })
-      )
 
       describe('when a suggestion description is specified', () => {
         it('shows the maxVisibleSuggestions in the suggestion popup, but with extra height for the description', () => {
@@ -758,6 +741,8 @@ describe('Autocomplete Manager', () => {
           })
 
           triggerAutocompletion(editor, true, 'a')
+
+          waitForDeferredSuggestions(editorView, 4)
 
           runs(() => {
             expect(editorView.querySelector('.autocomplete-plus')).toExist()
@@ -783,6 +768,8 @@ describe('Autocomplete Manager', () => {
           })
 
           triggerAutocompletion(editor, true, 'a')
+
+          waitForDeferredSuggestions(editorView, 4)
 
           runs(() => {
             let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
@@ -816,6 +803,8 @@ describe('Autocomplete Manager', () => {
           })
 
           triggerAutocompletion(editor, true, 'a')
+
+          waitForDeferredSuggestions(editorView, 4)
 
           runs(() => {
             let suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')

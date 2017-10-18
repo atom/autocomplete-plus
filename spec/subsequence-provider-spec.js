@@ -118,11 +118,6 @@ describe('SubsequenceProvider', () => {
       waitsForPromise(() => {
         return suggestionsForPrefix(provider, editor, 'qu').then(sugs => {
           expect(sugs).not.toContain('qu')
-          editor.insertText(' qu')
-          waitForBufferToStopChanging()
-          return suggestionsForPrefix(provider, editor, 'qu')
-        }).then(sugs => {
-          expect(sugs).toContain('qu')
         })
       })
     })
@@ -152,22 +147,6 @@ describe('SubsequenceProvider', () => {
       waitsForPromise(() => {
         return suggestionsForPrefix(provider, editor, 'omg').then(sugs => {
           expect(sugs).not.toContain('omg')
-        })
-      })
-    })
-
-    it('returns the word under the cursor when there is a suffix and there are multiple instances of the word', done => {
-      editor.moveToBottom()
-      editor.insertText('icksort')
-      waitForBufferToStopChanging()
-      editor.moveToBeginningOfLine()
-      editor.insertText('qu')
-      waitForBufferToStopChanging()
-
-      waitsForPromise(() => {
-        return suggestionsForPrefix(provider, editor, 'qu').then(sugs => {
-          expect(sugs).not.toContain('qu')
-          expect(sugs).toContain('quicksort')
         })
       })
     })

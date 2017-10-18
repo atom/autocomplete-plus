@@ -266,6 +266,22 @@ describe('SubsequenceProvider', () => {
       })
     )
 
+    describe('when editor.nonWordCharacters changes', () => {
+      it('matches words that contain characters no longer included', () => {
+        editor.insertText('good-noodles ')
+
+        waitsForPromise(() =>
+          suggestionsForPrefix(provider, editor, 'good').then(sugs => {
+            expect(sugs).not.toContain('good-noodles')
+            atom.config.set('editor.nonWordCharacters', '/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?…')
+            return suggestionsForPrefix(provider, editor, 'good')
+          }).then(sugs => {
+            expect(sugs).toContain('good-noodles')
+          })
+        )
+      })
+    })
+
     describe('when includeCompletionsFromAllBuffers is enabled', () => {
       beforeEach(() => {
         atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', true)

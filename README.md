@@ -92,7 +92,7 @@ In `package.json`:
   "consumedServices": {
     "autocomplete.watchEditor": {
       "versions": {
-        "1.0.0": "consumeAutocompleteWatchEditor",
+        "1.0.0": "consumeAutocompleteWatchEditor"
       }
     }
   }

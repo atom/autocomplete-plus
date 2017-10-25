@@ -177,9 +177,8 @@
       "type": "string",
       "default": "Subsequence",
       "enum": [
-        "Fuzzy",
-        "Symbol",
-        "Subsequence"
+        "Subsequence",
+        "Symbol"
       ],
       "order": 16
     },

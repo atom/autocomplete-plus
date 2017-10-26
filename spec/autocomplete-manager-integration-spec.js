@@ -2275,8 +2275,12 @@ defm`
         editor.insertText('q')
         editor.insertText('u')
 
+        waitForAutocomplete()
+
         runs(() => {
-          expect(autocompleteManager.suggestionList.changeItems).not.toHaveBeenCalled()
+          expect(autocompleteManager.suggestionList.changeItems).toHaveBeenCalled()
+          expect(autocompleteManager.suggestionList.changeItems.mostRecentCall.args[0][0].text).toBe('quicksort')
+          autocompleteManager.suggestionList.changeItems.reset()
 
           activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', {data: 'i', target: activeElement}))
           triggerAutocompletion(editor, false, 'i')

@@ -6,8 +6,7 @@ const {
   triggerAutocompletion,
   waitForAutocomplete,
   waitForDeferredSuggestions,
-  buildIMECompositionEvent,
-  buildTextInputEvent
+  buildIMECompositionEvent
 } = require('./spec-helper')
 let temp = require('temp').track()
 const path = require('path')
@@ -2268,30 +2267,40 @@ defm`
         runs(() => expect(editorView.querySelector('.autocomplete-plus')).not.toExist())
       })
 
-      // TODO: Pretty Sure This Test Will Not Catch A Regression In Behavior Due To The Way It Is Written
-      it('should not update the suggestion list while composition is in progress', () => {
-        triggerAutocompletion(editor)
+      it('does not update the suggestion list while composition is in progress', () => {
+        const activeElement = editorView.querySelector('input')
+        spyOn(autocompleteManager.suggestionList, 'changeItems').andCallThrough()
 
-        // unfortunately, we need to fire IME events from the editor's input node so the editor picks them up
-        let activeElement = editorView.querySelector('input')
+        editor.moveToBottom()
+        editor.insertText('q')
+        editor.insertText('u')
 
         runs(() => {
-          spyOn(autocompleteManager.suggestionList, 'changeItems').andCallThrough()
           expect(autocompleteManager.suggestionList.changeItems).not.toHaveBeenCalled()
 
-          activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', {target: activeElement}))
-          activeElement.dispatchEvent(buildIMECompositionEvent('compositionupdate', {data: '~', target: activeElement}))
-
-          waitForAutocomplete()
+          activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', {data: 'i', target: activeElement}))
+          triggerAutocompletion(editor, false, 'i')
         })
+
+        waitForAutocomplete()
+
+        runs(() => {
+          expect(autocompleteManager.suggestionList.changeItems).toHaveBeenCalled()
+          expect(autocompleteManager.suggestionList.changeItems.mostRecentCall.args[0][0].text).toBe('quicksort')
+          autocompleteManager.suggestionList.changeItems.reset()
+
+          activeElement.dispatchEvent(buildIMECompositionEvent('compositionupdate', {data: 'ï', target: activeElement}))
+          editor.selectLeft()
+
+          editor.insertText('ï')
+          advanceClock(autocompleteManager.suggestionDelay)
+        })
+
+        waits(autocompleteManager.suggestionDelay)
 
         runs(() => {
           expect(autocompleteManager.suggestionList.changeItems).toHaveBeenCalledWith(null)
-
           activeElement.dispatchEvent(buildIMECompositionEvent('compositionend', {target: activeElement}))
-          activeElement.dispatchEvent(buildTextInputEvent({data: 'ã', target: activeElement}))
-
-          expect(editor.lineTextForBufferRow(13)).toBe('fã')
         })
       })
 

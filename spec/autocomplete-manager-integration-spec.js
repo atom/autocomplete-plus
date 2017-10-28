@@ -2297,10 +2297,10 @@ defm`
           editor.selectLeft()
 
           editor.insertText('ï')
-          advanceClock(autocompleteManager.suggestionDelay)
+          advanceClock(100)
         })
 
-        waits(autocompleteManager.suggestionDelay)
+        waits(100)
 
         runs(() => {
           expect(autocompleteManager.suggestionList.changeItems).toHaveBeenCalledWith(null)

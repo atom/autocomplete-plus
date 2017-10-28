@@ -104,12 +104,7 @@ describe('Async providers', () => {
 
         editor.moveToBottom()
         editor.insertText('o')
-
-        // Waiting will kick off the suggestion request
-        advanceClock(autocompleteManager.suggestionDelay * 2)
       })
-
-      waits(0)
 
       runs(() => {
         // Waiting will kick off the suggestion request

@@ -2032,6 +2032,23 @@ defm`
         })
       })
     })
+
+    describe('Keybind to navigate to descriptionMoreLink', () => {
+      it('triggers openExternal on keybind', () => {
+
+        spyOn(provider, 'getSuggestions').andCallFake(() => [{text: 'ab', description: 'it is ab'}])
+        let shell = require('shell')
+        spyOn(shell, 'openExternal')
+
+        triggerAutocompletion(editor, true, 'a')
+
+        runs(() => {
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:navigate-to-description-more-link')
+          expect(shell.openExternal).toHaveBeenCalled()
+        })
+      })
+    })    
   })
 
   describe('when opening a file without a path', () => {

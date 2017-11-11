@@ -173,9 +173,9 @@
       "order": 15
     },
     "defaultProvider": {
-      "description": "If you're having trouble with autocomplete, you may consider falling back to the Symbol provider and filing an issue.",
+      "description": "Consider giving the new Subsequence provider a try. Feel free to report any issues you experience.",
       "type": "string",
-      "default": "Subsequence",
+      "default": "Symbol",
       "enum": [
         "Fuzzy",
         "Symbol",

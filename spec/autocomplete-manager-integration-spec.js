@@ -2035,7 +2035,6 @@ defm`
 
     describe('Keybind to navigate to descriptionMoreLink', () => {
       it('triggers openExternal on keybind if there is a description', () => {
-
         spyOn(provider, 'getSuggestions').andCallFake(() => [{text: 'ab', description: 'it is ab'}])
         let shell = require('shell')
         spyOn(shell, 'openExternal')
@@ -2049,7 +2048,6 @@ defm`
         })
       })
       it('does not trigger openExternal on keybind if there is not a description', () => {
-
         spyOn(provider, 'getSuggestions').andCallFake(() => [{text: 'ab'}])
         let shell = require('shell')
         spyOn(shell, 'openExternal')

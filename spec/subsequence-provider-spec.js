@@ -482,5 +482,18 @@ describe('SubsequenceProvider', () => {
         })
       )
     })
+
+    // TODO - uncomment these tests once 1.22.1 is released.
+    // it('does not throw errors when findWordsWithSubsequence jobs are cancelled due to rapid buffer changes', () => {
+    //   editor.setText('')
+    //
+    //   const promises = []
+    //   for (let i = 0; i < 50; i++) {
+    //     editor.insertText('x')
+    //     promises.push(suggestionsForPrefix(provider, editor, editor.getText(), {raw: true}))
+    //   }
+    //
+    //   waitsForPromise(() => Promise.all(promises))
+    // })
   }
 })

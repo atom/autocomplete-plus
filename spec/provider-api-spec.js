@@ -190,6 +190,27 @@ describe('Provider API', () => {
       })
     })
 
+    it('it calls getSuggestionDetailsOnFocus if available and replaces suggestion', () => {
+      testProvider = {
+        scopeSelector: '.source.js, .source.coffee',
+        getSuggestions (options) {
+          return [{
+            text: 'ohai'
+          }]
+        },
+        getSuggestionDetailsOnFocus (suggestion) {
+          return Object.assign({}, suggestion, {description: 'foo'})
+        }
+      }
+      registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
+
+      triggerAutocompletion(editor, true, 'o')
+
+      runs(() => {
+        expect(autocompleteManager.suggestionList.items[0].description).toBe('foo')
+      })
+    })
+
     describe('when the filterSuggestions option is set to true', () => {
       let getSuggestions = () => autocompleteManager.suggestionList.items.map(({text}) => ({text}))
 

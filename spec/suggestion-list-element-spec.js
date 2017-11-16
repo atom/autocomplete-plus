@@ -1,8 +1,7 @@
-'use babel'
 /* eslint-env jasmine */
 /* eslint-disable no-template-curly-in-string */
-
-import SuggestionListElement from '../lib/suggestion-list-element'
+const SuggestionListElement = require('../lib/suggestion-list-element')
+const {waitForAutocomplete} = require('./spec-helper')
 
 const fragmentToHtml = fragment => {
   const el = document.createElement('span')
@@ -61,6 +60,31 @@ describe('Suggestion List Element', () => {
       suggestionListElement.renderItem(suggestion)
       expect(suggestionListElement.selectedLi.querySelector('.left-label').innerHTML).toContain('Animal&lt;Cat&gt;')
       return expect(suggestionListElement.selectedLi.querySelector('.right-label').innerHTML).toContain('Animal&lt;Dog&gt;')
+    })
+  })
+
+  describe('itemChanged', () => {
+    beforeEach(() => jasmine.attachToDOM(suggestionListElement.element))
+
+    it('updates the list item', () => {
+      const suggestion = {text: 'foo'}
+      const newSuggestion = {text: 'foo', description: 'foobar', rightLabel: 'foo'}
+      suggestionListElement.model = {items: [newSuggestion]}
+      suggestionListElement.selectedIndex = 0
+      suggestionListElement.renderItem(suggestion, 0)
+      expect(suggestionListElement.element.querySelector('.right-label').innerText).toBe('')
+
+      suggestionListElement.itemChanged({suggestion: newSuggestion, index: 0})
+
+      waitForAutocomplete()
+
+      runs(() => {
+        expect(suggestionListElement.element.querySelector('.right-label').innerText)
+          .toBe('foo')
+
+        expect(suggestionListElement.element.querySelector('.suggestion-description-content').innerText)
+          .toBe('foobar')
+      })
     })
   })
 

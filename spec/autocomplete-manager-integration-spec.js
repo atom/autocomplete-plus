@@ -2032,6 +2032,35 @@ defm`
         })
       })
     })
+
+    describe('Keybind to navigate to descriptionMoreLink', () => {
+      it('triggers openExternal on keybind if there is a description', () => {
+        spyOn(provider, 'getSuggestions').andCallFake(() => [{text: 'ab', description: 'it is ab'}])
+        let shell = require('shell')
+        spyOn(shell, 'openExternal')
+
+        triggerAutocompletion(editor, true, 'a')
+
+        runs(() => {
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:navigate-to-description-more-link')
+          expect(shell.openExternal).toHaveBeenCalled()
+        })
+      })
+      it('does not trigger openExternal on keybind if there is not a description', () => {
+        spyOn(provider, 'getSuggestions').andCallFake(() => [{text: 'ab'}])
+        let shell = require('shell')
+        spyOn(shell, 'openExternal')
+
+        triggerAutocompletion(editor, true, 'a')
+
+        runs(() => {
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          atom.commands.dispatch(editorView, 'autocomplete-plus:navigate-to-description-more-link')
+          expect(shell.openExternal).not.toHaveBeenCalled()
+        })
+      })
+    })
   })
 
   describe('when opening a file without a path', () => {

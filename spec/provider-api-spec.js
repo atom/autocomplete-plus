@@ -190,7 +190,7 @@ describe('Provider API', () => {
       })
     })
 
-    it('it calls getSuggestionDetailsOnFocus if available and replaces suggestion', () => {
+    it('it calls getSuggestionDetailsOnSelect if available and replaces suggestion', () => {
       testProvider = {
         scopeSelector: '.source.js, .source.coffee',
         getSuggestions (options) {
@@ -198,7 +198,7 @@ describe('Provider API', () => {
             text: 'ohai'
           }]
         },
-        getSuggestionDetailsOnFocus (suggestion) {
+        getSuggestionDetailsOnSelect (suggestion) {
           return Object.assign({}, suggestion, {description: 'foo'})
         }
       }

@@ -3,9 +3,11 @@
 
 import { TextBuffer } from 'atom'
 
-let waitForBufferToStopChanging = () => advanceClock(TextBuffer.prototype.stoppedChangingDelay)
+function waitForBufferToStopChanging () {
+  advanceClock(TextBuffer.prototype.stoppedChangingDelay)
+}
 
-let suggestionsForPrefix = (provider, editor, prefix, options) => {
+function suggestionsForPrefix (provider, editor, prefix, options) {
   let bufferPosition = editor.getCursorBufferPosition()
   let scopeDescriptor = editor.getLastCursor().getScopeDescriptor()
   let suggestions = provider.getSuggestions({editor, bufferPosition, prefix, scopeDescriptor})
@@ -52,8 +54,9 @@ describe('SymbolProvider', () => {
     })
   })
 
-  it('runs a completion ', () => expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
-  )
+  it('runs a completion ', () => {
+    expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
+  })
 
   it('adds words to the symbol list after they have been written', () => {
     expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
@@ -113,8 +116,7 @@ describe('SymbolProvider', () => {
     editor.insertText('omg')
     expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain('omg')
     expect(suggestionsForPrefix(provider, editor, 'omg')).not.toContain('omgcatscats')
-  }
-  )
+  })
 
   it('does not return the word under the cursors when are multiple cursors', () => {
     editor.moveToBottom()
@@ -153,7 +155,7 @@ describe('SymbolProvider', () => {
     })
   })
 
-  describe('when `editor.largeFileMode` is true', () =>
+  describe('when `editor.largeFileMode` is true', () => {
     it("doesn't recompute symbols when the buffer changes", () => {
       let coffeeEditor = null
 
@@ -163,8 +165,7 @@ describe('SymbolProvider', () => {
         atom.workspace.open('sample.coffee').then((e) => {
           coffeeEditor = e
           coffeeEditor.largeFileMode = true
-        })
-      )
+        }))
 
       runs(() => {
         waitForBufferToStopChanging()
@@ -176,7 +177,7 @@ describe('SymbolProvider', () => {
         expect(suggestionsForPrefix(provider, coffeeEditor, 'abc')).toEqual([])
       })
     })
-  )
+  })
 
   describe('when autocomplete-plus.minimumWordLength is > 1', () => {
     beforeEach(() => atom.config.set('autocomplete-plus.minimumWordLength', 3))
@@ -233,6 +234,7 @@ describe('SymbolProvider', () => {
 
   describe('when multiple editors track the same buffer', () => {
     let [rightPane, rightEditor] = []
+
     beforeEach(() => {
       let pane = atom.workspace.paneForItem(editor)
       rightPane = pane.splitRight({copyActiveItem: true})
@@ -269,20 +271,14 @@ describe('SymbolProvider', () => {
       expect(provider.isWatchingEditor(editor)).toBe(false)
       expect(provider.isWatchingEditor(rightEditor)).toBe(true)
 
-      expect(suggestionsForPrefix(provider, editor, 'quick')).toContain('quicksort')
-      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
-
       rightEditor.insertText('function aNewFunction(){};')
       waitForBufferToStopChanging()
-      expect(suggestionsForPrefix(provider, editor, 'anew')).toContain('aNewFunction')
+      expect(suggestionsForPrefix(provider, rightEditor, 'anew')).toContain('aNewFunction')
 
       rightPane.destroy()
       expect(provider.isWatchingBuffer(buffer)).toBe(false)
       expect(provider.isWatchingEditor(editor)).toBe(false)
       expect(provider.isWatchingEditor(rightEditor)).toBe(false)
-
-      expect(suggestionsForPrefix(provider, editor, 'quick')).not.toContain('quicksort')
-      expect(suggestionsForPrefix(provider, editor, 'anew')).not.toContain('aNewFunction')
     })
   })
 

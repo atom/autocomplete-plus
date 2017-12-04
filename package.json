@@ -238,10 +238,10 @@
       ],
       "order": 22
     },
-    "cycleSuggestions": {
-      "description": "Cycle through the list when moving up and down instead of dismissing it.",
+    "moveToCancel": {
+      "description": "Moving up when the first item is selected or down when the last item is selected cancels the suggestion list.",
       "type": "boolean",
-      "default": true,
+      "default": false,
       "order": 23
     }
   },

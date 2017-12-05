@@ -236,6 +236,12 @@
         }
       ],
       "order": 22
+    },
+    "moveToCancel": {
+      "description": "Moving up when the first item is selected or down when the last item is selected cancels the suggestion list.",
+      "type": "boolean",
+      "default": false,
+      "order": 23
     }
   },
   "standard": {

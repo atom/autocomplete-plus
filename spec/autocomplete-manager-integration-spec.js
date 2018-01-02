@@ -542,10 +542,10 @@ describe('Autocomplete Manager', () => {
       })
 
       it('calls with word prefix containing a dash', () => {
-        editor.insertText('_okyea')
+        editor.insertText('-okyea')
         editor.insertText('h')
         waitForAutocomplete()
-        runs(() => expect(prefix).toBe('abc_okyeah'))
+        runs(() => expect(prefix).toBe('abc-okyeah'))
       })
 
       it('calls with space character', () => {

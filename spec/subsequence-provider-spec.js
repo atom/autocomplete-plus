@@ -273,11 +273,7 @@ describe('SubsequenceProvider', () => {
         waitsForPromise(() =>
           suggestionsForPrefix(provider, editor, 'good').then(sugs => {
             expect(sugs).not.toContain('good-noodles')
-            atom.config.set(
-              'editor.nonWordCharacters',
-              '/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?…',
-              {scopeSelector: editor.getLastCursor().getScopeDescriptor().getScopeChain()}
-            )
+            atom.config.set('editor.nonWordCharacters', '/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?…')
             return suggestionsForPrefix(provider, editor, 'good')
           }).then(sugs => {
             expect(sugs).toContain('good-noodles')

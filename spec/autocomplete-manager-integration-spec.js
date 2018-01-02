@@ -586,6 +586,42 @@ describe('Autocomplete Manager', () => {
         waitForAutocomplete()
         runs(() => expect(prefix).toBe(' '))
       })
+
+      describe('providers using the 4.0 API', () => {
+        it('accounts for word characters of the current language', () => {
+          let prefix = null
+          const provider = {
+            scopeSelector: '*',
+            inclusionPriority: 2,
+            excludeLowerPriority: true,
+            getSuggestions ({prefix: p}) { prefix = p }
+          }
+
+          mainModule.consumeProvider(provider, 4)
+
+          atom.config.set('editor.nonWordCharacters', '-')
+          editor.insertText(' $foo-$ba')
+          editor.insertText('r')
+          waitForAutocomplete()
+          runs(() => expect(prefix).toBe('$bar'))
+        })
+
+        it('is an empty string when the cursor does not follow a word character', () => {
+          let prefix = null
+          const provider = {
+            scopeSelector: '*',
+            inclusionPriority: 2,
+            excludeLowerPriority: true,
+            getSuggestions ({prefix: p}) { prefix = p }
+          }
+
+          mainModule.consumeProvider(provider, 4)
+          editor.insertText(' foo')
+          editor.insertText('.')
+          waitForAutocomplete()
+          runs(() => expect(prefix).toBe(''))
+        })
+      })
     })
 
     describe('when the character entered is not at the cursor position', () => {

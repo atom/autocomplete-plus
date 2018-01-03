@@ -77,7 +77,7 @@ describe('Autocomplete Manager', () => {
             return (list.map((text) => ({text})))
           }
         }
-        mainModule.consumeProvider(provider)
+        mainModule.consumeProvider(provider, 3)
       })
     })
 
@@ -1140,6 +1140,35 @@ describe('Autocomplete Manager', () => {
           let suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
           expect(editor.getText()).toBe('abc.something')
+        })
+      })
+
+      describe('providers using the 4.0 API', () => {
+        it('replaces the entire prefix by default, regardless of the characters it contains', () => {
+          atom.config.set('editor.nonWordCharacters', '-')
+          provider = {
+            scopeSelector: '*',
+            inclusionPriority: 100,
+            excludeLowerPriority: true,
+            getSuggestions ({prefix}) {
+              return [{
+                text: '$food'
+              }]
+            }
+          }
+          mainModule.consumeProvider(provider, 4)
+
+          editor.setText('')
+          editor.insertText('$food $fo')
+          editor.insertText('o')
+          waitForAutocomplete()
+
+          runs(() => {
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+            let suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            expect(editor.getText()).toBe('$food $food')
+          })
         })
       })
     })

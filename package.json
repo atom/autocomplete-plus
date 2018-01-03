@@ -38,7 +38,8 @@
         "1.0.0": "consumeProvider_1",
         "1.1.0": "consumeProvider_1_1",
         "2.0.0": "consumeProvider_2",
-        "3.0.0": "consumeProvider_3"
+        "3.0.0": "consumeProvider_3",
+        "4.0.0": "consumeProvider_4"
       }
     },
     "snippets": {

@@ -62,10 +62,10 @@ describe('Provider Manager', () => {
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(false)
       expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe(false)
 
-      providerManager.addProvider(testProvider, '3.0.0')
+      providerManager.addProvider(testProvider, 3)
       expect(providerManager.isProviderRegistered(testProvider)).toEqual(true)
       let apiVersion = providerManager.apiVersionForProvider(testProvider)
-      expect(apiVersion).toEqual('3.0.0')
+      expect(apiVersion).toEqual(3)
       expect(hasDisposable(providerManager.subscriptions, testProvider)).toBe(true)
     })
 
@@ -88,9 +88,9 @@ describe('Provider Manager', () => {
         scopeSelector: '.source.js',
         dispose () {}
       }
-      expect(providerManager.isValidProvider({}, '3.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider({}, 3)).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, 3)).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, 3)).toEqual(true)
     })
 
     it('can identify a provider with an invalid getSuggestions', () => {
@@ -99,9 +99,9 @@ describe('Provider Manager', () => {
         scopeSelector: '.source.js',
         dispose () {}
       }
-      expect(providerManager.isValidProvider({}, '3.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider({}, 3)).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, 3)).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, 3)).toEqual(true)
     })
 
     it('can identify a provider with a missing scope selector', () => {
@@ -110,8 +110,8 @@ describe('Provider Manager', () => {
         aSelector: '.source.js',
         dispose () {}
       }
-      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, 3)).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, 3)).toEqual(true)
     })
 
     it('can identify a provider with an invalid scope selector', () => {
@@ -120,8 +120,8 @@ describe('Provider Manager', () => {
         scopeSelector: '',
         dispose () {}
       }
-      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider(bogusProvider, 3)).toEqual(false)
+      expect(providerManager.isValidProvider(testProvider, 3)).toEqual(true)
 
       bogusProvider = {
         getSuggestions (options) {},
@@ -129,7 +129,7 @@ describe('Provider Manager', () => {
         dispose () {}
       }
 
-      expect(providerManager.isValidProvider(bogusProvider, '3.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, 3)).toEqual(false)
     })
 
     it('correctly identifies a 1.0 provider', () => {
@@ -138,15 +138,15 @@ describe('Provider Manager', () => {
         requestHandler: 'yo, this is a bad handler',
         dispose () {}
       }
-      expect(providerManager.isValidProvider({}, '1.0.0')).toEqual(false)
-      expect(providerManager.isValidProvider(bogusProvider, '1.0.0')).toEqual(false)
+      expect(providerManager.isValidProvider({}, 1)).toEqual(false)
+      expect(providerManager.isValidProvider(bogusProvider, 1)).toEqual(false)
 
       let legitProvider = {
         selector: '.source.js',
         requestHandler () {},
         dispose () {}
       }
-      expect(providerManager.isValidProvider(legitProvider, '1.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider(legitProvider, 1)).toEqual(true)
     })
 
     it('registers a valid provider', () => {
@@ -231,7 +231,7 @@ describe('Provider Manager', () => {
         }
       }
 
-      expect(providerManager.isValidProvider(testProvider, '3.0.0')).toEqual(true)
+      expect(providerManager.isValidProvider(testProvider, 3)).toEqual(true)
 
       expect(providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
       expect(providerManager.applicableProviders(['workspace-center'], '.source.js').indexOf(testProvider)).toBe(-1)

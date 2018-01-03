@@ -77,7 +77,7 @@ describe('Autocomplete Manager', () => {
             return (list.map((text) => ({text})))
           }
         }
-        mainModule.consumeProvider(provider)
+        mainModule.consumeProvider(provider, 3)
       })
     })
 
@@ -542,10 +542,10 @@ describe('Autocomplete Manager', () => {
       })
 
       it('calls with word prefix containing a dash', () => {
-        editor.insertText('_okyea')
+        editor.insertText('-okyea')
         editor.insertText('h')
         waitForAutocomplete()
-        runs(() => expect(prefix).toBe('abc_okyeah'))
+        runs(() => expect(prefix).toBe('abc-okyeah'))
       })
 
       it('calls with space character', () => {
@@ -585,6 +585,42 @@ describe('Autocomplete Manager', () => {
         editor.insertText(' ')
         waitForAutocomplete()
         runs(() => expect(prefix).toBe(' '))
+      })
+
+      describe('providers using the 4.0 API', () => {
+        it('accounts for word characters of the current language', () => {
+          let prefix = null
+          const provider = {
+            scopeSelector: '*',
+            inclusionPriority: 2,
+            excludeLowerPriority: true,
+            getSuggestions ({prefix: p}) { prefix = p }
+          }
+
+          mainModule.consumeProvider(provider, 4)
+
+          atom.config.set('editor.nonWordCharacters', '-')
+          editor.insertText(' $foo-$ba')
+          editor.insertText('r')
+          waitForAutocomplete()
+          runs(() => expect(prefix).toBe('$bar'))
+        })
+
+        it('is an empty string when the cursor does not follow a word character', () => {
+          let prefix = null
+          const provider = {
+            scopeSelector: '*',
+            inclusionPriority: 2,
+            excludeLowerPriority: true,
+            getSuggestions ({prefix: p}) { prefix = p }
+          }
+
+          mainModule.consumeProvider(provider, 4)
+          editor.insertText(' foo')
+          editor.insertText('.')
+          waitForAutocomplete()
+          runs(() => expect(prefix).toBe(''))
+        })
       })
     })
 
@@ -1104,6 +1140,35 @@ describe('Autocomplete Manager', () => {
           let suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
           expect(editor.getText()).toBe('abc.something')
+        })
+      })
+
+      describe('providers using the 4.0 API', () => {
+        it('replaces the entire prefix by default, regardless of the characters it contains', () => {
+          atom.config.set('editor.nonWordCharacters', '-')
+          provider = {
+            scopeSelector: '*',
+            inclusionPriority: 100,
+            excludeLowerPriority: true,
+            getSuggestions ({prefix}) {
+              return [{
+                text: '$food'
+              }]
+            }
+          }
+          mainModule.consumeProvider(provider, 4)
+
+          editor.setText('')
+          editor.insertText('$food $fo')
+          editor.insertText('o')
+          waitForAutocomplete()
+
+          runs(() => {
+            expect(editorView.querySelector('.autocomplete-plus')).toExist()
+            let suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+            atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+            expect(editor.getText()).toBe('$food $food')
+          })
         })
       })
     })

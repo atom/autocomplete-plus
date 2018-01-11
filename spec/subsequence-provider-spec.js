@@ -267,22 +267,26 @@ describe('SubsequenceProvider', () => {
     )
 
     describe('when editor.nonWordCharacters changes', () => {
-      it('matches words that contain characters no longer included', () => {
-        editor.insertText('good-noodles ')
+      it('includes characters that are included in the `autocomplete.extraWordCharacters` setting or not excluded in the `editor.nonWordCharacters` setting', () => {
+        waitsForPromise(async () => {
+          const scopeSelector = editor.getLastCursor().getScopeDescriptor().getScopeChain()
+          editor.insertText('good$noodles good-beef ')
 
-        waitsForPromise(() =>
-          suggestionsForPrefix(provider, editor, 'good').then(sugs => {
-            expect(sugs).not.toContain('good-noodles')
-            atom.config.set(
-              'editor.nonWordCharacters',
-              '/\\()"\':,.;<>~!@#$%^&*|+=[]{}`?…',
-              {scopeSelector: editor.getLastCursor().getScopeDescriptor().getScopeChain()}
-            )
-            return suggestionsForPrefix(provider, editor, 'good')
-          }).then(sugs => {
-            expect(sugs).toContain('good-noodles')
-          })
-        )
+          atom.config.set('editor.nonWordCharacters', '$-', {scopeSelector})
+          let sugs = await suggestionsForPrefix(provider, editor, 'good')
+          expect(sugs).not.toContain('good$noodles')
+          expect(sugs).not.toContain('good-beef')
+
+          atom.config.set('autocomplete.extraWordCharacters', '-', {scopeSelector})
+          sugs = await suggestionsForPrefix(provider, editor, 'good')
+          expect(sugs).toContain('good-beef')
+          expect(sugs).not.toContain('good$noodles')
+
+          atom.config.set('editor.nonWordCharacters', '-', {scopeSelector})
+          sugs = await suggestionsForPrefix(provider, editor, 'good')
+          expect(sugs).toContain('good-beef')
+          expect(sugs).toContain('good$noodles')
+        })
       })
     })
 

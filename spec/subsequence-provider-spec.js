@@ -110,28 +110,17 @@ describe('SubsequenceProvider', () => {
       })
     })
 
-    it('does not return the word under the cursor when there is only a prefix', () => {
+    it('does not return the prefix as a suggestion', () => {
+      atom.config.set('editor.nonWordCharacters', '-')
+      atom.config.set('autocomplete.extraWordCharacters', '-')
+
       editor.moveToBottom()
-      editor.insertText('qu')
+      editor.insertText('--qu')
       waitForBufferToStopChanging()
 
       waitsForPromise(() => {
-        return suggestionsForPrefix(provider, editor, 'qu').then(sugs => {
-          expect(sugs).not.toContain('qu')
-        })
-      })
-    })
-
-    it('does not return the word under the cursor when there is a suffix and only one instance of the word', () => {
-      editor.moveToBottom()
-      editor.insertText('catscats')
-      editor.moveToBeginningOfLine()
-      editor.insertText('omg')
-
-      waitsForPromise(() => {
-        return suggestionsForPrefix(provider, editor, 'omg').then(sugs => {
-          expect(sugs).not.toContain('omg')
-          expect(sugs).not.toContain('omgcatscats')
+        return suggestionsForPrefix(provider, editor, '--qu').then(sugs => {
+          expect(sugs).not.toContain('--qu')
         })
       })
     })

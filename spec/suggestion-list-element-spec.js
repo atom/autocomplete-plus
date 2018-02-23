@@ -281,9 +281,9 @@ describe('Suggestion List Element', () => {
     it('dismisses the suggestion list if the current selection is at the start of the list and moveToCancel is true', () => {
       const model = {
         activeEditor: {
-          moveUp() {}
+          moveUp () {}
         },
-        cancel() {}
+        cancel () {}
       }
       spyOn(model.activeEditor, 'moveUp')
       spyOn(model, 'cancel')
@@ -322,9 +322,9 @@ describe('Suggestion List Element', () => {
     it('dismisses the suggestion list if the current selection is at the end of the list and moveToCancel is true', () => {
       const model = {
         activeEditor: {
-          moveDown() {}
+          moveDown () {}
         },
-        cancel() {}
+        cancel () {}
       }
       spyOn(model.activeEditor, 'moveDown')
       spyOn(model, 'cancel')
@@ -356,9 +356,9 @@ describe('Suggestion List Element', () => {
       const model = {
         activeEditor: {
           getScreenLineCount: () => 42,
-          moveUp() {}
+          moveUp () {}
         },
-        cancel() {}
+        cancel () {}
       }
       spyOn(model.activeEditor, 'moveUp')
       spyOn(model, 'cancel')
@@ -378,9 +378,9 @@ describe('Suggestion List Element', () => {
       const model = {
         activeEditor: {
           getScreenLineCount: () => 42,
-          moveDown() {}
+          moveDown () {}
         },
-        cancel() {}
+        cancel () {}
       }
       spyOn(model.activeEditor, 'moveDown')
       spyOn(model, 'cancel')
@@ -400,9 +400,9 @@ describe('Suggestion List Element', () => {
     it('dismisses the list if moveToCancel is true', () => {
       const model = {
         activeEditor: {
-          moveToTop() {}
+          moveToTop () {}
         },
-        cancel() {}
+        cancel () {}
       }
       spyOn(model.activeEditor, 'moveToTop')
       spyOn(model, 'cancel')
@@ -421,9 +421,9 @@ describe('Suggestion List Element', () => {
     it('dismisses the list if moveToCancel is true', () => {
       const model = {
         activeEditor: {
-          moveToBottom() {}
+          moveToBottom () {}
         },
-        cancel() {}
+        cancel () {}
       }
       spyOn(model.activeEditor, 'moveToBottom')
       spyOn(model, 'cancel')

@@ -75,7 +75,7 @@
       "title": "Inline Mode",
       "description": "The activation key will cycle through the suggestions without showing the suggestion list.",
       "type": "boolean",
-      "default": true,
+      "default": false,
       "order": 3.5
     },
     "confirmCompletion": {

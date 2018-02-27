@@ -1,9 +1,9 @@
 {
   "name": "autocomplete-plus",
-  "version": "2.40.4",
+  "version": "2.40.4+eweitnauer",
   "main": "./lib/main",
   "description": "Display possible completions in the editor while typing",
-  "repository": "https://github.com/atom/autocomplete-plus",
+  "repository": "https://github.com/eweitnauer/autocomplete-plus",
   "license": "MIT",
   "engines": {
     "atom": ">=0.189.0 <2.0.0"
@@ -70,6 +70,13 @@
       "default": 10,
       "minimum": 1,
       "order": 3
+    },
+    "inlineMode": {
+      "title": "Inline Mode",
+      "description": "The activation key will cycle through the suggestions without showing the suggestion list.",
+      "type": "boolean",
+      "default": true,
+      "order": 3.5
     },
     "confirmCompletion": {
       "title": "Keymap For Confirming A Suggestion",

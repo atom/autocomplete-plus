@@ -267,4 +267,175 @@ describe('Suggestion List Element', () => {
       expect(suggestionListElement.removeEmptySnippets('hello${1000:}hello')).toBe('hellohello')
     })
   })
+
+  describe('moveSelectionUp', () => {
+    it('decreases the selected index when the current index is greater than zero', () => {
+      spyOn(suggestionListElement, 'setSelectedIndex')
+      suggestionListElement.selectedIndex = 1
+
+      suggestionListElement.moveSelectionUp()
+
+      expect(suggestionListElement.setSelectedIndex).toHaveBeenCalledWith(0)
+    })
+
+    it('dismisses the suggestion list if the current selection is at the start of the list and moveToCancel is true', () => {
+      const model = {
+        activeEditor: {
+          moveUp () {}
+        },
+        cancel () {}
+      }
+      spyOn(model.activeEditor, 'moveUp')
+      spyOn(model, 'cancel')
+
+      suggestionListElement.model = model
+      suggestionListElement.selectedIndex = 0
+      suggestionListElement.moveToCancel = true
+
+      suggestionListElement.moveSelectionUp()
+
+      expect(model.activeEditor.moveUp).toHaveBeenCalledWith(1)
+      expect(model.cancel).toHaveBeenCalled()
+    })
+
+    it('cycles to the last element in the suggestion list when the current selection is at the start of the list', () => {
+      spyOn(suggestionListElement, 'visibleItems').andReturn(['a', 'b', 'c', 'd', 'e'])
+      spyOn(suggestionListElement, 'setSelectedIndex')
+
+      suggestionListElement.moveSelectionUp()
+
+      expect(suggestionListElement.setSelectedIndex).toHaveBeenCalledWith(4)
+    })
+  })
+
+  describe('moveSelectionDown', () => {
+    it('increases the selected index if the current selection is not at the end of the list', () => {
+      spyOn(suggestionListElement, 'visibleItems').andReturn(['a', 'b', 'c', 'd', 'e'])
+      spyOn(suggestionListElement, 'setSelectedIndex')
+      suggestionListElement.selectedIndex = 3
+
+      suggestionListElement.moveSelectionDown()
+
+      expect(suggestionListElement.setSelectedIndex).toHaveBeenCalledWith(4)
+    })
+
+    it('dismisses the suggestion list if the current selection is at the end of the list and moveToCancel is true', () => {
+      const model = {
+        activeEditor: {
+          moveDown () {}
+        },
+        cancel () {}
+      }
+      spyOn(model.activeEditor, 'moveDown')
+      spyOn(model, 'cancel')
+      spyOn(suggestionListElement, 'visibleItems').andReturn(['a', 'b', 'c', 'd', 'e'])
+
+      suggestionListElement.model = model
+      suggestionListElement.selectedIndex = 4
+      suggestionListElement.moveToCancel = true
+
+      suggestionListElement.moveSelectionDown()
+
+      expect(model.activeEditor.moveDown).toHaveBeenCalledWith(1)
+      expect(model.cancel).toHaveBeenCalled()
+    })
+
+    it('cycles to the first element in the suggestion list when the current suggestion is at the end of the list', () => {
+      spyOn(suggestionListElement, 'visibleItems').andReturn(['a', 'b', 'c', 'd', 'e'])
+      spyOn(suggestionListElement, 'setSelectedIndex')
+      suggestionListElement.selectedIndex = 4
+
+      suggestionListElement.moveSelectionDown()
+
+      expect(suggestionListElement.setSelectedIndex).toHaveBeenCalledWith(0)
+    })
+  })
+
+  describe('moveSelectionPageUp', () => {
+    it('dismisses the list if moveToCancel is true', () => {
+      const model = {
+        activeEditor: {
+          getScreenLineCount: () => 42,
+          moveUp () {}
+        },
+        cancel () {}
+      }
+      spyOn(model.activeEditor, 'moveUp')
+      spyOn(model, 'cancel')
+
+      suggestionListElement.model = model
+      suggestionListElement.moveToCancel = true
+
+      suggestionListElement.moveSelectionPageUp()
+
+      expect(model.activeEditor.moveUp).toHaveBeenCalledWith(42)
+      expect(model.cancel).toHaveBeenCalled()
+    })
+  })
+
+  describe('moveSelectionPageDown', () => {
+    it('dismisses the list if moveToCancel is true', () => {
+      const model = {
+        activeEditor: {
+          getScreenLineCount: () => 42,
+          moveDown () {}
+        },
+        cancel () {}
+      }
+      spyOn(model.activeEditor, 'moveDown')
+      spyOn(model, 'cancel')
+      spyOn(suggestionListElement, 'visibleItems').andReturn(['a'])
+
+      suggestionListElement.model = model
+      suggestionListElement.moveToCancel = true
+
+      suggestionListElement.moveSelectionPageDown()
+
+      expect(model.activeEditor.moveDown).toHaveBeenCalledWith(42)
+      expect(model.cancel).toHaveBeenCalled()
+    })
+  })
+
+  describe('moveSelectionToTop', () => {
+    it('dismisses the list if moveToCancel is true', () => {
+      const model = {
+        activeEditor: {
+          moveToTop () {}
+        },
+        cancel () {}
+      }
+      spyOn(model.activeEditor, 'moveToTop')
+      spyOn(model, 'cancel')
+
+      suggestionListElement.model = model
+      suggestionListElement.moveToCancel = true
+
+      suggestionListElement.moveSelectionToTop()
+
+      expect(model.activeEditor.moveToTop).toHaveBeenCalled()
+      expect(model.cancel).toHaveBeenCalled()
+    })
+  })
+
+  describe('moveSelectionToBottom', () => {
+    it('dismisses the list if moveToCancel is true', () => {
+      const model = {
+        activeEditor: {
+          moveToBottom () {}
+        },
+        cancel () {}
+      }
+      spyOn(model.activeEditor, 'moveToBottom')
+      spyOn(model, 'cancel')
+      spyOn(suggestionListElement, 'visibleItems').andReturn(['a'])
+
+      suggestionListElement.model = model
+      suggestionListElement.moveToCancel = true
+
+      suggestionListElement.moveSelectionToBottom()
+
+      expect(model.activeEditor.moveToBottom).toHaveBeenCalled()
+      expect(model.cancel).toHaveBeenCalled()
+    })
+  })
 })

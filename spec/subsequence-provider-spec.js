@@ -112,7 +112,7 @@ describe('SubsequenceProvider', () => {
 
     it('does not return the prefix as a suggestion', () => {
       atom.config.set('editor.nonWordCharacters', '-')
-      atom.config.set('autocomplete.extraWordCharacters', '-')
+      atom.config.set('autocomplete-plus.extraWordCharacters', '-')
 
       editor.moveToBottom()
       editor.insertText('--qu')
@@ -256,7 +256,7 @@ describe('SubsequenceProvider', () => {
     )
 
     describe('when editor.nonWordCharacters changes', () => {
-      it('includes characters that are included in the `autocomplete.extraWordCharacters` setting or not excluded in the `editor.nonWordCharacters` setting', () => {
+      it('includes characters that are included in the `autocomplete-plus.extraWordCharacters` setting or not excluded in the `editor.nonWordCharacters` setting', () => {
         waitsForPromise(async () => {
           const scopeSelector = editor.getLastCursor().getScopeDescriptor().getScopeChain()
           editor.insertText('good$noodles good-beef ')
@@ -266,7 +266,7 @@ describe('SubsequenceProvider', () => {
           expect(sugs).not.toContain('good$noodles')
           expect(sugs).not.toContain('good-beef')
 
-          atom.config.set('autocomplete.extraWordCharacters', '-', {scopeSelector})
+          atom.config.set('autocomplete-plus.extraWordCharacters', '-', {scopeSelector})
           sugs = await suggestionsForPrefix(provider, editor, 'good')
           expect(sugs).toContain('good-beef')
           expect(sugs).not.toContain('good$noodles')

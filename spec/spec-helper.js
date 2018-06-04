@@ -1,5 +1,3 @@
-/* eslint-env jasmine */
-
 let completionDelay = 100
 
 beforeEach(() => {

@@ -1,5 +1,4 @@
 'use babel'
-/* eslint-env jasmine */
 
 import SymbolStore from '../lib/symbol-store'
 import { Selector } from 'selector-kit'

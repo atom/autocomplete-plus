@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 /* eslint-disable no-template-curly-in-string */
 
 const { TextEditor } = require('atom')
@@ -2507,7 +2506,7 @@ defm`
         bottomEditorView = atom.views.getView(bottomEditor)
         atom.workspace.addBottomPanel({item: bottomEditorView, visible: true})
         autocompleteDisposable = autocompleteManager.watchEditor(
-            bottomEditor, ['bottom-label'])
+          bottomEditor, ['bottom-label'])
       })
     })
 

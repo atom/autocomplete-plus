@@ -1,9 +1,8 @@
 'use babel'
-/* eslint-env jasmine */
 
-let temp = require('temp').track()
 import path from 'path'
 import fs from 'fs-plus'
+const temp = require('temp').track()
 
 describe('Autocomplete Manager', () => {
   let [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager, didAutocomplete] = []

@@ -1,5 +1,4 @@
 'use babel'
-/* eslint-env jasmine */
 
 import { waitForAutocomplete } from './spec-helper'
 describe('Async providers', () => {
@@ -91,7 +90,7 @@ describe('Async providers', () => {
                   rightLabel: 'asyncProvided'
                 }]
               )
-            , 1000)
+              , 1000)
           })
         }
       }

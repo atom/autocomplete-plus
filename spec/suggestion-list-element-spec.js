@@ -1,4 +1,3 @@
-/* eslint-env jasmine */
 /* eslint-disable no-template-curly-in-string */
 const SuggestionListElement = require('../lib/suggestion-list-element')
 const {waitForAutocomplete} = require('./spec-helper')

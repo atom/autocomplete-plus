@@ -1,5 +1,4 @@
 'use babel'
-/* eslint-env jasmine */
 
 import { triggerAutocompletion } from './spec-helper'
 import grim from 'grim'

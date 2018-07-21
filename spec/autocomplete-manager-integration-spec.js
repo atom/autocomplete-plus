@@ -1173,6 +1173,43 @@ describe('Autocomplete Manager', () => {
       })
     })
 
+    describe('when a replacementPrefix is not specified, but updated multiple times', () => {
+      // First test checks if suggestion did not have replacementPrefix, isPrefixModified is set.
+      // Second test checks that reused suggestion will still be selected with different prefix.
+
+      // Mutable suggestion
+      let suggestion = {text: 'something'}
+
+      beforeEach(() =>
+        spyOn(provider, 'getSuggestions').andCallFake(() => [suggestion]))
+
+      it('adds isPrefixModified the first time suggestion is shown', () => {
+        editor.insertText('so')
+        triggerAutocompletion(editor, false, 'm')
+
+        runs(() => {
+          let suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+          expect(editor.getText()).toBe('something')
+          expect(suggestion.replacementPrefix).toBe("som")
+          expect(suggestion.isPrefixModified).toBe(true)
+        })
+      })
+
+      it('updates replacementPrefix when returning the same suggestion', () => {
+        editor.insertText('some')
+        triggerAutocompletion(editor, false, 't')
+
+        runs(() => {
+          let suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
+          expect(editor.getText()).toBe('something')
+          expect(suggestion.replacementPrefix).toBe("somet")
+          expect(suggestion.isPrefixModified).toBe(true)
+        })
+      })
+    })
+
     describe("when autocomplete-plus.suggestionListFollows is 'Cursor'", () => {
       beforeEach(() => atom.config.set('autocomplete-plus.suggestionListFollows', 'Cursor'))
 

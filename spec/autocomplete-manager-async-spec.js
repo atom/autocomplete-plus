@@ -1,9 +1,9 @@
-'use babel'
 /* eslint-env jasmine */
 
-import { waitForAutocomplete } from './spec-helper'
+const { waitForAutocomplete } = require('./spec-helper')
+
 describe('Async providers', () => {
-  let [completionDelay, editorView, editor, mainModule, autocompleteManager, registration] = []
+  let completionDelay, editorView, editor, mainModule, autocompleteManager, registration
 
   beforeEach(() => {
     runs(() => {

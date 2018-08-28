@@ -178,16 +178,6 @@
       ],
       "order": 15
     },
-    "defaultProvider": {
-      "description": "If you're having trouble with autocomplete, you may consider falling back to the Symbol provider and filing an issue.",
-      "type": "string",
-      "default": "Subsequence",
-      "enum": [
-        "Subsequence",
-        "Symbol"
-      ],
-      "order": 16
-    },
     "suppressActivationForEditorClasses": {
       "title": "Suppress Activation For Editor Classes",
       "description": "Don't auto-activate when any of these classes are present in the editor.",

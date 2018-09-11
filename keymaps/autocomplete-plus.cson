@@ -4,3 +4,12 @@
 'atom-text-editor.autocomplete-active':
   'escape': 'autocomplete-plus:cancel'
   'f1': 'autocomplete-plus:navigate-to-description-more-link'
+  'cmd-1': 'autocomplete-plus:menu:1'
+  'cmd-2': 'autocomplete-plus:menu:2'
+  'cmd-3': 'autocomplete-plus:menu:3'
+  'cmd-4': 'autocomplete-plus:menu:4'
+  'cmd-5': 'autocomplete-plus:menu:5'
+  'cmd-6': 'autocomplete-plus:menu:6'
+  'cmd-7': 'autocomplete-plus:menu:7'
+  'cmd-8': 'autocomplete-plus:menu:8'
+  'cmd-9': 'autocomplete-plus:menu:9'

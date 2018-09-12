@@ -159,8 +159,23 @@ autocomplete-suggestion-list {
     }
   }
 
-  .word-container {
+  .shortcut {
     padding-right: @item-padding;
+    font-size: @font-size-small;
+    border-right: 1px solid @text-color-subtle;
+
+    &:empty {
+      padding-right: 0;
+      border-right: 0;
+    }
+
+    .icon-shortcut {
+      padding-right: 2px;
+    }
+  }
+
+  .word-container {
+    padding: 0 @item-padding;
   }
 
   .word {

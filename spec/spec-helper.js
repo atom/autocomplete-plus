@@ -5,7 +5,6 @@ let completionDelay = 100
 beforeEach(() => {
   spyOn(atom.views, 'readDocument').andCallFake(fn => fn())
   spyOn(atom.views, 'updateDocument').andCallFake(fn => fn())
-  atom.config.set('autocomplete-plus.defaultProvider', 'Symbol')
   atom.config.set('autocomplete-plus.minimumWordLength', 1)
   atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
   atom.config.set('autocomplete-plus.useCoreMovementCommands', true)

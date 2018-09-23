@@ -1,6 +1,6 @@
 {
   "name": "autocomplete-plus",
-  "version": "2.40.7",
+  "version": "2.41.0",
   "main": "./lib/main",
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/atom/autocomplete-plus",
@@ -178,16 +178,6 @@
         "Cursor"
       ],
       "order": 15
-    },
-    "defaultProvider": {
-      "description": "If you're having trouble with autocomplete, you may consider falling back to the Symbol provider and filing an issue.",
-      "type": "string",
-      "default": "Subsequence",
-      "enum": [
-        "Subsequence",
-        "Symbol"
-      ],
-      "order": 16
     },
     "suppressActivationForEditorClasses": {
       "title": "Suppress Activation For Editor Classes",

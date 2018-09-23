@@ -32,6 +32,8 @@ Additionally, the confirm keymap can be customized in your keymap.cson:
   'ctrl-shift-a': 'autocomplete-plus:confirm'
 ```
 
+If setting custom keybindings, use the `none` setting for the confirmation keymap. All this option does is not set any other keybindings. This allows the `TAB` and `ENTER` keys to be used like normal, without side effects.
+
 ### Remapping Movement Commands
 
 By default, autocomplete-plus commandeers the editor's core movement commands when the suggestion list is open. You may want to change these movement commands to use your own keybindings.

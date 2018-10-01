@@ -80,7 +80,8 @@
         "tab",
         "enter",
         "tab and enter",
-        "tab always, enter when suggestion explicitly selected"
+        "tab always, enter when suggestion explicitly selected",
+        "none"
       ],
       "order": 4
     },

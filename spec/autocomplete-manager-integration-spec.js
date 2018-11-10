@@ -548,6 +548,13 @@ describe('Autocomplete Manager', () => {
         runs(() => expect(prefix).toBe('abc-okyeah'))
       })
 
+      it('calls with word prefix containing a number', () => {
+        editor.insertText('4okyea')
+        editor.insertText('h')
+        waitForAutocomplete()
+        runs(() => expect(prefix).toBe('abc4okyeah'))
+      })
+
       it('calls with space character', () => {
         editor.insertText(' ')
         waitForAutocomplete()

@@ -13,8 +13,9 @@
     "fuzzaldrin": "^2.1.0",
     "fuzzaldrin-plus": "^0.6.0",
     "grim": "^2.0.1",
-    "marked": "^0.3.17",
+    "marked": "^0.5.1",
     "minimatch": "^3.0.3",
+    "sanitize-html": "^1.19.1",
     "selector-kit": "^0.1",
     "stable": "^0.1.5",
     "underscore-plus": "^1.6.6"

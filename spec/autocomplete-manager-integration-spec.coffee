@@ -5,10 +5,9 @@ _ = require 'underscore-plus'
 NodeTypeText = 3
 
 describe 'Autocomplete Manager', ->
-  [workspaceElement, completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule, gutterWidth] = []
+  [workspaceElement, completionDelay, editorView, editor, mainModule, autocompleteManager, mainModule] = []
 
   beforeEach ->
-    gutterWidth = null
     runs ->
       # Set to live completion
       atom.config.set('autocomplete-plus.enableAutoActivation', true)
@@ -192,99 +191,17 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(prefix).toBe '.'
 
-      it "calls with prefix after non \\b word break", ->
-        editor.insertText('=""')
-        editor.insertText(' ')
-        waitForAutocomplete()
-        runs ->
-          expect(prefix).toBe ' '
-
-      it "calls with prefix after non \\b word break", ->
-        editor.insertText('?')
-        editor.insertText(' ')
-        waitForAutocomplete()
-        runs ->
-          expect(prefix).toBe ' '
-
-    describe "when the character entered is not at the cursor position", ->
-      beforeEach ->
-        editor.setText 'some text ok'
-        editor.setCursorBufferPosition([0, 7])
-
-      it "does not show the suggestion list", ->
-        buffer = editor.getBuffer()
-        buffer.setTextInRange([[0, 0], [0, 0]], "s")
-        waitForAutocomplete()
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-
     describe "when number of suggestions > maxVisibleSuggestions", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.maxVisibleSuggestions', 2)
 
-      describe "when a suggestion description is not specified", ->
-        it "only shows the maxVisibleSuggestions in the suggestion popup", ->
-          triggerAutocompletion(editor, true, 'a')
+      it "only shows the maxVisibleSuggestions in the suggestion popup", ->
+        triggerAutocompletion(editor, true, 'a')
 
-          runs ->
-            expect(editorView.querySelector('.autocomplete-plus')).toExist()
-            itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
-            expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
-
-            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-            expect(suggestionList.offsetHeight).toBe(2 * itemHeight)
-            expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
-
-      describe "when a suggestion description is specified", ->
-        it "shows the maxVisibleSuggestions in the suggestion popup, but with extra height for the description", ->
-          spyOn(provider, 'getSuggestions').andCallFake ->
-            list = ['ab', 'abc', 'abcd', 'abcde']
-            ({text, description: "#{text} yeah ok"} for text in list)
-
-          triggerAutocompletion(editor, true, 'a')
-
-          runs ->
-            expect(editorView.querySelector('.autocomplete-plus')).toExist()
-            itemHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus li')).height)
-            expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
-
-            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-            descriptionHeight = parseInt(getComputedStyle(editorView.querySelector('.autocomplete-plus .suggestion-description')).height)
-            expect(suggestionList.offsetHeight).toBe(2 * itemHeight + descriptionHeight)
-            expect(suggestionList.querySelector('.suggestion-list-scroller').style['max-height']).toBe("#{2 * itemHeight}px")
-
-        it "adjusts the width when the description changes", ->
-          listWidth = null
-          spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
-            list =[
-              {text: 'ab',    description: 'mmmmmmmmmmmmmmmmmmmmmmmmmm'}
-              {text: 'abc',   description: 'mmmmmmmmmmmmmmmmmmmmmm'}
-              {text: 'abcd',  description: 'mmmmmmmmmmmmmmmmmm'}
-              {text: 'abcde', description: 'mmmmmmmmmmmmmm'}
-            ]
-            (item for item in list when item.text.startsWith(prefix))
-
-          triggerAutocompletion(editor, true, 'a')
-
-          runs ->
-            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-            expect(suggestionList).toExist()
-
-            listWidth = parseInt(suggestionList.style.width)
-            expect(listWidth).toBeGreaterThan 0
-
-            editor.insertText('b')
-            editor.insertText('c')
-            waitForAutocomplete()
-
-          runs ->
-            suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-            expect(suggestionList).toExist()
-
-            newWidth = parseInt(suggestionList.style.width)
-            expect(newWidth).toBeGreaterThan 0
-            expect(newWidth).toBeLessThan listWidth
+        runs ->
+          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+          expect(editorView.querySelectorAll('.autocomplete-plus li')).toHaveLength 4
+          expect(editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list').style['max-height']).toBe("#{2 * 25}px")
 
     describe "when match.snippet is used", ->
       beforeEach ->
@@ -383,6 +300,7 @@ describe 'Autocomplete Manager', ->
 
             characterMatches = editorView.querySelectorAll('.autocomplete-plus li span.word .character-match')
             text = editorView.querySelector('.autocomplete-plus li span.word').textContent
+            console.log characterMatches
             expect(characterMatches).toHaveLength 0
             expect(text).toBe 'omgnope'
 
@@ -403,7 +321,7 @@ describe 'Autocomplete Manager', ->
               charMatch = editorView.querySelector('.autocomplete-plus li span.word .character-match')
               expect(word.textContent).toBe 'ab(c)c'
               expect(charMatch.textContent).toBe 'c'
-              expect(charMatch.parentNode).toHaveClass 'snippet-completion'
+              expect(charMatch.parentNode).toHaveClass 'word'
 
           it "does not highlight the snippet html when highlight beginning of the word", ->
             spyOn(provider, 'getSuggestions').andCallFake ->
@@ -425,7 +343,7 @@ describe 'Autocomplete Manager', ->
               expect(charMatches[1].textContent).toBe 'e'
               expect(charMatches[1].parentNode).toHaveClass 'word'
               expect(charMatches[2].textContent).toBe 'f'
-              expect(charMatches[2].parentNode).toHaveClass 'snippet-completion'
+              expect(charMatches[2].parentNode).toHaveClass 'word'
 
     describe "when a replacementPrefix is not specified", ->
       beforeEach ->
@@ -444,139 +362,28 @@ describe 'Autocomplete Manager', ->
           atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
           expect(editor.getText()).toBe 'something'
 
-      it "does not replace non-word prefixes with the chosen suggestion", ->
-        editor.insertText('abc')
-        editor.insertText('.')
-        waitForAutocomplete()
-
-        expect(editor.getText()).toBe 'abc.'
-
-        runs ->
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
-          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:confirm')
-          expect(editor.getText()).toBe 'abc.something'
-
-    describe "when autocomplete-plus.suggestionListFollows is 'Cursor'", ->
-      beforeEach ->
-        atom.config.set('autocomplete-plus.suggestionListFollows', 'Cursor')
-
-      it "places the suggestion list at the cursor", ->
-        spyOn(provider, 'getSuggestions').andCallFake (options) ->
-          [{text: 'ab', leftLabel: 'void'}, {text: 'abc', leftLabel: 'void'}]
-
-        editor.insertText('omghey ab')
-        triggerAutocompletion(editor, false, 'c')
-
-        runs ->
-          overlayElement = editorView.querySelector('.autocomplete-plus')
-          expect(overlayElement).toExist()
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 10])
-
-          suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          expect(suggestionList.style['margin-left']).toBeFalsy()
-
     describe "when autocomplete-plus.suggestionListFollows is 'Word'", ->
       beforeEach ->
         atom.config.set('autocomplete-plus.suggestionListFollows', 'Word')
 
+      afterEach ->
+        atom.config.set('autocomplete-plus.suggestionListFollows', 'Cursor')
+
       it "opens to the correct position, and correctly closes on cancel", ->
-        editor.insertText('xxxxxxxxxxx ab')
+        editor.insertText('x ab')
         triggerAutocompletion(editor, false, 'c')
 
         runs ->
           overlayElement = editorView.querySelector('.autocomplete-plus')
 
           expect(overlayElement).toExist()
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
 
-      it "displays the suggestion list with a negative margin to align the prefix with the word-container", ->
-        spyOn(provider, 'getSuggestions').andCallFake (options) ->
-          [{text: 'ab', leftLabel: 'void'}, {text: 'abc', leftLabel: 'void'}]
+          left = editorView.pixelPositionForBufferPosition([0, 2]).left
+          gutterWidth = editorView.shadowRoot.querySelector('.gutter').offsetWidth
+          expect(overlayElement.style.left).toBe "#{left + gutterWidth}px"
 
-        editor.insertText('omghey ab')
-        triggerAutocompletion(editor, false, 'c')
-
-        runs ->
-          suggestionList = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
-          wordContainer = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .word-container')
-          expect(suggestionList.style['margin-left']).toBe "-#{wordContainer.offsetLeft}px"
-
-      it "keeps the suggestion list planted at the beginning of the prefix when typing", ->
-        overlayElement = null
-        # Lots of x's to keep the margin offset away from the left of the window
-        # See https://github.com/atom-community/autocomplete-plus/issues/399
-        editor.insertText('xxxxxxxxxx xx')
-        editor.insertText(' ')
-        waitForAutocomplete()
-
-        runs ->
-          overlayElement = editorView.querySelector('.autocomplete-plus')
-
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
-
-          editor.insertText('a')
-          waitForAutocomplete()
-
-        runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
-
-          editor.insertText('b')
-          waitForAutocomplete()
-
-        runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
-
-          editor.backspace()
-          editor.backspace()
-          waitForAutocomplete()
-
-        runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
-
-          editor.backspace()
-          waitForAutocomplete()
-
-        runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 11])
-
-          editor.insertText(' ')
-          editor.insertText('a')
-          editor.insertText('b')
-          editor.insertText('c')
-          waitForAutocomplete()
-
-        runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 14])
-
-      it "when broken by a non-word character, the suggestion list is positioned at the beginning of the new word", ->
-        overlayElement = null
-        editor.insertText('xxxxxxxxxxx')
-        editor.insertText(' abc')
-        editor.insertText('d')
-        waitForAutocomplete()
-
-        runs ->
-          overlayElement = editorView.querySelector('.autocomplete-plus')
-
-          left = editorView.pixelPositionForBufferPosition([0, 12]).left
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
-
-          editor.insertText(' ')
-          editor.insertText('a')
-          editor.insertText('b')
-          waitForAutocomplete()
-
-        runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 17])
-
-          editor.backspace()
-          editor.backspace()
-          editor.backspace()
-          waitForAutocomplete()
-
-        runs ->
-          expect(overlayElement.style.left).toBe pixelLeftForBufferPosition([0, 12])
+          atom.commands.dispatch(editorView, 'autocomplete-plus:cancel')
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
     describe 'accepting suggestions', ->
       beforeEach ->
@@ -902,7 +709,8 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).not.toHaveClass('selected')
 
           # Select previous item
-          atom.commands.dispatch(editorView, 'core:move-up')
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-previous')
 
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).not.toHaveClass('selected')
@@ -910,59 +718,32 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).toHaveClass('selected')
 
       it 'closes the autocomplete when up arrow pressed when only one item displayed', ->
-        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
-          [{text: 'quicksort'}, {text: 'quack'}].filter (val) ->
-            val.text.startsWith(prefix)
+        spyOn(provider, 'getSuggestions').andCallFake ->
+          [{text: 'quicksort'}]
 
-        editor.insertText('q')
-        editor.insertText('u')
-        waitForAutocomplete()
+        triggerAutocompletion(editor, false, 'q')
 
         runs ->
-          # two items displayed, should not close
-          atom.commands.dispatch(editorView, 'core:move-up')
-          advanceClock(1)
-
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).toExist()
-
-          editor.insertText('a')
-          waitForAutocomplete()
-
-        runs ->
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).toExist()
-
-          # one item displayed, should close
-          atom.commands.dispatch(editorView, 'core:move-up')
+          # Accept suggestion
+          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
           advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
           expect(autocomplete).not.toExist()
 
-      it 'does not close the autocomplete when up arrow pressed with multiple items displayed but triggered on one item', ->
-        spyOn(provider, 'getSuggestions').andCallFake ({prefix}) ->
-          [{text: 'quicksort'}, {text: 'quack'}].filter (val) ->
-            val.text.startsWith(prefix)
-
-        editor.insertText('q')
-        editor.insertText('u')
-        editor.insertText('a')
-        waitForAutocomplete()
+      it 'closes the autocomplete when up arrow while up,down navigation not selected', ->
+        atom.config.set('autocomplete-plus.navigateCompletions', 'ctrl-p,ctrl-n')
+        triggerAutocompletion(editor, false, 'a')
 
         runs ->
-          editor.backspace()
-          waitForAutocomplete()
-
-        runs ->
-          autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).toExist()
-
-          atom.commands.dispatch(editorView, 'core:move-up')
+          # Accept suggestion
+          key = atom.keymaps.constructor.buildKeydownEvent('up', {target: document.activeElement})
+          atom.keymaps.handleKeyboardEvent(key)
           advanceClock(1)
 
           autocomplete = editorView.querySelector('.autocomplete-plus')
-          expect(autocomplete).toExist()
+          expect(autocomplete).not.toExist()
 
     describe 'select-next event', ->
       it 'selects the next item in the list', ->
@@ -975,7 +756,9 @@ describe 'Autocomplete Manager', ->
           expect(items[2]).not.toHaveClass('selected')
 
           # Select next item
-          atom.commands.dispatch(editorView, 'core:move-down')
+
+          suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
 
           items = editorView.querySelectorAll('.autocomplete-plus li')
           expect(items[0]).not.toHaveClass('selected')
@@ -997,13 +780,13 @@ describe 'Autocomplete Manager', ->
           suggestionListView = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list')
           items = editorView.querySelectorAll('.autocomplete-plus li')
 
-          atom.commands.dispatch(suggestionListView, 'core:move-down')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
           expect(items[1]).toHaveClass('selected')
 
-          atom.commands.dispatch(suggestionListView, 'core:move-down')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
           expect(items[2]).toHaveClass('selected')
 
-          atom.commands.dispatch(suggestionListView, 'core:move-down')
+          atom.commands.dispatch(suggestionListView, 'autocomplete-plus:select-next')
           expect(items[0]).toHaveClass('selected')
 
     describe "label rendering", ->
@@ -1032,7 +815,7 @@ describe 'Autocomplete Manager', ->
           triggerAutocompletion(editor)
           runs ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
-            expect(icon.textContent).toBe('o')
+            expect(icon.innerHTML).toBe('o')
 
       describe "when the `type` specified has a default icon", ->
         beforeEach ->
@@ -1043,6 +826,7 @@ describe 'Autocomplete Manager', ->
           triggerAutocompletion(editor)
           runs ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon i')
+            console.log editorView.querySelector('.autocomplete-plus li .icon-container .icon').innerHTML
             expect(icon).toHaveClass('icon-move-right')
 
       describe "when `type` is an empty string", ->
@@ -1087,7 +871,7 @@ describe 'Autocomplete Manager', ->
           triggerAutocompletion(editor)
           runs ->
             icon = editorView.querySelector('.autocomplete-plus li .icon-container .icon')
-            expect(icon.textContent).toBe('s')
+            expect(icon.innerHTML).toBe('s')
 
       describe "when `iconHTML` is not a string and no type is specified", ->
         beforeEach ->
@@ -1143,46 +927,6 @@ describe 'Autocomplete Manager', ->
           runs ->
             label = editorView.querySelector('.autocomplete-plus li .left-label .something')
             expect(label).toHaveText('sometext')
-
-    describe 'when clicking in the suggestion list', ->
-      beforeEach ->
-        spyOn(provider, 'getSuggestions').andCallFake ->
-          list = ['ab', 'abc', 'abcd', 'abcde']
-          ({text, description: "#{text} yeah ok"} for text in list)
-
-      it 'will select the item and confirm the selection', ->
-        triggerAutocompletion(editor, true, 'a')
-
-        runs ->
-          # Get the second item
-          item = editorView.querySelectorAll('.autocomplete-plus li')[1]
-
-          # Click the item, expect list to be hidden and text to be added
-          mouse = document.createEvent('MouseEvents')
-          mouse.initMouseEvent('mousedown', true, true, window)
-          item.dispatchEvent(mouse)
-          mouse = document.createEvent('MouseEvents')
-          mouse.initMouseEvent('mouseup', true, true, window)
-          item.dispatchEvent(mouse)
-
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-          expect(editor.getBuffer().getLastLine()).toEqual(item.textContent.trim())
-
-      it 'will not close the list when the description is clicked', ->
-        triggerAutocompletion(editor, true, 'a')
-
-        runs ->
-          description = editorView.querySelector('.autocomplete-plus .suggestion-description-content')
-
-          # Click the description, expect list to still show
-          mouse = document.createEvent('MouseEvents')
-          mouse.initMouseEvent('mousedown', true, true, window)
-          description.dispatchEvent(mouse)
-          mouse = document.createEvent('MouseEvents')
-          mouse.initMouseEvent('mouseup', true, true, window)
-          description.dispatchEvent(mouse)
-
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
   describe 'when opening a file without a path', ->
     beforeEach ->
@@ -1242,9 +986,9 @@ describe 'Autocomplete Manager', ->
         autocompleteManager = mainModule.autocompleteManager
 
       runs ->
-        advanceClock(autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
+        advanceClock(autocompleteManager.providerManager.fuzzyProvider.deferBuildWordListInterval)
 
-    describe 'when the built-in provider is disabled', ->
+    describe 'when fuzzyProvider is disabled', ->
       it 'should not show the suggestion list', ->
         atom.config.set('autocomplete-plus.enableBuiltinProvider', false)
         expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
@@ -1279,7 +1023,6 @@ describe 'Autocomplete Manager', ->
 
       it 'shows the suggestion list on backspace if allowed', ->
         runs ->
-          atom.config.set('autocomplete-plus.backspaceTriggersAutocomplete', true)
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
           editor.moveToBottom()
@@ -1417,6 +1160,26 @@ describe 'Autocomplete Manager', ->
         runs ->
           expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
+    describe 'when a suggestion is clicked', ->
+      it 'should select the item and confirm the selection', ->
+        triggerAutocompletion(editor, true, 'a')
+
+        runs ->
+          # Get the second item
+          item = editorView.querySelectorAll('.autocomplete-plus li')[1]
+
+          # Click the item, expect list to be hidden and
+          # text to be added
+          mouse = document.createEvent('MouseEvents')
+          mouse.initMouseEvent('mousedown', true, true, window)
+          item.dispatchEvent(mouse)
+          mouse = document.createEvent('MouseEvents')
+          mouse.initMouseEvent('mouseup', true, true, window)
+          item.dispatchEvent(mouse)
+
+          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+          expect(editor.getBuffer().getLastLine()).toEqual(item.textContent.trim())
+
     describe '.cancel()', ->
       it 'unbinds autocomplete event handlers for move-up and move-down', ->
         triggerAutocompletion(editor, false)
@@ -1452,13 +1215,3 @@ describe 'Autocomplete Manager', ->
       runs ->
         suggestionListView = atom.views.getView(autocompleteManager.suggestionList)
         expect(suggestionListView.scrollWidth).toBe(suggestionListView.offsetWidth)
-
-  requiresGutter = ->
-    editorView.component?.overlayManager?
-
-  pixelLeftForBufferPosition = (bufferPosition) ->
-    gutterWidth ?= editorView.shadowRoot.querySelector('.gutter').offsetWidth
-    left = editorView.pixelPositionForBufferPosition(bufferPosition).left
-    left += editorView.offsetLeft
-    left = gutterWidth + left if requiresGutter()
-    "#{left}px"

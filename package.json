@@ -1,10 +1,14 @@
 {
   "name": "autocomplete-plus",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "version": "2.42.0",
 =======
   "version": "2.35.13",
 >>>>>>> origin/2.35-releases
+=======
+  "version": "2.36.11",
+>>>>>>> origin/2.36-releases
   "main": "./lib/main",
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/atom/autocomplete-plus",

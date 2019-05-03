@@ -1,4 +1,5 @@
-# autocomplete+ [![OS X Build Status](https://travis-ci.org/atom/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom/autocomplete-plus) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/4faqdkcw2d0ybgiv/branch/master?svg=true)](https://ci.appveyor.com/project/joefitzgerald/autocomplete-plus/branch/master) [![Slack](https://img.shields.io/badge/chat-atomio%2Eslack%2Ecom-blue.svg?style=flat-square)](http://atom-slack.herokuapp.com/)
+# Autocomplete+ package
+[![macOS Build Status](https://travis-ci.org/atom/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom/autocomplete-plus) [![Windows Build status](https://ci.appveyor.com/api/projects/status/9bpokrud2apgqsq0/branch/master?svg=true)](https://ci.appveyor.com/project/Atom/autocomplete-plus/branch/master) [![Dependency Status](https://david-dm.org/atom/autocomplete-plus.svg)](https://david-dm.org/atom/autocomplete-plus)
 
 Displays possible autocomplete suggestions on keystroke (or manually by typing `ctrl-space`) and inserts a suggestion in the editor if confirmed.
 
@@ -8,7 +9,7 @@ Displays possible autocomplete suggestions on keystroke (or manually by typing `
 
 ## Installation
 
-autocomplete+ is bundled with Atom. You don't have to do anything to install it.
+`autocomplete+` is bundled with Atom. You don't have to do anything to install it.
 
 ## Providers
 
@@ -30,6 +31,8 @@ Additionally, the confirm keymap can be customized in your keymap.cson:
   'tab': 'unset!'
   'ctrl-shift-a': 'autocomplete-plus:confirm'
 ```
+
+If setting custom keybindings, use the `none` setting for the confirmation keymap. All this option does is not set any other keybindings. This allows the `TAB` and `ENTER` keys to be used like normal, without side effects.
 
 ### Remapping Movement Commands
 
@@ -69,6 +72,7 @@ Then add these to your keymap file:
 * Disable autocomplete for file(s) via blacklisting, e.g. `*.md` to blacklist Markdown files
 * Disable autocomplete for editor scope(s) via blacklisting
 * Expands a snippet if an autocomplete+ provider includes one in a suggestion
+* Allows external editors to register for autocompletions
 
 ## Provider API
 
@@ -79,3 +83,28 @@ Great autocomplete depends on having great autocomplete providers. If there is n
 ## `SymbolProvider` Configuration
 
 If the default `SymbolProvider` is missing useful information for the language / grammar you're working with, please take a look at the [`SymbolProvider` Config API](https://github.com/atom/autocomplete-plus/wiki/SymbolProvider-Config-API).
+
+## The `watchEditor` API
+
+The `watchEditor` method on the `AutocompleteManager` object is exposed as a [provided service](http://flight-manual.atom.io/behind-atom/sections/interacting-with-other-packages-via-services/), named `autocomplete.watchEditor`. The method allows external editors to register for autocompletions from providers with a given set of labels. Disposing the returned object will undo this request. External packages can access this service with the following code.
+
+In `package.json`:
+```
+{
+  "consumedServices": {
+    "autocomplete.watchEditor": {
+      "versions": {
+        "1.0.0": "consumeAutocompleteWatchEditor"
+      }
+    }
+  }
+}
+```
+In the main module file:
+```
+consumeAutocompleteWatchEditor(watchEditor) {
+  this.autocompleteDisposable = watchEditor(
+    this.editor, ['symbol-provider']
+  )
+}
+```

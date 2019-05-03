@@ -1,10 +1,6 @@
-# 'atom-text-editor:not(.mini) .autocomplete-plus':
-#   'tab': 'autocomplete-plus:confirm'
-#   'down': 'autocomplete-plus:select-next'
-#   'ctrl-n': 'autocomplete-plus:select-next'
-#   'up': 'autocomplete-plus:select-previous'
-#   'ctrl-p': 'autocomplete-plus:select-previous'
-#   'escape': 'autocomplete-plus:cancel'
-
 'atom-text-editor':
-  'ctrl-shift-space': 'autocomplete-plus:activate'
+  'ctrl-space': 'autocomplete-plus:activate'
+
+'atom-text-editor.autocomplete-active':
+  'escape': 'autocomplete-plus:cancel'
+  'f1': 'autocomplete-plus:navigate-to-description-more-link'

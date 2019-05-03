@@ -1,21 +1,60 @@
+// TODO: remove this fallback when 193 is out for a while
+.attr-syntax-color() { @syntax-color-attribute: #888; } .attr-syntax-color();
+
 @import "ui-variables";
 @import "syntax-variables";
 
-@type-icon-font-size: @font-size + 2px;
-@type-icon-offset: 0px;
-@type-icon-size: @component-line-height - @type-icon-offset * 2;
-@type-icon-border-radius: 0px;
+@font-size-small: .9em;
+@type-icon-font-size: 1em;
+@type-letter-icon-font-size: @font-size-small;
+@row-line-height: 2em;
+@item-padding: .75em;
+@item-side-padding: .6em;
 
 atom-overlay.autocomplete-plus {
-  z-index: 5;
+  z-index: 12; // higher than docks
 }
 
 autocomplete-suggestion-list.select-list.popover-list {
-  width: auto;
+  width: auto !important; // TODO: Can be removed once the inline style is gone
   display: inline-block;
-  min-width: 200px;
-  overflow-y: auto;
+  min-width: 243px; // Try and fail until the specs pass
   padding: 0;
+  overflow: hidden;
+  color: @text-color;
+
+  .suggestion-list-scroller {
+    overflow-y: auto;
+  }
+
+  .suggestion-description {
+    padding: 5px 0;
+    padding-left: @item-side-padding;
+    padding-right: @item-side-padding;
+    min-height: @row-line-height;
+    line-height: 1.3;
+    background: darken(@overlay-background-color, 4%);
+    border-radius: 0 0 @component-border-radius @component-border-radius;
+
+    // let the other sibling decide how large the container should be
+    width: min-content;
+    min-width: 100%;
+  }
+
+  .suggestion-description-content {
+    font-size: @font-size + 1px;
+    font-family: @font-family;
+    max-height: 33vh;
+    display: block;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
+
+  .suggestion-description-more-link {
+    font-size: @font-size + 1px;
+    font-family: @font-family;
+    color: @text-color-info;
+  }
 
   input {
     position: absolute;
@@ -26,10 +65,12 @@ autocomplete-suggestion-list.select-list.popover-list {
     margin-top: 0;
     display: table;
     width: 100%;
+    margin-right: 10px; // Needed to prevent horizontal scrolling when right label is too long
 
     li {
       display: table-row;
       color: @text-color;
+      line-height: @row-line-height;
 
       > span {
         display: table-cell;
@@ -43,11 +84,14 @@ autocomplete-suggestion-list.select-list.popover-list {
       }
 
       &.selected {
+        .word {
+          color: fadeout(@text-color-selected, 20%);
+        }
         .character-match {
           color: @text-color-selected;
         }
-        .completion-label, .snippet-completion {
-          color: fadeout(@text-color-selected, 60%);
+        .left-label, .right-label, .snippet-completion {
+          color: fadeout(@text-color-selected, 50%);
         }
       }
     }
@@ -56,26 +100,22 @@ autocomplete-suggestion-list.select-list.popover-list {
 
 autocomplete-suggestion-list {
   .icon-container {
-    width: @type-icon-size;
-    padding-left: @type-icon-offset;
-    padding-right: @component-padding;
+    width: @row-line-height;
+    padding-left: 0;
+    padding-right: @item-padding;
     &:empty {
-      padding: 0 0 0 @component-padding / 2;
+      width: @item-side-padding;
+      padding: 0;
     }
   }
 
   .icon {
     display: block;
-    width: @type-icon-size;
-    height: @type-icon-size;
-    line-height: @type-icon-size - 2px;
-    border-radius: @type-icon-border-radius;
-    display: block;
+    width: @row-line-height;
+    line-height: @row-line-height;
     text-align: center;
     font-style: normal;
     font-weight: bold;
-    font-size: @type-icon-font-size;
-    vertical-align: middle;
 
     color: @text-color-subtle;
     background: fadeout(@text-color, 90%);
@@ -86,41 +126,45 @@ autocomplete-suggestion-list {
       width: @type-icon-font-size;
       height: @type-icon-font-size;
     }
+
+    .icon-letter {
+      // I'm failing to vert center these letters. So shift them up...
+      position: relative;
+      top: -.1em;
+      font-size: @type-letter-icon-font-size;
+      line-height: @type-letter-icon-font-size;
+    }
   }
 
   .left-label {
     text-align: right;
-    padding-right: @component-padding;
+    padding-right: @item-padding;
+    vertical-align: middle;
 
-    font-size: .9em;
+    font-size: @font-size-small;
     color: @text-color-subtle;
 
     &:empty {
-      padding: 0;
+      padding-right: 0;
     }
   }
 
   .right-label {
-    float: right;
-    padding-left: @component-padding;
-    padding-right: @component-padding / 2;
-
-    font-size: .9em;
+    padding-right: @item-padding;
+    font-size: @font-size-small;
     color: @text-color-subtle;
 
     &:empty {
-      padding: 0 @component-padding / 2 0 0;
+      padding-right: 0;
     }
   }
 
+  .word-container {
+    padding-right: @item-padding;
+  }
+
   .word {
-    // TODO: The 600px is arbitrary. We need to make it butt up against the
-    // right of the window.
     float: left;
-    max-width: 600px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .character-match {
@@ -132,25 +176,57 @@ autocomplete-suggestion-list {
     color: @text-color-subtle;
   }
 
-  .make-type-icon(variable, @syntax-color-variable);
-  .make-type-icon(constant, @syntax-color-constant);
-  .make-type-icon(property, @syntax-color-property);
-  .make-type-icon(value, @syntax-color-value);
-  .make-type-icon(method, @syntax-color-method);
-  .make-type-icon(function, @syntax-color-function);
-  .make-type-icon(class, @syntax-color-class);
-  .make-type-icon(type, @syntax-color-class);
-  .make-type-icon(keyword, @syntax-color-keyword);
+  // Here we set the max width of the popup
+  .left-label {
+    max-width: 20vw;
+  }
+  .word {
+    max-width: 35vw;
+  }
+  .right-label {
+    max-width: 25vw;
+  }
+
+  .word, .left-label, .right-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .make-type-icon(attribute, @syntax-color-attribute);
   .make-type-icon(builtin, @syntax-color-keyword);
-  .make-type-icon(tag, @syntax-color-tag);
+  .make-type-icon(class, @syntax-color-class);
+  .make-type-icon(constant, @syntax-color-constant);
+  .make-type-icon(function, @syntax-color-function);
   .make-type-icon(import, @syntax-color-import);
+  .make-type-icon(keyword, @syntax-color-keyword);
+  .make-type-icon(method, @syntax-color-method);
+  .make-type-icon(module, @syntax-color-import);
+  .make-type-icon(mixin, @syntax-color-class);
+  .make-type-icon(package, @syntax-color-import);
+  .make-type-icon(property, @syntax-color-property);
   .make-type-icon(require, @syntax-color-import);
   .make-type-icon(snippet, @syntax-color-snippet);
+  .make-type-icon(tag, @syntax-color-tag);
+  .make-type-icon(type, @syntax-color-class);
+  .make-type-icon(value, @syntax-color-value);
+  .make-type-icon(variable, @syntax-color-variable);
+  .make-type-icon(selector, @syntax-color-attribute);
+  .make-type-icon(pseudo-selector, @syntax-color-attribute);
 }
 
 .make-type-icon(@type, @color) {
   .icon.@{type} {
     color: @color;
     background: fadeout(@color, 80%)
+  }
+}
+.make-type-icon(@type, @color)
+  when (hsvvalue(@color) - hsvvalue(@overlay-background-color) > -20)
+  and (hsvvalue(@color) - hsvvalue(@overlay-background-color) < 20) {
+  .icon.@{type} {
+    @corrected-color: contrast(@overlay-background-color, darken(@color, 30%), lighten(@color, 30%));
+    color: @corrected-color;
+    background: fadeout(@corrected-color, 80%);
   }
 }

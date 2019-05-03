@@ -143,6 +143,7 @@ class SymbolProvider
     for type, options of config
       @config[type] ?= {}
       @config[type].selectors = Selector.create(options.selector) if options.selector?
+      @config[type].displaySelectors = Selector.create(options.displaySelector) if options.displaySelector?
       @config[type].typePriority = options.typePriority ? 1
       @config[type].wordRegex = @wordRegex
 
@@ -192,7 +193,7 @@ class SymbolProvider
     @buildConfigIfScopeChanged(options)
 
     bufferPath = if @includeCompletionsFromAllBuffers then null else @editor.getPath()
-    symbolList = @symbolStore.symbolsForConfig(@config, bufferPath, wordUnderCursor)
+    symbolList = @symbolStore.symbolsForConfig(@config, bufferPath, options.scopeDescriptor, wordUnderCursor)
 
     words =
       if atom.config.get("autocomplete-plus.strictMatching")
@@ -224,7 +225,8 @@ class SymbolProvider
     # Probably inefficient to do a linear search
     candidates = []
     for symbol in symbolList
-      continue unless prefix[0].toLowerCase() is symbol.text[0].toLowerCase() # must match the first char!
+      firstChar = (symbol.snippet or symbol.text)[0]
+      continue unless prefix[0].toLowerCase() is firstChar.toLowerCase() # must match the first char!
       score = fuzzaldrin.score(symbol.text, prefix)
       score *= @getLocalityScore(bufferPosition, symbol.bufferRowsForBufferPath?(bufferPath))
       candidates.push({symbol, score, locality, rowDifference}) if score > 0

@@ -86,7 +86,7 @@ class Symbol
   isSingleInstanceOf: (word) ->
     @text is word and @count is 1
 
-  appliesToConfig: (config, bufferPath) ->
+  appliesToConfig: (config, bufferPath, scopeDescriptor) ->
     @type = null if @cachedConfig isnt config
 
     unless @type?
@@ -99,6 +99,10 @@ class Symbol
               @type = type
               typePriority = options.typePriority
       @cachedConfig = config
+
+    if @type? and config[@type].displaySelectors?
+      scopeChain = scopeDescriptor.getScopeChain()
+      return false unless selectorsMatchScopeChain(config[@type].displaySelectors, scopeChain)
 
     if bufferPath?
       @type? and @countForBufferPath(bufferPath) > 0
@@ -139,12 +143,15 @@ class SymbolStore
     symbolKey = @getKey(symbolKey)
     @symbolMap[symbolKey]
 
-  symbolsForConfig: (config, bufferPath, wordUnderCursor) ->
+  symbolsForConfig: (config, bufferPath, scopeDescriptor, wordUnderCursor) ->
     symbols = []
     for symbolKey, symbol of @symbolMap
-      symbols.push(symbol) if symbol.appliesToConfig(config, bufferPath) and not symbol.isSingleInstanceOf(wordUnderCursor)
+      symbols.push(symbol) if symbol.appliesToConfig(config, bufferPath, scopeDescriptor) and not symbol.isSingleInstanceOf(wordUnderCursor)
+
+    scopeChain = scopeDescriptor?.getScopeChain()
     for type, options of config
-      symbols = symbols.concat(options.suggestions) if options.suggestions
+      if not scopeChain? or not options.displaySelectors? or selectorsMatchScopeChain(options.displaySelectors, scopeChain)
+        symbols = symbols.concat(options.suggestions) if options.suggestions
     symbols
 
   adjustBufferRows: (editor, oldRange, newRange) ->

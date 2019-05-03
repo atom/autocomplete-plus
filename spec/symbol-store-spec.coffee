@@ -173,6 +173,7 @@ describe 'SymbolStore', ->
       expect(symbols[0].text).toBe 'abc'
       expect(symbols[0].type).toBe 'newtype'
 
+<<<<<<< HEAD
   describe "when different word regexes are specified", ->
     it "adds tokens matching the scopeDescriptor", ->
       scopeDescriptor = editor.getRootScopeDescriptor()
@@ -187,6 +188,43 @@ describe 'SymbolStore', ->
       expect(store.getLength()).toBe 2
       expect(store.getSymbol('@def').getCount()).toBe 1
       expect(store.getSymbol('$klm').getCount()).toBe 1
+=======
+    describe "when a displaySelector is used", ->
+      it "updates the symbol types as new tokens come in", ->
+        config =
+          variable:
+            selectors: Selector.create('.variable')
+            typePriority: 2
+          function:
+            displaySelectors: Selector.create('.function')
+            selectors: Selector.create('.function')
+            typePriority: 3
+          builtin:
+            displaySelectors: Selector.create('.coffee .variable')
+            suggestions: [
+              text: 'abuiltin'
+            ]
+
+        editor.setText('abc = -> cats\navar = 1')
+        editor.setCursorBufferPosition([0, 1])
+        scopeDescriptor = editor.getLastCursor().getScopeDescriptor()
+        symbols = store.symbolsForConfig(config, null, scopeDescriptor)
+
+        expect(symbols.length).toBe 2
+        expect(symbols[0].text).toBe 'abc'
+        expect(symbols[0].type).toBe 'function'
+        expect(symbols[1].text).toBe 'avar'
+        expect(symbols[1].type).toBe 'variable'
+
+        editor.setCursorBufferPosition([1, 1])
+        scopeDescriptor = editor.getLastCursor().getScopeDescriptor()
+        symbols = store.symbolsForConfig(config, null, scopeDescriptor)
+
+        expect(symbols.length).toBe 2
+        expect(symbols[0].text).toBe 'avar'
+        expect(symbols[0].type).toBe 'variable'
+        expect(symbols[1].text).toBe 'abuiltin'
+>>>>>>> origin/bo-display-selector
 
   describe "when there are multiple files with tokens in the store", ->
     config = null

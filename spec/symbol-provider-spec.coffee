@@ -14,7 +14,7 @@ suggestionsForPrefix = (provider, editor, prefix, options) ->
   else
     (sug.text for sug in suggestions)
 
-describe 'SymbolProvider', ->
+fdescribe 'SymbolProvider', ->
   [completionDelay, editorView, editor, mainModule, autocompleteManager, provider] = []
 
   beforeEach ->
@@ -363,6 +363,41 @@ describe 'SymbolProvider', ->
       expect(suggestions[1].text).toBe 'abcd'
       expect(suggestions[1].type).toBe 'function'
       expect(suggestions[1].rightLabel).toBe 'one'
+
+  ffdescribe "when the symbols config contains a displaySelector", ->
+    beforeEach ->
+      config =
+        variable:
+          selector: '.variable'
+          typePriority: 2
+        function:
+          displaySelector: '.function'
+          selector: '.function.name'
+          typePriority: 3
+        builtin:
+          displaySelector: '.variable'
+          suggestions: ['abuiltin']
+      atom.config.set('autocomplete.symbols', config, scopeSelector: '.source.js')
+      editor.setText('function abc(avar){}\nfunction abc(avar){}')
+
+    it "adds the suggestion objects to the results", ->
+      editor.setCursorBufferPosition([0, 9])
+      suggestions = suggestionsForPrefix(provider, editor, 'a', raw: true)
+      expect(suggestions).toHaveLength 2
+      expect(suggestions[0].text).toBe 'abc'
+      expect(suggestions[0].type).toBe 'function'
+      expect(suggestions[1].text).toBe 'avar'
+      expect(suggestions[1].type).toBe 'variable'
+      console.log suggestions
+
+      editor.setCursorBufferPosition([0, 13])
+      suggestions = suggestionsForPrefix(provider, editor, 'a', raw: true)
+      console.log suggestions
+      expect(suggestions).toHaveLength 2
+      expect(suggestions[0].text).toBe 'avar'
+      expect(suggestions[0].type).toBe 'variable'
+      expect(suggestions[1].text).toBe 'abuiltin'
+      expect(suggestions[1].type).toBe 'builtin'
 
   describe "when the legacy completions array is used", ->
     beforeEach ->

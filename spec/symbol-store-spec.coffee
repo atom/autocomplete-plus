@@ -174,6 +174,7 @@ describe 'SymbolStore', ->
       expect(symbols[0].type).toBe 'newtype'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   describe "when different word regexes are specified", ->
     it "adds tokens matching the scopeDescriptor", ->
       scopeDescriptor = editor.getRootScopeDescriptor()
@@ -189,6 +190,8 @@ describe 'SymbolStore', ->
       expect(store.getSymbol('@def').getCount()).toBe 1
       expect(store.getSymbol('$klm').getCount()).toBe 1
 =======
+=======
+>>>>>>> bo-display-selector
     describe "when a displaySelector is used", ->
       it "updates the symbol types as new tokens come in", ->
         config =
@@ -224,7 +227,10 @@ describe 'SymbolStore', ->
         expect(symbols[0].text).toBe 'avar'
         expect(symbols[0].type).toBe 'variable'
         expect(symbols[1].text).toBe 'abuiltin'
+<<<<<<< HEAD
 >>>>>>> origin/bo-display-selector
+=======
+>>>>>>> bo-display-selector
 
   describe "when there are multiple files with tokens in the store", ->
     config = null

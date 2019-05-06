@@ -1,21 +1,40 @@
-language: objective-c
+language: android
+jdk: oraclejdk8
+sudo: required
+rvm: 2.0.0
 
 notifications:
-  email:
-    on_success: never
-    on_failure: change
-  webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/cc2592f750965c320c96
-    on_success: change
+  # Slack notification on failure (secured token).
+  slack:
+    rooms:
+      secure: sOTcwi1DT0lJykB/smJQwJ5lQblg9jc5PtLsTu4euI/P4nCv1CPu5DVZ1aDwXL6TPDUO5uEwbzbjVFZzrl2nFdAV9XvGT3wL3Zrm2Y5HBtwi8JWdbc4dYR/xobJlIg7HRczXwoFt6yls4BUayNJJbZFV9q0ftmUSe77Pag/ZWQw=
     on_failure: always
-    on_start: false
+    on_success: change
 
-script: 'curl -s https://raw.githubusercontent.com/atom/ci/master/build-package.sh | sh'
+android:
+  components:
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - extra-android-support
+    - platform-tools
+    - tools
+    - build-tools-27.0.3
+    - android-27
 
-git:
-  depth: 10
+env:
+  global:
+    - MALLOC_ARENA_MAX=2
+    - GRADLE_OPTS="-XX:MaxPermSize=4g -Xmx4g"
+    - ANDROID_SDKS=android-14
+    - ANDROID_TARGET=android-14
 
-branches:
-  only:
-    - master
+install:
+  # Setup gradle.properties
+  - cp gradle.properties-example gradle.properties
+  - cp libs/login/gradle.properties-example libs/login/gradle.properties
+
+script:
+  - ./tools/validate-login-strings.sh
+  - ./gradlew -PdisablePreDex checkstyle ktlint assembleVanillaRelease lintVanillaRelease testVanillaRelease || (grep -A20 -B2 'severity="Error"' -r --include="*.xml" WordPress libs; exit 1)
+  - bundle install
+  - bundle exec danger --fail-on-errors=true  

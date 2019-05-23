@@ -1,0 +1,9 @@
+VM102:8 [header-fragment] content-type of https://www.paypalobjects.com/merchant-hf/header-fragment/locales/DE/de/secondary-header/secondary-header.json should be application/json. Instead, got text/html.
+(anonymous) @ VM102:8
+VM102:8 [header-fragment] attempting to parse https://www.paypalobjects.com/merchant-hf/header-fragment/locales/DE/de/secondary-header/secondary-header.json as application/json.
+(anonymous) @ VM102:8
+VM102:8 [header-fragment] attempt to parse https://www.paypalobjects.com/merchant-hf/header-fragment/locales/DE/de/secondary-header/secondary-header.json as JSON was successful.
+1:1 Failed to load resource: net::ERR_BLOCKED_BY_CLIENT
+content.min.js:2 [Deprecation] Element.createShadowRoot is deprecated and will be removed in M73, around March 2019. Please use Element.attachShadow instead. See https://www.chromestatus.com/features/4507242028072960 for more details.
+(anonymous) @ content.min.js:2
+VM137 select-platform:formatted:1 Unchecked runtime.lastError: The message port closed before a response was received.

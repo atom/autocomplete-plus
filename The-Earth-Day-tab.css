@@ -1,0 +1,124 @@
+
+p, ul { margin: 0; padding: 0 }
+b, em, i, s { font-style: normal; font-weight: 400; text-decoration: none }
+li { list-style: none }
+a { text-decoration: none; color: #333 }
+.clearfix { clear: both; zoom: 1 }
+.clearfix:after{clear:both;display: block; height: 0; font-size: 0; content: "."; visibility: hidden }
+.w1200 { max-width: 1200px; margin: 0 auto }
+.floor { }
+.tab_con li { transition: all .3s ease; -moz-transition: all .3s ease; -ms-transition: all .3s ease; -webkit-transition: all .3s ease;float: left; text-align: center }
+h4 { padding: 0; margin: 0 }
+h4 a { color: #333 }
+.lukybagCountDown span em, .pr_box .count_time { display: none !important }
+.tab_btn ul li .tab_btn_con .count_time em { display: none }
+.tab_btn ul li .tab_btn_con .count_time s:nth-of-type(1) { display: none }
+.tab_btn ul li .tab_btn_con .count_time em:nth-of-type(1) { display: none }
+.tab_btn ul li .tab_btn_con .count_time i:nth-of-type(1) { display: none }
+.tab_btn_con .count_time em { display: none }
+
+.b_product_center {
+    width: 100%;
+    max-width: 1200px;
+    padding-top:0;
+    margin: 0 auto;
+}
+.pr_tt a {width:98%;text-align:center;font-size:13px;line-height:1;height:27px;overflow:hidden;display: block}
+.pr_box .buy_btn {width: 100%;max-width: 200px;line-height: 43px;background: #e44025;font-size: 16px;text-align: center;color: #fff;margin: 0 auto 0;text-transform: uppercase;border-radius: 4px;display: block;margin-top:10px;}
+.pr_box .buy_btn.comingSoon{
+	 background:#f06806; 
+}
+.pr_box .buy_btn:hover { opacity: .8 }
+.pr_info{padding:0 10px;}
+.pr_price { margin:10px 0}
+.pr_price .current_price { font-size: 30px; font-weight: bold; display: inline-block; color: #e44025; }
+.pr_price .origin_price { font-size: 14px; color: #000; text-decoration: line-through; display: inline-block; margin: 0 auto; text-align: right; }
+.tab_btn li { float: left; color: #fff }
+.tab_btn li .tab_bg { display: none }
+.tab_btn li em { font-style: normal }
+.tab_btn li.active .tab_bg { display: block }
+.tab_con .item { display: none }
+.tab_con .item.active { display: block }
+.bm_dialog { width: 100%; word-spacing: -3px; display: none; position: fixed; left: 0; top: 0; z-index: 1000; height: 100%; text-align: center; font-size: 0; letter-spacing: -3px }
+.bm_dialog>* { display: inline-block; vertical-align: middle; font-size: 12px; letter-spacing: 0; word-spacing: 0 }
+.bm_dialog>i { display: inline-block; width: 0; height: 100%; vertical-align: middle; font-size: 0 }
+.bm_dialog .dialog_c { display: inline-block; vertical-align: middle; font-size: 12px; letter-spacing: 0; word-spacing: 0; border-radius: 4px; position: relative; width: 80%; min-width: 200px; max-width: 600px; text-align: left; background-color: #fff; padding: 15px }
+.bm_dialog .dialog_c h4 { padding: 0 0 15px; font-size: 16px; color: #333; font-weight: 400 }
+.bm_dialog .icon-close { position: absolute; right: 15px; top: 15px; display: block; width: 10px; height: 10px; cursor: pointer; background: url(http://deal.tomtop.com/activity/201711/cdn-resource/close_20171116.png) center center no-repeat }
+.dialog_show { display: block !important }
+#bm_dialogBg, .bm_dialogBg { position: fixed; left: 0; top: 0; z-index: 1000; width: 100%; height: 150%; opacity: .6; background-color: #000 }
+.m_text_control .text_c { display: table; width: 100%; text-align: left; font-size: 0; letter-spacing: -3px; word-spacing: -3px }
+.m_text_control .text_c>* { display: inline-block; vertical-align: middle; font-size: 12px; letter-spacing: 0; word-spacing: 0 }
+.m_text_control .text_c label { width: 140px; text-align: right; margin-right: 5px }
+.m_text_control .text_c input { height: 32px; line-height: 30px; border: 1px solid #ccc; padding: 0 10px; box-sizing: border-box }
+.hide { display: none }
+.m_text_control .text_c a.btn { height: 32px; line-height: 32px; background: #f90; color: #fff }
+.m_text_control .text_c a.btn:hover { opacity: .8 }
+.m_text_control.error { color: #ce352c }
+.m_text_control.sucess { color: #60a917 }
+.m_text_control.error input { border-color: #ce352c }
+.m_text_control.sucess input { border-color: #60a917 }
+.m_text_control.error .error_info, .m_text_control.sucess .error_info { display: block }
+.m_text_control .error_info { display: none; padding-top: 5px }
+.m_text_control { padding: 0 0 10px }
+.lineBlock { display: inline-block; vertical-align: middle }
+.share_mask { position: absolute; background: rgba(0, 0, 0, 0); width: 100%; height:24%; z-index: 2; cursor: pointer; top: 0; right: 0 }
+.share_tips { position: relative; width: 100px; height: 20px; line-height: 20px; text-align: center; background: #f60; border-radius: 2px; color: #fff }
+.share_tips .triangle { display: block; position: absolute; top: 4px; left: -12px; width: 0; height: 0; border-width: 6px; border-style: solid; border-color: transparent #f60 transparent transparent }
+i.icon_right { display: inline-block; vertical-align: middle; width: 36px; height: 36px; background: url(http://deal.tomtop.com/activity/201711/cdn-resource/icon_small.png) -46px -130px no-repeat; margin-right: 10px; color: #5ea81e; line-height: 36px; font-size: 12px }
+.m_email_input .dialog_c { max-width: 402px }
+.m_email_input .m_text_control .text_c input { width: 70% }
+.m_email_input .m_text_control .text_c a.btn { width: 30%; text-align: center }
+.m_share .dialog_c { max-width: 500px !important; padding: 15px }
+.m_share .share_coupon { margin-top: 15px; padding: 0 8% }
+.m_share .share_coupon .share_coupon_item { width: 100% }
+.m_share .share_coupon .share_coupon_item h3 { margin-bottom: 20px }
+.m_share .share_coupon .share_coupon_item h3>.lineBlock { width: 80% }
+.m_share .share_coupon .share_coupon_item h3 .share_coupon_title { color: #333; font-weight: 700; font-size: 16px; margin-bottom: 10px }
+.m_share .share_coupon .share_coupon_item h3 .share_coupon_text { color: #f60 }
+.m_share .share_coupon .share_coupon_item .coupon_warp { padding-left: 55px }
+.m_share .share_coupon .share_coupon_item .coupon_warp .coupon { width: 158px; height: 78px; text-align: center; line-height: 78px; font-size: 26px; color: #f60; vertical-align: middle; border: 1px dashed #f60; margin-right: 20px }
+.m_share .share_coupon .share_coupon_item .coupon_warp a { text-decoration: underline }
+.m_share_check .dialog_c { max-width: 380px !important; text-align: center; padding: 25px 0; color: #666; box-sizing: border-box }
+.m_share_check .dialog_c .minibox_c p { font-size: 14px; margin-bottom: 15px }
+.m_share_check .dialog_c .minibox_c a { min-width: 90px; cursor: pointer; display: inline-block; font-size: 12px; line-height: 22px; margin-bottom: 0; padding: 4px 12px; border-radius: 2px; text-align: center; vertical-align: middle; box-sizing: border-box; background-color: #fff; border: 1px solid #ccc; color: #4f4f4f }
+.m_share_check .dialog_c .minibox_c a:first-of-type { margin-right: 10px; background-color: #f90; border-color: #f90; color: #fff }
+.m_share_check .dialog_c .minibox_c a:first-of-type:hover { color: #fff }
+.m_share_check .dialog_c .minibox_c .share_error i.icon_erro { display: inline-block; width: 36px; height: 36px; background: url(http://deal.tomtop.com/activity/201711/cdn-resource/iconsprite.png) 1px 1px no-repeat; background-size: 276px auto; margin-right: 10px; line-height: 36px; font-size: 12px; vertical-align: middle }
+.m_share_check .dialog_c .minibox_c .share_error, .m_share_check .dialog_c .minibox_c .share_success { text-align: left; padding: 0 8% }
+.m_share_check .dialog_c .minibox_c .share_error h3 .lineBlock, .m_share_check .dialog_c .minibox_c .share_success h3 .lineBlock { vertical-align: middle; width: 80% }
+.m_share_check .dialog_c .minibox_c .share_error h3 p, .m_share_check .dialog_c .minibox_c .share_success h3 p { margin-bottom: 0 }
+.at-svc-odnoklassniki_ru, .at-svc-pinterest_share { display: none !important }
+
+.subScrible { width: 147px; height: 132px; position: absolute; top: 0; left: 26px }
+.subScrible #subScrible {padding-top: 84px; font-size: 14px }
+.share_this {width:219px;height:78px;line-height:20px;background:#fae83b;text-align: center;position: relative;
+}
+.share_this p {margin:10px 0; color: #1b582b;font-size:20px;color:#000;}
+.share_this .at-share-btn-elements { text-align: center }
+.share_this .at-share-btn-elements a { width: 30px; height: 30px; line-height: 30px; border-radius: 30px !important; margin-right: 8px }
+.activity_countDown em { display: none }
+.activity_countDown i { font-style: none  }
+.m_progress_bar { margin: 3px 0 }
+.m_progress_bar .bar_wrap { width: 80%; height: 10px; background: #ffcdac; border-radius: 5px; position: relative; display: block; margin: 0 auto }
+.m_progress_bar .bar_wrap .bar_wrap_cont { position: absolute; top: 0; left: 0; height: 100%; border-radius: 5px; background: #ff6600; }
+.m_progress_bar .bar_sale { vertical-align: middle; margin-left: 5px; font-size: 14px; color: #000; padding: 4px 9px 9px; background: url(http://deal.tomtop.com/activity/201712/progress_bar.png) no-repeat center; background-size: 100% 100%; }
+.m_progress_bar .bar_sale .pro_count { margin-right: 1px }
+
+@media (max-width:1450px) {
+	.b_product_center{ max-width:1000px;}
+    .pr_box .buy_btn {max-width: 162px;line-height: 37px;font-size: 15px;}
+	}
+@media (max-width:800px) {
+    /*äº§å“*/  
+
+}
+@media (max-width:450px) {
+ .pr_box .buy_btn {max-width: 130px;}   
+/*æ—¶é—´*/  
+.tab_btn li .tab_btn_con i.bbb:nth-of-type(1){ display: block !important;} 
+.contain .tab_ajax li .tab_btn_con span {
+    height: 20px !important;
+    line-height: 13px !important;
+}    
+}

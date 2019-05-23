@@ -1,0 +1,36 @@
+Conversation with Toggl
+Started on February 19, 2019 at 12:27 AM Tallinn time (GMT+02:00)
+
+--- February 19, 2019 ---
+
+12:27 AM | Bebby2012: Validation result for 'Toggl_summary_report_2018-01-01_2018-12-31.csv'
+------------------------------------------------------
+Clients: 3 
+ Bebby2012 imported a CSV file on 2019-02-18 22:27:30. Import was successful and took 33.268752ms
+
+12:27 AM | Operator: Toggl will be back tomorrow.
+
+12:27 AM | Operator: You'll be notified here and by email (bebby2012@hotmail.de)
+
+--- February 19, 2019 ---
+
+06:24 AM | Rico from Toggl: Hi there, 
+ Thanks for getting in touch. 😄  
+ How can we help? Your last message included the log from a recent CSV import you successfully did, is that correct? 
+ All the best,
+
+06:24 AM | Operator: Help Rico understand how they’re doing:
+
+06:24 AM | Operator: Rate your conversation
+
+09:22 PM | Bebby2012: [Attachment: "toggl-invoice (3).pdf"]
+
+09:22 PM | Bebby2012: [Attachment: "Toggl_users_2019-02-11_to_2019-02-17.csv"]
+
+10:50 PM | Elise from Toggl: Hi Bebby, 
+ Elise here, stepping in for Rico. Can you please share what we can help with? The attachments aren't giving us any context - please let us know what you need and we can go from there.
+
+Cheers,
+
+---
+Exported from Toggl on February 20, 2019 at 11:29 PM Tallinn time (GMT+02:00)

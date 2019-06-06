@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:status.appveyor.com,2005:/history</id>
+  <link rel="alternate" type="text/html" href="https://status.appveyor.com"/>
+  <link rel="self" type="application/atom+xml" href="https://status.appveyor.com/history.atom"/>
+  <title>AppVeyor Status - Incident History</title>
+  <updated>2019-06-05T16:31:05-07:00</updated>
+  <author>
+    <name>AppVeyor</name>
+  </author>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2484086</id>
+    <published>2019-06-02T22:33:46-07:00</published>
+    <updated>2019-06-02T22:33:46-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/zpqgs5gqcx9d"/>
+    <title>Builds on GCE environment are failing</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;22:33&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;12:49&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - There is an ongoing issue with Google Compute Engine: https://status.cloud.google.com/incident/compute/19003&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2433451</id>
+    <published>2019-05-22T13:52:19-07:00</published>
+    <updated>2019-05-22T13:52:19-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/584gq79b73l0"/>
+    <title>GitHub webhooks delayed delivery</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;13:52&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;11:16&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - GitHub incident: https://www.githubstatus.com/incidents/nf4gcjtcsqdb&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2365711</id>
+    <published>2019-05-02T17:17:53-07:00</published>
+    <updated>2019-05-02T17:17:53-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/6tbv0820xc8r"/>
+    <title>Intermittent nuget packages restore issues</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;17:17&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;14:15&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are continuing to work on a fix for this issue.&lt;/p&gt;&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;14:15&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - Problem is related to the network infrastructure problems ion Azure West US (https://azure.microsoft.com/en-us/status/).&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2347683</id>
+    <published>2019-04-24T06:57:20-07:00</published>
+    <updated>2019-04-24T06:57:20-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/378v468f35qq"/>
+    <title>GitHub webhooks rejection</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;06:57&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;06:24&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - The allowed webhook IP addresses range has been updated and GitHub webhooks should be working again. We apologize for the inconveniences caused by this incident!&lt;/p&gt;&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;06:22&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are currently investigating this issue.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2266767</id>
+    <published>2019-03-18T20:09:58-07:00</published>
+    <updated>2019-03-18T20:09:58-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/6wvjng6gr54s"/>
+    <title>Slow response and builds are queued</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;18&lt;/var&gt;, &lt;var data-var='time'&gt;20:09&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;18&lt;/var&gt;, &lt;var data-var='time'&gt;15:23&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - A fix has been implemented and we are monitoring the results.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;18&lt;/var&gt;, &lt;var data-var='time'&gt;08:28&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - There was a huge number of ongoing malicious requests to AppVeyor exploiting certain functionality and degrading AppVeyor database performance.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;18&lt;/var&gt;, &lt;var data-var='time'&gt;06:52&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are currently investigating this issue.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2178745</id>
+    <published>2019-01-29T20:31:32-08:00</published>
+    <updated>2019-01-29T20:31:32-08:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/zwxd08sjvssj"/>
+    <title>Builds are not starting</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;20:31&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;20:03&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - AppVeyor has been affected by network infrastructure issues on Azure in West US region: https://azure.microsoft.com/en-us/status/&lt;br /&gt;It looks like the service is getting back up and we are monitoring it.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;18:24&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are continuing to investigate this issue.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;18:04&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are currently investigating this issue.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2153318</id>
+    <published>2019-01-16T19:35:27-08:00</published>
+    <updated>2019-01-16T19:35:27-08:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/vb0z2vs0j2qn"/>
+    <title>AppVeyor is not available</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;16&lt;/var&gt;, &lt;var data-var='time'&gt;19:35&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - It's been resolved. The problem was a database migration during AppVeyor update preventing roles from a normal start. Sorry for the inconveniences caused by this issue.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;16&lt;/var&gt;, &lt;var data-var='time'&gt;18:53&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are investigating.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2124433</id>
+    <published>2019-01-01T16:53:29-08:00</published>
+    <updated>2019-01-01T16:53:29-08:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/39tq9r92flzh"/>
+    <title>Errors provisioning build VMs on GCE cloud</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt; 1&lt;/var&gt;, &lt;var data-var='time'&gt;16:53&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Primary build environment has been recovered.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt; 1&lt;/var&gt;, &lt;var data-var='time'&gt;14:23&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - Customers see "Cannot assign job to clouds/groups 'pro, pro-backup'. All clouds within the group are either failing, or offline, or busy." error on failed build details. There was a power issue in our primary data center. We are currently performing recovery procedure.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2121246</id>
+    <published>2018-12-30T09:42:20-08:00</published>
+    <updated>2018-12-30T09:42:20-08:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/kj2v1vpywl4x"/>
+    <title>NuGet restore issues</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;30&lt;/var&gt;, &lt;var data-var='time'&gt;09:42&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - The issues has been fixed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;15:03&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - We are observing the errors in all build environments while restoring NuGet packages during the builds. NuGet team has confirmed the issue on their status page: https://status.nuget.org/ which is related to CDN provider service degradation in North America: https://status.verizondigitalmedia.com/#network-status&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2029599</id>
+    <published>2018-11-11T08:23:27-08:00</published>
+    <updated>2018-11-11T08:23:27-08:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/w0mj58njkfsh"/>
+    <title>Issues with switching node version</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;11&lt;/var&gt;, &lt;var data-var='time'&gt;08:23&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - We have switched node version manager to download a feed from a healthy blob.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;11&lt;/var&gt;, &lt;var data-var='time'&gt;05:33&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - 'install-Product node &lt;version&gt;' fails with 'Unable to connect to the remote server' error. &lt;br /&gt;Root cause of the problem is unresponsive Azure blob container. We are working with Azure on restoring the functionality.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2011898</id>
+    <published>2018-11-06T11:20:17-08:00</published>
+    <updated>2018-11-06T11:20:17-08:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/2lmgmh6jghld"/>
+    <title>Sporadic errors accessing build cache</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt; 6&lt;/var&gt;, &lt;var data-var='time'&gt;11:20&lt;/var&gt; PST&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;11:16&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - The issue has re-occurred. We are still working with our hosting provider to resolve it.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2011791</id>
+    <published>2018-11-02T16:14:25-07:00</published>
+    <updated>2018-11-02T16:14:25-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/zbrjlw01ntsf"/>
+    <title>AppVeyor cannot list repositories for GitHub App authorization</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;16:14&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;12:13&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - It should be working now.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;10:24&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - GitHub is experiencing issues: https://status.github.com/messages&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/2011493</id>
+    <published>2018-11-02T10:22:34-07:00</published>
+    <updated>2018-11-02T10:22:34-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/588022cn5xp0"/>
+    <title>Sporadic errors accessing build cache</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;10:22&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;08:16&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are observing sporadic 403 (Forbidden) errors in builds working with build cache. We notified our hosting provider about the issue and are awaiting for their response.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1985904</id>
+    <published>2018-10-22T16:45:17-07:00</published>
+    <updated>2018-10-22T16:45:17-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/4sp2p2g7j99g"/>
+    <title>GitHub is having major issue</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Oct &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;16:45&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Oct &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;06:45&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - https://status.github.com/messages&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1986695</id>
+    <published>2018-10-22T16:45:06-07:00</published>
+    <updated>2018-10-22T16:45:06-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/2v4knj0nlm0j"/>
+    <title>AppVeyor builds are queued</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Oct &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;16:45&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Oct &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;13:39&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are still seeing the huge queue. It will take more time to drain it to the normal state. Sorry about inconveniences.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Oct &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;13:05&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - We've resolved the issue with queued builds.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Oct &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;12:39&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - AppVeyor builds are delayed because of increased webhook calls from GitHub. We are working on clearing up the queue.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1935276</id>
+    <published>2018-09-27T13:23:36-07:00</published>
+    <updated>2018-09-27T13:23:36-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/rxsxf9yh6mxd"/>
+    <title>NuGet restores return 503 error</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt;27&lt;/var&gt;, &lt;var data-var='time'&gt;13:23&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - NuGet.org is no longer degraded.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt;27&lt;/var&gt;, &lt;var data-var='time'&gt;07:57&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are receiving reports from customers that nuget restores from v2 feed sporadically return 503 Service Unavailable errors. An issue filed on NuGet Gallery project: https://github.com/NuGet/Home/issues/7333&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1904307</id>
+    <published>2018-09-12T14:39:58-07:00</published>
+    <updated>2018-09-12T14:39:58-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/5kry864f2jx8"/>
+    <title>Slow and intermittent chocolatey downloads</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt;12&lt;/var&gt;, &lt;var data-var='time'&gt;14:39&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt;12&lt;/var&gt;, &lt;var data-var='time'&gt;10:29&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - Customers can experiences unstable chocolatey downloads. Please watch http://status.chocolatey.org/.&lt;br /&gt;As a workaround add 'appveyor-retry' before 'choco install'&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1891341</id>
+    <published>2018-09-04T17:24:20-07:00</published>
+    <updated>2018-09-04T17:24:20-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/jw1pdf0k7s4b"/>
+    <title>Intermittent errors while uploading artifacts to Google storage</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt; 4&lt;/var&gt;, &lt;var data-var='time'&gt;17:24&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt; 4&lt;/var&gt;, &lt;var data-var='time'&gt;08:53&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - A fix has been implemented and we are monitoring the results.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt; 4&lt;/var&gt;, &lt;var data-var='time'&gt;06:59&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - There is an ongoing incident on GCP: https://status.cloud.google.com/incident/storage/1800&lt;/p&gt;&lt;p&gt;&lt;small&gt;Sep &lt;var data-var='date'&gt; 4&lt;/var&gt;, &lt;var data-var='time'&gt;06:55&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are currently investigating this issue.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1871755</id>
+    <published>2018-08-21T14:47:27-07:00</published>
+    <updated>2018-08-21T14:47:27-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/kqwjgg14m71g"/>
+    <title>Intermittent issues with Chocolatey packages installation</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Aug &lt;var data-var='date'&gt;21&lt;/var&gt;, &lt;var data-var='time'&gt;14:47&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Chocolatey maintenance completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Aug &lt;var data-var='date'&gt;21&lt;/var&gt;, &lt;var data-var='time'&gt;12:45&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - Chocolatey is performing maintenance (https://twitter.com/chocolateynuget/status/1031915993646424067).&lt;br /&gt;To workaround or at least decrease error rate, add 'appveyor-retry' before 'choco install'&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1868140</id>
+    <published>2018-08-17T12:00:55-07:00</published>
+    <updated>2018-08-19T21:48:14-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/8xlvjz01xw5q"/>
+    <title>AppVeyor nuget feed timeouts</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Aug &lt;var data-var='date'&gt;17&lt;/var&gt;, &lt;var data-var='time'&gt;12:00&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Users experienced intermittent timeouts why restoring nuget packages hosted on AppVeyor project and account feeds.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1813521</id>
+    <published>2018-07-17T12:32:51-07:00</published>
+    <updated>2018-07-17T12:32:51-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/wyyb5z1hfzlf"/>
+    <title>Slow cloning from GitHub</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jul &lt;var data-var='date'&gt;17&lt;/var&gt;, &lt;var data-var='time'&gt;12:32&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jul &lt;var data-var='date'&gt;16&lt;/var&gt;, &lt;var data-var='time'&gt;10:13&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - A fix has been implemented and we are monitoring the results.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jul &lt;var data-var='date'&gt;15&lt;/var&gt;, &lt;var data-var='time'&gt;20:16&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We are currently investigating this issue.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1811569</id>
+    <published>2018-07-13T10:01:04-07:00</published>
+    <updated>2018-07-13T10:01:04-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/1b4jzp0mwr76"/>
+    <title>Intermittent networking issues</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jul &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;10:01&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jul &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;08:52&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - The fix has been applied.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jul &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;08:12&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - Some customers are reporting about intermittent connectivity issues in their builds.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1760962</id>
+    <published>2018-06-08T00:36:19-07:00</published>
+    <updated>2018-06-11T12:10:34-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/5qh9tjh5t7qg"/>
+    <title>GitLab projects cannot be added and built</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt; 8&lt;/var&gt;, &lt;var data-var='time'&gt;00:36&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - GitLab API V4 support implemented and deployed&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt; 7&lt;/var&gt;, &lt;var data-var='time'&gt;07:57&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - GitLab discontinued API V3 support which AppVeyor uses. We are working on fix.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1707313</id>
+    <published>2018-04-28T01:00:07-07:00</published>
+    <updated>2018-04-28T01:00:08-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/f258xs17nw4r"/>
+    <title>Network maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;28&lt;/var&gt;, &lt;var data-var='time'&gt;01:00&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;27&lt;/var&gt;, &lt;var data-var='time'&gt;19:00&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;26&lt;/var&gt;, &lt;var data-var='time'&gt;16:07&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - The data center hosting AppVeyor primary build environment will be performing a scheduled maintenance of networking equipment. There would be few moments of downtime. During that time the builds will be automatically switched to our backup build environment hosted on GCE.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.appveyor.com,2005:Incident/1653873</id>
+    <published>2018-03-22T05:18:30-07:00</published>
+    <updated>2018-06-11T12:10:35-07:00</updated>
+    <link rel="alternate" type="text/html" href="https://status.appveyor.com/incidents/hvc2j2ww8kl9"/>
+    <title>Nuget package restore failures</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;05:18&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - nuget.org up and running.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;22&lt;/var&gt;, &lt;var data-var='time'&gt;03:15&lt;/var&gt; PDT&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - Nuget.org experiencing an outage. Check https://status.nuget.org for details.&lt;/p&gt;</content>
+  </entry>
+</feed>

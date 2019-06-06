@@ -1,81 +1,112 @@
-# autocomplete+ [![OS X Build Status](https://travis-ci.org/atom/autocomplete-plus.svg?branch=master)](https://travis-ci.org/atom/autocomplete-plus) [![Windows Build Status](https://ci.appveyor.com/api/projects/status/4faqdkcw2d0ybgiv/branch/master?svg=true)](https://ci.appveyor.com/project/joefitzgerald/autocomplete-plus/branch/master) [![Slack](https://img.shields.io/badge/chat-atomio%2Eslack%2Ecom-blue.svg?style=flat-square)](http://atom-slack.herokuapp.com/)
+# WordPress for Android #
 
-Displays possible autocomplete suggestions on keystroke (or manually by typing `ctrl-space`) and inserts a suggestion in the editor if confirmed.
+[![Build Status](https://travis-ci.org/wordpress-mobile/WordPress-Android.svg?branch=develop)](https://travis-ci.org/wordpress-mobile/WordPress-Android)
 
-![autocomplete+](https://cloud.githubusercontent.com/assets/744740/7656861/9fb8bcc4-faea-11e4-9814-9dca218ded93.png)
+If you're just looking to install WordPress for Android, you can find
+it on [Google Play](https://play.google.com/store/apps/details?id=org.wordpress.android). If you're a developer wanting to contribute, read on.
 
-[Changelog](https://github.com/atom/autocomplete-plus/releases)
 
-## Installation
+## Build Instructions ##
 
-autocomplete+ is bundled with Atom. You don't have to do anything to install it.
+1. Make sure you've installed [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) and [Android Studio](https://developer.android.com/studio/index.html), a _Standard Setup_ would work.
+2. Clone this GitHub repository.
+3. Copy `gradle.properties-example` to `gradle.properties`.
+4. In Android Studio open the project from the local repository as a **Gradle project** (this will auto-generate `local.properties` with the SDK location).
+5. Make sure you have an emulation device setup in AVD Manager (_Tools → Android → AVD Manager_).
+6. Run.
 
-## Providers
+Notes:
 
-`autocomplete+` has a powerful autocomplete provider API, allowing provider authors to add language-specific behavior to this package.
+* To use WordPress.com features (login to WordPress.com, access Reader and Stats, etc) you need a WordPress.com OAuth2 ID and secret. Please read the [OAuth2 Authentication](#oauth2-authentication) section.
 
-You should *definitely* install additional providers (the default provider bundled with this package is somewhat crude): https://github.com/atom/autocomplete-plus/wiki/Autocomplete-Providers
+Once installed, you can now build, install and test the project from the command line:
 
-## Usage
+    $ ./gradlew assembleVanillaDebug                        # assemble the debug .apk
+    $ ./gradlew installVanillaDebug                         # install the debug .apk if you have an
+                                                            # emulator or an Android device connected
+    $ ./gradlew :WordPress:testVanillaDebugUnitTest         # assemble, install and run unit tests
+    $ ./gradlew :WordPress:connectedVanillaDebugAndroidTest # assemble, install and run Android tests
 
-Just type some stuff, and autocomplete+ will automatically show you some suggestions.
-Press `UP` and `DOWN` to select another suggestion, press `TAB` or `ENTER` to confirm your selection. You can change the default keymap in `Preferences`:
 
-* Keymap For Confirming A Suggestion
+## Directory structure ##                
+    .
+    ├── libs                    # dependencies used to build debug variants
+    ├── tools                   # script collection
+    ├── gradle.properties       # properties imported by the build script
+    ├── WordPress
+    │   |-- build.gradle        # main build script
+    │   └── src
+    │       ├── androidTest     # Android test assets, resources and code
+    │       ├── test            # Unit tests
+    │       ├── main
+    │       │   ├── assets      # main project assets
+    │       │   ├── java        # main project java code
+    │       │   └── res         # main project resources
+    │       ├── debug           # debug variant
+    │       └── wasabi          # wasabi variant specific resources and manifest
 
-Additionally, the confirm keymap can be customized in your keymap.cson:
+## OAuth2 Authentication ##
 
-```coffeescript
-'atom-text-editor.autocomplete-active':
-  'tab': 'unset!'
-  'ctrl-shift-a': 'autocomplete-plus:confirm'
-```
+In order to use WordPress.com functions you will need a client ID and
+a client secret key. These details will be used to authenticate your
+application and verify that the API calls being made are valid. You can
+create an application or view details for your existing applications with
+our [WordPress.com applications manager][5].
 
-### Remapping Movement Commands
+When creating your application, you should select "Native client" for the
+application type. The applications manager currently requires a "redirect URL",
+but this isn't used for mobile apps. Just use "https://localhost".
 
-By default, autocomplete-plus commandeers the editor's core movement commands when the suggestion list is open. You may want to change these movement commands to use your own keybindings.
+Once you've created your application in the [applications manager][5], you'll
+need to edit the `./gradle.properties` file and change the
+`WP.OAUTH.APP_ID` and `WP.OAUTH.APP_SECRET` fields. Then you can compile and
+run the app on a device or an emulator and try to login with a WordPress.com
+account. Note that authenticating to WordPress.com via Google is not supported in development builds of the app, only in the official release.
 
-First you need to set the `autocomplete-plus.useCoreMovementCommands` setting to `false`, which you can do from the `autocomplete-plus` settings in the settings view.
+Note that credentials created with our [WordPress.com applications manager][5] allow login only and not signup. New
+accounts must be created using the [official app][1] or [on the web](https://wordpress.com/start). Login is restricted
+to the WordPress.com account with which the credentials were created. Also, you will be able to interact with sites of
+that same WordPress.com account only. In other words, if the credentials were created with foo@email.com, you will only
+be able to login with foo@email.com and access foo@email.com sites. Using another account like bar@email.com will cause
+the `Client cannot use "password" grant_type` error. 
 
-![core-movement](https://cloud.githubusercontent.com/assets/69169/8839134/72a9c7e6-3087-11e5-9d1f-8d3d15961327.jpg)
+Read more about [OAuth2][6] and the [WordPress.com REST endpoint][7].
 
-Or by adding this to your config file:
+## Google Configuration ##
 
-```coffee
-"*":
-  "autocomplete-plus":
-    "useCoreMovementCommands": false
-```
+Google Sign-In is only available for WordPress.com accounts through the [official app][1].
+Contributors can build and run the app without issue, but Google Sign-In will always fail.
+Google Sign-In requires configuration files which contain client and server information
+that can't be shared publicly. More documentation and guides can be found on the
+[Google Identity Platform website][8].
 
-Then add these to your keymap file:
+## How we work ##
 
-```coffeescript
-'body atom-text-editor.autocomplete-active':
-  'ctrl-p': 'autocomplete-plus:move-up'
-  'ctrl-n': 'autocomplete-plus:move-down'
-  'pageup': 'autocomplete-plus:page-up'
-  'pagedown': 'autocomplete-plus:page-down'
-  'home': 'autocomplete-plus:move-to-top'
-  'end': 'autocomplete-plus:move-to-bottom'
-```
+You can read more about [Code Style Guidelines](CODESTYLE.md) we adopted, and
+how we're organizing branches in our repository in the
+[Contribution Guide](CONTRIBUTING.md).
 
-## Features
+## Need help to build or hack? ##
 
-* Shows suggestions while typing
-* Includes a default provider (`SymbolProvider`):
-  * Wordlist generation happens when you open a file, while editing the file, and on save
-  * Suggestions are calculated using `fuzzaldrin`
-* Exposes a provider API which can be used to extend the functionality of the package and provide targeted / contextually correct suggestions
-* Disable autocomplete for file(s) via blacklisting, e.g. `*.md` to blacklist Markdown files
-* Disable autocomplete for editor scope(s) via blacklisting
-* Expands a snippet if an autocomplete+ provider includes one in a suggestion
+Say hello on our [Slack][4] channel: `#mobile`.
 
-## Provider API
+## FAQ ##
 
-Great autocomplete depends on having great autocomplete providers. If there is not already a great provider for the language / grammar that you are working in, please consider creating a provider.
+* Q: I can't build/test/package the project because of a `PermGen space` error.
+* A: Create a `gradle.properties` file in the project root directory with the
+following: `org.gradle.jvmargs=-XX:MaxPermSize=1024m`.
 
-[Read the `Provider API` documentation](https://github.com/atom/autocomplete-plus/wiki/Provider-API) to learn how to create a new autocomplete provider.
+## License ##
 
-## `SymbolProvider` Configuration
+WordPress for Android is an Open Source project covered by the
+[GNU General Public License version 2](LICENSE.md). Note: code
+in the `libs/` directory comes from external libraries, which might
+be covered by a different license compatible with the GPLv2.
 
-If the default `SymbolProvider` is missing useful information for the language / grammar you're working with, please take a look at the [`SymbolProvider` Config API](https://github.com/atom/autocomplete-plus/wiki/SymbolProvider-Config-API).
+[1]: https://play.google.com/store/apps/details?id=org.wordpress.android
+[3]: http://developer.android.com/sdk/installing/studio.html
+[4]: https://make.wordpress.org/chat/
+[5]: https://developer.wordpress.com/apps/
+[6]: https://developer.wordpress.com/docs/oauth2/
+[7]: https://developer.wordpress.com/docs/api/
+[8]: https://developers.google.com/identity/

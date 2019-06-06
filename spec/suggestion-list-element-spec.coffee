@@ -1,4 +1,5 @@
 SuggestionListElement = require '../lib/suggestion-list-element'
+_ = require 'underscore-plus'
 
 describe 'Suggestion List Element', ->
   [suggestionListElement] = []
@@ -9,44 +10,6 @@ describe 'Suggestion List Element', ->
   afterEach ->
     suggestionListElement?.dispose()
     suggestionListElement = null
-
-  describe 'renderItem', ->
-    beforeEach ->
-      jasmine.attachToDOM(suggestionListElement)
-
-    it "HTML escapes displayText", ->
-      suggestion = text: 'Animal<Cat>'
-      suggestionListElement.renderItem(suggestion)
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
-
-      suggestion = text: 'Animal<Cat>', displayText: 'Animal<Cat>'
-      suggestionListElement.renderItem(suggestion)
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
-
-      suggestion = snippet: 'Animal<Cat>', displayText: 'Animal<Cat>'
-      suggestionListElement.renderItem(suggestion)
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
-
-    it "HTML escapes snippets", ->
-      suggestion = snippet: 'Animal<Cat>(${1:omg<wow>}, ${2:ok<yeah>})'
-      suggestionListElement.renderItem(suggestion)
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'omg&lt;wow&gt;'
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'ok&lt;yeah&gt;'
-
-      suggestion =
-        snippet: 'Animal<Cat>(${1:omg<wow>}, ${2:ok<yeah>})'
-        displayText: 'Animal<Cat>(omg<wow>, ok<yeah>)'
-      suggestionListElement.renderItem(suggestion)
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'Animal&lt;Cat&gt;'
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'omg&lt;wow&gt;'
-      expect(suggestionListElement.selectedLi.innerHTML).toContain 'ok&lt;yeah&gt;'
-
-    it "HTML escapes labels", ->
-      suggestion = text: 'something', leftLabel: 'Animal<Cat>', rightLabel: 'Animal<Dog>'
-      suggestionListElement.renderItem(suggestion)
-      expect(suggestionListElement.selectedLi.querySelector('.left-label').innerHTML).toContain 'Animal&lt;Cat&gt;'
-      expect(suggestionListElement.selectedLi.querySelector('.right-label').innerHTML).toContain 'Animal&lt;Dog&gt;'
 
   describe 'getDisplayHTML', ->
     it 'uses displayText over text or snippet', ->
@@ -131,6 +94,14 @@ describe 'Suggestion List Element', ->
       replacementPrefix = 'a'
       expect(suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)).toBe('<span class="character-match">a</span>bc(<span class="snippet-completion">d</span>, <span class="snippet-completion">e</span>)f')
 
+    # <span class="character-match">R</span><span class="character-match">o</span>ute<span class="character-match">:</span>:<span class="character-match">i</span>nput(<span class="snippet-completion">'${2:name</span>'})
+    # <span class="character-match">R</span><span class="character-match">o</span>ute<span class="character-match">:</span>:<span class="character-match">i</span>nput(<span class="snippet-completion">'<span class="snippet-completion">name</span>'</span>)'.
+    fit 'tolerates :: in a snippet\'s definition', ->
+      text = ''
+      snippet = 'Route::input(${1:\'${2:name}\'})$3'
+      replacementPrefix = 'ro:i'
+      expect(suggestionListElement.getDisplayHTML(text, snippet, null, replacementPrefix)).toBe('<span class="character-match">R</span><span class="character-match">o</span>ute<span class="character-match">:</span>:<span class="character-match">i</span>nput(<span class="snippet-completion">\'<span class="snippet-completion">name</span>\'</span>)')
+
   describe 'findCharacterMatches', ->
     assertMatches = (text, replacementPrefix, truthyIndices) ->
       text = suggestionListElement.removeEmptySnippets(text)
@@ -146,22 +117,22 @@ describe 'Suggestion List Element', ->
     it 'finds matches when no snippets exist', ->
       assertMatches('hello', '', [])
       assertMatches('hello', 'h', [0])
-      assertMatches('hello', 'hl', [0, 2])
-      assertMatches('hello', 'hlo', [0, 2, 4])
+      assertMatches('hello', 'hl', [0,2])
+      assertMatches('hello', 'hlo', [0,2,4])
 
     it 'finds matches when snippets exist', ->
       assertMatches('${0:hello}', '', [])
       assertMatches('${0:hello}', 'h', [0])
-      assertMatches('${0:hello}', 'hl', [0, 2])
-      assertMatches('${0:hello}', 'hlo', [0, 2, 4])
+      assertMatches('${0:hello}', 'hl', [0,2])
+      assertMatches('${0:hello}', 'hlo', [0,2,4])
       assertMatches('${0:hello}world', '', [])
       assertMatches('${0:hello}world', 'h', [0])
-      assertMatches('${0:hello}world', 'hw', [0, 5])
-      assertMatches('${0:hello}world', 'hlw', [0, 2, 5])
+      assertMatches('${0:hello}world', 'hw', [0,5])
+      assertMatches('${0:hello}world', 'hlw', [0,2,5])
       assertMatches('hello${0:world}', '', [])
       assertMatches('hello${0:world}', 'h', [0])
-      assertMatches('hello${0:world}', 'hw', [0, 5])
-      assertMatches('hello${0:world}', 'hlw', [0, 2, 5])
+      assertMatches('hello${0:world}', 'hw', [0,5])
+      assertMatches('hello${0:world}', 'hlw', [0,2,5])
 
   describe 'removeEmptySnippets', ->
     it 'removes an empty snippet group', ->

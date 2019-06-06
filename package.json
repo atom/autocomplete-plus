@@ -1,6 +1,10 @@
 {
   "name": "autocomplete-plus",
-  "version": "2.30.0",
+<<<<<<< HEAD
+  "version": "2.42.0",
+=======
+  "version": "2.35.13",
+>>>>>>> origin/2.35-releases
   "main": "./lib/main",
   "description": "Display possible completions in the editor while typing",
   "repository": "https://github.com/atom/autocomplete-plus",
@@ -10,27 +14,37 @@
   },
   "dependencies": {
     "atom-slick": "^2.0.0",
+    "dompurify": "^1.0.8",
     "fuzzaldrin": "^2.1.0",
-    "fuzzaldrin-plus": "^0.1.0",
-    "grim": "^1.4.0",
-    "minimatch": "^2.0.1",
+    "fuzzaldrin-plus": "^0.6.0",
+    "grim": "^2.0.1",
+    "marked": "^0.5.1",
+    "minimatch": "^3.0.3",
     "selector-kit": "^0.1",
-    "semver": "^4.3.3",
     "stable": "^0.1.5",
     "underscore-plus": "^1.6.6"
   },
   "devDependencies": {
     "coffeelint": "^1.9.7",
     "fs-plus": ">=2.4.0",
+    "standard": "^8.3.0",
     "temp": ">=0.7.0"
+  },
+  "providedServices": {
+    "autocomplete.watchEditor": {
+      "versions": {
+        "1.0.0": "provideWatchEditor"
+      }
+    }
   },
   "consumedServices": {
     "autocomplete.provider": {
       "versions": {
-        "1.0.0": "consumeProvider_1_0",
+        "1.0.0": "consumeProvider_1",
         "1.1.0": "consumeProvider_1_1",
-        "2.0.0": "consumeProvider_2_0",
-        "3.0.0": "consumeProvider_3_0"
+        "2.0.0": "consumeProvider_2",
+        "3.0.0": "consumeProvider_3",
+        "4.0.0": "consumeProvider_4"
       }
     },
     "snippets": {
@@ -49,9 +63,9 @@
     },
     "autoActivationDelay": {
       "title": "Delay Before Suggestions Are Shown",
-      "description": "This prevents suggestions from being shown too frequently. Usually, the default works well. A lower value than the default has performance implications, and is not advised.",
+      "description": "If you are experiencing performance issues when typing, you should try increasing this value to a non-zero number (e.g. 100).",
       "type": "integer",
-      "default": 100,
+      "default": 0,
       "order": 2
     },
     "maxVisibleSuggestions": {
@@ -71,7 +85,8 @@
         "tab",
         "enter",
         "tab and enter",
-        "tab always, enter when suggestion explicitly selected"
+        "tab always, enter when suggestion explicitly selected",
+        "none"
       ],
       "order": 4
     },
@@ -96,7 +111,7 @@
     },
     "scopeBlacklist": {
       "title": "Scope Blacklist",
-      "description": "Suggestions will not be provided for scopes matching this list. See: https://atom.io/docs/latest/behind-atom-scoped-settings-scopes-and-scope-descriptors",
+      "description": "Suggestions will not be provided for scopes matching this list. See: http://flight-manual.atom.io/behind-atom/sections/scoped-settings-scopes-and-scope-descriptors/",
       "type": "array",
       "default": [],
       "items": {
@@ -123,6 +138,12 @@
       "type": "integer",
       "default": 3,
       "order": 10
+    },
+    "extraWordCharacters": {
+      "description": "Characters to consider part of words for the purpose of autocomplete, even if they are included in the editor.nonWordCharacters setting",
+      "type": "string",
+      "default": "",
+      "order": 10.5
     },
     "enableBuiltinProvider": {
       "title": "Enable Built-In Provider",
@@ -163,16 +184,6 @@
       ],
       "order": 15
     },
-    "defaultProvider": {
-      "description": "Using the Symbol provider is experimental. You must reload Atom to use a new provider after changing this option.",
-      "type": "string",
-      "default": "Symbol",
-      "enum": [
-        "Fuzzy",
-        "Symbol"
-      ],
-      "order": 16
-    },
     "suppressActivationForEditorClasses": {
       "title": "Suppress Activation For Editor Classes",
       "description": "Don't auto-activate when any of these classes are present in the editor.",
@@ -211,6 +222,41 @@
       "type": "boolean",
       "default": false,
       "order": 21
+    },
+    "similarSuggestionRemoval": {
+      "description": "Should similar suggestions be removed from the list? If so how to determine they are similar.",
+      "type": "string",
+      "default": "none",
+      "enum": [
+        {
+          "value": "none",
+          "description": "Do not remove similar suggestions"
+        },
+        {
+          "value": "textOrSnippet",
+          "description": "Remove when the insertion text or snippet match"
+        }
+      ],
+      "order": 22
+    },
+    "moveToCancel": {
+      "description": "Moving up when the first item is selected or down when the last item is selected cancels the suggestion list.",
+      "type": "boolean",
+      "default": false,
+      "order": 23
     }
+  },
+  "standard": {
+    "globals": [
+      "CustomEvent",
+      "HTMLElement",
+      "advanceClock",
+      "atom",
+      "getComputedStyle",
+      "waitsForPromise"
+    ],
+    "ignore": [
+      "**/spec/fixtures/**"
+    ]
   }
 }

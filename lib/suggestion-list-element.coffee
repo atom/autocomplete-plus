@@ -2,14 +2,15 @@
 SnippetParser = require './snippet-parser'
 {isString} = require('./type-helpers')
 fuzzaldrinPlus = require 'fuzzaldrin-plus'
+shell = require('electron').shell
 
 ItemTemplate = """
   <span class="icon-container"></span>
   <span class="left-label"></span>
   <span class="word-container">
     <span class="word"></span>
-    <span class="right-label"></span>
   </span>
+  <span class="right-label"></span>
 """
 
 ListTemplate = """
@@ -107,7 +108,9 @@ class SuggestionListElement extends HTMLElement
       @descriptionContent.textContent = item.description
       if item.descriptionMoreURL? and item.descriptionMoreURL.length?
         @descriptionMoreLink.style.display = 'inline'
-        @descriptionMoreLink.setAttribute('href', item.descriptionMoreURL)
+        @descriptionMoreLink.onclick = (event) ->
+          shell.openExternal(item.descriptionMoreURL)
+          event.stopPropagation()
       else
         @descriptionMoreLink.style.display = 'none'
         @descriptionMoreLink.setAttribute('href', '#')

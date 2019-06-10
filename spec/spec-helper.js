@@ -11,6 +11,21 @@ beforeEach(() => {
   atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false)
 })
 
+async function triggerAutocompletionPromise (editor, moveCursor = true, char = 'f') {
+  if (moveCursor) {
+    editor.moveToBottom()
+    editor.moveToBeginningOfLine()
+  }
+  editor.insertText(char)
+  module.exports.waitForAutocomplete()
+
+  const editorView = atom.views.getView(editor)
+
+  return conditionPromise(
+    () => editorView.querySelectorAll('.autocomplete-plus li').length === 1
+  )
+}
+
 let triggerAutocompletion = (editor, moveCursor = true, char = 'f') => {
   if (moveCursor) {
     editor.moveToBottom()
@@ -63,8 +78,31 @@ let buildTextInputEvent = ({data, target}) => {
   return event
 }
 
+async function conditionPromise (condition) {
+  const startTime = Date.now()
+
+  while (true) {
+    await timeoutPromise(100)
+
+    if (await condition()) {
+      return
+    }
+
+    if (Date.now() - startTime > 5000) {
+      throw new Error('Timed out waiting on condition')
+    }
+  }
+}
+
+function timeoutPromise (timeout) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, timeout)
+  })
+}
+
 module.exports = {
   triggerAutocompletion,
+  triggerAutocompletionPromise,
   waitForAutocomplete,
   buildIMECompositionEvent,
   buildTextInputEvent,

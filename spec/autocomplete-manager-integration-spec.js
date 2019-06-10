@@ -4,6 +4,7 @@
 const { TextEditor } = require('atom')
 const {
   triggerAutocompletion,
+  triggerAutocompletionPromise,
   waitForAutocomplete,
   waitForDeferredSuggestions,
   buildIMECompositionEvent
@@ -2508,79 +2509,62 @@ defm`
 
   describe('when watching an external text editor for a given set of provider labels', () => {
     let [bottomEditor, bottomEditorView, autocompleteDisposable] = []
-    beforeEach(() => {
-      // Activate package.
-      waitsForPromise(() => atom.packages.activatePackage('autocomplete-plus').then((a) => {
-        mainModule = a.mainModule
-      }))
+    beforeEach(async () => {
+      jasmine.useRealClock()
 
-      waitsFor(() => {
-        autocompleteManager = mainModule.autocompleteManager
-        return autocompleteManager
-      })
+      // Activate package.
+      const pck = await atom.packages.activatePackage('autocomplete-plus')
+      mainModule = pck.mainModule
+
+      autocompleteManager = mainModule.autocompleteManager
 
       // Create external providers with labels.
-      runs(() => {
-        let bottomProvider = {
-          labels: ['bottom-label'],
-          scopeSelector: '*',
-          getSuggestions (options) { return [{text: 'bottom'}] }
-        }
-        mainModule.consumeProvider(bottomProvider)
+      let bottomProvider = {
+        labels: ['bottom-label'],
+        scopeSelector: '*',
+        getSuggestions (options) { return [{text: 'bottom'}] }
+      }
+      mainModule.consumeProvider(bottomProvider)
 
-        let centerProvider = {
-          labels: ['workspace-center'],
-          scopeSelector: '*',
-          getSuggestions (options) { return [{text: 'center'}] }
-        }
-        mainModule.consumeProvider(centerProvider)
-      })
+      let centerProvider = {
+        labels: ['workspace-center'],
+        scopeSelector: '*',
+        getSuggestions (options) { return [{text: 'center'}] }
+      }
+      mainModule.consumeProvider(centerProvider)
 
-      // Create a regular pane item text editor.
-      waitsForPromise(() =>
-        atom.workspace.open('').then((e) => {
-          editor = e
-          editorView = atom.views.getView(editor)
-        })
-      )
+      editor = await atom.workspace.open('')
+      editorView = atom.views.getView(editor)
 
       // Create an editor in the bottom panel,
       // requesting autocompletions from a given label.
-      runs(() => {
-        bottomEditor = new TextEditor()
-        bottomEditorView = atom.views.getView(bottomEditor)
-        atom.workspace.addBottomPanel({item: bottomEditorView, visible: true})
-        autocompleteDisposable = autocompleteManager.watchEditor(
-            bottomEditor, ['bottom-label'])
-      })
+      bottomEditor = new TextEditor()
+      bottomEditorView = atom.views.getView(bottomEditor)
+      atom.workspace.addBottomPanel({item: bottomEditorView, visible: true})
+      autocompleteDisposable = autocompleteManager.watchEditor(
+        bottomEditor,
+        ['bottom-label']
+      )
     })
 
-    it('provides appropriate autocompletions when each editor is focused.', () => {
-      runs(() => {
-        bottomEditorView.focus()
-        triggerAutocompletion(bottomEditor)
-      })
+    it('provides appropriate autocompletions when each editor is focused.', async () => {
+      bottomEditorView.focus()
+      await triggerAutocompletionPromise(bottomEditor)
 
-      runs(() => {
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        let items = bottomEditorView.querySelectorAll('.autocomplete-plus li')
-        expect(items.length).toEqual(1)
-        expect(items[0].innerText.trim()).toEqual('bottom')
-      })
+      let items = bottomEditorView.querySelectorAll('.autocomplete-plus li')
+      expect(items.length).toEqual(1)
+      expect(items[0].innerText.trim()).toEqual('bottom')
 
-      runs(() => {
-        editorView.focus()
-        triggerAutocompletion(editor)
-      })
+      editorView.focus()
+      await triggerAutocompletionPromise(editor)
 
-      runs(() => {
-        expect(bottomEditorView.querySelector('.autocomplete-plus')).not.toExist()
+      expect(bottomEditorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        let items = editorView.querySelectorAll('.autocomplete-plus li')
-        expect(items.length).toEqual(1)
-        expect(items[0].innerText.trim()).toEqual('center')
-      })
+      items = editorView.querySelectorAll('.autocomplete-plus li')
+      expect(items.length).toEqual(1)
+      expect(items[0].innerText.trim()).toEqual('center')
     })
 
     it('stops providing autocompletions when disposed.', () => {

@@ -3,8 +3,8 @@
 
 const { TextEditor } = require('atom')
 const {
+  conditionPromise,
   triggerAutocompletion,
-  triggerAutocompletionPromise,
   waitForAutocomplete,
   waitForDeferredSuggestions,
   buildIMECompositionEvent
@@ -2549,7 +2549,10 @@ defm`
 
     it('provides appropriate autocompletions when each editor is focused.', async () => {
       bottomEditorView.focus()
-      await triggerAutocompletionPromise(bottomEditor)
+      triggerAutocompletion(bottomEditor)
+      await conditionPromise(
+        () => bottomEditorView.querySelectorAll('.autocomplete-plus li').length === 1
+      )
 
       expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
@@ -2558,7 +2561,10 @@ defm`
       expect(items[0].innerText.trim()).toEqual('bottom')
 
       editorView.focus()
-      await triggerAutocompletionPromise(editor)
+      triggerAutocompletion(editor)
+      await conditionPromise(
+        () => editorView.querySelectorAll('.autocomplete-plus li').length === 1
+      )
 
       expect(bottomEditorView.querySelector('.autocomplete-plus')).not.toExist()
 

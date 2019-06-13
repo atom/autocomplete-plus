@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang='de' xml:lang='de' xmlns='http://www.w3.org/1999/xhtml'>
+<head>https://www.aklamio.com/u/jasminisel1/r/aklamio
+<meta content='text/html;charset=UTF-8' http-equiv='content-type'>https://www.aklamio.com/de/tools/cashbar?utm_campaign=aklamio&utm_medium=shops&utm_source=menubar
+<meta content='width=device-width, initial-scale=1.0, user-scalable=no' name='viewport'>
+<title>Freunde Werben und Cashback bei über 3000 online Shops - aklamio</title>
+<link href='https://www.aklamio.com/de/u/jasminisel1/r/aklamio' rel='canonical'>
+<meta content='Freunde werben, Empfehlen, Cashback, Prämie, Empfehlungsprämie, Kunden werben Kunden' name='keywords'>
+<meta content='Freundschaft ist Dein bestes Investment. Lade deine Freunde zu Aklamio ein und teile die besten Angebote und Produkte. Wir beteiligen Dich an mit 10 Prozent.' name='description'>
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700,404,402" />
+<link rel="stylesheet" media="screen, projection, print" href="/assets/main-3ec50b6cd89b7b1891e894f0122ed8db3b168e30988725eae88668fd9f4bffca.css" />
+<link rel="shortcut icon" type="image/x-icon" href="/assets/icons/favicon/favicon-ecaca8aabcbbbfbb5e66b5624efba767fdd29e2a8595ab161a3597812276ca2d.ico" />
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" />
+<!--[if lte IE 9]>https://www.aklamio.com/de/tools/cashbar?utm_campaign=aklamio&utm_medium=shops&utm_source=menubar/https://www.aklamio.com/u/jasminisel1/r/aklamio
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->auto
+<meta content='https://www.aklamio.com/assets/www/facebok-og-image-4a7225cc307c222f25b56a9f09f14289ec49c652279b9d525e535caacecd59b0.jpg' itemprop='image' property='og:image'>
+<!-- Start of aklamio Zendesk Widget script -->
+<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(c){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","aklamio.zendesk.com");
+/*]]>*/<div class="zopim __web-inspector-hide-shortcut__" __jx__id="___$_73 ___$_73" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; padding: 0px; border: 0px; background: transparent; overflow: hidden; position: fixed; z-index: 16000002; width: 180px; height: 30px; right: 10px; bottom: 0px; display: none;" data-test-id="ChatWidgetButton"><iframe frameborder="0" style="background-color: transparent; vertical-align: text-bottom; position: relative; width: 100%; height: 100%; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; margin: 0px; overflow: hidden; display: block;" src="about:blank" data-test-id="ChatWidgetButton-iframe" title="Zendesk Chat widget button"></iframe></div></script>document.querySelector('body > div:nth-child(2)')
+<!-- End of aklamio Zendesk Widget script -->
+<script>
+  zE(function() {https://www.aklamio.com/de/tools/cashbar?utm_campaign=aklamio&utm_medium=shops&utm_source=menubar
+    zE.setLocale("de");
+    zE.identify({ email: "jasminisel85@gmail.com" });
+  });<body class="logged-in __web-inspector-hide-shortcut__" datasqstyle="{&quot;paddingTop&quot;:null}" datasquuid="7ec1c2bc-9563-4f6b-a7d4-dbe229018a84" style="padding-top: 40px;"><div class="zopim __web-inspector-hide-shortcut__" __jx__id="___$_73 ___$_73" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; padding: 0px; border: 0px; background: transparent; overflow: hidden; position: fixed; z-index: 16000002; width: 180px; height: 30px; right: 10px; bottom: 0px; display: none;" data-test-id="ChatWidgetButton"><iframe frameborder="0" style="background-color: transparent; vertical-align: text-bottom; position: relative; width: 100%; height: 100%; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; margin: 0px; overflow: hidden; display: block;" src="about:blank" data-test-id="ChatWidgetButton-iframe" title="Zendesk Chat widget button"></iframe></div><div class="zopim" __jx__id="___$_4 ___$_4" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; padding: 0px; border: 0px; background: transparent; overflow: hidden; position: fixed; z-index: 16000001; bottom: 0px; border-top-left-radius: 5px; border-top-right-radius: 5px; display: none; width: 350px; height: 450px; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 3px 2px; left: 8px;" data-test-id="ChatWidgetWindow"><iframe frameborder="0" style="background-color: transparent; vertical-align: text-bottom; position: relative; width: 100%; height: 100%; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; margin: 0px; overflow: hidden; display: block;" src="about:blank" data-test-id="ChatWidgetWindow-iframe" title="Zendesk Chat widget window"></iframe></div>
+<header class="site-header" datasqstyle="{&quot;top&quot;:null}" datasquuid="7ec1c2bc-9563-4f6b-a7d4-dbe229018a84" datasqtop="40" style="top: 40px;">
+<div class="container clearfix">
+<a class="logo" href="/de/uebersicht"><svg width="299" height="77" viewBox="0 0 299 77" xmlns="http://www.w3.org/2000/svg"><title>logo</title><g id="logo" fill="none" fill-rule="evenodd"><g id="icon"><path d="M64.635 15.834L39.183 1.224C37.77.408 36.193 0 34.616 0c-1.578 0-3.154.408-4.568 1.224L4.595 15.834C1.753 17.474 0 20.514 0 23.807v29.38c0 3.29 1.753 6.332 4.595 7.972l25.41 14.54c1.416.815 2.992 1.223 4.57 1.223 1.576 0 3.153-.408 4.567-1.224l25.493-14.54c2.843-1.64 4.596-4.683 4.596-7.974v-29.38c0-3.29-1.752-6.33-4.595-7.972" id="Shape" fill="#FC6053"></path><path d="M47.17 55.848c-5.928 0-8.238-8.262-8.238-13.594-1.48 5.696-6.613 13.594-12.173 13.594-4.952 0-7.793-4.358-7.793-9.653 0-10.685 8.238-23.013 18.36-23.013 3.553 0 6.577 1.892 6.577 3.462 0 1.85-3.576 3.155-5.182 3.155-1.25-1.28-2.602-1.94-4.25-1.94-6.052 0-10.332 11.342-10.332 17.69 0 2.823.968 5.814 3.684 5.814 4.222 0 8.224-6.558 10.14-12.603.61-1.93.834-3.13 1.02-4.677.18-1.507 1.25-2.3 2.53-2.3 1.267 0 2.246 1.057 2.246 2.13 0 5.95-.5 19.446 3.4 19.446 2.61 0 2.563-6.452 2.563-9.83 2.863 0 5.072 1.782 5.072 4.47 0 3.82-3.19 7.848-7.625 7.848" id="Shape" fill="#FEFEFE"></path></g><g id="text" fill="#364047"><path d="M113.056 53.115c2.238 0 4.21-.51 5.916-1.525 1.705-1.018 2.936-2.332 3.694-3.942v-5.52h-6.226c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.04.907 2.475 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.087-.677-.13-1.364-.13-2.06-1.034 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.857-.693-6.355-2.084-1.5-1.39-2.248-3.272-2.248-5.646 0-2.544 1.11-4.56 3.333-6.053 2.222-1.49 5.236-2.238 9.04-2.238h6.176v-3.637c0-1.967-.64-3.51-1.924-4.63-1.284-1.118-3.08-1.677-5.387-1.677-1.55 0-2.966.207-4.25.623-1.283.414-2.355.978-3.216 1.69l-.26 3.687h-2.557l.026-5.29c1.29-.983 2.836-1.78 4.636-2.39 1.8-.61 3.716-.915 5.748-.915 3.083 0 5.563.77 7.44 2.314 1.878 1.543 2.816 3.755 2.816 6.637v13.53c0 .56.013 1.098.04 1.615.025.518.08 1.02.167 1.513l2.79.18v2.237h-5.502zm9.44-37.54v-2.303h7.315v24.07h3.296l8.535-9.084-.05-.13-2.57-.18v-2.304h9.883v2.304l-3.268.31-9.597 10.172 10.92 12.657 3.113.284v2.277h-9.856v-2.276l2.957-.182-9.753-11.18h-3.606v11.025l4.23.337v2.277h-11.544v-2.276l4.23-.337V18.074l-4.23-.336zm31.514 0v-2.303h7.488v37.763l4.33.337v2.277H164.19v-2.276l4.328-.337V18.074l-4.328-.336zm22.726 35.378c2.24 0 4.21-.51 5.917-1.525 1.704-1.018 2.935-2.332 3.693-3.942v-5.52H190.3c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.042.907 2.476 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.086-.677-.13-1.364-.13-2.06-1.032 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.856-.693-6.354-2.084-1.5-1.39-2.25-3.272-2.25-5.646 0-2.544 1.112-4.56 3.334-6.053 2.222-1.49 5.236-2.238 9.042-2.238h6.174v-3.637c0-1.967-.64-3.51-1.924-4.63-1.283-1.118-3.08-1.677-5.386-1.677-1.55 0-2.967.207-4.25.623-1.284.414-2.355.978-3.217 1.69l-.26 3.687h-2.557l.026-5.29c1.292-.983 2.837-1.78 4.636-2.39 1.8-.61 3.717-.915 5.75-.915 3.082 0 5.562.77 7.44 2.314 1.877 1.543 2.815 3.755 2.815 6.637v13.53c0 .56.014 1.098.04 1.615.026.518.082 1.02.167 1.513l2.79.18v2.237h-5.502zm10.425-25.2v-2.308h6.923l.283 4.64c.892-1.643 2.085-2.913 3.577-3.81 1.493-.9 3.268-1.348 5.327-1.348 2.127 0 3.903.522 5.327 1.567 1.424 1.044 2.445 2.64 3.062 4.78.84-1.97 2.035-3.52 3.59-4.65 1.55-1.133 3.442-1.698 5.672-1.698 2.967 0 5.262.993 6.884 2.98 1.62 1.987 2.43 5.062 2.43 9.226v13.71l4.196.362v2.28H243.29v-2.28l4.193-.363v-13.76c0-3.457-.605-5.897-1.813-7.322-1.21-1.426-2.895-2.138-5.057-2.138-2.402 0-4.25.768-5.545 2.306s-2.097 3.5-2.406 5.883c0 .138.004.268.013.39.008.12.012.275.012.466v14.202l4.195.336v2.28h-11.477v-2.28l4.195-.336V39.406c0-3.386-.613-5.81-1.84-7.27s-2.912-2.19-5.056-2.19c-2.197 0-3.934.558-5.21 1.672-1.28 1.115-2.176 2.614-2.69 4.497v17.08l4.194.335v2.28H207.52v-2.28l4.196-.336v-22.78l-4.195-.338zm58.7-10.295h-3.16v-4.348h3.16v4.348zm-7.49 33.75l4.33-.336v-22.75l-4.33-.337v-2.304h7.49v25.39l4.33.337v2.278h-11.82v-2.277zm17.814-11.58c0 3.186.815 5.865 2.444 8.034 1.63 2.17 3.9 3.256 6.817 3.256 2.864 0 5.11-1.085 6.74-3.256 1.63-2.17 2.444-4.848 2.444-8.035v-.84c0-3.135-.82-5.797-2.458-7.984-1.637-2.187-3.897-3.28-6.778-3.28-2.88 0-5.137 1.093-6.766 3.28-1.63 2.187-2.444 4.85-2.444 7.985v.84zm-3.087-.84c0-4.052 1.123-7.376 3.37-9.97 2.246-2.593 5.222-3.89 8.927-3.89 3.72 0 6.705 1.297 8.952 3.89 2.247 2.594 3.37 5.918 3.37 9.97v.84c0 4.068-1.118 7.395-3.357 9.98-2.24 2.585-5.21 3.88-8.915 3.88-3.74 0-6.732-1.295-8.978-3.88-2.247-2.585-3.37-5.912-3.37-9.98v-.84z" id="Shape"></path></g></g></svg></a>
+<div class="desktop-nav">
+<div class="float-left">
+<div class="searchbar">
+<form>
+<span class="icon-magnifying-glass"></span>
+<span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input class="search-query ui-autocomplete-input" data-category="in Kategorie" data-no-result="Leider wurden keine Ergebnisse gefunden " data-reward=" Prämie" data-url="https://www.aklamio.com/de/shops/for_autocomplete" id="nav-search-input" placeholder="Suche nach Shop oder Kategorie" autocomplete="off">
+</form>
+<div class="autocomplete-container"><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style="display: none;"></ul></div>
+</div>
+<div class="browse-categories">
+oder
+<a class="js-categories-dropdown" href="#">zu Kategorien
+</a><span class="triangle-down">
+<img src="/assets/www/aklamio-branding/icons/icon-big-triangle-down-6eb4f26fc0a8f40d0f9b1684f8b29ce01f1f81342d9b31423d6a7109895148ab.svg" alt="Icon big triangle down">
+</span>
+</div>
+</div>
+<div class="float-right">
+<div class="nav-links">
+<a id="header-nav-cashbar" href="/de/tools/cashbar?utm_campaign=aklamio&amp;utm_medium=balance&amp;utm_source=menubar">Cashbar</a>
+<a id="header-nav-companies" class="for-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</div>
+<div class="user-links">
+<div class="user-dashboard-links">
+<div class="user-dashboard-links-balance">
+<a id="dashboard-links-balance" href="/de/konto"><span class="icon-payout"></span>
+<strong>0,00€</strong>
+</a></div>
+<div class="user-dashboard-links-rewards">auto
+<a id="dashboard-links-rewards" href="/de/uebersicht"><span class="icon-reward"></span>
+<strong class="total">0</strong>
+<strong class="pending">0</strong>
+</a></div>
+</div>
+<a id="dashboard-links-image-settings" class="user-nav-link user-picture" href="#"><img src="https://static.aklamio.com/users/90a4d37df5e45cf92e68e551ec26654dfac8fab1/medium/image.png" alt="Image">
+<span class="icon-chevron-down"></span>
+</a><ul class="user-nav">
+<li>
+<a id="user-nav-dashboard" class="" href="/de/uebersicht"><span class="icon-grid"></span>
+Übersicht
+</a></li>
+<li>
+<a id="user-nav-balance-details" class="" href="/de/konto"><span class="icon-payout"></span>
+Kontostand
+</a></li>
+<li>
+<a id="user-nav-settings" class="" href="/de/einstellungen"><span class="icon-cog"></span>
+Einstellungen
+</a></li>
+<li>
+<a id="user-nav-support_request" class="" href="/de/transaction_inquiries"><span class="icon-lifebuoy"></span>
+Nachbuchungsanfrage
+</a></li>
+<li>
+<a id="user-nav-invite-friends" class="" href="/de/shops/aklamio"><span class="icon-users"></span>
+Freunde einladen
+</a></li>
+<li>
+<a id="user-nav-logout" class="" href="/de/abmelden">Ausloggen
+</a></li>
+</ul>
+</div>
+<div class="dropdown-group language">
+<a id="dropdown-toggle-language" class="dropdown-toggle-link" href="#">DE</a>
+<ul class="dropdown-menu">
+<li>
+<a href="https://www.aklamio.com/en/balance?update_user_locale=true">EN</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/es/pagos?update_user_locale=true">ES</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/fr/compte?update_user_locale=true">FR</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/it/profilo?update_user_locale=true">IT</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/nl/saldo?update_user_locale=true">NL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pl/saldo?update_user_locale=true">PL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pt/saldo?update_user_locale=true">PT</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="shops-category">
+<div class="container">
+<span class="icon-cross close-categories-dropdown js-close-categories-dropdown"></span>
+<ul class="category-group">
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/fashion">Fashion</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-bekleidung">Bekleidung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-kinder-babysachen">Kinder &amp; Babysachen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-dessous">Dessous</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-schuhe">Schuhe</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-accessories">Accessories</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-streetwear">Streetwear</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-schmuck-luxus">Schmuck &amp; Luxus</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/reisen-urlaub">Reisen &amp; Urlaub</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-autovermietung">Autovermietung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-holiday-package">Holiday package</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-fluege">Flüge</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-hotels-apartments">Hotels &amp; Apartments</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-kreuzfahrten">Kreuzfahrten</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/home-beauty">Home &amp; Beauty</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-design">Design</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-haus-garten">Haus &amp; Garten</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-pflanzen-blumen">Pflanzen &amp; Blumen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-apotheke">Apotheke</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-optiker">Optiker</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-gesundheit-beauty">Gesundheit &amp; Beauty</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-geschenke">Geschenke</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/finanzen-energieversorger-versicherung">Finanzen, Energieversorger &amp; Versicherung</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-versicherung">Versicherung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-kredit">Kredit</a>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-banken-kreditkarten">Banken &amp; Kreditkarten</a>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-strom-gasanbieter">Strom &amp; Gasanbieter</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/computer-software">Computer &amp; Software</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-software">Software</a>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-computer">Computer</a>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-elektronik">Elektronik</a>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-audio">Audio</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/auto-motorrad">Auto &amp; Motorrad</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-autoteile">Autoteile</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-motorradteile">Motorradteile</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-reifen">Reifen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-autowerkstatt">Autowerkstatt</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-accessories">Accessories</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/verschiedenes">Verschiedenes</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-buero">Büro</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-tierbedarf">Tierbedarf</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-reinigungsdienste">Reinigungsdienste</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-drucksachen-foto">Drucksachen &amp; Foto</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-bildung">Bildung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-dienstleistungen">Dienstleistungen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-community">Community</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/telekommunikation">Telekommunikation</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-langfristige-handyvertraege">Langfristige Handyverträge</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-internet-tv">Internet &amp; TV</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-prepaid-anbieter">Prepaid-Anbieter</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-geraete">Geräte</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-webhosting">Webhosting</a>
+</li>
+</ul>
+</li>
+</ul>
+<div class="category-all-shops">
+<a id="all-shops-categories-link" href="/de/shops">Alle Shops anzeigen</a>
+</div>
+<div class="category-all">
+<a id="all-categories-link" href="/de/all-categories">Alle Kategorien
+<span class="icon-chevron-right"></span>
+</a></div>
+</div>
+</div>
+
+<div class="searchbar mobile">
+<form>
+<span class="icon-magnifying-glass"></span>
+<span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input class="mobile-search-query ui-autocomplete-input" data-url="https://www.aklamio.com/de/shops/for_autocomplete" id="mobile-nav-search-input" placeholder="Suche nach Shop oder Kategorie" autocomplete="off">
+</form>
+<div class="autocomplete-container"><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-2" tabindex="0" style="display: none;"></ul></div>
+</div>
+<div class="mobile-nav-link">
+<span class="icon-cross"></span>
+<a id="mobile-nav-menue" href="#">Menü</a>
+</div>
+<div class="mobile-nav">
+<ul>
+<li>
+<a id="mobile-nav-dashboard" href="/de/uebersicht"><span class="icon-grid"></span>
+Übersicht
+</a></li>
+<li>
+<a id="mobile-nav-account" href="/de/konto"><span class="icon-payout"></span>
+Kontostand
+</a></li>
+<li>
+<a id="mobile-nav-settings" href="/de/einstellungen"><span class="icon-cog"></span>
+Einstellungen
+</a></li>
+<li>
+<a id="mobile-nav-support" href="/de/transaction_inquiries"><span class="icon-lifebuoy"></span>
+Nachbuchungsanfrage
+</a></li>
+<li>
+<a id="mobile-nav-invite-friends" href="/de/shops/aklamio"><span class="icon-users"></span>
+Freunde einladen
+</a></li>
+<li>
+<a id="mobile-nav-shops" href="/de/shops"><span class="icon-shop"></span>
+Shops
+</a></li>
+<li>
+<a id="mobile-nav-categories" href="/de/all-categories"><span class="icon-dots-three-horizontal"></span>
+Kategorien
+</a></li>
+<li>
+<a id="mobile-nav-logout" href="/de/abmelden"><span class="icon-log-out"></span>
+Ausloggen
+</a></li>
+<li>
+<a id="header-nav-cashbar" href="/de/tools/cashbar"><span class="icon-cashback"></span>
+Cashbar
+</a></li>
+<li>
+<a id="header-nav-companies" href="/de/fuer-unternehmen"><span class="icon-globe"></span>
+Für Unternehmen
+</a></li>
+</ul>
+</div>
+
+</header>
+
+<main class="main-content">
+<div class="banners-container"><div class="owl-carousel owl-carousel_banners owl-loaded"><div class="owl-stage-outer"><div class="owl-stage" style="transform: translate3d(-794px, 0px, 0px); transition: all 0s ease 0s; width: 1588px;"><div class="owl-item" style="width: 794px;"><a class="submenu" href="https://deals.aklamio.com?utm_source=banner&amp;utm_medium=lp_aklamio" target="_blank"><div class="item item-mobile" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-mobile.png')"></div><div class="item item-tablet" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-tablet.png')"></div><div class="item item-desktop" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-desktop.png')"></div></a></div><div class="owl-item animated owl-animated-in fadeIn active" style="width: 794px;"><a class="submenu" href="/de/u/jasminisel1/r/unitymediabusiness_de?utm_source=banner&amp;utm_medium=lp_unitymedia"><div class="item item-mobile" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-mobile.png')"></div><div class="item item-tablet" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-tablet.png')"></div><div class="item item-desktop" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-desktop.png')"></div></a></div></div></div><div class="owl-nav disabled"><div class="owl-prev">prev</div><div class="owl-next">next</div></div><div class="owl-dots disabled"></div></div></div>
+
+<section class="sc-user-balance">
+<div class="container">
+<h1>Kontostand</h1>
+<div class="infobox">
+<p>Hier kannst Du Deine bestätigten Prämien auf Dein Bankkonto (BIC/IBAN) oder PayPal-Konto auszahlen lassen. Der Betrag wird Dir in Kürze von Aklamio überwiesen.</p>
+</div>
+<table class="payout">
+<tbody><tr>
+<th class="align-left">Auszahlungsbetrag je nach Währung</th>
+<th class="align-right">verfügbare Auszahlungsmethoden</th>
+</tr>
+<tr class="content">
+<td class="align-left payout-amount" data-title="Auszahlungsbetrag je nach Währung">
+0,00€
+</td>
+<td class="align-right" data-title="verfügbare Auszahlungsmethoden">
+<span class="btn btn-paypal disabled no-payout">
+<span class="icon-paypal"></span>
+</span>
+<span class="btn btn-payout-bank disabled no-payout">
+<span class="icon-credit-card"></span>
+Bankkonto
+</span>
+</td>
+</tr>
+</tbody></table>
+<div class="non-sepa-hint">
+<h3>Wichtige Information:</h3>
+<p>Banküberweisungen sind nur für Bankkonten im SEPA-Raum mit einer IBAN (International Bank Account Number) möglich. Befindet sich Deine Bank außerhalb des SEPA-Raums, kannst Du eine Auszahlung über PayPal beantragen. Auszahlungen können ab 1€, 1£, 1 CHF, 1$ oder 1zl erfolgen.</p>
+</div>
+<h2>Kontoaktivitäten</h2>
+<p class="no-earning">Hoppla, noch nichts verdient?</p>
+<a class="btn btn-primary no-earning" id="start-recommending" href="/de/shops">Na, dann aber los!</a>
+</div>
+</section>
+
+</main>
+<footer class="site-footer">
+<a class="back-to-top" href="#">
+<span class="icon-triangle-up"></span>
+nach oben
+</a>
+<div class="footer-nav">
+<div class="container">
+<ul class="main-links">
+<li>
+<a id="footer-nav-about" href="/de/was-ist-aklamio">Über Aklamio</a>
+</li>
+<li>
+<a id="footer-nav-careers" target="_blank" rel="nofollow" href="https://aklamio-jobs.personio.de/?language=de">Karriere</a>
+</li>
+<li>
+<a id="footer-nav-help" href="/de/hilfe">Fragen &amp; Antworten</a>
+</li>
+<li>
+<a id="footer-nav-cashbar" href="/de/tools/cashbar">Cashbar</a>
+</li>
+<li>
+<a id="footer-nav-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</li>
+</ul>
+<ul class="social-links">
+<li>
+<a target="_blank" id="footer-social-facebook" href="https://www.facebook.com/aklamio"><span class="icon-facebook"></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-twitter" href="https://twitter.com/aklamio"><span class="icon-twitter"></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-linkedin" href="https://www.linkedin.com/company/aklamio-gmbh/"><span class="icon-linkedin"></span>
+</a></li>
+</ul>
+<ul class="legal-links">
+<li>
+<a id="footer-nav-privacy" href="/de/datenschutz">Datenschutzerklärung</a>
+</li>
+<li>
+<a id="footer-nav-terms" href="/de/agb">AGB</a>
+</li>
+<li>
+<a id="footer-nav-imprint" href="/de/impressum">Impressum</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<div class="container">
+<div class="shop-country-select">
+<span class="icon-shop"></span>
+<label>Shops aus</label>
+<select class="js-shop-country-select">
+<option data-url="https://www.aklamio.com/de/konto?shop_country=de" selected="true" value="de">
+Deutschland
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=at" value="at">
+Österreich
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=ch" value="ch">
+Schweiz
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=es" value="es">
+Spanien
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=gb" value="gb">
+Großbritannien
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=fr" value="fr">
+Frankreich
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=it" value="it">
+Italien
+</option>
+</select>
+</div>
+<div class="language-select">
+<span class="icon-globe"></span>
+<label>Sprache</label>
+<select class="js-language-select">
+<option selected="true" value="https://www.aklamio.com/de/konto?update_user_locale=true">
+Deutsch
+</option>
+<option value="https://www.aklamio.com/en/balance?update_user_locale=true">
+English
+</option>
+<option value="https://www.aklamio.com/es/pagos?update_user_locale=true">
+Español
+</option>
+<option value="https://www.aklamio.com/fr/compte?update_user_locale=true">
+Français
+</option>
+<option value="https://www.aklamio.com/it/profilo?update_user_locale=true">
+Italiano
+</option>
+<option value="https://www.aklamio.com/nl/saldo?update_user_locale=true">
+Nederlands
+</option>
+<option value="https://www.aklamio.com/pl/saldo?update_user_locale=true">
+Polski
+</option>
+<option value="https://www.aklamio.com/pt/saldo?update_user_locale=true">
+Português
+</option>
+</select>
+</div>
+<div class="copyright">
+© 2019 aklamio GmbH
+</div>
+<div class="eu-union">
+<div class="logo-eu" data-hint="Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.">
+<img src="/assets/www/aklamio-branding/logos/eu-flag-4db4c8712abfabd68e563751137183dbf6a9d551d1970dde4633fcef2f900037.jpg" alt="Eu flag">
+</div>
+<span class="eu-union-desc">
+<span class="eu-union-headline">
+EUROPÄISCHE UNION
+</span>
+<span class="eu-union-sub">
+Europäischer Fonds für regionale Entwicklung
+</span>
+</span>
+<p class="eu-union-hint-mobile">
+Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.
+</p>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js"></script>
+
+<!-- setting utm params dynamically -->
+<script>
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24140910-1']);
+  _gaq.push (['_gat._anonymizeIp']);
+  _gaq.push(['_setDomainName', 'aklamio.com']);
+  
+  
+  
+  
+  
+  
+  
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+<div id="hc_extension_bkgnd" style="position: fixed; left: 0px; top: 40px; right: 0px; bottom: 0px; z-index: -1999999999; display: block; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);" datasqstyle="{&quot;top&quot;:&quot;0px&quot;}" datasquuid="7ec1c2bc-9563-4f6b-a7d4-dbe229018a84" datasqtop="40"></div><span id="hc_extension_svg_filters" hidden=""><svg xmlns="http://www.w3.org/2000/svg" version="1.1"><defs><filter x="0" y="0" width="99999" height="99999" id="hc_extension_off"><feComponentTransfer><feFuncR type="table" tableValues="0 1"></feFuncR><feFuncG type="table" tableValues="0 1"></feFuncG><feFuncB type="table" tableValues="0 1"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_highcontrast"><feComponentTransfer><feFuncR type="gamma" exponent="3.0"></feFuncR><feFuncG type="gamma" exponent="3.0"></feFuncG><feFuncB type="gamma" exponent="3.0"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_highcontrast_back"><feComponentTransfer><feFuncR type="gamma" exponent="0.33"></feFuncR><feFuncG type="gamma" exponent="0.33"></feFuncG><feFuncB type="gamma" exponent="0.33"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_grayscale"><feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"></feColorMatrix><feComponentTransfer><feFuncR type="gamma" exponent="3"></feFuncR><feFuncG type="gamma" exponent="3"></feFuncG><feFuncB type="gamma" exponent="3"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_grayscale_back"><feComponentTransfer><feFuncR type="gamma" exponent="0.33"></feFuncR><feFuncG type="gamma" exponent="0.33"></feFuncG><feFuncB type="gamma" exponent="0.33"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_invert"><feComponentTransfer><feFuncR type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncR><feFuncG type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncG><feFuncB type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_invert_back"><feComponentTransfer><feFuncR type="table" tableValues="1 0"></feFuncR><feFuncG type="table" tableValues="1 0"></feFuncG><feFuncB type="table" tableValues="1 0"></feFuncB></feComponentTransfer><feComponentTransfer><feFuncR type="gamma" exponent="1.7"></feFuncR><feFuncG type="gamma" exponent="1.7"></feFuncG><feFuncB type="gamma" exponent="1.7"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_invert_grayscale"><feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"></feColorMatrix><feComponentTransfer><feFuncR type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncR><feFuncG type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncG><feFuncB type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_yellow_on_black"><feComponentTransfer><feFuncR type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncR><feFuncG type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncG><feFuncB type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncB></feComponentTransfer><feColorMatrix type="matrix" values="0.3 0.5 0.2 0 0 0.3 0.5 0.2 0 0 0 0 0 0 0 0 0 0 1 0"></feColorMatrix></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_yellow_on_black_back"><feComponentTransfer><feFuncR type="table" tableValues="1 0"></feFuncR><feFuncG type="table" tableValues="1 0"></feFuncG><feFuncB type="table" tableValues="1 0"></feFuncB></feComponentTransfer><feComponentTransfer><feFuncR type="gamma" exponent="0.33"></feFuncR><feFuncG type="gamma" exponent="0.33"></feFuncG><feFuncB type="gamma" exponent="0.33"></feFuncB></feComponentTransfer></filter></defs></svg></span><span class="smp_int_img"><span>Share Image</span></span><span id="buffer-extension-hover-button" style="display: none; position: absolute; z-index: 8675309; width: 100px; height: 25px; background-image: url(&quot;chrome-extension://noojglkidnpfjbincgijbaiedldjfbhh/data/shared/img/buffer-hover-icon@1x.png&quot;); background-size: 100px 25px; opacity: 0.9; cursor: pointer;" class="__web-inspector-hide-shortcut__"></span><div id="sqseobar2" class="sqseobar2-white sqseobar2-horizontal"><div class="sqseobar2-inner"><img src="chrome-extension://akdgnmcogleenhbclghghlkkdndkjdjc/static/svg/seoquake-icon.svg" class="sqseobar2-logo"><a class="sqseobar2-link sqseobar2-reloadButton sqseobar2-item-hidden"><span>Alle Parameter laden</span></a><div class="sqseobar2-parameters"><div class="sqmore-container" style="width: 308px;"><div class="sqseobar2-parameters-container"><div class="sqseobar2-parameterItemInline"><span class="sqicn sqicn-google"></span><span class="sqseobar2-parameterItemInline-title sqseobar2-parameterItemInline-title-full">Google index</span><span class="sqseobar2-parameterItemInline-title">I</span><a href="https://www.google.com/search?hl=en&amp;safe=off&amp;q=site%3Awww.aklamio.com&amp;btnG=Search&amp;gws_rd=cr" target="_blank" class="seoquake-params-request sqseobar2-error">!</a></div><div class="sqseobar2-parameterItemInline"><span class="sqicn sqicn-google"></span><span class="sqseobar2-parameterItemInline-title sqseobar2-parameterItemInline-title-full">Google cachedate</span><span class="sqseobar2-parameterItemInline-title">Cached</span><a href="https://webcache.googleusercontent.com/search?hl=en&amp;gl=en&amp;ie=UTF-8&amp;oe=UTF-8&amp;q=cache:https%3A%2F%2Fwww.aklamio.com%2Fde%2Fkonto" target="_blank" class="seoquake-params-request">8 Apr 2019</a></div></div></div><button class="sqseobar2-button-more" style="visibility: visible;">Mehr Daten</button></div><div class="sqseobar2-right-container"><div class="sqseobar2-right-container-buttons"><a class="sqseobar2-link sqseobar2-link-pageinfo"><span>Zusammenfassungsbericht</span></a><a class="sqseobar2-link sqseobar2-link-diagnosis"><span>Diagnose</span></a><a class="sqseobar2-link sqseobar2-link-density"><span>Dichte</span></a><a class="sqseobar2-link sqseobar2-link-external"><span>Externe Links</span><span class="sqseobar2-link-value">5</span></a><a class="sqseobar2-link sqseobar2-link-internal"><span>Interne Links</span><span class="sqseobar2-link-value">87</span></a><a class="sqseobar2-link sqseobar2-link-siteaudit" href="https://www.semrush.com/projects/?utm_source=seoquake&amp;utm_medium=toolbar&amp;utm_campaign=oauth&amp;ref=174537735#create"><span>Site audit</span><span class="sqseobar2-link-value">n/a</span></a></div><button class="sqseobar2-button-close" title="Bereich schließen"></button><button class="sqseobar2-button-configure" title="Bereich konfigurieren"></button></div></div></div><iframe data-product="web_widget" title="content=https://www.aklamio.com/u/jasminisel1/r/aklamio" tabindex="-1" aria-hidden="true" src="about:blank" style="width: 0px; height: 0px; border: 0px; position: absolute; top: -9999px;"></iframe><img src="chrome-extension://cabldpgmkejdhjbgmeooocablkljdbcg/icons/share_image.png" id="socialpilot-extension-hover-button" style="cursor:pointer;display:none;"><script>
+    (function(d,s){var z=$zopim,$=z.s= d.createElement(s),e=d.getElementsByTagName(s)[0];
+    $.async=!0;$.setAttribute('charset','utf-8');
+    $.src='https://v2.zopim.com/?46Er33HDkdlEGkWbfuu2G3W0cJH7CjBy';
+    z.t=+new Date;$. type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
+  </script><style></style><div><iframe title="Öffnet ein Widget, in dem Sie weitere Informationen finden" id="launcher" tabindex="0" class="zEWidget-launcher zEWidget-launcher--active" style="border: none; background: transparent; z-index: 999998; transform: translateZ(0px); position: fixed; transition: opacity 250ms cubic-bezier(0.645, 0.045, 0.355, 1) 0s, top, bottom; opacity: 1; width: 114px; height: 50px; max-height: 551px; min-height: 50px; margin: 10px 20px; left: 0px; bottom: 0px;"></iframe></div><div><iframe title="Hier finden Sie weitere Informationen" id="webWidget" tabindex="-1" class="zEWidget-webWidget " style="border: none; background: transparent; z-index: 999999; transform: translateZ(0px); position: fixed; transition: opacity 250ms cubic-bezier(0.645, 0.045, 0.355, 1) 0s, top, bottom; opacity: 0; width: 357px; height: 100%; max-height: 565px; min-height: 150px; margin-left: 8px; margin-right: 8px; top: -9999px;"></iframe></div><div class="zopim" __jx__id="___$_1" style="position: absolute; visibility: hidden; margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></div><div class="zopim __web-inspector-hide-shortcut__" __jx__id="___$_73 ___$_73" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; padding: 0px; border: 0px; background: transparent; overflow: hidden; position: fixed; z-index: 16000002; width: 180px; height: 30px; right: 10px; bottom: 0px; display: none;" data-test-id="ChatWidgetButton"><iframe frameborder="0" style="background-color: transparent; vertical-align: text-bottom; position: relative; width: 100%; height: 100%; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; margin: 0px; overflow: hidden; display: block;" src="about:blank" data-test-id="ChatWidgetButton-iframe" title="Zendesk Chat widget button"></iframe></div>document.querySelector('#hc_extension_bkgnd')</body><body class="logged-in __web-inspector-hide-shortcut__" datasqstyle="{&quot;paddingTop&quot;:null}" datasquuid="7ec1c2bc-9563-4f6b-a7d4-dbe229018a84" style="padding-top: 40px;"><div class="zopim __web-inspector-hide-shortcut__" __jx__id="___$_73 ___$_73" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; padding: 0px; border: 0px; background: transparent; overflow: hidden; position: fixed; z-index: 16000002; width: 180px; height: 30px; right: 10px; bottom: 0px; display: none;" data-test-id="ChatWidgetButton"><iframe frameborder="0" style="background-color: transparent; vertical-align: text-bottom; position: relative; width: 100%; height: 100%; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; margin: 0px; overflow: hidden; display: block;" src="about:blank" data-test-id="ChatWidgetButton-iframe" title="Zendesk Chat widget button"></iframe></div><div class="zopim" __jx__id="___$_4 ___$_4" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; padding: 0px; border: 0px; background: transparent; overflow: hidden; position: fixed; z-index: 16000001; bottom: 0px; border-top-left-radius: 5px; border-top-right-radius: 5px; display: none; width: 350px; height: 450px; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 3px 2px; left: 8px;" data-test-id="ChatWidgetWindow"><iframe frameborder="0" style="background-color: transparent; vertical-align: text-bottom; position: relative; width: 100%; height: 100%; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; margin: 0px; overflow: hidden; display: block;" src="about:blank" data-test-id="ChatWidgetWindow-iframe" title="Zendesk Chat widget window"></iframe></div>
+<header class="site-header" datasqstyle="{&quot;top&quot;:null}" datasquuid="7ec1c2bc-9563-4f6b-a7d4-dbe229018a84" datasqtop="40" style="top: 40px;">
+<div class="container clearfix">
+<a class="logo" href="/de/uebersicht"><svg width="299" height="77" viewBox="0 0 299 77" xmlns="http://www.w3.org/2000/svg"><title>logo</title><g id="logo" fill="none" fill-rule="evenodd"><g id="icon"><path d="M64.635 15.834L39.183 1.224C37.77.408 36.193 0 34.616 0c-1.578 0-3.154.408-4.568 1.224L4.595 15.834C1.753 17.474 0 20.514 0 23.807v29.38c0 3.29 1.753 6.332 4.595 7.972l25.41 14.54c1.416.815 2.992 1.223 4.57 1.223 1.576 0 3.153-.408 4.567-1.224l25.493-14.54c2.843-1.64 4.596-4.683 4.596-7.974v-29.38c0-3.29-1.752-6.33-4.595-7.972" id="Shape" fill="#FC6053"></path><path d="M47.17 55.848c-5.928 0-8.238-8.262-8.238-13.594-1.48 5.696-6.613 13.594-12.173 13.594-4.952 0-7.793-4.358-7.793-9.653 0-10.685 8.238-23.013 18.36-23.013 3.553 0 6.577 1.892 6.577 3.462 0 1.85-3.576 3.155-5.182 3.155-1.25-1.28-2.602-1.94-4.25-1.94-6.052 0-10.332 11.342-10.332 17.69 0 2.823.968 5.814 3.684 5.814 4.222 0 8.224-6.558 10.14-12.603.61-1.93.834-3.13 1.02-4.677.18-1.507 1.25-2.3 2.53-2.3 1.267 0 2.246 1.057 2.246 2.13 0 5.95-.5 19.446 3.4 19.446 2.61 0 2.563-6.452 2.563-9.83 2.863 0 5.072 1.782 5.072 4.47 0 3.82-3.19 7.848-7.625 7.848" id="Shape" fill="#FEFEFE"></path></g><g id="text" fill="#364047"><path d="M113.056 53.115c2.238 0 4.21-.51 5.916-1.525 1.705-1.018 2.936-2.332 3.694-3.942v-5.52h-6.226c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.04.907 2.475 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.087-.677-.13-1.364-.13-2.06-1.034 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.857-.693-6.355-2.084-1.5-1.39-2.248-3.272-2.248-5.646 0-2.544 1.11-4.56 3.333-6.053 2.222-1.49 5.236-2.238 9.04-2.238h6.176v-3.637c0-1.967-.64-3.51-1.924-4.63-1.284-1.118-3.08-1.677-5.387-1.677-1.55 0-2.966.207-4.25.623-1.283.414-2.355.978-3.216 1.69l-.26 3.687h-2.557l.026-5.29c1.29-.983 2.836-1.78 4.636-2.39 1.8-.61 3.716-.915 5.748-.915 3.083 0 5.563.77 7.44 2.314 1.878 1.543 2.816 3.755 2.816 6.637v13.53c0 .56.013 1.098.04 1.615.025.518.08 1.02.167 1.513l2.79.18v2.237h-5.502zm9.44-37.54v-2.303h7.315v24.07h3.296l8.535-9.084-.05-.13-2.57-.18v-2.304h9.883v2.304l-3.268.31-9.597 10.172 10.92 12.657 3.113.284v2.277h-9.856v-2.276l2.957-.182-9.753-11.18h-3.606v11.025l4.23.337v2.277h-11.544v-2.276l4.23-.337V18.074l-4.23-.336zm31.514 0v-2.303h7.488v37.763l4.33.337v2.277H164.19v-2.276l4.328-.337V18.074l-4.328-.336zm22.726 35.378c2.24 0 4.21-.51 5.917-1.525 1.704-1.018 2.935-2.332 3.693-3.942v-5.52H190.3c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.042.907 2.476 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.086-.677-.13-1.364-.13-2.06-1.032 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.856-.693-6.354-2.084-1.5-1.39-2.25-3.272-2.25-5.646 0-2.544 1.112-4.56 3.334-6.053 2.222-1.49 5.236-2.238 9.042-2.238h6.174v-3.637c0-1.967-.64-3.51-1.924-4.63-1.283-1.118-3.08-1.677-5.386-1.677-1.55 0-2.967.207-4.25.623-1.284.414-2.355.978-3.217 1.69l-.26 3.687h-2.557l.026-5.29c1.292-.983 2.837-1.78 4.636-2.39 1.8-.61 3.717-.915 5.75-.915 3.082 0 5.562.77 7.44 2.314 1.877 1.543 2.815 3.755 2.815 6.637v13.53c0 .56.014 1.098.04 1.615.026.518.082 1.02.167 1.513l2.79.18v2.237h-5.502zm10.425-25.2v-2.308h6.923l.283 4.64c.892-1.643 2.085-2.913 3.577-3.81 1.493-.9 3.268-1.348 5.327-1.348 2.127 0 3.903.522 5.327 1.567 1.424 1.044 2.445 2.64 3.062 4.78.84-1.97 2.035-3.52 3.59-4.65 1.55-1.133 3.442-1.698 5.672-1.698 2.967 0 5.262.993 6.884 2.98 1.62 1.987 2.43 5.062 2.43 9.226v13.71l4.196.362v2.28H243.29v-2.28l4.193-.363v-13.76c0-3.457-.605-5.897-1.813-7.322-1.21-1.426-2.895-2.138-5.057-2.138-2.402 0-4.25.768-5.545 2.306s-2.097 3.5-2.406 5.883c0 .138.004.268.013.39.008.12.012.275.012.466v14.202l4.195.336v2.28h-11.477v-2.28l4.195-.336V39.406c0-3.386-.613-5.81-1.84-7.27s-2.912-2.19-5.056-2.19c-2.197 0-3.934.558-5.21 1.672-1.28 1.115-2.176 2.614-2.69 4.497v17.08l4.194.335v2.28H207.52v-2.28l4.196-.336v-22.78l-4.195-.338zm58.7-10.295h-3.16v-4.348h3.16v4.348zm-7.49 33.75l4.33-.336v-22.75l-4.33-.337v-2.304h7.49v25.39l4.33.337v2.278h-11.82v-2.277zm17.814-11.58c0 3.186.815 5.865 2.444 8.034 1.63 2.17 3.9 3.256 6.817 3.256 2.864 0 5.11-1.085 6.74-3.256 1.63-2.17 2.444-4.848 2.444-8.035v-.84c0-3.135-.82-5.797-2.458-7.984-1.637-2.187-3.897-3.28-6.778-3.28-2.88 0-5.137 1.093-6.766 3.28-1.63 2.187-2.444 4.85-2.444 7.985v.84zm-3.087-.84c0-4.052 1.123-7.376 3.37-9.97 2.246-2.593 5.222-3.89 8.927-3.89 3.72 0 6.705 1.297 8.952 3.89 2.247 2.594 3.37 5.918 3.37 9.97v.84c0 4.068-1.118 7.395-3.357 9.98-2.24 2.585-5.21 3.88-8.915 3.88-3.74 0-6.732-1.295-8.978-3.88-2.247-2.585-3.37-5.912-3.37-9.98v-.84z" id="Shape"></path></g></g></svg></a>
+<div class="desktop-nav">
+<div class="float-left">
+<div class="searchbar">
+<form>
+<span class="icon-magnifying-glass"></span>
+<span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input class="search-query ui-autocomplete-input" data-category="in Kategorie" data-no-result="Leider wurden keine Ergebnisse gefunden " data-reward=" Prämie" data-url="https://www.aklamio.com/de/shops/for_autocomplete" id="nav-search-input" placeholder="Suche nach Shop oder Kategorie" autocomplete="off">
+</form>
+<div class="autocomplete-container"><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-1" tabindex="0" style="display: none;"></ul></div>
+</div>
+<div class="browse-categories">
+oder
+<a class="js-categories-dropdown" href="#">zu Kategorien
+</a><span class="triangle-down">
+<img src="/assets/www/aklamio-branding/icons/icon-big-triangle-down-6eb4f26fc0a8f40d0f9b1684f8b29ce01f1f81342d9b31423d6a7109895148ab.svg" alt="Icon big triangle down">
+</span>
+</div>
+</div>
+<div class="float-right">
+<div class="nav-links">
+<a id="header-nav-cashbar" href="/de/tools/cashbar?utm_campaign=aklamio&amp;utm_medium=balance&amp;utm_source=menubar">Cashbar</a>
+<a id="header-nav-companies" class="for-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</div>
+<div class="user-links">
+<div class="user-dashboard-links">
+<div class="user-dashboard-links-balance">
+<a id="dashboard-links-balance" href="/de/konto"><span class="icon-payout"></span>
+<strong>0,00€</strong>
+</a></div>
+<div class="user-dashboard-links-rewards">
+<a id="dashboard-links-rewards" href="/de/uebersicht"><span class="icon-reward"></span>
+<strong class="total">0</strong>
+<strong class="pending">0</strong>
+</a></div>
+</div>
+<a id="dashboard-links-image-settings" class="user-nav-link user-picture" href="#"><img src="https://static.aklamio.com/users/90a4d37df5e45cf92e68e551ec26654dfac8fab1/medium/image.png" alt="Image">
+<span class="icon-chevron-down"></span>
+</a><ul class="user-nav">
+<li>
+<a id="user-nav-dashboard" class="" href="/de/uebersicht"><span class="icon-grid"></span>
+Übersicht
+</a></li>
+<li>
+<a id="user-nav-balance-details" class="" href="/de/konto"><span class="icon-payout"></span>
+Kontostand
+</a></li>
+<li>
+<a id="user-nav-settings" class="" href="/de/einstellungen"><span class="icon-cog"></span>
+Einstellungen
+</a></li>
+<li>
+<a id="user-nav-support_request" class="" href="/de/transaction_inquiries"><span class="icon-lifebuoy"></span>
+Nachbuchungsanfrage
+</a></li>
+<li>
+<a id="user-nav-invite-friends" class="" href="/de/shops/aklamio"><span class="icon-users"></span>
+Freunde einladen
+</a></li>
+<li>
+<a id="user-nav-logout" class="" href="/de/abmelden">Ausloggen
+</a></li>
+</ul>
+</div>
+<div class="dropdown-group language">
+<a id="dropdown-toggle-language" class="dropdown-toggle-link" href="#">DE</a>
+<ul class="dropdown-menu">
+<li>
+<a href="https://www.aklamio.com/en/balance?update_user_locale=true">EN</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/es/pagos?update_user_locale=true">ES</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/fr/compte?update_user_locale=true">FR</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/it/profilo?update_user_locale=true">IT</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/nl/saldo?update_user_locale=true">NL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pl/saldo?update_user_locale=true">PL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pt/saldo?update_user_locale=true">PT</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="shops-category">
+<div class="container">
+<span class="icon-cross close-categories-dropdown js-close-categories-dropdown"></span>
+<ul class="category-group">
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/fashion">Fashion</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-bekleidung">Bekleidung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-kinder-babysachen">Kinder &amp; Babysachen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-dessous">Dessous</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-schuhe">Schuhe</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-accessories">Accessories</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-streetwear">Streetwear</a>
+</li>
+<li class="sub-cat">
+<a href="/de/fashion-schmuck-luxus">Schmuck &amp; Luxus</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/reisen-urlaub">Reisen &amp; Urlaub</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-autovermietung">Autovermietung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-holiday-package">Holiday package</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-fluege">Flüge</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-hotels-apartments">Hotels &amp; Apartments</a>
+</li>
+<li class="sub-cat">
+<a href="/de/reisen-urlaub-kreuzfahrten">Kreuzfahrten</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/home-beauty">Home &amp; Beauty</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-design">Design</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-haus-garten">Haus &amp; Garten</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-pflanzen-blumen">Pflanzen &amp; Blumen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-apotheke">Apotheke</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-optiker">Optiker</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-gesundheit-beauty">Gesundheit &amp; Beauty</a>
+</li>
+<li class="sub-cat">
+<a href="/de/home-beauty-geschenke">Geschenke</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/finanzen-energieversorger-versicherung">Finanzen, Energieversorger &amp; Versicherung</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-versicherung">Versicherung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-kredit">Kredit</a>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-banken-kreditkarten">Banken &amp; Kreditkarten</a>
+</li>
+<li class="sub-cat">
+<a href="/de/finanzen-energieversorger-versicherung-strom-gasanbieter">Strom &amp; Gasanbieter</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/computer-software">Computer &amp; Software</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-software">Software</a>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-computer">Computer</a>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-elektronik">Elektronik</a>
+</li>
+<li class="sub-cat">
+<a href="/de/computer-software-audio">Audio</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/auto-motorrad">Auto &amp; Motorrad</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-autoteile">Autoteile</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-motorradteile">Motorradteile</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-reifen">Reifen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-autowerkstatt">Autowerkstatt</a>
+</li>
+<li class="sub-cat">
+<a href="/de/auto-motorrad-accessories">Accessories</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/verschiedenes">Verschiedenes</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-buero">Büro</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-tierbedarf">Tierbedarf</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-reinigungsdienste">Reinigungsdienste</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-drucksachen-foto">Drucksachen &amp; Foto</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-bildung">Bildung</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-dienstleistungen">Dienstleistungen</a>
+</li>
+<li class="sub-cat">
+<a href="/de/verschiedenes-community">Community</a>
+</li>
+</ul>
+</li>
+<li class="category-item">
+<ul>
+<li>
+<h3 class="category-title">
+<a href="/de/telekommunikation">Telekommunikation</a>
+</h3>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-langfristige-handyvertraege">Langfristige Handyverträge</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-internet-tv">Internet &amp; TV</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-prepaid-anbieter">Prepaid-Anbieter</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-geraete">Geräte</a>
+</li>
+<li class="sub-cat">
+<a href="/de/telekommunikation-webhosting">Webhosting</a>
+</li>
+</ul>
+</li>
+</ul>
+<div class="category-all-shops">
+<a id="all-shops-categories-link" href="/de/shops">Alle Shops anzeigen</a>
+</div>
+<div class="category-all">
+<a id="all-categories-link" href="/de/all-categories">Alle Kategorien
+<span class="icon-chevron-right"></span>
+</a></div>
+</div>
+</div>
+
+<div class="searchbar mobile">
+<form>
+<span class="icon-magnifying-glass"></span>
+<span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span><input class="mobile-search-query ui-autocomplete-input" data-url="https://www.aklamio.com/de/shops/for_autocomplete" id="mobile-nav-search-input" placeholder="Suche nach Shop oder Kategorie" autocomplete="off">
+</form>
+<div class="autocomplete-container"><ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all" id="ui-id-2" tabindex="0" style="display: none;"></ul></div>
+</div>
+<div class="mobile-nav-link">
+<span class="icon-cross"></span>
+<a id="mobile-nav-menue" href="#">Menü</a>
+</div>
+<div class="mobile-nav">
+<ul>
+<li>
+<a id="mobile-nav-dashboard" href="/de/uebersicht"><span class="icon-grid"></span>
+Übersicht
+</a></li>
+<li>
+<a id="mobile-nav-account" href="/de/konto"><span class="icon-payout"></span>
+Kontostand
+</a></li>
+<li>
+<a id="mobile-nav-settings" href="/de/einstellungen"><span class="icon-cog"></span>
+Einstellungen
+</a></li>
+<li>
+<a id="mobile-nav-support" href="/de/transaction_inquiries"><span class="icon-lifebuoy"></span>
+Nachbuchungsanfrage
+</a></li>
+<li>
+<a id="mobile-nav-invite-friends" href="/de/shops/aklamio"><span class="icon-users"></span>
+Freunde einladen
+</a></li>
+<li>
+<a id="mobile-nav-shops" href="/de/shops"><span class="icon-shop"></span>
+Shops
+</a></li>
+<li>
+<a id="mobile-nav-categories" href="/de/all-categories"><span class="icon-dots-three-horizontal"></span>
+Kategorien
+</a></li>
+<li>
+<a id="mobile-nav-logout" href="/de/abmelden"><span class="icon-log-out"></span>
+Ausloggen
+</a></li>
+<li>
+<a id="header-nav-cashbar" href="/de/tools/cashbar"><span class="icon-cashback"></span>
+Cashbar
+</a></li>
+<li>
+<a id="header-nav-companies" href="/de/fuer-unternehmen"><span class="icon-globe"></span>
+Für Unternehmen
+</a></li>
+</ul>
+</div>
+
+</header>
+
+<main class="main-content">
+<div class="banners-container"><div class="owl-carousel owl-carousel_banners owl-loaded"><div class="owl-stage-outer"><div class="owl-stage" style="transform: translate3d(-794px, 0px, 0px); transition: all 0s ease 0s; width: 1588px;"><div class="owl-item" style="width: 794px;"><a class="submenu" href="https://deals.aklamio.com?utm_source=banner&amp;utm_medium=lp_aklamio" target="_blank"><div class="item item-mobile" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-mobile.png')"></div><div class="item item-tablet" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-tablet.png')"></div><div class="item item-desktop" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-desktop.png')"></div></a></div><div class="owl-item animated owl-animated-in fadeIn active" style="width: 794px;"><a class="submenu" href="/de/u/jasminisel1/r/unitymediabusiness_de?utm_source=banner&amp;utm_medium=lp_unitymedia"><div class="item item-mobile" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-mobile.png')"></div><div class="item item-tablet" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-tablet.png')"></div><div class="item item-desktop" style="background-image: url('https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-desktop.png')"></div></a></div></div></div><div class="owl-nav disabled"><div class="owl-prev">prev</div><div class="owl-next">next</div></div><div class="owl-dots disabled"></div></div></div>
+
+<section class="sc-user-balance">
+<div class="container">
+<h1>Kontostand</h1>
+<div class="infobox">
+<p>Hier kannst Du Deine bestätigten Prämien auf Dein Bankkonto (BIC/IBAN) oder PayPal-Konto auszahlen lassen. Der Betrag wird Dir in Kürze von Aklamio überwiesen.</p>
+</div>
+<table class="payout">
+<tbody><tr>
+<th class="align-left">Auszahlungsbetrag je nach Währung</th>
+<th class="align-right">verfügbare Auszahlungsmethoden</th>
+</tr>
+<tr class="content">
+<td class="align-left payout-amount" data-title="Auszahlungsbetrag je nach Währung">
+0,00€
+</td>
+<td class="align-right" data-title="verfügbare Auszahlungsmethoden">
+<span class="btn btn-paypal disabled no-payout">
+<span class="icon-paypal"></span>
+</span>
+<span class="btn btn-payout-bank disabled no-payout">
+<span class="icon-credit-card"></span>
+Bankkonto
+</span>
+</td>
+</tr>
+</tbody></table>
+<div class="non-sepa-hint">
+<h3>Wichtige Information:</h3>
+<p>Banküberweisungen sind nur für Bankkonten im SEPA-Raum mit einer IBAN (International Bank Account Number) möglich. Befindet sich Deine Bank außerhalb des SEPA-Raums, kannst Du eine Auszahlung über PayPal beantragen. Auszahlungen können ab 1€, 1£, 1 CHF, 1$ oder 1zl erfolgen.</p>
+</div>
+<h2>Kontoaktivitäten</h2>
+<p class="no-earning">Hoppla, noch nichts verdient?</p>
+<a class="btn btn-primary no-earning" id="start-recommending" href="/de/shops">Na, dann aber los!</a>
+</div>
+</section>
+
+</main>
+<footer class="site-footer">
+<a class="back-to-top" href="#">
+<span class="icon-triangle-up"></span>
+nach oben
+</a>
+<div class="footer-nav">
+<div class="container">
+<ul class="main-links">
+<li>
+<a id="footer-nav-about" href="/de/was-ist-aklamio">Über Aklamio</a>
+</li>
+<li>
+<a id="footer-nav-careers" target="_blank" rel="nofollow" href="https://aklamio-jobs.personio.de/?language=de">Karriere</a>
+</li>
+<li>
+<a id="footer-nav-help" href="/de/hilfe">Fragen &amp; Antworten</a>
+</li>
+<li>
+<a id="footer-nav-cashbar" href="/de/tools/cashbar">Cashbar</a>
+</li>
+<li>
+<a id="footer-nav-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</li>
+</ul>
+<ul class="social-links">
+<li>
+<a target="_blank" id="footer-social-facebook" href="https://www.facebook.com/aklamio"><span class="icon-facebook"></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-twitter" href="https://twitter.com/aklamio"><span class="icon-twitter"></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-linkedin" href="https://www.linkedin.com/company/aklamio-gmbh/"><span class="icon-linkedin"></span>
+</a></li>
+</ul>
+<ul class="legal-links">
+<li>
+<a id="footer-nav-privacy" href="/de/datenschutz">Datenschutzerklärung</a>
+</li>
+<li>
+<a id="footer-nav-terms" href="/de/agb">AGB</a>
+</li>
+<li>
+<a id="footer-nav-imprint" href="/de/impressum">Impressum</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<div class="container">
+<div class="shop-country-select">
+<span class="icon-shop"></span>
+<label>Shops aus</label>
+<select class="js-shop-country-select">
+<option data-url="https://www.aklamio.com/de/konto?shop_country=de" selected="true" value="de">
+Deutschland
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=at" value="at">
+Österreich
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=ch" value="ch">
+Schweiz
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=es" value="es">
+Spanien
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=gb" value="gb">
+Großbritannien
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=fr" value="fr">
+Frankreich
+</option>
+<option data-url="https://www.aklamio.com/de/konto?shop_country=it" value="it">
+Italien
+</option>
+</select>
+</div>
+<div class="language-select">
+<span class="icon-globe"></span>
+<label>Sprache</label>
+<select class="js-language-select">
+<option selected="true" value="https://www.aklamio.com/de/konto?update_user_locale=true">
+Deutsch
+</option>
+<option value="https://www.aklamio.com/en/balance?update_user_locale=true">
+English
+</option>
+<option value="https://www.aklamio.com/es/pagos?update_user_locale=true">
+Español
+</option>
+<option value="https://www.aklamio.com/fr/compte?update_user_locale=true">
+Français
+</option>
+<option value="https://www.aklamio.com/it/profilo?update_user_locale=true">
+Italiano
+</option>
+<option value="https://www.aklamio.com/nl/saldo?update_user_locale=true">
+Nederlands
+</option>
+<option value="https://www.aklamio.com/pl/saldo?update_user_locale=true">
+Polski
+</option>
+<option value="https://www.aklamio.com/pt/saldo?update_user_locale=true">
+Português
+</option>
+</select>
+</div>
+<div class="copyright">
+© 2019 aklamio GmbH
+</div>
+<div class="eu-union">
+<div class="logo-eu" data-hint="Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.">
+<img src="/assets/www/aklamio-branding/logos/eu-flag-4db4c8712abfabd68e563751137183dbf6a9d551d1970dde4633fcef2f900037.jpg" alt="Eu flag">
+</div>
+<span class="eu-union-desc">
+<span class="eu-union-headline">
+EUROPÄISCHE UNION
+</span>
+<span class="eu-union-sub">
+Europäischer Fonds für regionale Entwicklung
+</span>
+</span>
+<p class="eu-union-hint-mobile">
+Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.
+</p>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js"></script>
+
+<!-- setting utm params dynamically -->
+<script>
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24140910-1']);
+  _gaq.push (['_gat._anonymizeIp']);
+  _gaq.push(['_setDomainName', 'aklamio.com']);
+  
+  
+  
+  
+  
+  
+  
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+<div id="hc_extension_bkgnd" style="position: fixed; left: 0px; top: 40px; right: 0px; bottom: 0px; z-index: -1999999999; display: block; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255);" datasqstyle="{&quot;top&quot;:&quot;0px&quot;}" datasquuid="7ec1c2bc-9563-4f6b-a7d4-dbe229018a84" datasqtop="40" class="__web-inspector-hide-shortcut__"></div><span id="hc_extension_svg_filters" hidden=""><svg xmlns="http://www.w3.org/2000/svg" version="1.1"><defs><filter x="0" y="0" width="99999" height="99999" id="hc_extension_off"><feComponentTransfer><feFuncR type="table" tableValues="0 1"></feFuncR><feFuncG type="table" tableValues="0 1"></feFuncG><feFuncB type="table" tableValues="0 1"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_highcontrast"><feComponentTransfer><feFuncR type="gamma" exponent="3.0"></feFuncR><feFuncG type="gamma" exponent="3.0"></feFuncG><feFuncB type="gamma" exponent="3.0"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_highcontrast_back"><feComponentTransfer><feFuncR type="gamma" exponent="0.33"></feFuncR><feFuncG type="gamma" exponent="0.33"></feFuncG><feFuncB type="gamma" exponent="0.33"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_grayscale"><feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"></feColorMatrix><feComponentTransfer><feFuncR type="gamma" exponent="3"></feFuncR><feFuncG type="gamma" exponent="3"></feFuncG><feFuncB type="gamma" exponent="3"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_grayscale_back"><feComponentTransfer><feFuncR type="gamma" exponent="0.33"></feFuncR><feFuncG type="gamma" exponent="0.33"></feFuncG><feFuncB type="gamma" exponent="0.33"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_invert"><feComponentTransfer><feFuncR type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncR><feFuncG type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncG><feFuncB type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_invert_back"><feComponentTransfer><feFuncR type="table" tableValues="1 0"></feFuncR><feFuncG type="table" tableValues="1 0"></feFuncG><feFuncB type="table" tableValues="1 0"></feFuncB></feComponentTransfer><feComponentTransfer><feFuncR type="gamma" exponent="1.7"></feFuncR><feFuncG type="gamma" exponent="1.7"></feFuncG><feFuncB type="gamma" exponent="1.7"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_invert_grayscale"><feColorMatrix type="matrix" values="0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0.2126 0.7152 0.0722 0 0 0 0 0 1 0"></feColorMatrix><feComponentTransfer><feFuncR type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncR><feFuncG type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncG><feFuncB type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncB></feComponentTransfer></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_yellow_on_black"><feComponentTransfer><feFuncR type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncR><feFuncG type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncG><feFuncB type="gamma" amplitude="-1" exponent="3" offset="1"></feFuncB></feComponentTransfer><feColorMatrix type="matrix" values="0.3 0.5 0.2 0 0 0.3 0.5 0.2 0 0 0 0 0 0 0 0 0 0 1 0"></feColorMatrix></filter><filter x="0" y="0" width="99999" height="99999" id="hc_extension_yellow_on_black_back"><feComponentTransfer><feFuncR type="table" tableValues="1 0"></feFuncR><feFuncG type="table" tableValues="1 0"></feFuncG><feFuncB type="table" tableValues="1 0"></feFuncB></feComponentTransfer><feComponentTransfer><feFuncR type="gamma" exponent="0.33"></feFuncR><feFuncG type="gamma" exponent="0.33"></feFuncG><feFuncB type="gamma" exponent="0.33"></feFuncB></feComponentTransfer></filter></defs></svg></span><span class="smp_int_img"><span>Share Image</span></span><span id="buffer-extension-hover-button" style="display: none; position: absolute; z-index: 8675309; width: 100px; height: 25px; background-image: url(&quot;chrome-extension://noojglkidnpfjbincgijbaiedldjfbhh/data/shared/img/buffer-hover-icon@1x.png&quot;); background-size: 100px 25px; opacity: 0.9; cursor: pointer;" class="__web-inspector-hide-shortcut__"></span><div id="sqseobar2" class="sqseobar2-white sqseobar2-horizontal"><div class="sqseobar2-inner"><img src="chrome-extension://akdgnmcogleenhbclghghlkkdndkjdjc/static/svg/seoquake-icon.svg" class="sqseobar2-logo"><a class="sqseobar2-link sqseobar2-reloadButton sqseobar2-item-hidden"><span>Alle Parameter laden</span></a><div class="sqseobar2-parameters"><div class="sqmore-container" style="width: 308px;"><div class="sqseobar2-parameters-container"><div class="sqseobar2-parameterItemInline"><span class="sqicn sqicn-google"></span><span class="sqseobar2-parameterItemInline-title sqseobar2-parameterItemInline-title-full">Google index</span><span class="sqseobar2-parameterItemInline-title">I</span><a href="https://www.google.com/search?hl=en&amp;safe=off&amp;q=site%3Awww.aklamio.com&amp;btnG=Search&amp;gws_rd=cr" target="_blank" class="seoquake-params-request sqseobar2-error">!</a></div><div class="sqseobar2-parameterItemInline"><span class="sqicn sqicn-google"></span><span class="sqseobar2-parameterItemInline-title sqseobar2-parameterItemInline-title-full">Google cachedate</span><span class="sqseobar2-parameterItemInline-title">Cached</span><a href="https://webcache.googleusercontent.com/search?hl=en&amp;gl=en&amp;ie=UTF-8&amp;oe=UTF-8&amp;q=cache:https%3A%2F%2Fwww.aklamio.com%2Fde%2Fkonto" target="_blank" class="seoquake-params-request">8 Apr 2019</a></div></div></div><button class="sqseobar2-button-more" style="visibility: visible;">Mehr Daten</button></div><div class="sqseobar2-right-container"><div class="sqseobar2-right-container-buttons"><a class="sqseobar2-link sqseobar2-link-pageinfo"><span>Zusammenfassungsbericht</span></a><a class="sqseobar2-link sqseobar2-link-diagnosis"><span>Diagnose</span></a><a class="sqseobar2-link sqseobar2-link-density"><span>Dichte</span></a><a class="sqseobar2-link sqseobar2-link-external"><span>Externe Links</span><span class="sqseobar2-link-value">5</span></a><a class="sqseobar2-link sqseobar2-link-internal"><span>Interne Links</span><span class="sqseobar2-link-value">87</span></a><a class="sqseobar2-link sqseobar2-link-siteaudit" href="https://www.semrush.com/projects/?utm_source=seoquake&amp;utm_medium=toolbar&amp;utm_campaign=oauth&amp;ref=174537735#create"><span>Site audit</span><span class="sqseobar2-link-value">n/a</span></a></div><button class="sqseobar2-button-close" title="Bereich schließen"></button><button class="sqseobar2-button-configure" title="Bereich konfigurieren"></button></div></div></div><iframe data-product="web_widget" title="content=https://www.aklamio.com/u/jasminisel1/r/aklamio" tabindex="-1" aria-hidden="true" src="about:blank" style="width: 0px; height: 0px; border: 0px; position: absolute; top: -9999px;"></iframe><img src="chrome-extension://cabldpgmkejdhjbgmeooocablkljdbcg/icons/share_image.png" id="socialpilot-extension-hover-button" style="cursor:pointer;display:none;"><script>
+    (function(d,s){var z=$zopim,$=z.s= d.createElement(s),e=d.getElementsByTagName(s)[0];
+    $.async=!0;$.setAttribute('charset','utf-8');
+    $.src='https://v2.zopim.com/?46Er33HDkdlEGkWbfuu2G3W0cJH7CjBy';
+    z.t=+new Date;$. type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
+  </script><style></style><div><iframe title="Öffnet ein Widget, in dem Sie weitere Informationen finden" id="launcher" tabindex="0" class="zEWidget-launcher zEWidget-launcher--active" style="border: none; background: transparent; z-index: 999998; transform: translateZ(0px); position: fixed; transition: opacity 250ms cubic-bezier(0.645, 0.045, 0.355, 1) 0s, top, bottom; opacity: 1; width: 114px; height: 50px; max-height: 551px; min-height: 50px; margin: 10px 20px; left: 0px; bottom: 0px;"></iframe></div><div><iframe title="Hier finden Sie weitere Informationen" id="webWidget" tabindex="-1" class="zEWidget-webWidget " style="border: none; background: transparent; z-index: 999999; transform: translateZ(0px); position: fixed; transition: opacity 250ms cubic-bezier(0.645, 0.045, 0.355, 1) 0s, top, bottom; opacity: 0; width: 357px; height: 100%; max-height: 565px; min-height: 150px; margin-left: 8px; margin-right: 8px; top: -9999px;"></iframe></div><div class="zopim" __jx__id="___$_1" style="position: absolute; visibility: hidden; margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></div><div class="zopim __web-inspector-hide-shortcut__" __jx__id="___$_73 ___$_73" style="margin-top: 0px; margin-right: 0px; margin-bottom: 0px; padding: 0px; border: 0px; background: transparent; overflow: hidden; position: fixed; z-index: 16000002; width: 180px; height: 30px; right: 10px; bottom: 0px; display: none;" data-test-id="ChatWidgetButton"><iframe frameborder="0" style="background-color: transparent; vertical-align: text-bottom; position: relative; width: 100%; height: 100%; min-width: 100%; min-height: 100%; max-width: 100%; max-height: 100%; margin: 0px; overflow: hidden; display: block;" src="about:blank" data-test-id="ChatWidgetButton-iframe" title="Zendesk Chat widget button"></iframe></div></body>
+</script>
+
+
+
+
+
+<https://www.aklamio.com/u/jasminisel1/r/aklamio>
+<html lang='de' xml:lang='de' xmlns='http://www.w3.org/1999/xhtml'>
+<head><meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+<meta content='text/html;charset=UTF-8' http-equiv='content-type'>
+<meta content='width=device-width, initial-scale=1.0, user-scalable=no' name='viewport'>
+<title>Hier geht's zu Deinem Aklamio-Nutzerkonto 
+</title>http://aklam.io/1lzDhF
+<link href='https://www.aklamio.com/de/anmelden' rel='canonical'>
+<link href='https://www.aklamio.com/de/anmelden' hreflang='de' rel='alternate'>
+<link href='https://www.aklamio.com/en/sign_in' hreflang='en' rel='alternate'>
+<link href='https://www.aklamio.com/es/inicia-sesion' hreflang='es' rel='alternate'>
+<link href='https://www.aklamio.com/fr/se-connecter' hreflang='fr' rel='alternate'>
+<link href='https://www.aklamio.com/it/accedi' hreflang='it' rel='alternate'>
+<link href='https://www.aklamio.com/nl/aanmelden' hreflang='nl' rel='alternate'>
+<link href='https://www.aklamio.com/pl/zaloguj_sie' hreflang='pl' rel='alternate'>
+<link href='https://www.aklamio.com/pt/iniciar_a_sessao' hreflang='pt' rel='alternate'>
+<meta content='Freunde werben, Empfehlen, Cashback, Prämie, Empfehlungsprämie, Kunden werben Kunden' name='keywords'>
+<meta content='Du bist bereits ein Teil der Aklamio-Community, dann kannst Du Dich hier jederzeit anmelden und eine Übersicht Deiner Prämien und Deines Cashbacks erhalten' name='description'>
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700" />
+<link rel="stylesheet" media="screen, projection, print" href="/assets/main-3ec50b6cd89b7b1891e894f0122ed8db3b168e30988725eae88668fd9f4bffca.css" />
+<link rel="shortcut icon" type="image/x-icon" href="/assets/icons/favicon/favicon-ecaca8aabcbbbfbb5e66b5624efba767fdd29e2a8595ab161a3597812276ca2d.ico" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="RxnSiACkVgXedI8t0psu4QEvjpst2lLJY0jTUdoJEkuXbcb/amuci+6qXk3mLPpi7VUCtB+X7rWmxdMoiZUq1g==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+<meta content='https://www.aklamio.com/assets/www/facebok-og-image-4a7225cc307c222f25b56a9f09f14289ec49c652279b9d525e535caacecd59b0.jpg' itemprop='image' property='og:image'>
+<!-- Start of aklamio Zendesk Widget script -->
+<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(c){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","aklamio.zendesk.com");
+/*]]>*/</script>
+<!-- End of aklamio Zendesk Widget script -->
+<script>https://www.aklamio.com/de/uebersicht
+  zE(function() {https://www.aklamio.com/u/jasminisel1/r/aklamio
+    zE.setLocale("de");
+    zE.identify({ email: "" });
+  });
+</script>
+<script id='translations' type='application/json'>
+{<http://aklam.io/1lzDhF>
+<html lang='de' xml:lang='de' xmlns='http://www.w3.org/1999/xhtml'>
+<head><meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+  "global.how_it_work_slider.slide_1.description": "Empfiehl mit Aklamio mehr als 3.000 Shops und 100 Millionen Produkte.",
+  "global.how_it_work_slider.slide_1.headline": "Wähle Deinen Shop",
+  "global.how_it_work_slider.slide_1.navigation": "<strong>1</strong>",
+  "global.how_it_work_slider.slide_2.description": "Teile Deinen persönlichen Empfehlungslink über WhatsApp, E-Mail oder Facebook.",
+  "global.how_it_work_slider.slide_2.headline": "Teile Deinen Link",
+  "global.how_it_work_slider.slide_2.navigation": "<strong>2</strong>",
+  "global.how_it_work_slider.slide_3.description": "Gut gemacht – Dein Freund hat soeben gefunden, was er gesucht hat. Damit hast Du Geld verdient.",
+  "global.how_it_work_slider.slide_3.headline": "Deine Empfehlung war erfolgreich",
+  "global.how_it_work_slider.slide_3.navigation": "<strong>3</strong>",
+  "www.react.recommendation_overlay.step1.headline": "Du empfiehlst: ",
+  "www.react.recommendation_overlay.step2.headline": "Was möchtest Du mit Deiner Prämie tun?",
+  "www.react.recommendation_overlay.step2.pill.give": "Verschenken",
+  "www.react.recommendation_overlay.step2.pill.keep": "Behalten",
+  "www.react.recommendation_overlay.step2.pill.share": "Teilen",
+  "www.react.recommendation_overlay.step3.copy_confirm_message": "Um Deinen Link einzufügen, kannst Du entweder mit der rechten Maustaste auf \"Einfügen\" klicken oder die Tastenkombination STRG + V verwenden.",
+  "www.react.recommendation_overlay.step3.copy_link": "Link kopieren",
+  "www.react.recommendation_overlay.step3.email_share_link": "E-Mail",
+  "www.react.recommendation_overlay.step3.facebook_share_link": "Facebook",
+  "www.react.recommendation_overlay.step3.google_share_link": "Google",
+  "www.react.recommendation_overlay.step3.headline": "Teile Deine Empfehlung",
+  "www.react.recommendation_overlay.step3.link_copied": "In die Zwischenablage kopiert",
+  "www.react.recommendation_overlay.step3.link_selected": "Ctrl+C zum Kopieren",
+  "www.react.recommendation_overlay.step3.twitter_share_link": "Twitter",
+  "www.react.recommendation_overlay.step3.whatsapp_share_link": "WhatsApp",
+  "www.react.user_dashboard.cashback_tile.go_to_shop": "Weiter zum Shop",
+  "www.react.user_dashboard.no_shop_recommended.description": "Empfehlen war noch nie so einfach! Jetzt kanns los gehen.",
+  "www.react.user_dashboard.no_shop_recommended.shops_link": "/de/shops",
+  "www.react.user_dashboard.no_shop_recommended.start_recommending": "Hab Spaß, entdecke Neues und empfiehl Aklamio weiter",
+  "www.react.user_dashboard.onboarding.hint.after_link": "und empfiehl Deinen Freunden Shops und Produkte, die Du gut findest.",
+  "www.react.user_dashboard.onboarding.hint.description": "Dein Aklamio-Nutzerkonto wurde erfolgreich bestätigt.",
+  "www.react.user_dashboard.onboarding.hint.headline": "Willkommen bei Aklamio",
+  "www.react.user_dashboard.onboarding.hint.profile_link": "Vervollständige Dein Aklamio-Nutzerkonto",
+  "www.react.user_dashboard.onboarding.hint.settings_link": "/de/einstellungen",
+  "www.react.user_dashboard.payout_available.action": "Auszahlen",
+  "www.react.user_dashboard.payout_available.content_one": "Gute Neuigkeiten : ",
+  "www.react.user_dashboard.payout_available.content_two": "Dein Guthaben steht zur Auszahlung bereit",
+  "www.react.user_dashboard.payout_available.payout_link": "/de/konto",
+  "www.react.user_dashboard.recommendation_tile.clicks": "Klicks",
+  "www.react.user_dashboard.recommendation_tile.created_on": "erstellt am",
+  "www.react.user_dashboard.recommendation_tile.rewards": "Prämien",
+  "www.react.user_dashboard.recommendation_tile.share_button": "Nochmals teilen",
+  "www.react.user_dashboard.reward_filter.all": "alle",
+  "www.react.user_dashboard.reward_filter.clear_filter": "Zurück zur Prämienübersicht",
+  "www.react.user_dashboard.reward_filter.confirmed": "bestätigt",
+  "www.react.user_dashboard.reward_filter.headline": "Prämien",
+  "www.react.user_dashboard.reward_filter.label": "Prämienstatus",
+  "www.react.user_dashboard.reward_filter.pending": "offen",
+  "www.react.user_dashboard.reward_filter.rejected": "abgelehnt",
+  "www.react.user_dashboard.reward_filter.total_confirmed": "bestätigt",
+  "www.react.user_dashboard.reward_receiver.follower": "Prämie verschenken",
+  "www.react.user_dashboard.reward_receiver.mittlr": "Prämie behalten",
+  "www.react.user_dashboard.reward_receiver.shared": "Prämie teilen",
+  "www.react.user_dashboard.reward_table.load_more": "Mehr Prämien",
+  "www.react.user_dashboard.reward_tile.confirmed_on": "bestätigt am ",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.less_than_a_week": "unter einer Woche",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.not_available": "wird ermittelt",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.twelve_weeks_or_longer": "mehr als 12 Wochen",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.up_to_weeks": "bis zu {weeks} Wochen",
+  "www.react.user_dashboard.reward_tile.created_on": "erstellt am ",
+  "www.react.user_dashboard.reward_tile.get_support": "Nachbuchungsanfrage",
+  "www.react.user_dashboard.reward_tile.invited_friends.link": "Lade noch mehr Freunde ein",
+  "www.react.user_dashboard.reward_tile.invited_friends.title": "Eingeladene Freunde ",
+  "www.react.user_dashboard.reward_tile.rejected_on": "abgelehnt am",
+  "www.react.user_dashboard.reward_tile.tooltip.bonus_reward": "Bonusprämie",
+  "www.react.user_dashboard.settings_link": "/de/einstellungen",
+  "www.react.user_dashboard.shop_filter.all_shops": "Alle Shops",
+  "www.react.user_dashboard.shop_filter.hint": "Empfohlene Shops werden erst angezeigt, wenn Dein Freund Deinem Empfehlungslink folgt.",
+  "www.react.user_dashboard.shop_filter.option_placeholder": "Alle Shops",
+  "www.react.user_dashboard.shop_filter.reward_history": "Meine Shops",
+  "www.react.user_dashboard.shop_filter.select_shop": "Wähle Deinen Shop",
+  "www.react.user_dashboard.shop_tile.button.cashback": "Cashback",
+  "www.react.user_dashboard.shop_tile.button.cashbacks": "Cashbacks",
+  "www.react.user_dashboard.shop_tile.button.no_reward": "Noch keine Prämien",
+  "www.react.user_dashboard.shop_tile.button.recommendation": "Empfehlung",
+  "www.react.user_dashboard.shop_tile.button.recommendations": "Empfehlungen",
+  "www.react.user_dashboard.shop_tile.button.show_reward": "Prämien anzeigen",
+  "www.react.user_dashboard.shop_tile.button.you_created": "Du hast: ",
+  "www.react.user_dashboard.shop_tile.load_more_cta": "Mehr anzeigen",
+  "www.react.user_dashboard.shop_tile.reward_amount.reward": "Prämie",
+  "www.react.user_dashboard.shop_tile.reward_amount.rewards": "Prämien",
+  "www.react.user_dashboard.shop_tile.tooltip.clicks": "Anzahl von Klicks",
+  "www.react.user_dashboard.shop_tile.tooltip.none_published_shop": "Dieser Shop gehört nicht mehr zu unseren Partner-Shops",
+  "www.react.user_dashboard.shop_tile.tooltip.payout": "Auszahlung",
+  "www.react.user_dashboard.shop_tile.tooltip.recommendations": "Empfehlungen",
+  "www.react.user_dashboard.shop_tile.tooltip.recommend_again_cta": "Nochmals teilen",
+  "www.react.user_dashboard.shop_tile.tooltip.rewards": "Prämien",
+  "www.react.user_dashboard.shop_tile.tooltip.shop_again_cta": "Nochmals einkaufen",
+  "www.react.user_dashboard.shop_tile.top_reward": "Prämie",
+  "www.react.user_dashboard.support_link": "/de/transaction_inquiries",
+  "www.react.user_dashboard.support_link_text": "Nachbuchungsanfrage",
+  "www.react.user_dashboard.user_overview.pending_rewards": "Offene Prämien",
+  "www.react.user_dashboard.user_overview.show_all_rewards": "Alle Prämien anzeigen",
+  "www.react.user_dashboard.user_overview.total_rewards": "Gesamt"
+}
+</script>
+<script>https://www.aklamio.com/de/uebersicht
+  var translations = JSON.parse(document.getElementById('translations').innerHTML);https://www.aklamio.com/de/uebersicht
+</script>
+</head>
+<body class='sign'>https://www.aklamio.com/u/jasminisel1/r/content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" />
+<header class='site-header'><script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<script src="/assets/signup-6bcd28fabdc73dde92c7a20727620fe05807ded555e91e880ecd41d0e4eeac03.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<div class='container clearfix'>
+<a class="logo" href="/de"><svg width="299" height="77" viewBox="0 0 299 77" xmlns="http://www.w3.org/2000/svg"><title>logo</title><g id="logo" fill="none" fill-rule="evenodd"><g id="icon"><path d="M64.635 15.834L39.183 1.224C37.77.408 36.193 0 34.616 0c-1.578 0-3.154.408-4.568 1.224L4.595 15.834C1.753 17.474 0 20.514 0 23.807v29.38c0 3.29 1.753 6.332 4.595 7.972l25.41 14.54c1.416.815 2.992 1.223 4.57 1.223 1.576 0 3.153-.408 4.567-1.224l25.493-14.54c2.843-1.64 4.596-4.683 4.596-7.974v-29.38c0-3.29-1.752-6.33-4.595-7.972" id="Shape" fill="#FC6053"/><path d="M47.17 55.848c-5.928 0-8.238-8.262-8.238-13.594-1.48 5.696-6.613 13.594-12.173 13.594-4.952 0-7.793-4.358-7.793-9.653 0-10.685 8.238-23.013 18.36-23.013 3.553 0 6.577 1.892 6.577 3.462 0 1.85-3.576 3.155-5.182 3.155-1.25-1.28-2.602-1.94-4.25-1.94-6.052 0-10.332 11.342-10.332 17.69 0 2.823.968 5.814 3.684 5.814 4.222 0 8.224-6.558 10.14-12.603.61-1.93.834-3.13 1.02-4.677.18-1.507 1.25-2.3 2.53-2.3 1.267 0 2.246 1.057 2.246 2.13 0 5.95-.5 19.446 3.4 19.446 2.61 0 2.563-6.452 2.563-9.83 2.863 0 5.072 1.782 5.072 4.47 0 3.82-3.19 7.848-7.625 7.848" id="Shape" fill="#FEFEFE"/></g><g id="text" fill="#364047"><path d="M113.056 53.115c2.238 0 4.21-.51 5.916-1.525 1.705-1.018 2.936-2.332 3.694-3.942v-5.52h-6.226c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.04.907 2.475 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.087-.677-.13-1.364-.13-2.06-1.034 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.857-.693-6.355-2.084-1.5-1.39-2.248-3.272-2.248-5.646 0-2.544 1.11-4.56 3.333-6.053 2.222-1.49 5.236-2.238 9.04-2.238h6.176v-3.637c0-1.967-.64-3.51-1.924-4.63-1.284-1.118-3.08-1.677-5.387-1.677-1.55 0-2.966.207-4.25.623-1.283.414-2.355.978-3.216 1.69l-.26 3.687h-2.557l.026-5.29c1.29-.983 2.836-1.78 4.636-2.39 1.8-.61 3.716-.915 5.748-.915 3.083 0 5.563.77 7.44 2.314 1.878 1.543 2.816 3.755 2.816 6.637v13.53c0 .56.013 1.098.04 1.615.025.518.08 1.02.167 1.513l2.79.18v2.237h-5.502zm9.44-37.54v-2.303h7.315v24.07h3.296l8.535-9.084-.05-.13-2.57-.18v-2.304h9.883v2.304l-3.268.31-9.597 10.172 10.92 12.657 3.113.284v2.277h-9.856v-2.276l2.957-.182-9.753-11.18h-3.606v11.025l4.23.337v2.277h-11.544v-2.276l4.23-.337V18.074l-4.23-.336zm31.514 0v-2.303h7.488v37.763l4.33.337v2.277H164.19v-2.276l4.328-.337V18.074l-4.328-.336zm22.726 35.378c2.24 0 4.21-.51 5.917-1.525 1.704-1.018 2.935-2.332 3.693-3.942v-5.52H190.3c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.042.907 2.476 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.086-.677-.13-1.364-.13-2.06-1.032 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.856-.693-6.354-2.084-1.5-1.39-2.25-3.272-2.25-5.646 0-2.544 1.112-4.56 3.334-6.053 2.222-1.49 5.236-2.238 9.042-2.238h6.174v-3.637c0-1.967-.64-3.51-1.924-4.63-1.283-1.118-3.08-1.677-5.386-1.677-1.55 0-2.967.207-4.25.623-1.284.414-2.355.978-3.217 1.69l-.26 3.687h-2.557l.026-5.29c1.292-.983 2.837-1.78 4.636-2.39 1.8-.61 3.717-.915 5.75-.915 3.082 0 5.562.77 7.44 2.314 1.877 1.543 2.815 3.755 2.815 6.637v13.53c0 .56.014 1.098.04 1.615.026.518.082 1.02.167 1.513l2.79.18v2.237h-5.502zm10.425-25.2v-2.308h6.923l.283 4.64c.892-1.643 2.085-2.913 3.577-3.81 1.493-.9 3.268-1.348 5.327-1.348 2.127 0 3.903.522 5.327 1.567 1.424 1.044 2.445 2.64 3.062 4.78.84-1.97 2.035-3.52 3.59-4.65 1.55-1.133 3.442-1.698 5.672-1.698 2.967 0 5.262.993 6.884 2.98 1.62 1.987 2.43 5.062 2.43 9.226v13.71l4.196.362v2.28H243.29v-2.28l4.193-.363v-13.76c0-3.457-.605-5.897-1.813-7.322-1.21-1.426-2.895-2.138-5.057-2.138-2.402 0-4.25.768-5.545 2.306s-2.097 3.5-2.406 5.883c0 .138.004.268.013.39.008.12.012.275.012.466v14.202l4.195.336v2.28h-11.477v-2.28l4.195-.336V39.406c0-3.386-.613-5.81-1.84-7.27s-2.912-2.19-5.056-2.19c-2.197 0-3.934.558-5.21 1.672-1.28 1.115-2.176 2.614-2.69 4.497v17.08l4.194.335v2.28H207.52v-2.28l4.196-.336v-22.78l-4.195-.338zm58.7-10.295h-3.16v-4.348h3.16v4.348zm-7.49 33.75l4.33-.336v-22.75l-4.33-.337v-2.304h7.49v25.39l4.33.337v2.278h-11.82v-2.277zm17.814-11.58c0 3.186.815 5.865 2.444 8.034 1.63 2.17 3.9 3.256 6.817 3.256 2.864 0 5.11-1.085 6.74-3.256 1.63-2.17 2.444-4.848 2.444-8.035v-.84c0-3.135-.82-5.797-2.458-7.984-1.637-2.187-3.897-3.28-6.778-3.28-2.88 0-5.137 1.093-6.766 3.28-1.63 2.187-2.444 4.85-2.444 7.985v.84zm-3.087-.84c0-4.052 1.123-7.376 3.37-9.97 2.246-2.593 5.222-3.89 8.927-3.89 3.72 0 6.705 1.297 8.952 3.89 2.247 2.594 3.37 5.918 3.37 9.97v.84c0 4.068-1.118 7.395-3.357 9.98-2.24 2.585-5.21 3.88-8.915 3.88-3.74 0-6.732-1.295-8.978-3.88-2.247-2.585-3.37-5.912-3.37-9.98v-.84z" id="Shape"/></g></g></svg></a>
+<div class='desktop-nav'>44534247+shoppingandmore2017@users.noreply.github.com
+<div class='float-left'>https://www.aklamio.com/u/jasminisel1/r/aklamio
+<div class='searchbar'>https://www.aklamio.com/de/tools/cashbar?utm_campaign=aklamio&utm_medium=shops&utm_source=menubar
+<form>
+<span class='icon-magnifying-glass'>d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==</span>
+<input class='search-query' data-category='in Kategorie' data-https://www.aklamio.com/de/transaction_inquiries_result_content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" />https://github.com/desktop/desktop/compare/development...shoppingandmore2017:master-result=d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg=='Leider wurden keine Ergebnisse gefunden ' data-reward=' Prämie' data-url='https://www.aklamio.com/de/shops/for_autocomplete' id='nav-search-input' placeholder='Suche nach Shop oder Kategorie'>
+</form>
+<div class='autocomplete-container'>https://www.aklamio.com/de/uebersicht/content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" />44534247+shoppingandmore2017@users.noreply.github.com</div>
+</div>
+<div class='browse-categories'>https://www.aklamio.com/de/uebersicht
+oder
+<a class="js-categories-dropdown" href="#">zu Kategorien
+</a><span class='triangle-down'>
+<img src="/assets/www/aklamio-branding/icons/icon-big-triangle-down-6eb4f26fc0a8f40d0f9b1684f8b29ce01f1f81342d9b31423d6a7109895148ab.svg" alt="Icon big triangle down" />
+</span>
+</div>d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==https://www.aklamio.com/u/jasminisel1/r/aklamio
+</div><meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="CF4OPnsDEXqiawWDukUvqF2Cy92+mvfBUWOVqToTH1IiA02ZMeRWxQ2i5zQ+tQFZqoWwtjyhmQnMF+mP8GEI8g==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+<meta content='https://www.aklamio.com/assets/www/facebok-og-image-4a7225cc307c222f25b56a9f09f14289ec49c652279b9d525e535caacecd59b0.jpg' itemprop='image' property='og:image'>
+<!-- Start of aklamio Zendesk Widget script -->
+<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(c){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","aklamio.zendesk.com");
+/*]]>*/</script>
+<!-- End of aklamio Zendesk Widget script -->
+<script>
+  zE(function() {https://www.aklamio.com/de/tools/cashbar?utm_campaign=aklamio&utm_medium=shops&utm_source=menubar
+    zE.setLocale("de");
+    zE.identify({ email: "jasminisel85@gmail.com" });
+  });
+</script>
+
+<div class='float-right'>
+<div class='nav-links'>
+<a id="header-nav-cashbar" href="/de/tools/cashbar?utm_campaign=aklamio&amp;utm_source=menubar">Cashbar</a>
+<a id="header-nav-companies" class="for-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</div>44534247+shoppingandmore2017@users.noreply.github.com
+7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==https://www.aklamio.com/u/jasminisel1/r/aklamio
+</div><script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<script src="/assets/signup-6bcd28fabdc73dde92c7a20727620fe05807ded555e91e880ecd41d0e4eeac03.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<div class='user-links'>7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==https://www.aklamio.com/u/jasminisel1/r/aklamio
+</div><script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<script src="/assets/signup-6bcd28fabdc73dde92c7a20727620fe05807ded555e91e880ecd41d0e4eeac03.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<a id="primary-nav-login" class="btn btn-secondary" href="/de/anmelden">Einloggen</a>
+<a id="primary-nav-signup" class="btn btn-primary last" href="/de/registrierung">Registrieren</a>
+</div><script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<script src="/assets/signup-6bcd28fabdc73dde92c7a20727620fe05807ded555e91e880ecd41d0e4eeac03.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<div class='dropdown-group language'>
+<a id="dropdown-toggle-language" class="dropdown-toggle-link" href="#">DE</a>
+<ul class='dropdown-menu'>
+<li>http://aklam.io/1lzDhF
+<a href="https://www.aklamio.com/en/sign_in?update_user_locale=true">EN</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/es/inicia-sesion?update_user_locale=true">ES</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/fr/se-connecter?update_user_locale=true">FR</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/it/accedi?update_user_locale=true">IT</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/nl/aanmelden?update_user_locale=true">NL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pl/zaloguj_sie?update_user_locale=true">PL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pt/iniciar_a_sessao?update_user_locale=true">PT</a>
+</li>
+</ul>
+</div>
+</div>7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==https://www.aklamio.com/u/jasminisel1/r/aklamio
+</div>
+</div>
+</div>
+<div class='shops-category'>
+<div class='container'>
+<span class='icon-cross close-categories-dropdown js-close-categories-dropdown'></span>
+<ul class='category-group'>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/fashion">Fashion</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-bekleidung">Bekleidung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-kinder-babysachen">Kinder &amp; Babysachen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-dessous">Dessous</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-schuhe">Schuhe</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-accessories">Accessories</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-streetwear">Streetwear</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-schmuck-luxus">Schmuck &amp; Luxus</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/reisen-urlaub">Reisen &amp; Urlaub</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-autovermietung">Autovermietung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-holiday-package">Holiday package</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-fluege">Flüge</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-hotels-apartments">Hotels &amp; Apartments</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-kreuzfahrten">Kreuzfahrten</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/home-beauty">Home &amp; Beauty</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-design">Design</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-haus-garten">Haus &amp; Garten</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-pflanzen-blumen">Pflanzen &amp; Blumen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-apotheke">Apotheke</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-optiker">Optiker</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-gesundheit-beauty">Gesundheit &amp; Beauty</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-geschenke">Geschenke</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/finanzen-energieversorger-versicherung">Finanzen, Energieversorger &amp; Versicherung</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-versicherung">Versicherung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-kredit">Kredit</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-banken-kreditkarten">Banken &amp; Kreditkarten</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-strom-gasanbieter">Strom &amp; Gasanbieter</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/computer-software">Computer &amp; Software</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-software">Software</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-computer">Computer</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-elektronik">Elektronik</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-audio">Audio</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/auto-motorrad">Auto &amp; Motorrad</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-autoteile">Autoteile</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-motorradteile">Motorradteile</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-reifen">Reifen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-autowerkstatt">Autowerkstatt</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-accessories">Accessories</a>
+</li>
+</ul>
+</li></li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/verschiedenes">Verschiedenes</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-buero">Büro</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-tierbedarf">Tierbedarf</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-reinigungsdienste">Reinigungsdienste</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-drucksachen-foto">Drucksachen &amp; Foto</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-bildung">Bildung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-dienstleistungen">Dienstleistungen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-community">Community</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/telekommunikation">Telekommunikation</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-langfristige-handyvertraege">Langfristige Handyverträge</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-internet-tv">Internet &amp; TV</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-prepaid-anbieter">Prepaid-Anbieter</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-geraete">Geräte</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-webhosting">Webhosting</a>
+</li>
+</ul>
+</li>
+</ul>
+<div class='category-all-shops'>
+<a id="all-shops-categories-link" href="/de/shops">Alle Shops anzeigen</a>
+</div><meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="CF4OPnsDEXqiawWDukUvqF2Cy92+mvfBUWOVqToTH1IiA02ZMeRWxQ2i5zQ+tQFZqoWwtjyhmQnMF+mP8GEI8g==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+<meta content='https://www.aklamio.com/assets/www/facebok-og-image-4a7225cc307c222f25b56a9f09f14289ec49c652279b9d525e535caacecd59b0.jpg' itemprop='image' property='og:image'>
+<!-- Start of aklamio Zendesk Widget script -->
+<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(c){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","aklamio.zendesk.com");
+/*]]>*/</script>
+<!-- End of aklamio Zendesk Widget script -->
+<script>
+  zE(function() {
+    zE.setLocale("de");
+    zE.identify({ email: "jasminisel85@gmail.com" });
+  });
+</script>
+
+<div class='category-all'>
+<a id="all-categories-link" href="/de/all-categories">Alle Kategorien
+<span class='icon-chevron-right'></span>
+</a></div>
+</div>
+</div>
+<div class='searchbar mobile'>
+<form>
+<span class='icon-magnifying-glass'></span>
+<input class='mobile-search-query' data-url='https://www.aklamio.com/de/shops/for_autocomplete' id='mobile-nav-search-input' placeholder='Suche nach Shop oder Kategorie'>
+</form>
+<div class='autocomplete-container'></div>
+</div>
+<div class='mobile-nav-link'>
+<span class='icon-cross'></span>
+<a id="mobile-nav-menue" href="#">Menü</a>
+</div>
+<div class='mobile-nav'>
+<ul>
+<li>
+<a id="mobile-nav-signup" href="/de/registrierung"><span class='icon-user'></span>
+Registrieren
+</a></li>
+<li>
+<a id="mobile-nav-login" href="/de/anmelden"><span class='icon-lock'></span>
+Einloggen
+</a></li>
+<li>
+<a id="mobile-nav-shops" href="/de/shops"><span class='icon-shop'></span>
+Shops
+</a></li>
+<li>
+<a id="mobile-nav-categories" href="/de/all-categories"><span class='icon-dots-three-horizontal'></span>
+Kategorien
+</a></li>
+<li>
+<a id="header-nav-cashbar" href="/de/tools/cashbar"><span class='icon-cashback'></span>
+Cashbar
+</a></li>
+<li>
+<a id="header-nav-companies" href="https://www.aklamio.com/de/fuer-unternehmen"><span class='icon-globe'></span>
+Für Unternehmen
+</a></li>
+</ul>
+</div>
+</header>
+<div class='main-content'>
+<header></header>
+<section class='sc-login'>
+<div class='bg-register'></div>
+<div class='container'>
+<div class='module-signup-login'>
+<h1>Logge Dich ein</h1>
+<form class="new_mittlr" id="new_mittlr" action="/de/anmelden" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="Ex6R+GdSzX1WPlEehSbJw5Rxv4KLsH12Ybt1qB+ypxvDaoWPDZ0H82bggH6xkR1AeAszrbn9wQqkNnXRTC6fhg==" /><div class='form-element'>
+<input type="email" required="required" placeholder="Deine E-Mail-Adresse" class="with-icon" value="" name="mittlr[email]" id="mittlr_email" />
+<span class='icon-mail'>44534247+shoppingandmore2017@users.noreply.github.com</span><script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<script src="/assets/signup-6bcd28fabdc73dde92c7a20727620fe05807ded555e91e880ecd41d0e4eeac03.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+</div>https://github.com/desktop/desktop/compare/development...shoppingandmore2017:master<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="CF4OPnsDEXqiawWDukUvqF2Cy92+mvfBUWOVqToTH1IiA02ZMeRWxQ2i5zQ+tQFZqoWwtjyhmQnMF+mP8GEI8g==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+<meta content='https://www.aklamio.com/assets/www/facebok-og-image-4a7225cc307c222f25b56a9f09f14289ec49c652279b9d525e535caacecd59b0.jpg' itemprop='image' property='og:image'>
+<!-- Start of aklamio Zendesk Widget script -->
+<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(c){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","aklamio.zendesk.com");
+/*]]>*/</script>
+<!-- End of aklamio Zendesk Widget script -->
+<script>
+  zE(function() {https://www.aklamio.com/de/fuer-unternehmen
+    zE.setLocale("de");
+    zE.identify({ email: "jasminisel85@gmail.com" });
+  });
+</script>
+
+<div class='form-element'>https://www.aklamio.com/u/jasminisel1/r/aklamio
+<input required="required" placeholder="Dein Passwort" class="with-icon" type="password" name="mittlr[password]" id="mittlr_password" />
+<span class='icon-lock'>https://www.aklamio.com/u/jasminisel1/r/aklamio</span>
+</div>https://www.aklamio.com/u/jasminisel1/r/aklamio/https://github.com/desktop/desktop/compare/development...shoppingandmore2017:master
+<div class='forgot-password'>
+<a id="user-password-reset" class="user-password" href="/de/passwort-vergessen">Passwort vergessen?</a>
+</div>
+<input type="submit" name="commit" value="Mit E-Mail einloggen" id="sign-in-submit-button" />
+</form>
+<div class='choice choice_register-login'>
+oder
+</div>
+<ul class='social-connects'>
+<li>
+<a class="btn btn-paypal-connect" id="sign-in-paypal-connect" href="/auth/paypal">bebby2012@hotmail.de<span class='icon-paypal'></span>
+<span class='mobile-hidden'>
+Paypal
+</span>
+</a></li>
+<li>
+<a class="btn btn-facebook-connect" id="sign-in-facebook-connect" href="/auth/facebook"><span class='icon-facebook'></span>
+<span class='mobile-hidden'>
+Facebook
+</span>
+</a></li>
+<li>
+<a class="btn btn-google-connect" id="sign-in-google-connect" href="/auth/google_oauth2">shoppinggandmore@gmail.com<span class='icon-google'></span>
+<span class='mobile-hidden'>
+Google
+</span>
+</a></li>
+</ul>
+<div class='subbox'>auto<a class="logo" href="/de"><svg width="299" height="77" viewBox="0 0 299 77" xmlns="http://www.w3.org/2000/svg"><title>logo</title><g id="logo" fill="none" fill-rule="evenodd"><g id="icon"><path d="M64.635 15.834L39.183 1.224C37.77.408 36.193 0 34.616 0c-1.578 0-3.154.408-4.568 1.224L4.595 15.834C1.753 17.474 0 20.514 0 23.807v29.38c0 3.29 1.753 6.332 4.595 7.972l25.41 14.54c1.416.815 2.992 1.223 4.57 1.223 1.576 0 3.153-.408 4.567-1.224l25.493-14.54c2.843-1.64 4.596-4.683 4.596-7.974v-29.38c0-3.29-1.752-6.33-4.595-7.972" id="Shape" fill="#FC6053"/><path d="M47.17 55.848c-5.928 0-8.238-8.262-8.238-13.594-1.48 5.696-6.613 13.594-12.173 13.594-4.952 0-7.793-4.358-7.793-9.653 0-10.685 8.238-23.013 18.36-23.013 3.553 0 6.577 1.892 6.577 3.462 0 1.85-3.576 3.155-5.182 3.155-1.25-1.28-2.602-1.94-4.25-1.94-6.052 0-10.332 11.342-10.332 17.69 0 2.823.968 5.814 3.684 5.814 4.222 0 8.224-6.558 10.14-12.603.61-1.93.834-3.13 1.02-4.677.18-1.507 1.25-2.3 2.53-2.3 1.267 0 2.246 1.057 2.246 2.13 0 5.95-.5 19.446 3.4 19.446 2.61 0 2.563-6.452 2.563-9.83 2.863 0 5.072 1.782 5.072 4.47 0 3.82-3.19 7.848-7.625 7.848" id="Shape" fill="#FEFEFE"/></g><g id="text" fill="#364047"><path d="M113.056 53.115c2.238 0 4.21-.51 5.916-1.525 1.705-1.018 2.936-2.332 3.694-3.942v-5.52h-6.226c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.04.907 2.475 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.087-.677-.13-1.364-.13-2.06-1.034 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.857-.693-6.355-2.084-1.5-1.39-2.248-3.272-2.248-5.646 0-2.544 1.11-4.56 3.333-6.053 2.222-1.49 5.236-2.238 9.04-2.238h6.176v-3.637c0-1.967-.64-3.51-1.924-4.63-1.284-1.118-3.08-1.677-5.387-1.677-1.55 0-2.966.207-4.25.623-1.283.414-2.355.978-3.216 1.69l-.26 3.687h-2.557l.026-5.29c1.29-.983 2.836-1.78 4.636-2.39 1.8-.61 3.716-.915 5.748-.915 3.083 0 5.563.77 7.44 2.314 1.878 1.543 2.816 3.755 2.816 6.637v13.53c0 .56.013 1.098.04 1.615.025.518.08 1.02.167 1.513l2.79.18v2.237h-5.502zm9.44-37.54v-2.303h7.315v24.07h3.296l8.535-9.084-.05-.13-2.57-.18v-2.304h9.883v2.304l-3.268.31-9.597 10.172 10.92 12.657 3.113.284v2.277h-9.856v-2.276l2.957-.182-9.753-11.18h-3.606v11.025l4.23.337v2.277h-11.544v-2.276l4.23-.337V18.074l-4.23-.336zm31.514 0v-2.303h7.488v37.763l4.33.337v2.277H164.19v-2.276l4.328-.337V18.074l-4.328-.336zm22.726 35.378c2.24 0 4.21-.51 5.917-1.525 1.704-1.018 2.935-2.332 3.693-3.942v-5.52H190.3c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.042.907 2.476 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.086-.677-.13-1.364-.13-2.06-1.032 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.856-.693-6.354-2.084-1.5-1.39-2.25-3.272-2.25-5.646 0-2.544 1.112-4.56 3.334-6.053 2.222-1.49 5.236-2.238 9.042-2.238h6.174v-3.637c0-1.967-.64-3.51-1.924-4.63-1.283-1.118-3.08-1.677-5.386-1.677-1.55 0-2.967.207-4.25.623-1.284.414-2.355.978-3.217 1.69l-.26 3.687h-2.557l.026-5.29c1.292-.983 2.837-1.78 4.636-2.39 1.8-.61 3.717-.915 5.75-.915 3.082 0 5.562.77 7.44 2.314 1.877 1.543 2.815 3.755 2.815 6.637v13.53c0 .56.014 1.098.04 1.615.026.518.082 1.02.167 1.513l2.79.18v2.237h-5.502zm10.425-25.2v-2.308h6.923l.283 4.64c.892-1.643 2.085-2.913 3.577-3.81 1.493-.9 3.268-1.348 5.327-1.348 2.127 0 3.903.522 5.327 1.567 1.424 1.044 2.445 2.64 3.062 4.78.84-1.97 2.035-3.52 3.59-4.65 1.55-1.133 3.442-1.698 5.672-1.698 2.967 0 5.262.993 6.884 2.98 1.62 1.987 2.43 5.062 2.43 9.226v13.71l4.196.362v2.28H243.29v-2.28l4.193-.363v-13.76c0-3.457-.605-5.897-1.813-7.322-1.21-1.426-2.895-2.138-5.057-2.138-2.402 0-4.25.768-5.545 2.306s-2.097 3.5-2.406 5.883c0 .138.004.268.013.39.008.12.012.275.012.466v14.202l4.195.336v2.28h-11.477v-2.28l4.195-.336V39.406c0-3.386-.613-5.81-1.84-7.27s-2.912-2.19-5.056-2.19c-2.197 0-3.934.558-5.21 1.672-1.28 1.115-2.176 2.614-2.69 4.497v17.08l4.194.335v2.28H207.52v-2.28l4.196-.336v-22.78l-4.195-.338zm58.7-10.295h-3.16v-4.348h3.16v4.348zm-7.49 33.75l4.33-.336v-22.75l-4.33-.337v-2.304h7.49v25.39l4.33.337v2.278h-11.82v-2.277zm17.814-11.58c0 3.186.815 5.865 2.444 8.034 1.63 2.17 3.9 3.256 6.817 3.256 2.864 0 5.11-1.085 6.74-3.256 1.63-2.17 2.444-4.848 2.444-8.035v-.84c0-3.135-.82-5.797-2.458-7.984-1.637-2.187-3.897-3.28-6.778-3.28-2.88 0-5.137 1.093-6.766 3.28-1.63 2.187-2.444 4.85-2.444 7.985v.84zm-3.087-.84c0-4.052 1.123-7.376 3.37-9.97 2.246-2.593 5.222-3.89 8.927-3.89 3.72 0 6.705 1.297 8.952 3.89 2.247 2.594 3.37 5.918 3.37 9.97v.84c0 4.068-1.118 7.395-3.357 9.98-2.24 2.585-5.21 3.88-8.915 3.88-3.74 0-6.732-1.295-8.978-3.88-2.247-2.585-3.37-5.912-3.37-9.98v-.84z" id="Shape"/></g></g></svg></a>
+<div class='desktop-nav'>44534247+shoppingandmore2017@users.noreply.github.com
+<div class='float-left'>https://www.aklamio.com/u/jasminisel1/r/aklamio
+<div class='searchbar'>
+<form>
+<div><meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="CF4OPnsDEXqiawWDukUvqF2Cy92+mvfBUWOVqToTH1IiA02ZMeRWxQ2i5zQ+tQFZqoWwtjyhmQnMF+mP8GEI8g==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+<meta content='https://www.aklamio.com/assets/www/facebok-og-image-4a7225cc307c222f25b56a9f09f14289ec49c652279b9d525e535caacecd59b0.jpg' itemprop='image' property='og:image'>
+<!-- Start of aklamio Zendesk Widget script -->
+<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(c){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","aklamio.zendesk.com");
+/*]]>*/</script>
+<!-- End of aklamio Zendesk Widget script -->
+<script>
+  zE(function() {https://www.aklamio.com/u/jasminisel1/r/aklamio
+    zE.setLocale("de");
+    zE.identify({ email: "jasminisel85@gmail.com" });
+  });
+</script>
+
+Falls Du bei Aklamio noch nicht registriert bist:
+<a href="/de/registrierung">Hier geht&#39;s zur kostenlosen Anmeldung</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<footer class='site-footer'>
+<a class='back-to-top' href='#'>
+<span class='icon-triangle-up'></span>
+nach oben
+</a>
+<div class='footer-nav'>
+<div class='container'>
+<ul class='main-links'>https://www.aklamio.com/de/tools/cashbar?utm_campaign=aklamio&utm_medium=shops&utm_source=menubar
+<li>
+<a id="footer-nav-about" href="/de/was-ist-aklamio">Über Aklamio</a>
+</li>
+<li>
+<a id="footer-nav-careers" target="_blank" rel="nofollow" href="https://aklamio-jobs.personio.de/?language=de">Karriere</a>
+</li>
+<li>
+<a id="footer-nav-help" href="/de/hilfe">Fragen &amp; Antworten</a>
+</li>
+<li>
+<a id="footer-nav-cashbar" href="/de/tools/cashbar">Cashbar</a>
+</li>
+<li>
+<a id="footer-nav-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</li>
+</ul>
+<ul class='social-links'>
+<li>
+<a target="_blank" id="footer-social-facebook" href="https://www.facebook.com/aklamio"><span class='icon-facebook'></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-twitter" href="https://twitter.com/aklamio"><span class='icon-twitter'></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-linkedin" href="https://www.linkedin.com/company/aklamio-gmbh/"><span class='icon-linkedin'></span>
+</a></li>
+</ul>
+<ul class='legal-links'>
+<li>
+<a id="footer-nav-privacy" href="/de/datenschutz">Datenschutzerklärung</a>
+</li>
+<li>
+<a id="footer-nav-terms" href="/de/agb">AGB</a>
+</li>
+<li>
+<a id="footer-nav-imprint" href="https://www.aklamio.com/de/impressum">Impressum</a>
+</li>
+</ul>
+</div>
+</div>
+<div class='footer-bottom'>auto
+<div class='container'>
+<div class='shop-country-select'>auto
+<span class='icon-shop'></span>
+<label>Shops an</label>
+<select class='js-shop-country-select'>auto
+<option data-url='https://www.aklamio.com/de/anmelden?shop_country=de' value='de'>auto
+Deutschland
+</option>
+<option data-url='https://www.aklamio.com/de/anmelden?shop_country=at' value='at'>
+Österreich
+</option>
+<option data-url='https://www.aklamio.com/de/anmelden?shop_country=ch' value='ch'>
+Schweiz
+</option>
+<option data-url='https://www.aklamio.com/de/anmelden?shop_country=es' value='es'>
+Spanien
+</option>
+<option data-url='https://www.aklamio.com/de/anmelden?shop_country=gb' value='gb'>
+Großbritannien
+</option>
+<option data-url='https://www.aklamio.com/en/u/jasminisel1/r/aklamio' value='fr'>
+Frankreich
+</option>
+<option data-url='https://www.aklamio.com/it/u/jasminisel1/r/aklamio?update_user_locale=true' value='it'>
+Italien
+</option>
+</select>
+</div>view-source:https://www.aklamio.com/u/jasminisel1/r/aklamio
+<div class='language-select'>auto
+<span class='icon-globe'></span>auto
+<label>Sprache</label>auto
+<select class='js-language-select'>auto
+<option selected='true' value='https://www.aklamio.com/DE/u/jasminisel1/r/aklamio?update_user_locale=true'>auto
+Deutsch
+</option>
+<option value='https://www.aklamio.com/en/u/jasminisel1/r/aklamio?update_user_locale=true'>view-source:https://www.aklamio.com/u/jasminisel1/r/aklamio
+English
+</option>
+<option value='https://www.aklamio.com/es/jasminisel1/r/aklamio/inicia-saison?update_user_locale=true'>
+Español
+</option>
+<option value='https://www.aklamio.com/fr/se-connecter?update_user_locale=true'>
+Français
+</option>
+<option value='https://www.aklamio.com/it/u/jasminisel1/r/aklamio?update_user_locale=true'>
+Italiano
+</option>
+<option value='https://www.aklamio.com/nl/u/jasminisel1/r/aklamio?update_user_locale=true'>
+Nederlands
+</option>
+<option value='https://www.aklamio.com/pl/u/jasminisel1/r/zaloguj_sie?update_user_locale=true'>
+Polski
+</option>
+<option value='https://www.aklamio.com/pt/u/jasminisel1/r/aklamio?update_user_locale=true'>
+Português
+</option>
+</select>
+</div>
+<div class='copyright'>
+© 2019 aklamio GmbH
+</div>
+<div class='eu-union'>
+<div class='logo-eu' data-hint='Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.'>
+<img src="/assets/www/aklamio-branding/logos/eu-flag-4db4c8712abfabd68e563751137183dbf6a9d551d1970dde4633fcef2f900037.jpg" alt="Eu flag" />
+</div>https://www.aklamio.com/u/jasminisel1/r/aklamio
+<span class='eu-union-desc'>
+<span class='eu-union-headline'>
+EUROPÄISCHE UNION
+</span>
+<span class='eu-union-sub'>
+Europäischer Fonds für regionale Entwicklung
+</span>
+</span>
+<p class='eu-union-hint-mobile'>
+Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.
+</p>https://www.aklamio.com/de/tools/cashbar?utm_campaign=aklamio&utm_medium=shops&utm_source=menubar
+</div>
+</div>
+</div>
+</footer>
+<script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+<script src="/assets/signup-6bcd28fabdc73dde92c7a20727620fe05807ded555e91e880ecd41d0e4eeac03.js">content="d7r9BDIQg20kk6HkHclZnNUeVON6qf7DM3zF/UqE5qZd576jePfE0otaQ1OZOXdtIhkviPiSkAuuCLnbgPbxBg==" /></script>
+</body>
+</html>

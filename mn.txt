@@ -1,0 +1,273 @@
+Name
+ActiveX-Installer (AxInstSV)
+AllJoyn-Routerdienst
+Anmelde-Assistent für Microsoft-Konten
+Anmeldedienst
+Anmeldeinformationsverwaltung
+Anschlussumleitung für Remotedesktopdienst im Benutzermodus
+Anwendungsidentität
+Anwendungsinformationen
+Anzeigeverbesserungsdienst
+App-Vorbereitung
+AppX-Bereitstellungsdienst (AppXSVC)
+Arbeitsordner
+Arbeitsstationsdienst
+Aufgabenplanung
+Autom. Setup von Geräten, die mit dem Netzwerk verbunden sind
+Automatische Konfiguration (verkabelt)
+Automatische WLAN-Konfiguration
+Automatische Zeitzonenaktualisierung
+Avast SecureLine
+AVCTP-Dienst
+Basisfiltermodul
+Benachrichtigungsdienst für Systemereignisse
+Benutzerdatenspeicher _2424160
+Benutzerdatenzugriff_2424160
+Benutzerdienst für die Plattform für verbundene Geräte_2424160
+Benutzerdienst für GameDVR und Übertragungen_2424160
+Benutzererfahrung und Telemetrie im verbundenen Modus
+Benutzer-Manager
+Benutzerprofildienst
+BitLocker-Laufwerkverschlüsselungsdienst
+Blockebenen-Sicherungsmodul
+Bluetooth-Audiogateway-Dienst
+Bluetooth-Unterstützungsdienst
+Bluetooth-Unterstützungsdienst für Benutzer_2424160
+Broker für DevQuery-Hintergrundermittlung
+Broker für Laufzeitüberwachung der Systemüberwachung
+BTDevManager
+CaptureService_2424160
+Clientlizenzdienst (ClipSVC)
+CNG-Schlüsselisolation
+COM+-Ereignissystem
+COM+-Systemanwendung
+Computerbrowser
+ConsentUX_2424160
+CoreMessaging
+Cyberlink RichVideo64 Service(CRVS)
+Dateiversionsverlauf-Dienst
+Datenfreigabedienst
+Datennutzung
+DCOM-Server-Prozessstart
+Designs
+DevicePicker_2424160
+DevicesFlow_2424160
+DHCP-Client
+Diagnosediensthost
+Diagnoserichtliniendienst
+Diagnosesystemhost
+Diagnostic Execution Service
+Dienst "Assistent für lokale Profile"
+Dienst "Bonjour"
+Dienst für Bildschirmtastatur und Schreibbereich
+Dienst für Einzelhandelsdemos
+Dienst für räumliche Daten
+Distributed Transaction Coordinator
+DNS-Client
+Druckererweiterungen und -benachrichtigungen
+Druckwarteschlange
+Echtzeit-Datenträgerprüfung
+Eingabegerätedienst
+Eingebetteter Modus
+Enumeratordienst für tragbare Geräte
+Ereignisse zum Abrufen von Standbildern
+ESIF Upper Framework Service
+Extensible Authentication-Protokoll
+Fax
+Funktionssuchanbieter-Host
+Funktionssuche-Ressourcenveröffentlichung
+Funkverwaltungsdienst
+GamesAppIntegrationService
+GamesAppService
+Gatewaydienst auf Anwendungsebene
+Gemeinsame Nutzung der Internetverbindung
+Geolocation-Dienst
+Geräteinstallationsdienst
+Geräteinstallations-Manager
+Gerätezuordnungsdienst
+Google Chrome Elevation Service
+Google Update-Dienst (gupdate)
+Google Update-Dienst (gupdatem)
+GraphicsPerfSvc
+Gruppenrichtlinienclient
+Hostdienst für Windows Encryption Provider
+HP Registration Service
+HP Software Framework Service
+HP Support Solutions Framework Service
+HPWMISVC
+HV-Hostdienst
+Hyper-V PowerShell Direct-Dienst
+Hyper-V-Datenaustauschdienst
+Hyper-V-Dienst für Zeitsynchronisierung
+Hyper-V-Dienst zum Herunterfahren des Gasts
+Hyper-V-Gastdienstschnittstelle
+Hyper-V-Remotedesktopvirtualisierungsdienst
+Hyper-V-Taktdienst
+Hyper-V-Volumeschattenkopie-Anforderer
+IKE- und AuthIP IPsec-Schlüsselerstellungsmodule
+Infrarotüberwachungsdienst
+Infrastrukturdienst für Hintergrundaufgaben
+Intel(R) Capability Licensing Service TCP IP Interface
+Intel(R) Content Protection HECI Service
+Intel(R) Dynamic Application Loader Host Interface
+Intel(R) HD Graphics Control Panel Service
+Intel(R) Security Assist
+Intel(R) Security Assist Helper
+Intelligenter Hintergrundübertragungsdienst
+IP-Hilfsdienst
+IPsec-Richtlinien-Agent
+Jugendschutz
+Konfiguration für Remotedesktops
+Konfigurationsdienst für die IP-Übersetzung
+Kontaktdaten_2424160
+Kryptografiedienste
+KtmRm für Distributed Transaction Coordinator
+Laufwerke optimieren
+Leistungsindikator-DLL-Host
+Leistungsprotokolle und -warnungen
+Lokaler Sitzungs-Manager
+Manager für heruntergeladene Karten
+Manager-Dienst für den Funktionszugriff
+McAfee Activation Service
+McAfee AP Service
+McAfee CSP Service
+McAfee Firewall Core Service
+McAfee Module Core Service
+McAfee OOBE Service2
+McAfee PEF Service
+McAfee Service Controller
+McAfee Validation Trust Protection Service
+MessagingService_2424160
+Microsoft iSCSI-Initiator-Dienst
+Microsoft Office-Klick-und-Los-Dienst
+Microsoft Passport
+Microsoft Passport-Container
+Microsoft Store-Installationsdienst
+Microsoft Windows SMS-Routerdienst.
+Microsoft-SMP für Speicherplätze
+Microsoft-Softwareschattenkopie-Anbieter
+Natürliche Authentifizierung
+Net.Tcp-Portfreigabedienst
+Netzwerkeinrichtungsdienst
+Netzwerkkonnektivitäts-Assistent
+Netzwerklistendienst
+Netzwerkspeicher-Schnittstellendienst
+Netzwerkverbindungen
+Netzwerkverbindungsbroker
+NLA (Network Location Awareness)
+Office  Source Engine
+OpenSSH Authentication Agent
+Peer Name Resolution-Protokoll
+Peernetzwerk-Gruppenzuordnung
+Peernetzwerkidentitäts-Manager
+Plattformdienst für verbundene Geräte
+Plug & Play
+PNRP-Computernamenveröffentlichungs-Dienst
+PrintWorkflow_2424160
+Programmkompatibilitäts-Assistent-Dienst
+RAS-Verbindungsverwaltung
+Realtek Audio Service
+Realtek Bluetooth Device Manager Service
+Registrierungsdienst für die Geräteverwaltung
+Remotedesktopdienste
+Remoteprozeduraufruf (RPC)
+Remoteregistrierung
+Richtlinie zum Entfernen der Scmartcard
+Routing und RAS
+RPC-Endpunktzuordnung
+RPC-Locator
+Sekundäre Anmeldung
+Sensordatendienst
+Sensordienst
+Sensorüberwachungsdienst
+Server
+Shared PC Account Manager
+Shellhardwareerkennung
+Sicherheitscenter
+Sicherheitskonto-Manager
+Smartcard
+Smartcard-Geräteaufzählungsdienst
+SNMP-Trap
+Software Protection
+Speicherdienst
+Sprachumgebungsdienst
+SSDP-Suche
+SSTP-Dienst
+Standardsammlungsdienst des Microsoft(R)-Diagnose-Hubs
+StateRepository-Dienst
+Storage Tiers Management
+Stromversorgung
+Synchronisierungshost_2424160
+SynTPEnh Caller Service
+SysMain
+Systemereignissebroker
+TCP/IP-NetBIOS-Hilfsdienst
+Telefondienst
+Telefonie
+Übermittlungsoptimierung
+Überwachung verteilter Verknüpfungen (Client)
+Unterstützung in der Systemsteuerung unter Lösungen für Probleme
+Update Orchestrator Service
+UPnP-Gerätehost
+Verbessertes Windows-Audio/Video-Streaming
+Verbindungs-Manager-Dienst von Wi-Fi Direct Services
+Verbindungsschicht-Topologieerkennungs-Zuordnungsprogramm
+Verschlüsselndes Dateisystem (EFS)
+Verwaltung für automatische RAS-Verbindung
+Verwaltungsdienst für Unternehmens-Apps
+Virtueller Datenträger
+Volumeschattenkopie
+Volumetric Audio Compositor-Dienst
+WalletService
+WAP-Push-Nachrichten Routing-Dienst (Wireless Application Protocol) für die Geräteverwaltung
+WarpJITSvc
+Web Account Manager
+WebClient
+Windows 10-Dienst zur Vereinfachung von Updates
+Windows Defender Antivirus Service
+Windows Defender Antivirus-Netzwerkinspektionsdienst
+Windows Defender Firewall
+Windows Installer
+Windows Media Player-Netzwerkfreigabedienst
+Windows Modules Installer
+Windows Perception Service
+Windows Perception Simulation Service
+Windows Presentation Foundation-Schriftartcache 3.0.0.0
+Windows PushToInstall-Dienst
+Windows Remediation Service
+Windows Search
+Windows Update
+Windows Update Medic Service
+Windows-Audio
+Windows-Audio-Endpunkterstellung
+Windows-Bilderfassung (WIA)
+Windows-Biometriedienst
+Windows-Dienst für mobile Hotspots
+Windows-Dienst für Schriftartencache
+Windows-Ereignisprotokoll
+Windows-Ereignissammlung
+Windows-Fehlerberichterstattungsdienst
+Windows-Insider-Dienst
+Windows-Kamera-FrameServer
+Windows-Lizenz-Manager-Dienst
+Windows-Pushbenachrichtigungs-Benutzerdienst_2424160
+Windows-Pushbenachrichtigungssystemdienst
+Windows-Remoteverwaltung (WS-Verwaltung)
+Windows-Sicherheitsdienst
+Windows-Sicherung
+Windows-Sofortverbindung - Konfigurationsregistrierungsstelle
+Windows-Verbindungs-Manager
+Windows-Verwaltungsdienst
+Windows-Verwaltungsinstrumentation
+Windows-Zeitgeber
+WinHTTP-Web Proxy Auto-Discovery-Dienst
+WMI-Leistungsadapter
+WWAN - automatische Konfiguration
+Xbox Accessory Management Service
+Xbox Live Authentifizierungs-Manager
+Xbox Live-Netzwerkservice
+Xbox Live-Spiele speichern
+Zahlungs- und NFC/SE-Manager
+Zeitbroker
+Zertifikatverteilung
+Zwischenablage-Benutzerdienst_2424160

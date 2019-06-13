@@ -1,7 +1,7 @@
 'use babel'
 /* eslint-env jasmine */
 
-import { triggerAutocompletion } from './spec-helper'
+import { triggerAutocompletion, waitForAutocomplete } from './spec-helper'
 import grim from 'grim'
 
 describe('Provider API Legacy', () => {
@@ -99,7 +99,9 @@ describe('Provider API Legacy', () => {
       expect(deprecation.getMessage()).toContain('`blacklist`')
     })
 
-    it('raises deprecations when old API parameters are used in the 2.0 API', () => {
+    it('raises deprecations when old API parameters are used in the 2.0 API', async () => {
+      jasmine.useRealClock()
+
       class SampleProvider {
         constructor () {
           this.selector = '.source.js,.source.coffee'
@@ -118,25 +120,25 @@ describe('Provider API Legacy', () => {
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider())
       let numberDeprecations = grim.getDeprecationsLength()
       triggerAutocompletion(editor, true, 'o')
+      await waitForAutocomplete(editor)
 
-      runs(() => {
-        expect(grim.getDeprecationsLength() - numberDeprecations).toBe(3)
+      expect(grim.getDeprecationsLength() - numberDeprecations).toBe(3)
 
-        let deprecations = grim.getDeprecations()
+      let deprecations = grim.getDeprecations()
 
-        let deprecation = deprecations[deprecations.length - 3]
-        expect(deprecation.getMessage()).toContain('`word`')
-        expect(deprecation.getMessage()).toContain('SampleProvider')
+      let deprecation = deprecations[deprecations.length - 3]
+      expect(deprecation.getMessage()).toContain('`word`')
+      expect(deprecation.getMessage()).toContain('SampleProvider')
 
-        deprecation = deprecations[deprecations.length - 2]
-        expect(deprecation.getMessage()).toContain('`prefix`')
+      deprecation = deprecations[deprecations.length - 2]
+      expect(deprecation.getMessage()).toContain('`prefix`')
 
-        deprecation = deprecations[deprecations.length - 1]
-        expect(deprecation.getMessage()).toContain('`label`')
-      })
+      deprecation = deprecations[deprecations.length - 1]
+      expect(deprecation.getMessage()).toContain('`label`')
     })
 
-    it('raises deprecations when hooks are passed via each suggestion', () => {
+    it('raises deprecations when hooks are passed via each suggestion', async () => {
+      jasmine.useRealClock()
       class SampleProvider {
         constructor () {
           this.selector = '.source.js,.source.coffee'
@@ -155,19 +157,18 @@ describe('Provider API Legacy', () => {
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', new SampleProvider())
       let numberDeprecations = grim.getDeprecationsLength()
       triggerAutocompletion(editor, true, 'o')
+      await waitForAutocomplete(editor)
 
-      runs(() => {
-        expect(grim.getDeprecationsLength() - numberDeprecations).toBe(2)
+      expect(grim.getDeprecationsLength() - numberDeprecations).toBe(2)
 
-        let deprecations = grim.getDeprecations()
+      let deprecations = grim.getDeprecations()
 
-        let deprecation = deprecations[deprecations.length - 2]
-        expect(deprecation.getMessage()).toContain('`onWillConfirm`')
-        expect(deprecation.getMessage()).toContain('SampleProvider')
+      let deprecation = deprecations[deprecations.length - 2]
+      expect(deprecation.getMessage()).toContain('`onWillConfirm`')
+      expect(deprecation.getMessage()).toContain('SampleProvider')
 
-        deprecation = deprecations[deprecations.length - 1]
-        expect(deprecation.getMessage()).toContain('`onDidConfirm`')
-      })
+      deprecation = deprecations[deprecations.length - 1]
+      expect(deprecation.getMessage()).toContain('`onDidConfirm`')
     })
   })
 
@@ -201,7 +202,8 @@ describe('Provider API Legacy', () => {
       }
     })
 
-    it('passes the correct parameters to requestHandler', () => {
+    it('passes the correct parameters to requestHandler', async () => {
+      jasmine.useRealClock()
       testProvider = {
         selector: '.source.js,.source.coffee',
         requestHandler (options) { return [ {word: 'ohai', prefix: 'ohai'} ] }
@@ -210,20 +212,21 @@ describe('Provider API Legacy', () => {
 
       spyOn(testProvider, 'requestHandler')
       triggerAutocompletion(editor, true, 'o')
+      await waitForAutocomplete(editor)
 
-      runs(() => {
-        let args = testProvider.requestHandler.mostRecentCall.args[0]
-        expect(args.editor).toBeDefined()
-        expect(args.buffer).toBeDefined()
-        expect(args.cursor).toBeDefined()
-        expect(args.position).toBeDefined()
-        expect(args.scope).toBeDefined()
-        expect(args.scopeChain).toBeDefined()
-        expect(args.prefix).toBeDefined()
-      })
+      let args = testProvider.requestHandler.mostRecentCall.args[0]
+      expect(args.editor).toBeDefined()
+      expect(args.buffer).toBeDefined()
+      expect(args.cursor).toBeDefined()
+      expect(args.position).toBeDefined()
+      expect(args.scope).toBeDefined()
+      expect(args.scopeChain).toBeDefined()
+      expect(args.prefix).toBeDefined()
     })
 
-    it('should allow registration of a provider', () => {
+    it('should allow registration of a provider', async () => {
+      jasmine.useRealClock()
+
       expect(autocompleteManager.providerManager.store).toBeDefined()
       expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.coffee').length).toEqual(1)
@@ -256,13 +259,12 @@ describe('Provider API Legacy', () => {
       expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.go')[0]).toEqual(autocompleteManager.providerManager.defaultProvider)
 
       triggerAutocompletion(editor, true, 'o')
+      await waitForAutocomplete(editor)
 
-      runs(() => {
-        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
+      let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
 
-        expect(suggestionListView.element.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
-        expect(suggestionListView.element.querySelector('li')).toHaveClass('ohai')
-      })
+      expect(suggestionListView.element.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
+      expect(suggestionListView.element.querySelector('li')).toHaveClass('ohai')
     })
 
     it('should dispose a provider registration correctly', () => {

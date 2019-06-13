@@ -50,25 +50,25 @@ describe('Autocomplete Manager', () => {
       })
     })
 
-    it('restores the previous state', () => {
+    it('restores the previous state', async () => {
+      jasmine.useRealClock()
+
       // Trigger an autocompletion
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
       editor.insertText('f')
 
-      waitForAutocomplete()
+      await waitForAutocomplete(editor)
 
-      runs(() => {
-        // Accept suggestion
-        editorView = atom.views.getView(editor)
-        atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+      // Accept suggestion
+      editorView = atom.views.getView(editor)
+      atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
 
-        expect(editor.getBuffer().getLastLine()).toEqual('function')
+      expect(editor.getBuffer().getLastLine()).toEqual('function')
 
-        editor.undo()
+      editor.undo()
 
-        expect(editor.getBuffer().getLastLine()).toEqual('f')
-      })
+      expect(editor.getBuffer().getLastLine()).toEqual('f')
     })
   })
 })

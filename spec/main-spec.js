@@ -62,23 +62,21 @@ describe('Autocomplete', () => {
     )
   )
 
-  describe('@deactivate()', () =>
-    it('removes all autocomplete views', () =>
-      runs(() => {
-        // Trigger an autocompletion
-        editor.moveToBottom()
-        editor.insertText('A')
+  describe('@deactivate()', () => {
+    it('removes all autocomplete views', async () => {
+      jasmine.useRealClock()
 
-        waitForAutocomplete()
+      // Trigger an autocompletion
+      editor.moveToBottom()
+      editor.insertText('A')
 
-        runs(async () => {
-          expect(editorView.querySelector('.autocomplete-plus')).toExist()
+      await waitForAutocomplete(editor)
 
-          // Deactivate the package
-          await atom.packages.deactivatePackage('autocomplete-plus')
-          expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-        })
-      })
-    )
-  )
+      expect(editorView.querySelector('.autocomplete-plus')).toExist()
+
+      // Deactivate the package
+      await atom.packages.deactivatePackage('autocomplete-plus')
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+    })
+  })
 })

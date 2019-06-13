@@ -1,35 +1,32 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {waitForAutocomplete, triggerAutocompletion} from './spec-helper'
+import {waitForAutocomplete, triggerAutocompletion, conditionPromise} from './spec-helper'
 
 describe('Provider API', () => {
   let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider, testProvider2] = []
 
-  beforeEach(() => {
-    runs(() => {
-      // Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
-      atom.config.set('editor.fontSize', '16')
+  beforeEach(async () => {
+    jasmine.useRealClock()
 
-      // Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 // Rendering
+    // Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    atom.config.set('editor.fontSize', '16')
 
-      let workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
-    })
+    // Set the completion delay
+    completionDelay = 100
+    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
+    completionDelay += 100 // Rendering
+
+    let workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
     // Activate the package
-    waitsForPromise(() =>
-      Promise.all([
-        atom.packages.activatePackage('language-javascript'),
-        atom.workspace.open('sample.js').then((e) => { editor = e }),
-        atom.packages.activatePackage('autocomplete-plus').then((a) => { mainModule = a.mainModule })
-      ]))
+    await atom.packages.activatePackage('language-javascript')
+    editor = await atom.workspace.open('sample.js')
+    mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
 
-    waitsFor(() => {
+    await conditionPromise(() => {
       autocompleteManager = mainModule.autocompleteManager
       return autocompleteManager
     })
@@ -48,10 +45,6 @@ describe('Provider API', () => {
 
   describe('Provider API v2.0.0', () => {
     describe('common functionality', () => {
-      beforeEach(() => {
-        jasmine.useRealClock()
-      })
-
       it('registers the provider specified by [provider]', () => {
         testProvider = {
           scopeSelector: '.source.js,.source.coffee',
@@ -218,7 +211,6 @@ describe('Provider API', () => {
       beforeEach(() => editor.setText(''))
 
       it('filters suggestions based on the default prefix', async () => {
-        jasmine.useRealClock()
         testProvider = {
           scopeSelector: '.source.js',
           filterSuggestions: true,
@@ -245,7 +237,6 @@ describe('Provider API', () => {
       })
 
       it('filters suggestions based on the specified replacementPrefix for each suggestion', async () => {
-        jasmine.useRealClock()
         testProvider = {
           scopeSelector: '.source.js',
           filterSuggestions: true,
@@ -273,7 +264,6 @@ describe('Provider API', () => {
       })
 
       it('allows all suggestions when the prefix is an empty string / space', async () => {
-        jasmine.useRealClock()
         testProvider = {
           scopeSelector: '.source.js',
           filterSuggestions: true,

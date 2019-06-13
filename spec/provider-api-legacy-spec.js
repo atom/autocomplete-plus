@@ -1,13 +1,14 @@
 'use babel'
 /* eslint-env jasmine */
 
-import { triggerAutocompletion, waitForAutocomplete } from './spec-helper'
+import { triggerAutocompletion, waitForAutocomplete, conditionPromise } from './spec-helper'
 import grim from 'grim'
 
 describe('Provider API Legacy', () => {
   let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    jasmine.useRealClock()
     jasmine.snapshotDeprecations()
 
     // Set to live completion
@@ -22,18 +23,10 @@ describe('Provider API Legacy', () => {
     let workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise(() =>
-      Promise.all([
-        atom.packages.activatePackage('language-javascript'),
-        atom.workspace.open('sample.js').then(e => {
-          editor = e
-        }),
-        atom.packages.activatePackage('autocomplete-plus').then(a => {
-          mainModule = a.mainModule
-        })
-      ]))
-
-    waitsFor(() => {
+    await atom.packages.activatePackage('language-javascript')
+    editor = await atom.workspace.open('sample.js')
+    mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
+    await conditionPromise(() => {
       autocompleteManager = mainModule.autocompleteManager
       return autocompleteManager
     })
@@ -100,8 +93,6 @@ describe('Provider API Legacy', () => {
     })
 
     it('raises deprecations when old API parameters are used in the 2.0 API', async () => {
-      jasmine.useRealClock()
-
       class SampleProvider {
         constructor () {
           this.selector = '.source.js,.source.coffee'
@@ -138,7 +129,6 @@ describe('Provider API Legacy', () => {
     })
 
     it('raises deprecations when hooks are passed via each suggestion', async () => {
-      jasmine.useRealClock()
       class SampleProvider {
         constructor () {
           this.selector = '.source.js,.source.coffee'
@@ -203,7 +193,6 @@ describe('Provider API Legacy', () => {
     })
 
     it('passes the correct parameters to requestHandler', async () => {
-      jasmine.useRealClock()
       testProvider = {
         selector: '.source.js,.source.coffee',
         requestHandler (options) { return [ {word: 'ohai', prefix: 'ohai'} ] }
@@ -225,8 +214,6 @@ describe('Provider API Legacy', () => {
     })
 
     it('should allow registration of a provider', async () => {
-      jasmine.useRealClock()
-
       expect(autocompleteManager.providerManager.store).toBeDefined()
       expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.js').length).toEqual(1)
       expect(autocompleteManager.providerManager.applicableProviders(['workspace-center'], '.source.coffee').length).toEqual(1)

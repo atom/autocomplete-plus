@@ -1,37 +1,33 @@
 /* eslint-env jasmine */
 
-const { waitForAutocomplete, timeoutPromise } = require('./spec-helper')
+const { waitForAutocomplete, timeoutPromise, conditionPromise } = require('./spec-helper')
 
 describe('Async providers', () => {
   let completionDelay, editorView, editor, mainModule, autocompleteManager, registration
 
-  beforeEach(() => {
-    runs(() => {
-      // Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
-      atom.config.set('editor.fontSize', '16')
+  beforeEach(async () => {
+    jasmine.useRealClock()
 
-      // Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 // Rendering
+    // Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    atom.config.set('editor.fontSize', '16')
 
-      let workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
-    })
+    // Set the completion delay
+    completionDelay = 100
+    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
+    completionDelay += 100 // Rendering
 
-    waitsForPromise(() => atom.workspace.open('sample.js').then((e) => {
-      editor = e
-    }))
+    let workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise(() => atom.packages.activatePackage('language-javascript'))
+    editor = await atom.workspace.open('sample.js')
+
+    await atom.packages.activatePackage('language-javascript')
 
     // Activate the package
-    waitsForPromise(() => atom.packages.activatePackage('autocomplete-plus').then((a) => {
-      mainModule = a.mainModule
-    }))
+    mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
 
-    waitsFor(() => {
+    await conditionPromise(() => {
       autocompleteManager = mainModule.autocompleteManager
       return autocompleteManager
     })
@@ -65,7 +61,6 @@ describe('Async providers', () => {
     })
 
     it('should provide completions when a provider returns a promise that results in an array of suggestions', async () => {
-      jasmine.useRealClock()
       editor.moveToBottom()
       editor.insertText('o')
 
@@ -98,7 +93,6 @@ describe('Async providers', () => {
     })
 
     it('does not show the suggestion list when it is triggered then no longer needed', async () => {
-      jasmine.useRealClock()
       editorView = atom.views.getView(editor)
 
       editor.moveToBottom()

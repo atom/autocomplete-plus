@@ -7,7 +7,7 @@ import fs from 'fs-plus'
 import { conditionPromise, waitForAutocomplete } from './spec-helper'
 
 describe('Autocomplete Manager', () => {
-  let [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager, didAutocomplete] = []
+  let [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager] = []
 
   beforeEach(async () => {
     jasmine.useRealClock()

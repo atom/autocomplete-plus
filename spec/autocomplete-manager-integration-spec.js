@@ -17,7 +17,7 @@ const path = require('path')
 let NodeTypeText = 3
 
 describe('Autocomplete Manager', () => {
-  let autocompleteManager, completionDelay, editor, editorView, gutterWidth, mainModule, workspaceElement
+  let autocompleteManager, editor, editorView, gutterWidth, mainModule, workspaceElement
 
   let pixelLeftForBufferPosition = (bufferPosition) => {
     let gutter = editorView.querySelector('.gutter')
@@ -41,9 +41,7 @@ describe('Autocomplete Manager', () => {
     atom.config.set('editor.fontSize', '16')
 
     // Set the completion delay
-    completionDelay = 100
-    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-    completionDelay += 100 // Rendering
+    atom.config.set('autocomplete-plus.autoActivationDelay', 100)
 
     workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
@@ -1717,7 +1715,6 @@ defm`
         expect(autocomplete).toExist()
 
         atom.commands.dispatch(editorView, 'core:move-up')
-        advanceClock(1)
 
         autocomplete = editorView.querySelector('.autocomplete-plus')
         expect(autocomplete).toExist()

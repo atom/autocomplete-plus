@@ -1,71 +1,47 @@
 'use babel'
 /* eslint-env jasmine */
 
-import { waitForAutocomplete } from './spec-helper'
+import { conditionPromise, waitForAutocomplete } from './spec-helper'
 
 describe('Autocomplete', () => {
-  let [completionDelay, editorView, editor, autocompleteManager, mainModule] = []
+  let editorView
+  let editor
+  let autocompleteManager
+  let mainModule
 
-  beforeEach(() => {
-    runs(() => {
-      // Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
-      atom.config.set('autocomplete-plus.fileBlacklist', ['.*', '*.md'])
+  beforeEach(async () => {
+    jasmine.useRealClock()
 
-      // Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 // Rendering delay
+    // Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    atom.config.set('autocomplete-plus.fileBlacklist', ['.*', '*.md'])
 
-      let workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
-    })
+    let workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise(() => {
-      return atom.workspace.open('sample.js').then((e) => {
-        editor = e
-      })
-    })
-
-    waitsForPromise(() => { return atom.packages.activatePackage('language-javascript') })
+    editor = await atom.workspace.open('sample.js')
+    await atom.packages.activatePackage('language-javascript')
 
     // Activate the package
-    waitsForPromise(() => {
-      return atom.packages.activatePackage('autocomplete-plus').then((a) => {
-        mainModule = a.mainModule
-      })
-    })
+    mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
 
-    waitsFor(() => {
-      if (!mainModule.autocompleteManager) {
-        return false
-      }
-      return mainModule.autocompleteManager.ready
-    })
+    await conditionPromise(() =>
+      mainModule.autocompleteManager && mainModule.autocompleteManager.ready
+    )
 
-    runs(() => {
-      autocompleteManager = mainModule.autocompleteManager
-    })
-
-    return runs(() => {
-      editorView = atom.views.getView(editor)
-      return advanceClock(mainModule.autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
-    })
+    autocompleteManager = mainModule.autocompleteManager
+    editorView = atom.views.getView(editor)
   })
 
   describe('@activate()', () =>
-    it('activates autocomplete and initializes AutocompleteManager', () =>
-      runs(() => {
-        expect(autocompleteManager).toBeDefined()
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
-      })
-    )
+    it('activates autocomplete and initializes AutocompleteManager', () => {
+      expect(autocompleteManager).toBeDefined()
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+    })
   )
 
   describe('@deactivate()', () => {
     it('removes all autocomplete views', async () => {
-      jasmine.useRealClock()
-
       // Trigger an autocompletion
       editor.moveToBottom()
       editor.insertText('A')

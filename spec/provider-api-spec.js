@@ -4,7 +4,7 @@
 import {waitForAutocomplete, triggerAutocompletion, conditionPromise} from './spec-helper'
 
 describe('Provider API', () => {
-  let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider, testProvider2] = []
+  let [editor, mainModule, autocompleteManager, registration, testProvider, testProvider2] = []
 
   beforeEach(async () => {
     jasmine.useRealClock()
@@ -14,9 +14,7 @@ describe('Provider API', () => {
     atom.config.set('editor.fontSize', '16')
 
     // Set the completion delay
-    completionDelay = 100
-    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-    completionDelay += 100 // Rendering
+    atom.config.set('autocomplete-plus.autoActivationDelay', 100)
 
     let workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)

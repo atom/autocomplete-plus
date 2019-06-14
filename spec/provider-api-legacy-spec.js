@@ -5,7 +5,7 @@ import { triggerAutocompletion, waitForAutocomplete, conditionPromise } from './
 import grim from 'grim'
 
 describe('Provider API Legacy', () => {
-  let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider] = []
+  let [editor, mainModule, autocompleteManager, registration, testProvider] = []
 
   beforeEach(async () => {
     jasmine.useRealClock()
@@ -16,9 +16,7 @@ describe('Provider API Legacy', () => {
     atom.config.set('editor.fontSize', '16')
 
     // Set the completion delay
-    completionDelay = 100
-    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-    completionDelay += 100 // Rendering
+    atom.config.set('autocomplete-plus.autoActivationDelay', 100)
 
     let workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)

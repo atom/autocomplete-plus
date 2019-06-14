@@ -3,7 +3,7 @@
 const { waitForAutocomplete, timeoutPromise, conditionPromise } = require('./spec-helper')
 
 describe('Async providers', () => {
-  let completionDelay, editorView, editor, mainModule, autocompleteManager, registration
+  let editorView, editor, mainModule, autocompleteManager, registration
 
   beforeEach(async () => {
     jasmine.useRealClock()
@@ -13,9 +13,7 @@ describe('Async providers', () => {
     atom.config.set('editor.fontSize', '16')
 
     // Set the completion delay
-    completionDelay = 100
-    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-    completionDelay += 100 // Rendering
+    atom.config.set('autocomplete-plus.autoActivationDelay', 100)
 
     let workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)

@@ -1,37 +1,31 @@
 /* eslint-env jasmine */
 
-const { waitForAutocomplete } = require('./spec-helper')
+const { waitForAutocomplete, timeoutPromise, conditionPromise } = require('./spec-helper')
 
 describe('Async providers', () => {
-  let completionDelay, editorView, editor, mainModule, autocompleteManager, registration
+  let editorView, editor, mainModule, autocompleteManager, registration
 
-  beforeEach(() => {
-    runs(() => {
-      // Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
-      atom.config.set('editor.fontSize', '16')
+  beforeEach(async () => {
+    jasmine.useRealClock()
 
-      // Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 // Rendering
+    // Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    atom.config.set('editor.fontSize', '16')
 
-      let workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
-    })
+    // Set the completion delay
+    atom.config.set('autocomplete-plus.autoActivationDelay', 100)
 
-    waitsForPromise(() => atom.workspace.open('sample.js').then((e) => {
-      editor = e
-    }))
+    let workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
-    waitsForPromise(() => atom.packages.activatePackage('language-javascript'))
+    editor = await atom.workspace.open('sample.js')
+
+    await atom.packages.activatePackage('language-javascript')
 
     // Activate the package
-    waitsForPromise(() => atom.packages.activatePackage('autocomplete-plus').then((a) => {
-      mainModule = a.mainModule
-    }))
+    mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
 
-    waitsFor(() => {
+    await conditionPromise(() => {
       autocompleteManager = mainModule.autocompleteManager
       return autocompleteManager
     })
@@ -64,16 +58,14 @@ describe('Async providers', () => {
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testAsyncProvider)
     })
 
-    it('should provide completions when a provider returns a promise that results in an array of suggestions', () => {
+    it('should provide completions when a provider returns a promise that results in an array of suggestions', async () => {
       editor.moveToBottom()
       editor.insertText('o')
 
-      waitForAutocomplete()
+      await waitForAutocomplete(editor)
 
-      runs(() => {
-        let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
-        expect(suggestionListView.element.querySelector('li .right-label')).toHaveText('asyncProvided')
-      })
+      let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
+      expect(suggestionListView.element.querySelector('li .right-label')).toHaveText('asyncProvided')
     })
   })
 
@@ -98,29 +90,23 @@ describe('Async providers', () => {
       registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testAsyncProvider)
     })
 
-    it('does not show the suggestion list when it is triggered then no longer needed', () => {
-      runs(() => {
-        editorView = atom.views.getView(editor)
+    it('does not show the suggestion list when it is triggered then no longer needed', async () => {
+      editorView = atom.views.getView(editor)
 
-        editor.moveToBottom()
-        editor.insertText('o')
-      })
+      editor.moveToBottom()
+      editor.insertText('o')
 
-      runs(() => {
-        // Waiting will kick off the suggestion request
-        editor.insertText('\r')
-        waitForAutocomplete()
+      // Waiting will kick off the suggestion request
+      editor.insertText('\r')
+      await timeoutPromise(100)
 
-        // Expect nothing because the provider has not come back yet
-        expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
+      // Expect nothing because the provider has not come back yet
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
 
-        // Wait til the longass provider comes back
-        advanceClock(1000)
-      })
+      // Wait til the longass provider comes back
+      await timeoutPromise(1000)
 
-      waits(0)
-
-      runs(() => expect(editorView.querySelector('.autocomplete-plus')).not.toExist())
+      expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
     })
   })
 })

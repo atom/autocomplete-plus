@@ -1,74 +1,56 @@
 'use babel'
 /* eslint-env jasmine */
 
-import { waitForAutocomplete } from './spec-helper'
+import { conditionPromise, waitForAutocomplete } from './spec-helper'
 
 describe('Autocomplete Manager', () => {
-  let [completionDelay, editorView, editor, mainModule, autocompleteManager] = []
+  let editorView
+  let editor
+  let mainModule
 
-  beforeEach(() =>
-    runs(() => {
-      // Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
-      atom.config.set('editor.fontSize', '16')
+  beforeEach(() => {
+    // Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    atom.config.set('editor.fontSize', '16')
 
-      // Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 // Rendering
-
-      let workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
-    })
-  )
+    let workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
+  })
 
   describe('Undo a completion', () => {
-    beforeEach(() => {
-      runs(() => atom.config.set('autocomplete-plus.enableAutoActivation', true))
+    beforeEach(async () => {
+      jasmine.useRealClock()
+      atom.config.set('autocomplete-plus.enableAutoActivation', true)
 
-      waitsForPromise(() => atom.workspace.open('sample.js').then((e) => {
-        editor = e
-      }))
+      editor = await atom.workspace.open('sample.js')
 
-      waitsForPromise(() => atom.packages.activatePackage('language-javascript'))
+      await atom.packages.activatePackage('language-javascript')
 
       // Activate the package
-      waitsForPromise(() => atom.packages.activatePackage('autocomplete-plus').then((a) => {
-        mainModule = a.mainModule
-      }))
+      mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
 
-      waitsFor(() => {
-        if (!mainModule.autocompleteManager) {
-          return false
-        }
-        return mainModule.autocompleteManager.ready
-      })
-
-      return runs(() => {
-        autocompleteManager = mainModule.autocompleteManager
-        advanceClock(autocompleteManager.providerManager.defaultProvider.deferBuildWordListInterval)
-      })
+      await conditionPromise(() =>
+        mainModule.autocompleteManager && mainModule.autocompleteManager.ready
+      )
     })
 
-    it('restores the previous state', () => {
+    it('restores the previous state', async () => {
       // Trigger an autocompletion
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
       editor.insertText('f')
 
-      waitForAutocomplete()
+      await waitForAutocomplete(editor)
 
-      runs(() => {
-        // Accept suggestion
-        editorView = atom.views.getView(editor)
-        atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
+      // Accept suggestion
+      editorView = atom.views.getView(editor)
+      atom.commands.dispatch(editorView, 'autocomplete-plus:confirm')
 
-        expect(editor.getBuffer().getLastLine()).toEqual('function')
+      expect(editor.getBuffer().getLastLine()).toEqual('function')
 
-        editor.undo()
+      editor.undo()
 
-        expect(editor.getBuffer().getLastLine()).toEqual('f')
-      })
+      expect(editor.getBuffer().getLastLine()).toEqual('f')
     })
   })
 })

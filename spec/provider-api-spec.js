@@ -1,35 +1,30 @@
 'use babel'
 /* eslint-env jasmine */
 
-import {waitForAutocomplete, waitForAutocompletePromise, triggerAutocompletion} from './spec-helper'
+import {waitForAutocomplete, triggerAutocompletion, conditionPromise} from './spec-helper'
 
 describe('Provider API', () => {
-  let [completionDelay, editor, mainModule, autocompleteManager, registration, testProvider, testProvider2] = []
+  let [editor, mainModule, autocompleteManager, registration, testProvider, testProvider2] = []
 
-  beforeEach(() => {
-    runs(() => {
-      // Set to live completion
-      atom.config.set('autocomplete-plus.enableAutoActivation', true)
-      atom.config.set('editor.fontSize', '16')
+  beforeEach(async () => {
+    jasmine.useRealClock()
 
-      // Set the completion delay
-      completionDelay = 100
-      atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-      completionDelay += 100 // Rendering
+    // Set to live completion
+    atom.config.set('autocomplete-plus.enableAutoActivation', true)
+    atom.config.set('editor.fontSize', '16')
 
-      let workspaceElement = atom.views.getView(atom.workspace)
-      jasmine.attachToDOM(workspaceElement)
-    })
+    // Set the completion delay
+    atom.config.set('autocomplete-plus.autoActivationDelay', 100)
+
+    let workspaceElement = atom.views.getView(atom.workspace)
+    jasmine.attachToDOM(workspaceElement)
 
     // Activate the package
-    waitsForPromise(() =>
-      Promise.all([
-        atom.packages.activatePackage('language-javascript'),
-        atom.workspace.open('sample.js').then((e) => { editor = e }),
-        atom.packages.activatePackage('autocomplete-plus').then((a) => { mainModule = a.mainModule })
-      ]))
+    await atom.packages.activatePackage('language-javascript')
+    editor = await atom.workspace.open('sample.js')
+    mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
 
-    waitsFor(() => {
+    await conditionPromise(() => {
       autocompleteManager = mainModule.autocompleteManager
       return autocompleteManager
     })
@@ -48,10 +43,6 @@ describe('Provider API', () => {
 
   describe('Provider API v2.0.0', () => {
     describe('common functionality', () => {
-      beforeEach(() => {
-        jasmine.useRealClock()
-      })
-
       it('registers the provider specified by [provider]', () => {
         testProvider = {
           scopeSelector: '.source.js,.source.coffee',
@@ -103,7 +94,7 @@ describe('Provider API', () => {
 
         spyOn(testProvider, 'getSuggestions')
         triggerAutocompletion(editor, true, 'o')
-        await waitForAutocompletePromise(editor)
+        await waitForAutocomplete(editor)
 
         let args = testProvider.getSuggestions.mostRecentCall.args[0]
         expect(args.editor).toBeDefined()
@@ -132,7 +123,7 @@ describe('Provider API', () => {
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
         triggerAutocompletion(editor, true, 'o')
-        await waitForAutocompletePromise(editor)
+        await waitForAutocomplete(editor)
 
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         expect(suggestionListView.element.querySelector('li .right-label')).toHaveHtml('<span style="color: red">ohai</span>')
@@ -158,7 +149,7 @@ describe('Provider API', () => {
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
         triggerAutocompletion(editor, true, 'o')
-        await waitForAutocompletePromise(editor)
+        await waitForAutocomplete(editor)
 
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         expect(suggestionListView.element.querySelector('.word')).toHaveText('displayOHAI')
@@ -180,7 +171,7 @@ describe('Provider API', () => {
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
         triggerAutocompletion(editor, true, 'o')
-        await waitForAutocompletePromise(editor)
+        await waitForAutocomplete(editor)
 
         let suggestionListView = autocompleteManager.suggestionList.suggestionListElement
         let content = suggestionListView.element.querySelector('.suggestion-description-content')
@@ -206,7 +197,7 @@ describe('Provider API', () => {
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
         triggerAutocompletion(editor, true, 'o')
-        await waitForAutocompletePromise(editor)
+        await waitForAutocomplete(editor)
 
         expect(autocompleteManager.suggestionList.items[0].description).toBe('foo')
       })
@@ -217,7 +208,7 @@ describe('Provider API', () => {
 
       beforeEach(() => editor.setText(''))
 
-      it('filters suggestions based on the default prefix', () => {
+      it('filters suggestions based on the default prefix', async () => {
         testProvider = {
           scopeSelector: '.source.js',
           filterSuggestions: true,
@@ -235,17 +226,15 @@ describe('Provider API', () => {
 
         editor.insertText('o')
         editor.insertText('k')
-        waitForAutocomplete()
+        await waitForAutocomplete(editor)
 
-        runs(() =>
-          expect(getSuggestions()).toEqual([
-            {text: 'ok'},
-            {text: 'okwow'}
-          ])
-        )
+        expect(getSuggestions()).toEqual([
+          {text: 'ok'},
+          {text: 'okwow'}
+        ])
       })
 
-      it('filters suggestions based on the specified replacementPrefix for each suggestion', () => {
+      it('filters suggestions based on the specified replacementPrefix for each suggestion', async () => {
         testProvider = {
           scopeSelector: '.source.js',
           filterSuggestions: true,
@@ -263,18 +252,16 @@ describe('Provider API', () => {
         registration = atom.packages.serviceHub.provide('autocomplete.provider', '2.0.0', testProvider)
 
         editor.insertText('h')
-        waitForAutocomplete()
+        await waitForAutocomplete(editor)
 
-        runs(() =>
-          expect(getSuggestions()).toEqual([
-            {text: '::cats'},
-            {text: 'hai'},
-            {text: 'something'}
-          ])
-        )
+        expect(getSuggestions()).toEqual([
+          {text: '::cats'},
+          {text: 'hai'},
+          {text: 'something'}
+        ])
       })
 
-      it('allows all suggestions when the prefix is an empty string / space', () => {
+      it('allows all suggestions when the prefix is an empty string / space', async () => {
         testProvider = {
           scopeSelector: '.source.js',
           filterSuggestions: true,
@@ -291,15 +278,13 @@ describe('Provider API', () => {
 
         editor.insertText('h')
         editor.insertText(' ')
-        waitForAutocomplete()
+        await waitForAutocomplete(editor)
 
-        runs(() =>
-          expect(getSuggestions()).toEqual([
-            {text: 'ohai'},
-            {text: 'hai'},
-            {text: 'okwow'}
-          ])
-        )
+        expect(getSuggestions()).toEqual([
+          {text: 'ohai'},
+          {text: 'hai'},
+          {text: 'okwow'}
+        ])
       })
     })
   })

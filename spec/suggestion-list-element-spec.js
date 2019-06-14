@@ -1,7 +1,6 @@
 /* eslint-env jasmine */
 /* eslint-disable no-template-curly-in-string */
 const SuggestionListElement = require('../lib/suggestion-list-element')
-const {waitForAutocomplete} = require('./spec-helper')
 
 const fragmentToHtml = fragment => {
   const el = document.createElement('span')
@@ -66,7 +65,9 @@ describe('Suggestion List Element', () => {
   describe('itemChanged', () => {
     beforeEach(() => jasmine.attachToDOM(suggestionListElement.element))
 
-    it('updates the list item', () => {
+    it('updates the list item', async () => {
+      jasmine.useRealClock()
+
       const suggestion = {text: 'foo'}
       const newSuggestion = {text: 'foo', description: 'foobar', rightLabel: 'foo'}
       suggestionListElement.model = {items: [newSuggestion]}
@@ -76,15 +77,11 @@ describe('Suggestion List Element', () => {
 
       suggestionListElement.itemChanged({suggestion: newSuggestion, index: 0})
 
-      waitForAutocomplete()
+      expect(suggestionListElement.element.querySelector('.right-label').innerText)
+        .toBe('foo')
 
-      runs(() => {
-        expect(suggestionListElement.element.querySelector('.right-label').innerText)
-          .toBe('foo')
-
-        expect(suggestionListElement.element.querySelector('.suggestion-description-content').innerText)
-          .toBe('foobar')
-      })
+      expect(suggestionListElement.element.querySelector('.suggestion-description-content').innerText)
+        .toBe('foobar')
     })
   })
 

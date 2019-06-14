@@ -1,7 +1,5 @@
 /* eslint-env jasmine */
 
-let completionDelay = 100
-
 beforeEach(() => {
   spyOn(atom.views, 'readDocument').andCallFake(fn => fn())
   spyOn(atom.views, 'updateDocument').andCallFake(fn => fn())
@@ -11,11 +9,19 @@ beforeEach(() => {
   atom.config.set('autocomplete-plus.includeCompletionsFromAllBuffers', false)
 })
 
-function waitForAutocompletePromise (editor) {
+function waitForAutocomplete (editor) {
   const editorView = atom.views.getView(editor)
 
   return conditionPromise(
-    () => editorView.querySelectorAll('.autocomplete-plus').length === 1
+    () => editorView.querySelectorAll('.autocomplete-plus li').length > 0
+  )
+}
+
+function waitForAutocompleteToDisappear (editor) {
+  const editorView = atom.views.getView(editor)
+
+  return conditionPromise(
+    () => editorView.querySelectorAll('.autocomplete-plus li').length === 0
   )
 }
 
@@ -25,36 +31,20 @@ let triggerAutocompletion = (editor, moveCursor = true, char = 'f') => {
     editor.moveToBeginningOfLine()
   }
   editor.insertText(char)
-  waitForAutocomplete()
 }
 
-let waitForAutocomplete = () => {
-  advanceClock(completionDelay)
-  return waitsFor('autocomplete to show', (done) => {
-    setImmediate(() => {
-      advanceClock(10)
-      setImmediate(() => {
-        advanceClock(10)
-        done()
-      })
-    })
-  })
-}
+async function waitForDeferredSuggestions (editorView, totalSuggestions) {
+  await conditionPromise(
+    () => editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller')
+  )
 
-let waitForDeferredSuggestions = (editorView, totalSuggestions) => {
-  waitsFor(() => {
-    return editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller')
-  })
+  const scroller = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller')
+  scroller.scrollTo(0, 100)
+  scroller.scrollTo(0, 0)
 
-  runs(() => {
-    const scroller = editorView.querySelector('.autocomplete-plus autocomplete-suggestion-list .suggestion-list-scroller')
-    scroller.scrollTo(0, 100)
-    scroller.scrollTo(0, 0)
-  })
-
-  waitsFor(() => {
-    return editorView.querySelectorAll('.autocomplete-plus li').length === totalSuggestions
-  })
+  await conditionPromise(
+    () => editorView.querySelectorAll('.autocomplete-plus li').length === totalSuggestions
+  )
 }
 
 let buildIMECompositionEvent = (event, {data, target} = {}) => {
@@ -95,9 +85,10 @@ function timeoutPromise (timeout) {
 
 module.exports = {
   conditionPromise,
+  timeoutPromise,
   triggerAutocompletion,
   waitForAutocomplete,
-  waitForAutocompletePromise,
+  waitForAutocompleteToDisappear,
   buildIMECompositionEvent,
   buildTextInputEvent,
   waitForDeferredSuggestions

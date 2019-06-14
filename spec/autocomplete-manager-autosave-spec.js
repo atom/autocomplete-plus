@@ -4,10 +4,16 @@
 let temp = require('temp').track()
 import path from 'path'
 import fs from 'fs-plus'
-import { conditionPromise, waitForAutocomplete } from './spec-helper'
+import { conditionPromise } from './spec-helper'
 
 describe('Autocomplete Manager', () => {
-  let [directory, filePath, completionDelay, editorView, editor, mainModule, autocompleteManager] = []
+  let directory
+  let filePath
+  let editorView
+  let editor
+  let mainModule
+  let autocompleteManager
+  let createSuggestionsPromise
 
   beforeEach(async () => {
     jasmine.useRealClock()
@@ -37,11 +43,6 @@ return sort(Array.apply(this, arguments));
     atom.config.set('autocomplete-plus.enableAutoActivation', true)
     atom.config.set('editor.fontSize', '16')
 
-    // Set the completion delay
-    completionDelay = 100
-    atom.config.set('autocomplete-plus.autoActivationDelay', completionDelay)
-    completionDelay += 100 // Rendering
-
     let workspaceElement = atom.views.getView(atom.workspace)
     jasmine.attachToDOM(workspaceElement)
 
@@ -55,17 +56,27 @@ return sort(Array.apply(this, arguments));
     // Activate the package
     mainModule = (await atom.packages.activatePackage('autocomplete-plus')).mainModule
 
-    await conditionPromise(() => {
-      if (!mainModule || !mainModule.autocompleteManager) {
-        return false
-      }
-      return mainModule.autocompleteManager.ready
-    })
+    await conditionPromise(() =>
+      mainModule && mainModule.autocompleteManager && mainModule.autocompleteManager.ready
+    )
 
     autocompleteManager = mainModule.autocompleteManager
     let { displaySuggestions } = autocompleteManager
+
+    const suggestionsPromises = new Set()
+
+    createSuggestionsPromise = function () {
+      return new Promise(resolve => {
+        suggestionsPromises.add(resolve)
+      })
+    }
+
     spyOn(autocompleteManager, 'displaySuggestions').andCallFake((suggestions, options) => {
       displaySuggestions(suggestions, options)
+      for (const resolve of suggestionsPromises) {
+        resolve()
+      }
+      suggestionsPromises.clear()
     })
   })
 
@@ -73,15 +84,18 @@ return sort(Array.apply(this, arguments));
     it('keeps the suggestion list open while saving', async () => {
       expect(editorView.querySelector('.autocomplete-plus')).not.toExist()
       // Trigger an autocompletion
+      const firstEventPromise = createSuggestionsPromise()
+
       editor.moveToBottom()
       editor.moveToBeginningOfLine()
       editor.insertText('f')
-      await waitForAutocomplete(editor)
+      await firstEventPromise
 
+      const secondEventPromise = createSuggestionsPromise()
       editor.save()
       expect(editorView.querySelector('.autocomplete-plus')).toExist()
       editor.insertText('u')
-      await waitForAutocomplete(editor)
+      await secondEventPromise
 
       editor.save()
       expect(editorView.querySelector('.autocomplete-plus')).toExist()

@@ -2208,9 +2208,10 @@ defm`
         activeElement.dispatchEvent(buildIMECompositionEvent('compositionstart', {data: 'i', target: activeElement}))
         triggerAutocompletion(editor, false, 'i')
 
-        await waitForAutocomplete(editor)
+        await conditionPromise(() =>
+          autocompleteManager.suggestionList.changeItems.callCount > 0
+        )
 
-        expect(autocompleteManager.suggestionList.changeItems).toHaveBeenCalled()
         expect(autocompleteManager.suggestionList.changeItems.mostRecentCall.args[0][0].text).toBe('quicksort')
         autocompleteManager.suggestionList.changeItems.reset()
 

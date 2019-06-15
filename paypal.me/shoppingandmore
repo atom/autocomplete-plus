@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:status.braintreepayments.com,2005:/history</id>
+  <link rel="alternate" type="text/html" href="https://status.braintreepayments.com"/>
+  <link rel="self" type="application/atom+xml" href="https://status.braintreepayments.com/history.atom"/>
+  <title>Braintree Status - Incident History</title>
+  <updated>2019-06-14T15:45:36Z</updated>
+  <author>
+    <name>Braintree</name>
+  </author>paypal.me/shoppingandmore
+  <entry>https://publish.buffer.com/profile/59303fe6c2b642dd5cae79b0/tab/queue 
+https://www.facebook.com/Shoppingandmoreeee-327228161300463/settings/?tab=page_info 
+https://app.bitly.com/bbt2/ 
+https://app.bitly.com/Bh22mH3pyI6/bitlinks/2Wqw3ye 
+    <id>tag:status.braintreepayments.com,2005:Incident/2541747</id>
+    <published>2019-06-13T11:12:23Z</published>
+    <updated>2019-06-14T15:45:36Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/j0b881ljlrh7"/>
+    <title>Production Networking Issue</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;11:12&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved. The full incident impact window was 8:44 to 9:46 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;10:59&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - A fix has been implemented and we are monitoring the results.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;10:44&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are continuing to work on a fix for this issue&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;10:15&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Identified&lt;/strong&gt; - The issue has been identified and a fix is being implemented.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;09:45&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are continuing to investigate this issue&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;09:33&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are continuing to investigate this issue.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;09:16&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're investigating a networking issue that may be impacting the availability of the API or Control Panel for some merchants.
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;
+&lt;br /&gt;Timeouts or increased latency when making API calls.
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;
+&lt;br /&gt;An upstream networking issue with a third-party Internet Service Provider (ISP).&lt;/p&gt;</content>
+  </entry>https://publish.buffer.com/profile/59303fe6c2b642dd5cae79b0/tab/queue 
+https://www.facebook.com/Shoppingandmoreeee-327228161300463/settings/?tab=page_info 
+https://app.bitly.com/bbt2/ paypal.me/shoppingandmore
+https://app.bitly.com/Bh22mH3pyI6/bitlinks/2Wqw3ye 
+  <entry>https://toggl.com/app/subscription/2812977/invoices-and-payments
+    <id>tag:status.braintreepayments.com,2005:Incident/2523344</id>
+    <published>2019-06-11T00:01:01Z</published>
+    <updated>2019-06-11T00:01:01Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/k84gmj2ggsnc"/>
+    <title>Pay with Venmo Processing Issue</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;11&lt;/var&gt;, &lt;var data-var='time'&gt;00:01&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident has been resolved.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;23:12&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - A fix has been implemented and engineers are monitoring the results.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;22:09&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are continuing to investigate this issue and will provide further details as soon as possible.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;21:36&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - We are continuing to investigate this issue.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;21:36&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're currently investigating an elevated rate of Pay with Venmo transaction declines. Other payment methods are not impacted. An update will be provided as soon as possible.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;&lt;br /&gt;An elevated rate of Processor Declined (2046) responses for Pay with Venmo transactions.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;&lt;br /&gt;An upstream issue with Venmo.&lt;/p&gt;</content>
+  </entry>https://toggl.com/app/subscription/2812977/invoices-and-payments
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2517203</id>
+    <published>2019-06-09T15:08:17Z</published>
+    <updated>2019-06-09T15:08:17Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/n5hm0wyvxv90"/>
+    <title>Forward API Errors</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt; 9&lt;/var&gt;, &lt;var data-var='time'&gt;15:08&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Full resolution was confirmed at 14:59 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jun &lt;var data-var='date'&gt; 9&lt;/var&gt;, &lt;var data-var='time'&gt;14:49&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're currently investigating an elevated rate of errors with the Forward API. An update will be provided as soon as possible.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;&lt;br /&gt;An elevated rate of 500-level responses and increased latency for Forward API requests. &lt;br /&gt;&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;&lt;br /&gt;Engineers are investigating internally.&lt;/p&gt;</content>
+  </entry>paypal.me/shoppingandmore
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2402121</id>
+    <published>2019-05-14T20:58:01Z</published>
+    <updated>2019-05-16T21:02:07Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/n1hf4hj89lks"/>
+    <title>Production Errors</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt;14&lt;/var&gt;, &lt;var data-var='time'&gt;20:58&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - This incident is now resolved. The full incident window was 20:16 to 20:51 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt;14&lt;/var&gt;, &lt;var data-var='time'&gt;20:32&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're currently investigating an elevated rate of errors with the API and Control Panel. An update will be provided as soon as possible.
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;
+&lt;br /&gt;An elevated rate of 500-level responses for API requests and/or error pages when using the Control Panel.
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;
+&lt;br /&gt;Engineers are investigating internally.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2386897</id>
+    <published>2019-05-10T13:45:28Z</published>
+    <updated>2019-05-10T14:53:32Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/kv1z9v6hcswn"/>
+    <title>Forward API true</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;13:45&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Forward API service has returned to normal. Merchants utilizing the Forward API may have experience errors and latency between 11:55 and 12:30 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;May &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;13:07&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're currently investigating intermittent elevated errors and latency with the Forward API. An update will be provided as soon as possible.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;&lt;br /&gt;Intermittent elevated latency and 500-level responses for Forward API requests.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;&lt;br /&gt;Engineers are investigating internally.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2320661</id>
+    <published>2019-04-10T20:39:16Z</published>
+    <updated>2019-04-16T19:29:55Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/dq4gcyc5mj5j"/>
+    <title>Marketing Site Currently Unavailable</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;20:39&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Full resolution was confirmed at 20:38 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;20:15&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Monitoring&lt;/strong&gt; - Engineers implemented a fix and the marketing site is now up and running. We're currently monitoring the results.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt;10&lt;/var&gt;, &lt;var data-var='time'&gt;19:43&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're currently investigating an issue with our marketing site https://www.braintreepayments.com/ being unavailable. The API and the Control Panel are not currently impacted. An update will be provided as soon as possible.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;&lt;br /&gt;&lt;i&gt;503 Service Unavailable. No server is available to handle this request &lt;/i&gt; error when the page is accessed. &lt;br /&gt;&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;&lt;br /&gt;Engineers are investigating internally.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2317257</id>
+    <published>2019-04-09T14:06:07Z</published>
+    <updated>2019-04-09T14:06:07Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/bdnyht6t6slf"/>
+    <title>Europe Funding Delay</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt; 9&lt;/var&gt;, &lt;var data-var='time'&gt;14:06&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - We continue to work with our banking partner in Europe to resolve the issue with today's disbursement. Additional details will be provided in the merchant Control Panel moving forward.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt; 9&lt;/var&gt;, &lt;var data-var='time'&gt;11:41&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're currently investigating delayed disbursements for some European merchants. An update will be provided as soon as possible.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;&lt;br /&gt;Missing or incomplete disbursement on 9 April 2019 for merchants processing transactions on the AIB network.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;&lt;br /&gt;An upstream issue with our European banking partner.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2301769</id>
+    <published>2019-04-01T23:45:43Z</published>
+    <updated>2019-04-03T19:24:17Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/xst7jwxg7qw8"/>
+    <title>Elevated Client Errors</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Apr &lt;var data-var='date'&gt; 1&lt;/var&gt;, &lt;var data-var='time'&gt;23:45&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Beginning at 22:12 UTC, engineers detected an elevated rate of client-side errors and difficulties loading Braintree-hosted checkout forms. Engineers reverted a deployment that caused the problems and service returned to normal at approximately 00:05 UTC. &lt;br /&gt;&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;&lt;br /&gt;An elevated rate of client-side errors.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2269672</id>
+    <published>2019-03-19T18:15:23Z</published>
+    <updated>2019-03-19T18:38:02Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/202lwcd5nn66"/>
+    <title>3D Secure Processing Issues</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;19&lt;/var&gt;, &lt;var data-var='time'&gt;18:15&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Our 3D Secure provider has resolved the issue and errors have subsided. The incident window was from 18:02 to 18:08 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Mar &lt;var data-var='date'&gt;19&lt;/var&gt;, &lt;var data-var='time'&gt;18:09&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We're currently investigating an elevated rate of errors for 3D Secure. An update will be provided as soon as possible.
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Symptoms&lt;/b&gt;
+&lt;br /&gt; Impacted transactions will have a 3DS response of  "lookup_error".
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Cause&lt;/b&gt;
+&lt;br /&gt;An upstream issue with our 3D Secure provider, CardinalCommerce.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2125679</id>
+    <published>2019-02-05T03:30:46Z</published>
+    <updated>2019-02-05T03:30:46Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/4w0nq2fy2nj8"/>
+    <title>AIB Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Feb &lt;var data-var='date'&gt; 5&lt;/var&gt;, &lt;var data-var='time'&gt;03:30&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Feb &lt;var data-var='date'&gt; 5&lt;/var&gt;, &lt;var data-var='time'&gt;03:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt; 2&lt;/var&gt;, &lt;var data-var='time'&gt;19:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - Our European banking partner will be performing system maintenance between 03:00 and 03:30 UTC on 5 February 2019. Merchants processing on the AIB network may see an elevated rate of failed transactions during this window. Transactions that fail can be safely retried.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Scope&lt;/b&gt;: Only European merchants processing on the AIB network may be impacted by this maintenance window. The Braintree gateway will be operating normally during this time.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2142524</id>
+    <published>2019-01-29T19:15:55Z</published>
+    <updated>2019-01-29T19:15:55Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/skn5qs0qjn36"/>
+    <title>JCB Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;19:15&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;19:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;11&lt;/var&gt;, &lt;var data-var='time'&gt;17:26&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - JCB will be undergoing scheduled maintenance between 19:00 and 19:15 UTC on 29 January 2019. During this time, transactions using JCB-branded cards may fail or take longer than normal.&lt;/p&gt;</content>
+  </entry>Google Tag Manager	https://support.google.com/tagassistant/answer/3207128?ref_topic=2947092#iframehttps://publish.buffer.com/profile/59303fe6c2b642dd5cae79b0/tab/queue 
+https://www.facebook.com/Shoppingandmoreeee-327228161300463/settings/?tab=page_info 
+https://app.bitly.com/bbt2/ 
+https://app.bitly.com/Bh22mH3pyI6/bitlinks/2Wqw3ye 
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2170065</id>
+    <published>2019-01-29T07:00:46Z</published>
+    <updated>2019-01-29T07:00:46Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/vljgjktlf7qz"/>
+    <title>Chase-Salem Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;07:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;29&lt;/var&gt;, &lt;var data-var='time'&gt;06:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;25&lt;/var&gt;, &lt;var data-var='time'&gt;20:28&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - Chase Paymentech will be conducting maintenance on 29 January 2019 between 06:00 and 07:00 UTC. Merchants using Chase-Salem processing connections may experience an elevated rate of failed transactions during this window.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Note&lt;/b&gt;: Chase-Salem is a specialized processing connection used by a small number of US merchants. Most US merchants will not be impacted by this maintenance.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2168479</id>
+    <published>2019-01-25T04:03:45Z</published>
+    <updated>2019-01-25T04:03:45Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/1jg1jl7tw063"/>
+    <title>Production Networking Issue</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;25&lt;/var&gt;, &lt;var data-var='time'&gt;04:03&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Traffic levels and response times have returned to normal as of 3:46 UTC. Engineers were able to route APAC traffic away from the impacted upstream Internet service provider.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;25&lt;/var&gt;, &lt;var data-var='time'&gt;03:37&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - Engineers are monitoring elevated connectivity problems and request times from Australia and Southeast Asia due to an upstream networking issue. Some merchants may be experiencing timeouts or errors when trying to connect to the Braintree Production API or Control Panel.&lt;/p&gt;</content>
+  </entry>
+  <entry>paypal.me/shoppingandmore
+    <id>tag:status.braintreepayments.com,2005:Incident/2166718</id>
+    <published>2019-01-24T13:41:30Z</published>
+    <updated>2019-01-24T14:10:17Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/t58x0kw7ktsf"/>
+    <title>3D Secure Processing Issues</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;13:41&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - The 3D Secure service has returned to normal as of 13:15 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;13:32&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - Impacted transactions will have a 3DS response of "authentication_unavailable". Engineers are working urgently with our 3DS provider to resolve.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;13:17&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - Some merchants may be experiencing an elevated rate of errors when initializing 3D Secure due to an upstream issue with our 3DS provider. Engineers are engaged with our partner and updates will be provided as they are available.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2164662</id>
+    <published>2019-01-24T11:30:51Z</published>
+    <updated>2019-01-24T11:30:51Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/m38vnsw5b0w4"/>
+    <title>Venmo Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;11:30&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;24&lt;/var&gt;, &lt;var data-var='time'&gt;10:30&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;23&lt;/var&gt;, &lt;var data-var='time'&gt;16:28&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - Venmo will be performing database maintenance between 10:30 and 11:30 UTC on January 24. During this time, merchants may experience an elevated rate of unsuccessful Pay with Venmo transactions. Marketplace sub-merchants may also be unable to use Venmo payouts.  &lt;br /&gt;&lt;br /&gt;&lt;b&gt;Scope&lt;/b&gt;: Only merchants using Pay with Venmo or Venmo payouts may be impacted by this maintenance. Braintree will be up and accepting requests throughout this maintenance period.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2156420</id>
+    <published>2019-01-18T04:38:17Z</published>
+    <updated>2019-01-18T14:18:13Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/6z9gtfqm3vs7"/>
+    <title>Moneris Processing Issues</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;18&lt;/var&gt;, &lt;var data-var='time'&gt;04:38&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - An issue upstream of our gateway caused some transactions on the Moneris network to fail between 4:07 and 4:38 UTC.  Transactions that failed have a Processor Response Text of &lt;i&gt;Processor Network Unavailable - Try Again (3000).&lt;/i&gt;
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Scope&lt;/b&gt;: Only merchants in Canada may have been affected by this issue.&lt;/p&gt;</content>
+  </entry>paypal.me/shoppingandmore
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2150250</id>
+    <published>2019-01-17T20:00:45Z</published>
+    <updated>2019-01-17T20:00:45Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/9llh5gw25qlk"/>
+    <title>Database Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;17&lt;/var&gt;, &lt;var data-var='time'&gt;20:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;17&lt;/var&gt;, &lt;var data-var='time'&gt;19:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;15&lt;/var&gt;, &lt;var data-var='time'&gt;19:02&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - Between 19:00 and 20:00 UTC on 17 January 2019, engineers will be performing database maintenance that may result in a few short windows where API and Control Panel requests take longer than normal. Transactions may be delayed appearing in search results and the Control Panel. Submerchant approval and decline webhooks may also be delayed.&lt;br /&gt;&lt;br /&gt;It is not expected that requests will fail, however, any failed requests can be safely retried.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Questions?&lt;/b&gt; Feel free to &lt;a href="https://developers.braintreepayments.com/forms/contact"&gt;reach out to our support team.&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
+  <entry>paypal.me/shoppingandmore
+    <id>tag:status.braintreepayments.com,2005:Incident/2104959</id>
+    <published>2019-01-16T03:30:30Z</published>
+    <updated>2019-01-16T03:30:30Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/cbyp3p15ctk7"/>
+    <title>AIB Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;16&lt;/var&gt;, &lt;var data-var='time'&gt;03:30&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;16&lt;/var&gt;, &lt;var data-var='time'&gt;03:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;18&lt;/var&gt;, &lt;var data-var='time'&gt;16:05&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - Our European banking partner will be performing system maintenance between 03:00 and 03:30 on 16 January 2019. Merchants processing on the AIB network may see an elevated rate of failed transactions during this window. Transactions that fail can be safely retried.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Scope&lt;/b&gt;: Only European merchants processing on the AIB network may be impacted by this maintenance window. The Braintree gateway will be operating normally during this time.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2148170</id>
+    <published>2019-01-15T00:04:42Z</published>
+    <updated>2019-01-15T00:04:42Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/95h64m74sf6t"/>
+    <title>Sandbox connectivity issues</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;15&lt;/var&gt;, &lt;var data-var='time'&gt;00:04&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Traffic levels and error rates have returned to normal as at 23:57 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt;14&lt;/var&gt;, &lt;var data-var='time'&gt;23:59&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - A majority of merchants are currently unable to reach the sandbox API or access the sandbox Control Panel. We're aware of the issue and are working to resolve it as quickly as possible.
+&lt;br /&gt;
+&lt;br /&gt;The production API and Control Panel are &lt;b&gt;not&lt;/b&gt; impacted.&lt;/p&gt;</content>
+  </entry>Google Tag Manager	https://support.google.com/tagassistant/answer/3207128?ref_topic=2947092#iframe
+  <entry>paypal.me/shoppingandmore
+    <id>tag:status.braintreepayments.com,2005:Incident/2087347</id>
+    <published>2019-01-08T18:00:58Z</published>
+    <updated>2019-01-08T18:00:58Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/lp5cxsv0bpw4"/>
+    <title>Disaster Recovery Test</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt; 8&lt;/var&gt;, &lt;var data-var='time'&gt;18:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt; 8&lt;/var&gt;, &lt;var data-var='time'&gt;17:01&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;12&lt;/var&gt;, &lt;var data-var='time'&gt;21:57&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Update&lt;/strong&gt; - This DR test has been postponed to 8 January 2019 from 17:00 to 18:00 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt; 7&lt;/var&gt;, &lt;var data-var='time'&gt;20:34&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - We will be performing a disaster recovery test on Thursday, 13 December 2018 between 17:00 and 18:00 UTC. Merchants may observe Internet routes towards Braintree shift during this test. Additionally, some merchants may experience a small increase in latency for a period of fewer than 60 seconds at the beginning of the test. &lt;br /&gt;&lt;br /&gt;Merchants do not need to take any precautionary actions prior to the test.&lt;/p&gt;</content>https://publish.buffer.com/profile/59303fe6c2b642dd5cae79b0/tab/queue 
+https://www.facebook.com/Shoppingandmoreeee-327228161300463/settings/?tab=page_info 
+https://app.bitly.com/bbt2/ 
+https://app.bitly.com/Bh22mH3pyI6/bitlinks/2Wqw3ye 
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2134357</id>
+    <published>2019-01-07T21:52:08Z</published>
+    <updated>2019-01-07T21:52:08Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/kbyg7mbqz5kg"/>
+    <title>Production Errors</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt; 7&lt;/var&gt;, &lt;var data-var='time'&gt;21:52&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Errors and failures returned to normal rates at 21:45 UTC. Engineers will continue to monitor.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Jan &lt;var data-var='date'&gt; 7&lt;/var&gt;, &lt;var data-var='time'&gt;21:46&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - Some merchants are experiencing errors when attempting to call the Braintree API or access the Control Panel. This issue is also causing elevated processor failures. We're aware of the issue and working to resolve it as quickly as possible.&lt;/p&gt;</content>
+  </entry>paypal.me/shoppingandmore
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2118538</id>
+    <published>2018-12-27T17:28:11Z</published>
+    <updated>2018-12-27T17:28:11Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/wvrpn5g5p3t0"/>
+    <title>Production Networking Issue</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;27&lt;/var&gt;, &lt;var data-var='time'&gt;17:28&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - The networking issue has resolved and traffic has returned to normal as of 17:07 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;27&lt;/var&gt;, &lt;var data-var='time'&gt;17:06&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - We have detected an upstream networking issue with one of our Internet Service Providers (ISPs). Some merchants may be experiencing timeouts or latency trying to connect to the Braintree Production API or Control Panel.
+&lt;br /&gt;
+&lt;br /&gt;Engineers are working with our ISP to resolve the issue as quickly as possible.&lt;/p&gt;</content>
+  </entry>https://publish.buffer.com/profile/59303fe6c2b642dd5cae79b0/tab/queue 
+https://www.facebook.com/Shoppingandmoreeee-327228161300463/settings/?tab=page_info 
+https://app.bitly.com/bbt2/ 
+https://app.bitly.com/Bh22mH3pyI6/bitlinks/2Wqw3ye 
+  <entry>bebby2012@hotmail.com paypal.me/shoppingandmore
+    <id>tag:status.braintreepayments.com,2005:Incident/2099606</id>
+    <published>2018-12-14T22:34:34Z</published>
+    <updated>2018-12-14T22:34:34Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/qpyg55qbbvwk"/>
+    <title>Elevated API Errors</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;14&lt;/var&gt;, &lt;var data-var='time'&gt;22:34&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Resolved&lt;/strong&gt; - Error rates have returned to normal as 22:28 UTC.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Dec &lt;var data-var='date'&gt;14&lt;/var&gt;, &lt;var data-var='time'&gt;22:24&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Investigating&lt;/strong&gt; - Some merchants are experiencing an elevated rate of errors when attempting to call the Braintree API. We're aware of the issue and are working to resolve it as quickly as possible.
+&lt;br /&gt;
+&lt;br /&gt;&lt;b&gt;Scope&lt;/b&gt;: This issue potentially impacts any merchant attempting to make requests using the Braintree production API. The Control Panel is not impacted.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2049403</id>
+    <published>2018-11-28T19:00:36Z</published>
+    <updated>2018-11-28T19:00:36Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/kmxqs0b5v927"/>
+    <title>NAB Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;28&lt;/var&gt;, &lt;var data-var='time'&gt;19:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;28&lt;/var&gt;, &lt;var data-var='time'&gt;13:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;19&lt;/var&gt;, &lt;var data-var='time'&gt;20:02&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - National Australia Bank (NAB) will be performing maintenance between 0:00 and 6:00 am AEST on 29 November 2018. During this time, some transactions processed on the NAB and BNZ networks may fail. Any failed transactions can be safely retried. &lt;i&gt;Note: This maintenance was rescheduled from 20 November 2018.&lt;/i&gt;&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Scope&lt;/b&gt;: Only merchants located in Australia and New Zealand may be impacted by this maintenance.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <id>tag:status.braintreepayments.com,2005:Incident/2033679</id>
+    <published>2018-11-14T11:00:33Z</published>
+    <updated>2018-11-14T11:00:33Z</updated>
+    <link rel="alternate" type="text/html" href="https://status.braintreepayments.com/incidents/58tsx8nvtcr0"/>
+    <title>Venmo Maintenance</title>
+    <content type="html">&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;14&lt;/var&gt;, &lt;var data-var='time'&gt;11:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Completed&lt;/strong&gt; - The scheduled maintenance has been completed.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;14&lt;/var&gt;, &lt;var data-var='time'&gt;10:00&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;In progress&lt;/strong&gt; - Scheduled maintenance is currently in progress. We will provide updates as necessary.&lt;/p&gt;&lt;p&gt;&lt;small&gt;Nov &lt;var data-var='date'&gt;13&lt;/var&gt;, &lt;var data-var='time'&gt;19:37&lt;/var&gt; UTC&lt;/small&gt;&lt;br&gt;&lt;strong&gt;Scheduled&lt;/strong&gt; - Venmo will be performing database maintenance between 10:00 and 11:00 UTC on November 14. During this time, merchants may experience an elevated rate of declines for Pay with Venmo transactions. Additionally, marketplace sub-merchants may be unable to use Venmo payouts.&lt;br /&gt;&lt;br /&gt;&lt;b&gt;Scope&lt;/b&gt;: Only merchants using Pay with Venmo or Venmo payouts may be impacted by this maintenance. Braintree will be up and accepting requests throughout the maintenance period.&lt;/p&gt;</content>
+  </entry>paypal.me/shoppingandmore
+</feed>

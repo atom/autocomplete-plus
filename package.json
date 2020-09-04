@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "atom-slick": "^2.0.0",
-    "dompurify": "^1.0.8",
+    "dompurify": "^2.0.7",
     "fuzzaldrin": "^2.1.0",
     "fuzzaldrin-plus": "^0.6.0",
     "grim": "^2.0.1",

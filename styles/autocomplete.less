@@ -3,6 +3,10 @@
 
 @import "ui-variables";
 @import "syntax-variables";
+@font-face {
+  font-family: ScheherazadeRegular;
+  src:url("atom://autocomplete-plus/static/Scheherazade-Regular.ttf");
+}
 
 @font-size-small: .9em;
 @type-icon-font-size: 1em;
@@ -164,7 +168,9 @@ autocomplete-suggestion-list {
   }
 
   .word {
+    font-family: "ScheherazadeRegular";
     float: left;
+    font-size: 27.5px;
   }
 
   .character-match {

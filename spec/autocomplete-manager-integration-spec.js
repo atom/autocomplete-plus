@@ -942,12 +942,11 @@ describe('Autocomplete Manager', () => {
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
         let word = editorView.querySelector('.autocomplete-plus li span.word')
-        expect(word.childNodes).toHaveLength(5)
+        expect(word.childNodes).toHaveLength(4)
         expect(word.childNodes[0]).toHaveClass('character-match')
         expect(word.childNodes[1].nodeType).toBe(NodeTypeText)
         expect(word.childNodes[2]).toHaveClass('character-match')
-        expect(word.childNodes[3]).toHaveClass('character-match')
-        expect(word.childNodes[4].nodeType).toBe(NodeTypeText)
+        expect(word.childNodes[3].nodeType).toBe(NodeTypeText)
       })
 
       it('highlights repeated characters in the prefix', async () => {
@@ -965,12 +964,10 @@ describe('Autocomplete Manager', () => {
         expect(editorView.querySelector('.autocomplete-plus')).toExist()
 
         let word = editorView.querySelector('.autocomplete-plus li span.word')
-        expect(word.childNodes).toHaveLength(4)
+        expect(word.childNodes).toHaveLength(2)
         expect(word.childNodes[0]).toHaveClass('character-match')
-        expect(word.childNodes[1]).toHaveClass('character-match')
-        expect(word.childNodes[2]).toHaveClass('character-match')
-        expect(word.childNodes[3].nodeType).toBe(3) // text
-        expect(word.childNodes[3].textContent).toBe('ly')
+        expect(word.childNodes[1].nodeType).toBe(3) // text
+        expect(word.childNodes[1].textContent).toBe('ly')
       })
 
       describe('when the prefix does not match the word', () => {

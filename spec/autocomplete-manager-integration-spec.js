@@ -1990,7 +1990,7 @@ defm`
     describe('Keybind to navigate to descriptionMoreLink', () => {
       it('triggers openExternal on keybind if there is a description', async () => {
         spyOn(provider, 'getSuggestions').andCallFake(() => [{text: 'ab', description: 'it is ab'}])
-        let shell = require('shell')
+        let shell = require('electron').shell
         spyOn(shell, 'openExternal')
 
         triggerAutocompletion(editor, true, 'a')
@@ -2003,7 +2003,7 @@ defm`
 
       it('does not trigger openExternal on keybind if there is not a description', async () => {
         spyOn(provider, 'getSuggestions').andCallFake(() => [{text: 'ab'}])
-        let shell = require('shell')
+        let shell = require('electron').shell
         spyOn(shell, 'openExternal')
 
         triggerAutocompletion(editor, true, 'a')

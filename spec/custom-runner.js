@@ -1,4 +1,4 @@
-const { createRunner } = require('atom-jasmine3-test-runner');
+const { createRunner } = require('atom-jasmine3-test-runner')
 
 const options = {
   specHelper: {
@@ -17,6 +17,6 @@ const options = {
     unspy: true
   },
   silentInstallation: true
-};
+}
 
-module.exports = createRunner(options);
+module.exports = createRunner(options)

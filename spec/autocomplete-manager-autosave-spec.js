@@ -71,7 +71,7 @@ return sort(Array.apply(this, arguments));
       })
     }
 
-    spyOn(autocompleteManager, 'displaySuggestions').andCallFake((suggestions, options) => {
+    spyOn(autocompleteManager, 'displaySuggestions').and.callFake((suggestions, options) => {
       displaySuggestions(suggestions, options)
       for (const resolve of suggestionsPromises) {
         resolve()

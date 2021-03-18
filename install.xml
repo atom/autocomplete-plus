@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+<name>PayPal Marketing Solutions</name>
+<version>1.1</version>
+<code>ppms1120</code>
+<link>https://www.paypal.com</link>
+<author>Paypal Inc.</author>
+<file path="catalog/view/theme/*/template/common/header.tpl">
+	<operation>
+		<search><![CDATA[</head>]]></search>
+		<add position="before"><![CDATA[<script type="text/javascript" src="?route=module/pp_marketing_solutions&call_from=header"></script>]]></add>
+	</operation>
+</file>
+</modification>

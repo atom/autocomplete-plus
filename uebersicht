@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang='de' xml:lang='de' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<meta content='text/html;charset=UTF-8' http-equiv='content-type'>
+<meta content='width=device-width, initial-scale=1.0, user-scalable=no' name='viewport'>
+<title>Aklamio - alle Infos und die Übersicht zu Deinem Aklamio-Account
+</title>
+<link href='https://www.aklamio.com/de/uebersicht' rel='canonical'>
+<link href='https://www.aklamio.com/de/uebersicht' hreflang='de' rel='alternate'>
+<link href='https://www.aklamio.com/en/dashboard' hreflang='en' rel='alternate'>
+<link href='https://www.aklamio.com/es/vista-general' hreflang='es' rel='alternate'>
+<link href='https://www.aklamio.com/fr/vue-generale' hreflang='fr' rel='alternate'>
+<link href='https://www.aklamio.com/it/dashboard' hreflang='it' rel='alternate'>
+<link href='https://www.aklamio.com/nl/dashboard' hreflang='nl' rel='alternate'>
+<link href='https://www.aklamio.com/pl/pulpit' hreflang='pl' rel='alternate'>
+<link href='https://www.aklamio.com/pt/painel' hreflang='pt' rel='alternate'>
+
+<meta content='Freunde werben, Empfehlen, Cashback, Prämie, Empfehlungsprämie, Kunden werben Kunden' name='keywords'>
+<meta content='Hier bist Du in Deinem persöhnlichen Nutzerkonto von Aklamio. Du erhältst hier eine Übersicht, welche Shops Du empfohlen hast, wieviele Prämien und wieviel Cashback Du erhälst.' name='description'>
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700" />
+<link rel="stylesheet" media="screen, projection, print" href="/assets/main-3ec50b6cd89b7b1891e894f0122ed8db3b168e30988725eae88668fd9f4bffca.css" />
+<link rel="shortcut icon" type="image/x-icon" href="/assets/icons/favicon/favicon-ecaca8aabcbbbfbb5e66b5624efba767fdd29e2a8595ab161a3597812276ca2d.ico" />
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="gB0UANdMUrv0uDkALXtwPQbZneKSpD59mXxuu8kaxSJHFUCLL/EZCR8WCjg9cVneRa60fNSyNAF4F/ftGxmFtQ==" />
+<!--[if lte IE 9]>
+<link rel="stylesheet" media="screen" href="/assets/www/vendor/ie9-b5ff03c6612bdef1b097bcc85389c6eb55230d450c6e3dd799a3995261c233f5.css" />
+<script src="/assets/jquery/plugins/jquery.placeholder.min-6aec4a03e5c37e249b3a6331bf9fb838b6f0ae42a353eb502edb354435a73415.js"></script>
+<![endif]-->
+<meta content='https://www.aklamio.com/assets/www/facebok-og-image-4a7225cc307c222f25b56a9f09f14289ec49c652279b9d525e535caacecd59b0.jpg' itemprop='image' property='og:image'>
+<!-- Start of aklamio Zendesk Widget script -->
+<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(c){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","aklamio.zendesk.com");
+/*]]>*/</script>
+<!-- End of aklamio Zendesk Widget script -->
+<script>
+  zE(function() {
+    zE.setLocale("de");
+    zE.identify({ email: "jasminisel85@gmail.com" });
+  });
+</script>
+
+<!--Start of Zendesk Chat Script-->
+  <script type="text/javascript">
+  window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+  d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+  _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+  $.src="https://v2.zopim.com/?5k97Z7WxxDkatWVpQFYkc6AcmA2eBv5V";z.t=+new Date;$.
+  type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+  </script>
+<!--End of Zendesk Chat Script-->
+<script>
+  $zopim(function() {
+    $zopim.livechat.setLanguage("de");
+    $zopim.livechat.setName("jasminisel1");
+    $zopim.livechat.setEmail("jasminisel85@gmail.com");
+  });
+</script>
+
+<script id='translations' type='application/json'>
+{
+  "global.how_it_work_slider.slide_1.description": "Empfiehl mit Aklamio mehr als 3.000 Shops und 100 Millionen Produkte.",
+  "global.how_it_work_slider.slide_1.headline": "Wähle Deinen Shop",
+  "global.how_it_work_slider.slide_1.navigation": "<strong>1</strong>",
+  "global.how_it_work_slider.slide_2.description": "Teile Deinen persönlichen Empfehlungslink über WhatsApp, E-Mail oder Facebook.",
+  "global.how_it_work_slider.slide_2.headline": "Teile Deinen Link",
+  "global.how_it_work_slider.slide_2.navigation": "<strong>2</strong>",
+  "global.how_it_work_slider.slide_3.description": "Gut gemacht – Dein Freund hat soeben gefunden, was er gesucht hat. Damit hast Du Geld verdient.",
+  "global.how_it_work_slider.slide_3.headline": "Deine Empfehlung war erfolgreich",
+  "global.how_it_work_slider.slide_3.navigation": "<strong>3</strong>",
+  "www.react.recommendation_overlay.step1.headline": "Du empfiehlst: ",
+  "www.react.recommendation_overlay.step2.headline": "Was möchtest Du mit Deiner Prämie tun?",
+  "www.react.recommendation_overlay.step2.pill.give": "Verschenken",
+  "www.react.recommendation_overlay.step2.pill.keep": "Behalten",
+  "www.react.recommendation_overlay.step2.pill.share": "Teilen",
+  "www.react.recommendation_overlay.step3.copy_confirm_message": "Um Deinen Link einzufügen, kannst Du entweder mit der rechten Maustaste auf \"Einfügen\" klicken oder die Tastenkombination STRG + V verwenden.",
+  "www.react.recommendation_overlay.step3.copy_link": "Link kopieren",
+  "www.react.recommendation_overlay.step3.email_share_link": "E-Mail",
+  "www.react.recommendation_overlay.step3.facebook_share_link": "Facebook",
+  "www.react.recommendation_overlay.step3.google_share_link": "Google",
+  "www.react.recommendation_overlay.step3.headline": "Teile Deine Empfehlung",
+  "www.react.recommendation_overlay.step3.link_copied": "In die Zwischenablage kopiert",
+  "www.react.recommendation_overlay.step3.link_selected": "Ctrl+C zum Kopieren",
+  "www.react.recommendation_overlay.step3.twitter_share_link": "Twitter",
+  "www.react.recommendation_overlay.step3.whatsapp_share_link": "WhatsApp",
+  "www.react.user_dashboard.cashback_tile.go_to_shop": "Weiter zum Shop",
+  "www.react.user_dashboard.no_shop_recommended.description": "Empfehlen war noch nie so einfach! Jetzt kanns los gehen.",
+  "www.react.user_dashboard.no_shop_recommended.shops_link": "/de/shops",
+  "www.react.user_dashboard.no_shop_recommended.start_recommending": "Hab Spaß, entdecke Neues und empfiehl Aklamio weiter",
+  "www.react.user_dashboard.onboarding.hint.after_link": "und empfiehl Deinen Freunden Shops und Produkte, die Du gut findest.",
+  "www.react.user_dashboard.onboarding.hint.description": "Dein Aklamio-Nutzerkonto wurde erfolgreich bestätigt.",
+  "www.react.user_dashboard.onboarding.hint.headline": "Willkommen bei Aklamio",
+  "www.react.user_dashboard.onboarding.hint.profile_link": "Vervollständige Dein Aklamio-Nutzerkonto",
+  "www.react.user_dashboard.onboarding.hint.settings_link": "/de/einstellungen",
+  "www.react.user_dashboard.payout_available.action": "Auszahlen",
+  "www.react.user_dashboard.payout_available.content_one": "Gute Neuigkeiten : ",
+  "www.react.user_dashboard.payout_available.content_two": "Dein Guthaben steht zur Auszahlung bereit",
+  "www.react.user_dashboard.payout_available.payout_link": "/de/konto",
+  "www.react.user_dashboard.recommendation_tile.clicks": "Klicks",
+  "www.react.user_dashboard.recommendation_tile.created_on": "erstellt am",
+  "www.react.user_dashboard.recommendation_tile.rewards": "Prämien",
+  "www.react.user_dashboard.recommendation_tile.share_button": "Nochmals teilen",
+  "www.react.user_dashboard.reward_filter.all": "alle",
+  "www.react.user_dashboard.reward_filter.clear_filter": "Zurück zur Prämienübersicht",
+  "www.react.user_dashboard.reward_filter.confirmed": "bestätigt",
+  "www.react.user_dashboard.reward_filter.headline": "Prämien",
+  "www.react.user_dashboard.reward_filter.label": "Prämienstatus",
+  "www.react.user_dashboard.reward_filter.pending": "offen",
+  "www.react.user_dashboard.reward_filter.rejected": "abgelehnt",
+  "www.react.user_dashboard.reward_filter.total_confirmed": "bestätigt",
+  "www.react.user_dashboard.reward_receiver.follower": "Prämie verschenken",
+  "www.react.user_dashboard.reward_receiver.mittlr": "Prämie behalten",
+  "www.react.user_dashboard.reward_receiver.shared": "Prämie teilen",
+  "www.react.user_dashboard.reward_table.load_more": "Mehr Prämien",
+  "www.react.user_dashboard.reward_tile.confirmed_on": "bestätigt am ",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.less_than_a_week": "unter einer Woche",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.not_available": "wird ermittelt",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.twelve_weeks_or_longer": "mehr als 12 Wochen",
+  "www.react.user_dashboard.reward_tile.conversion_buckets.up_to_weeks": "bis zu {weeks} Wochen",
+  "www.react.user_dashboard.reward_tile.created_on": "erstellt am ",
+  "www.react.user_dashboard.reward_tile.get_support": "Nachbuchungsanfrage",
+  "www.react.user_dashboard.reward_tile.invited_friends.link": "Lade noch mehr Freunde ein",
+  "www.react.user_dashboard.reward_tile.invited_friends.title": "Eingeladene Freunde ",
+  "www.react.user_dashboard.reward_tile.rejected_on": "abgelehnt am",
+  "www.react.user_dashboard.reward_tile.tooltip.bonus_reward": "Bonusprämie",
+  "www.react.user_dashboard.settings_link": "/de/einstellungen",
+  "www.react.user_dashboard.shop_filter.all_shops": "Alle Shops",
+  "www.react.user_dashboard.shop_filter.hint": "Empfohlene Shops werden erst angezeigt, wenn Dein Freund Deinem Empfehlungslink folgt.",
+  "www.react.user_dashboard.shop_filter.option_placeholder": "Alle Shops",
+  "www.react.user_dashboard.shop_filter.reward_history": "Meine Shops",
+  "www.react.user_dashboard.shop_filter.select_shop": "Wähle Deinen Shop",
+  "www.react.user_dashboard.shop_tile.button.cashback": "Cashback",
+  "www.react.user_dashboard.shop_tile.button.cashbacks": "Cashbacks",
+  "www.react.user_dashboard.shop_tile.button.no_reward": "Noch keine Prämien",
+  "www.react.user_dashboard.shop_tile.button.recommendation": "Empfehlung",
+  "www.react.user_dashboard.shop_tile.button.recommendations": "Empfehlungen",
+  "www.react.user_dashboard.shop_tile.button.show_reward": "Prämien anzeigen",
+  "www.react.user_dashboard.shop_tile.button.you_created": "Du hast: ",
+  "www.react.user_dashboard.shop_tile.load_more_cta": "Mehr anzeigen",
+  "www.react.user_dashboard.shop_tile.reward_amount.reward": "Prämie",
+  "www.react.user_dashboard.shop_tile.reward_amount.rewards": "Prämien",
+  "www.react.user_dashboard.shop_tile.tooltip.clicks": "Anzahl von Klicks",
+  "www.react.user_dashboard.shop_tile.tooltip.none_published_shop": "Dieser Shop gehört nicht mehr zu unseren Partner-Shops",
+  "www.react.user_dashboard.shop_tile.tooltip.payout": "Auszahlung",
+  "www.react.user_dashboard.shop_tile.tooltip.recommendations": "Empfehlungen",
+  "www.react.user_dashboard.shop_tile.tooltip.recommend_again_cta": "Nochmals teilen",
+  "www.react.user_dashboard.shop_tile.tooltip.rewards": "Prämien",
+  "www.react.user_dashboard.shop_tile.tooltip.shop_again_cta": "Nochmals einkaufen",
+  "www.react.user_dashboard.shop_tile.top_reward": "Prämie",
+  "www.react.user_dashboard.support_link": "/de/transaction_inquiries",
+  "www.react.user_dashboard.support_link_text": "Nachbuchungsanfrage",
+  "www.react.user_dashboard.user_overview.pending_rewards": "Offene Prämien",
+  "www.react.user_dashboard.user_overview.show_all_rewards": "Alle Prämien anzeigen",
+  "www.react.user_dashboard.user_overview.total_rewards": "Gesamt"
+}
+</script>
+<script>
+  var translations = JSON.parse(document.getElementById('translations').innerHTML);
+</script>
+
+
+</head>
+
+<body class='logged-in'>
+<header class='site-header'>
+<div class='container clearfix'>
+<a class="logo" href="/de/uebersicht"><svg width="299" height="77" viewBox="0 0 299 77" xmlns="http://www.w3.org/2000/svg"><title>logo</title><g id="logo" fill="none" fill-rule="evenodd"><g id="icon"><path d="M64.635 15.834L39.183 1.224C37.77.408 36.193 0 34.616 0c-1.578 0-3.154.408-4.568 1.224L4.595 15.834C1.753 17.474 0 20.514 0 23.807v29.38c0 3.29 1.753 6.332 4.595 7.972l25.41 14.54c1.416.815 2.992 1.223 4.57 1.223 1.576 0 3.153-.408 4.567-1.224l25.493-14.54c2.843-1.64 4.596-4.683 4.596-7.974v-29.38c0-3.29-1.752-6.33-4.595-7.972" id="Shape" fill="#FC6053"/><path d="M47.17 55.848c-5.928 0-8.238-8.262-8.238-13.594-1.48 5.696-6.613 13.594-12.173 13.594-4.952 0-7.793-4.358-7.793-9.653 0-10.685 8.238-23.013 18.36-23.013 3.553 0 6.577 1.892 6.577 3.462 0 1.85-3.576 3.155-5.182 3.155-1.25-1.28-2.602-1.94-4.25-1.94-6.052 0-10.332 11.342-10.332 17.69 0 2.823.968 5.814 3.684 5.814 4.222 0 8.224-6.558 10.14-12.603.61-1.93.834-3.13 1.02-4.677.18-1.507 1.25-2.3 2.53-2.3 1.267 0 2.246 1.057 2.246 2.13 0 5.95-.5 19.446 3.4 19.446 2.61 0 2.563-6.452 2.563-9.83 2.863 0 5.072 1.782 5.072 4.47 0 3.82-3.19 7.848-7.625 7.848" id="Shape" fill="#FEFEFE"/></g><g id="text" fill="#364047"><path d="M113.056 53.115c2.238 0 4.21-.51 5.916-1.525 1.705-1.018 2.936-2.332 3.694-3.942v-5.52h-6.226c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.04.907 2.475 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.087-.677-.13-1.364-.13-2.06-1.034 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.857-.693-6.355-2.084-1.5-1.39-2.248-3.272-2.248-5.646 0-2.544 1.11-4.56 3.333-6.053 2.222-1.49 5.236-2.238 9.04-2.238h6.176v-3.637c0-1.967-.64-3.51-1.924-4.63-1.284-1.118-3.08-1.677-5.387-1.677-1.55 0-2.966.207-4.25.623-1.283.414-2.355.978-3.216 1.69l-.26 3.687h-2.557l.026-5.29c1.29-.983 2.836-1.78 4.636-2.39 1.8-.61 3.716-.915 5.748-.915 3.083 0 5.563.77 7.44 2.314 1.878 1.543 2.816 3.755 2.816 6.637v13.53c0 .56.013 1.098.04 1.615.025.518.08 1.02.167 1.513l2.79.18v2.237h-5.502zm9.44-37.54v-2.303h7.315v24.07h3.296l8.535-9.084-.05-.13-2.57-.18v-2.304h9.883v2.304l-3.268.31-9.597 10.172 10.92 12.657 3.113.284v2.277h-9.856v-2.276l2.957-.182-9.753-11.18h-3.606v11.025l4.23.337v2.277h-11.544v-2.276l4.23-.337V18.074l-4.23-.336zm31.514 0v-2.303h7.488v37.763l4.33.337v2.277H164.19v-2.276l4.328-.337V18.074l-4.328-.336zm22.726 35.378c2.24 0 4.21-.51 5.917-1.525 1.704-1.018 2.935-2.332 3.693-3.942v-5.52H190.3c-2.807 0-5.05.574-6.73 1.718-1.68 1.145-2.518 2.59-2.518 4.335 0 1.476.52 2.667 1.563 3.574 1.042.907 2.476 1.36 4.3 1.36zm10.18 2.162c-.208-.933-.354-1.738-.44-2.416-.086-.677-.13-1.364-.13-2.06-1.032 1.443-2.41 2.637-4.133 3.587-1.723.95-3.66 1.424-5.813 1.424-2.738 0-4.856-.693-6.354-2.084-1.5-1.39-2.25-3.272-2.25-5.646 0-2.544 1.112-4.56 3.334-6.053 2.222-1.49 5.236-2.238 9.042-2.238h6.174v-3.637c0-1.967-.64-3.51-1.924-4.63-1.283-1.118-3.08-1.677-5.386-1.677-1.55 0-2.967.207-4.25.623-1.284.414-2.355.978-3.217 1.69l-.26 3.687h-2.557l.026-5.29c1.292-.983 2.837-1.78 4.636-2.39 1.8-.61 3.717-.915 5.75-.915 3.082 0 5.562.77 7.44 2.314 1.877 1.543 2.815 3.755 2.815 6.637v13.53c0 .56.014 1.098.04 1.615.026.518.082 1.02.167 1.513l2.79.18v2.237h-5.502zm10.425-25.2v-2.308h6.923l.283 4.64c.892-1.643 2.085-2.913 3.577-3.81 1.493-.9 3.268-1.348 5.327-1.348 2.127 0 3.903.522 5.327 1.567 1.424 1.044 2.445 2.64 3.062 4.78.84-1.97 2.035-3.52 3.59-4.65 1.55-1.133 3.442-1.698 5.672-1.698 2.967 0 5.262.993 6.884 2.98 1.62 1.987 2.43 5.062 2.43 9.226v13.71l4.196.362v2.28H243.29v-2.28l4.193-.363v-13.76c0-3.457-.605-5.897-1.813-7.322-1.21-1.426-2.895-2.138-5.057-2.138-2.402 0-4.25.768-5.545 2.306s-2.097 3.5-2.406 5.883c0 .138.004.268.013.39.008.12.012.275.012.466v14.202l4.195.336v2.28h-11.477v-2.28l4.195-.336V39.406c0-3.386-.613-5.81-1.84-7.27s-2.912-2.19-5.056-2.19c-2.197 0-3.934.558-5.21 1.672-1.28 1.115-2.176 2.614-2.69 4.497v17.08l4.194.335v2.28H207.52v-2.28l4.196-.336v-22.78l-4.195-.338zm58.7-10.295h-3.16v-4.348h3.16v4.348zm-7.49 33.75l4.33-.336v-22.75l-4.33-.337v-2.304h7.49v25.39l4.33.337v2.278h-11.82v-2.277zm17.814-11.58c0 3.186.815 5.865 2.444 8.034 1.63 2.17 3.9 3.256 6.817 3.256 2.864 0 5.11-1.085 6.74-3.256 1.63-2.17 2.444-4.848 2.444-8.035v-.84c0-3.135-.82-5.797-2.458-7.984-1.637-2.187-3.897-3.28-6.778-3.28-2.88 0-5.137 1.093-6.766 3.28-1.63 2.187-2.444 4.85-2.444 7.985v.84zm-3.087-.84c0-4.052 1.123-7.376 3.37-9.97 2.246-2.593 5.222-3.89 8.927-3.89 3.72 0 6.705 1.297 8.952 3.89 2.247 2.594 3.37 5.918 3.37 9.97v.84c0 4.068-1.118 7.395-3.357 9.98-2.24 2.585-5.21 3.88-8.915 3.88-3.74 0-6.732-1.295-8.978-3.88-2.247-2.585-3.37-5.912-3.37-9.98v-.84z" id="Shape"/></g></g></svg></a>
+<div class='desktop-nav'>
+<div class='float-left'>
+<div class='searchbar'>
+<form>
+<span class='icon-magnifying-glass'></span>
+<input class='search-query' data-category='in Kategorie' data-no-result='Leider wurden keine Ergebnisse gefunden ' data-reward=' Prämie' data-url='https://www.aklamio.com/de/shops/for_autocomplete' id='nav-search-input' placeholder='Suche nach Shop oder Kategorie'>
+</form>
+<div class='autocomplete-container'></div>
+</div>
+<div class='browse-categories'>
+oder
+<a class="js-categories-dropdown" href="#">zu Kategorien
+</a><span class='triangle-down'>
+<img src="/assets/www/aklamio-branding/icons/icon-big-triangle-down-6eb4f26fc0a8f40d0f9b1684f8b29ce01f1f81342d9b31423d6a7109895148ab.svg" alt="Icon big triangle down" />
+</span>
+</div>
+</div>
+<div class='float-right'>
+<div class='nav-links'>
+<a id="header-nav-cashbar" href="/de/tools/cashbar?utm_campaign=aklamio&amp;utm_medium=dashboard&amp;utm_source=menubar">Cashbar</a>
+<a id="header-nav-companies" class="for-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</div>
+<div class='user-links'>
+<div class='user-dashboard-links'>
+<div class='user-dashboard-links-balance'>
+<a id="dashboard-links-balance" href="/de/konto"><span class='icon-payout'></span>
+<strong>0,00€</strong>
+</a></div>
+<div class='user-dashboard-links-rewards'>
+<a id="dashboard-links-rewards" href="/de/uebersicht"><span class='icon-reward'></span>
+<strong class='total'>0</strong>
+<strong class='pending'>0</strong>
+</a></div>
+</div>
+<a id="dashboard-links-image-settings" class="user-nav-link user-picture" href="#"><img src="https://static.aklamio.com/users/90a4d37df5e45cf92e68e551ec26654dfac8fab1/medium/image.png" alt="Image" />
+<span class='icon-chevron-down'></span>
+</a><ul class='user-nav'>
+<li>
+<a id="user-nav-dashboard" class="" href="/de/uebersicht"><span class='icon-grid'></span>
+Übersicht
+</a></li>
+<li>
+<a id="user-nav-balance-details" class="" href="/de/konto"><span class='icon-payout'></span>
+Kontostand
+</a></li>
+<li>
+<a id="user-nav-settings" class="" href="/de/einstellungen"><span class='icon-cog'></span>
+Einstellungen
+</a></li>
+<li>
+<a id="user-nav-support_request" class="" href="/de/transaction_inquiries"><span class='icon-lifebuoy'></span>
+Nachbuchungsanfrage
+</a></li>
+<li>
+<a id="user-nav-invite-friends" class="" href="/de/shops/aklamio"><span class='icon-users'></span>
+Freunde einladen
+</a></li>
+<li>
+<a id="user-nav-logout" class="" href="/de/abmelden">Ausloggen
+</a></li>
+</ul>
+</div>
+<div class='dropdown-group language'>
+<a id="dropdown-toggle-language" class="dropdown-toggle-link" href="#">DE</a>
+<ul class='dropdown-menu'>
+<li>
+<a href="https://www.aklamio.com/en/dashboard?update_user_locale=true">EN</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/es/vista-general?update_user_locale=true">ES</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/fr/vue-generale?update_user_locale=true">FR</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/it/dashboard?update_user_locale=true">IT</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/nl/dashboard?update_user_locale=true">NL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pl/pulpit?update_user_locale=true">PL</a>
+</li>
+<li>
+<a href="https://www.aklamio.com/pt/painel?update_user_locale=true">PT</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class='shops-category'>
+<div class='container'>
+<span class='icon-cross close-categories-dropdown js-close-categories-dropdown'></span>
+<ul class='category-group'>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/fashion">Fashion</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-bekleidung">Bekleidung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-kinder-babysachen">Kinder &amp; Babysachen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-dessous">Dessous</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-schuhe">Schuhe</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-accessories">Accessories</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-streetwear">Streetwear</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/fashion-schmuck-luxus">Schmuck &amp; Luxus</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/reisen-urlaub">Reisen &amp; Urlaub</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-autovermietung">Autovermietung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-holiday-package">Holiday package</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-fluege">Flüge</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-hotels-apartments">Hotels &amp; Apartments</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/reisen-urlaub-kreuzfahrten">Kreuzfahrten</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/home-beauty">Home &amp; Beauty</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-design">Design</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-haus-garten">Haus &amp; Garten</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-pflanzen-blumen">Pflanzen &amp; Blumen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-apotheke">Apotheke</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-optiker">Optiker</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-gesundheit-beauty">Gesundheit &amp; Beauty</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/home-beauty-geschenke">Geschenke</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/finanzen-energieversorger-versicherung">Finanzen, Energieversorger &amp; Versicherung</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-versicherung">Versicherung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-kredit">Kredit</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-banken-kreditkarten">Banken &amp; Kreditkarten</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/finanzen-energieversorger-versicherung-strom-gasanbieter">Strom &amp; Gasanbieter</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/computer-software">Computer &amp; Software</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-software">Software</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-computer">Computer</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-elektronik">Elektronik</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/computer-software-audio">Audio</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/auto-motorrad">Auto &amp; Motorrad</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-autoteile">Autoteile</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-motorradteile">Motorradteile</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-reifen">Reifen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-autowerkstatt">Autowerkstatt</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/auto-motorrad-accessories">Accessories</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/verschiedenes">Verschiedenes</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-buero">Büro</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-tierbedarf">Tierbedarf</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-reinigungsdienste">Reinigungsdienste</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-drucksachen-foto">Drucksachen &amp; Foto</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-bildung">Bildung</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-dienstleistungen">Dienstleistungen</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/verschiedenes-community">Community</a>
+</li>
+</ul>
+</li>
+<li class='category-item'>
+<ul>
+<li>
+<h3 class='category-title'>
+<a href="/de/telekommunikation">Telekommunikation</a>
+</h3>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-langfristige-handyvertraege">Langfristige Handyverträge</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-internet-tv">Internet &amp; TV</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-prepaid-anbieter">Prepaid-Anbieter</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-geraete">Geräte</a>
+</li>
+<li class='sub-cat'>
+<a href="/de/telekommunikation-webhosting">Webhosting</a>
+</li>
+</ul>
+</li>
+</ul>
+<div class='category-all-shops'>
+<a id="all-shops-categories-link" href="/de/shops">Alle Shops anzeigen</a>
+</div>
+<div class='category-all'>
+<a id="all-categories-link" href="/de/all-categories">Alle Kategorien
+<span class='icon-chevron-right'></span>
+</a></div>
+</div>
+</div>
+
+<div class='searchbar mobile'>
+<form>
+<span class='icon-magnifying-glass'></span>
+<input class='mobile-search-query' data-url='https://www.aklamio.com/de/shops/for_autocomplete' id='mobile-nav-search-input' placeholder='Suche nach Shop oder Kategorie'>
+</form>
+<div class='autocomplete-container'></div>
+</div>
+<div class='mobile-nav-link'>
+<span class='icon-cross'></span>
+<a id="mobile-nav-menue" href="#">Menü</a>
+</div>
+<div class='mobile-nav'>
+<ul>
+<li>
+<a id="mobile-nav-dashboard" href="/de/uebersicht"><span class='icon-grid'></span>
+Übersicht
+</a></li>
+<li>
+<a id="mobile-nav-account" href="/de/konto"><span class='icon-payout'></span>
+Kontostand
+</a></li>
+<li>
+<a id="mobile-nav-settings" href="/de/einstellungen"><span class='icon-cog'></span>
+Einstellungen
+</a></li>
+<li>
+<a id="mobile-nav-support" href="/de/transaction_inquiries"><span class='icon-lifebuoy'></span>
+Nachbuchungsanfrage
+</a></li>
+<li>
+<a id="mobile-nav-invite-friends" href="/de/shops/aklamio"><span class='icon-users'></span>
+Freunde einladen
+</a></li>
+<li>
+<a id="mobile-nav-shops" href="/de/shops"><span class='icon-shop'></span>
+Shops
+</a></li>
+<li>
+<a id="mobile-nav-categories" href="/de/all-categories"><span class='icon-dots-three-horizontal'></span>
+Kategorien
+</a></li>
+<li>
+<a id="mobile-nav-logout" href="/de/abmelden"><span class='icon-log-out'></span>
+Ausloggen
+</a></li>
+<li>
+<a id="header-nav-cashbar" href="/de/tools/cashbar"><span class='icon-cashback'></span>
+Cashbar
+</a></li>
+<li>
+<a id="header-nav-companies" href="/de/fuer-unternehmen"><span class='icon-globe'></span>
+Für Unternehmen
+</a></li>
+</ul>
+</div>
+
+</header>
+
+<main class='main-content'>
+<div class="banners-container"><div class="owl-carousel owl-carousel_banners"><a class="submenu" href="https://deals.aklamio.com?utm_source=banner&amp;utm_medium=lp_aklamio" target="_blank"><div class="item item-mobile" style="background-image: url(&#39;https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-mobile.png&#39;)"></div><div class="item item-tablet" style="background-image: url(&#39;https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-tablet.png&#39;)"></div><div class="item item-desktop" style="background-image: url(&#39;https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/aklamio/aklamio-banner-desktop.png&#39;)"></div></a><a class="submenu" href="/de/u/jasminisel1/r/unitymediabusiness_de?utm_source=banner&amp;utm_medium=lp_unitymedia"><div class="item item-mobile" style="background-image: url(&#39;https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-mobile.png&#39;)"></div><div class="item item-tablet" style="background-image: url(&#39;https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-tablet.png&#39;)"></div><div class="item item-desktop" style="background-image: url(&#39;https://s3.eu-central-1.amazonaws.com/aklamio-banners/production/unitymedia/unity-banner-desktop.png&#39;)"></div></a></div></div>
+
+
+
+
+
+<div data-react-class="I18n" data-react-props="{&quot;locale&quot;:&quot;de&quot;,&quot;messages&quot;:&quot;{\n  \&quot;global.how_it_work_slider.slide_1.description\&quot;: \&quot;Empfiehl mit Aklamio mehr als 3.000 Shops und 100 Millionen Produkte.\&quot;,\n  \&quot;global.how_it_work_slider.slide_1.headline\&quot;: \&quot;Wähle Deinen Shop\&quot;,\n  \&quot;global.how_it_work_slider.slide_1.navigation\&quot;: \&quot;\u003cstrong\u003e1\u003c/strong\u003e\&quot;,\n  \&quot;global.how_it_work_slider.slide_2.description\&quot;: \&quot;Teile Deinen persönlichen Empfehlungslink über WhatsApp, E-Mail oder Facebook.\&quot;,\n  \&quot;global.how_it_work_slider.slide_2.headline\&quot;: \&quot;Teile Deinen Link\&quot;,\n  \&quot;global.how_it_work_slider.slide_2.navigation\&quot;: \&quot;\u003cstrong\u003e2\u003c/strong\u003e\&quot;,\n  \&quot;global.how_it_work_slider.slide_3.description\&quot;: \&quot;Gut gemacht – Dein Freund hat soeben gefunden, was er gesucht hat. Damit hast Du Geld verdient.\&quot;,\n  \&quot;global.how_it_work_slider.slide_3.headline\&quot;: \&quot;Deine Empfehlung war erfolgreich\&quot;,\n  \&quot;global.how_it_work_slider.slide_3.navigation\&quot;: \&quot;\u003cstrong\u003e3\u003c/strong\u003e\&quot;,\n  \&quot;www.react.recommendation_overlay.step1.headline\&quot;: \&quot;Du empfiehlst: \&quot;,\n  \&quot;www.react.recommendation_overlay.step2.headline\&quot;: \&quot;Was möchtest Du mit Deiner Prämie tun?\&quot;,\n  \&quot;www.react.recommendation_overlay.step2.pill.give\&quot;: \&quot;Verschenken\&quot;,\n  \&quot;www.react.recommendation_overlay.step2.pill.keep\&quot;: \&quot;Behalten\&quot;,\n  \&quot;www.react.recommendation_overlay.step2.pill.share\&quot;: \&quot;Teilen\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.copy_confirm_message\&quot;: \&quot;Um Deinen Link einzufügen, kannst Du entweder mit der rechten Maustaste auf \\\&quot;Einfügen\\\&quot; klicken oder die Tastenkombination STRG + V verwenden.\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.copy_link\&quot;: \&quot;Link kopieren\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.email_share_link\&quot;: \&quot;E-Mail\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.facebook_share_link\&quot;: \&quot;Facebook\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.google_share_link\&quot;: \&quot;Google\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.headline\&quot;: \&quot;Teile Deine Empfehlung\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.link_copied\&quot;: \&quot;In die Zwischenablage kopiert\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.link_selected\&quot;: \&quot;Ctrl+C zum Kopieren\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.twitter_share_link\&quot;: \&quot;Twitter\&quot;,\n  \&quot;www.react.recommendation_overlay.step3.whatsapp_share_link\&quot;: \&quot;WhatsApp\&quot;,\n  \&quot;www.react.user_dashboard.cashback_tile.go_to_shop\&quot;: \&quot;Weiter zum Shop\&quot;,\n  \&quot;www.react.user_dashboard.no_shop_recommended.description\&quot;: \&quot;Empfehlen war noch nie so einfach! Jetzt kanns los gehen.\&quot;,\n  \&quot;www.react.user_dashboard.no_shop_recommended.shops_link\&quot;: \&quot;/de/shops\&quot;,\n  \&quot;www.react.user_dashboard.no_shop_recommended.start_recommending\&quot;: \&quot;Hab Spaß, entdecke Neues und empfiehl Aklamio weiter\&quot;,\n  \&quot;www.react.user_dashboard.onboarding.hint.after_link\&quot;: \&quot;und empfiehl Deinen Freunden Shops und Produkte, die Du gut findest.\&quot;,\n  \&quot;www.react.user_dashboard.onboarding.hint.description\&quot;: \&quot;Dein Aklamio-Nutzerkonto wurde erfolgreich bestätigt.\&quot;,\n  \&quot;www.react.user_dashboard.onboarding.hint.headline\&quot;: \&quot;Willkommen bei Aklamio\&quot;,\n  \&quot;www.react.user_dashboard.onboarding.hint.profile_link\&quot;: \&quot;Vervollständige Dein Aklamio-Nutzerkonto\&quot;,\n  \&quot;www.react.user_dashboard.onboarding.hint.settings_link\&quot;: \&quot;/de/einstellungen\&quot;,\n  \&quot;www.react.user_dashboard.payout_available.action\&quot;: \&quot;Auszahlen\&quot;,\n  \&quot;www.react.user_dashboard.payout_available.content_one\&quot;: \&quot;Gute Neuigkeiten : \&quot;,\n  \&quot;www.react.user_dashboard.payout_available.content_two\&quot;: \&quot;Dein Guthaben steht zur Auszahlung bereit\&quot;,\n  \&quot;www.react.user_dashboard.payout_available.payout_link\&quot;: \&quot;/de/konto\&quot;,\n  \&quot;www.react.user_dashboard.recommendation_tile.clicks\&quot;: \&quot;Klicks\&quot;,\n  \&quot;www.react.user_dashboard.recommendation_tile.created_on\&quot;: \&quot;erstellt am\&quot;,\n  \&quot;www.react.user_dashboard.recommendation_tile.rewards\&quot;: \&quot;Prämien\&quot;,\n  \&quot;www.react.user_dashboard.recommendation_tile.share_button\&quot;: \&quot;Nochmals teilen\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.all\&quot;: \&quot;alle\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.clear_filter\&quot;: \&quot;Zurück zur Prämienübersicht\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.confirmed\&quot;: \&quot;bestätigt\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.headline\&quot;: \&quot;Prämien\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.label\&quot;: \&quot;Prämienstatus\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.pending\&quot;: \&quot;offen\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.rejected\&quot;: \&quot;abgelehnt\&quot;,\n  \&quot;www.react.user_dashboard.reward_filter.total_confirmed\&quot;: \&quot;bestätigt\&quot;,\n  \&quot;www.react.user_dashboard.reward_receiver.follower\&quot;: \&quot;Prämie verschenken\&quot;,\n  \&quot;www.react.user_dashboard.reward_receiver.mittlr\&quot;: \&quot;Prämie behalten\&quot;,\n  \&quot;www.react.user_dashboard.reward_receiver.shared\&quot;: \&quot;Prämie teilen\&quot;,\n  \&quot;www.react.user_dashboard.reward_table.load_more\&quot;: \&quot;Mehr Prämien\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.confirmed_on\&quot;: \&quot;bestätigt am \&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.conversion_buckets.less_than_a_week\&quot;: \&quot;unter einer Woche\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.conversion_buckets.not_available\&quot;: \&quot;wird ermittelt\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.conversion_buckets.twelve_weeks_or_longer\&quot;: \&quot;mehr als 12 Wochen\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.conversion_buckets.up_to_weeks\&quot;: \&quot;bis zu {weeks} Wochen\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.created_on\&quot;: \&quot;erstellt am \&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.get_support\&quot;: \&quot;Nachbuchungsanfrage\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.invited_friends.link\&quot;: \&quot;Lade noch mehr Freunde ein\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.invited_friends.title\&quot;: \&quot;Eingeladene Freunde \&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.rejected_on\&quot;: \&quot;abgelehnt am\&quot;,\n  \&quot;www.react.user_dashboard.reward_tile.tooltip.bonus_reward\&quot;: \&quot;Bonusprämie\&quot;,\n  \&quot;www.react.user_dashboard.settings_link\&quot;: \&quot;/de/einstellungen\&quot;,\n  \&quot;www.react.user_dashboard.shop_filter.all_shops\&quot;: \&quot;Alle Shops\&quot;,\n  \&quot;www.react.user_dashboard.shop_filter.hint\&quot;: \&quot;Empfohlene Shops werden erst angezeigt, wenn Dein Freund Deinem Empfehlungslink folgt.\&quot;,\n  \&quot;www.react.user_dashboard.shop_filter.option_placeholder\&quot;: \&quot;Alle Shops\&quot;,\n  \&quot;www.react.user_dashboard.shop_filter.reward_history\&quot;: \&quot;Meine Shops\&quot;,\n  \&quot;www.react.user_dashboard.shop_filter.select_shop\&quot;: \&quot;Wähle Deinen Shop\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.button.cashback\&quot;: \&quot;Cashback\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.button.cashbacks\&quot;: \&quot;Cashbacks\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.button.no_reward\&quot;: \&quot;Noch keine Prämien\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.button.recommendation\&quot;: \&quot;Empfehlung\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.button.recommendations\&quot;: \&quot;Empfehlungen\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.button.show_reward\&quot;: \&quot;Prämien anzeigen\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.button.you_created\&quot;: \&quot;Du hast: \&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.load_more_cta\&quot;: \&quot;Mehr anzeigen\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.reward_amount.reward\&quot;: \&quot;Prämie\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.reward_amount.rewards\&quot;: \&quot;Prämien\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.tooltip.clicks\&quot;: \&quot;Anzahl von Klicks\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.tooltip.none_published_shop\&quot;: \&quot;Dieser Shop gehört nicht mehr zu unseren Partner-Shops\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.tooltip.payout\&quot;: \&quot;Auszahlung\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.tooltip.recommendations\&quot;: \&quot;Empfehlungen\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.tooltip.recommend_again_cta\&quot;: \&quot;Nochmals teilen\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.tooltip.rewards\&quot;: \&quot;Prämien\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.tooltip.shop_again_cta\&quot;: \&quot;Nochmals einkaufen\&quot;,\n  \&quot;www.react.user_dashboard.shop_tile.top_reward\&quot;: \&quot;Prämie\&quot;,\n  \&quot;www.react.user_dashboard.support_link\&quot;: \&quot;/de/transaction_inquiries\&quot;,\n  \&quot;www.react.user_dashboard.support_link_text\&quot;: \&quot;Nachbuchungsanfrage\&quot;,\n  \&quot;www.react.user_dashboard.user_overview.pending_rewards\&quot;: \&quot;Offene Prämien\&quot;,\n  \&quot;www.react.user_dashboard.user_overview.show_all_rewards\&quot;: \&quot;Alle Prämien anzeigen\&quot;,\n  \&quot;www.react.user_dashboard.user_overview.total_rewards\&quot;: \&quot;Gesamt\&quot;\n}&quot;,&quot;userImage&quot;:&quot;https://static.aklamio.com/users/90a4d37df5e45cf92e68e551ec26654dfac8fab1/large/image.png&quot;,&quot;userName&quot;:&quot;jasminisel1&quot;,&quot;rewardAmount&quot;:0,&quot;rewardPending&quot;:0,&quot;timeZone&quot;:null,&quot;timeFormat&quot;:&quot;de-DE&quot;,&quot;confirmedMoney&quot;:&quot;0,00€&quot;,&quot;pendingMoney&quot;:&quot;0,00€&quot;,&quot;showOnboardingHint&quot;:false,&quot;showHowItWorks&quot;:true,&quot;authenticityToken&quot;:&quot;KUDp+Bd2uTm5CMAswRN0DHVTzhPXp2vPbvAAq1YMX6XuSL1z78vyi1Km8xTRGV3vNiTnjZGxYbOPm5n9hA8fMg==&quot;,&quot;recommended_or_cashbacked&quot;:true,&quot;payout_possible&quot;:false,&quot;availableLocales&quot;:[&quot;de&quot;,&quot;en&quot;,&quot;es&quot;,&quot;fr&quot;,&quot;it&quot;,&quot;nl&quot;,&quot;pl&quot;,&quot;pt&quot;]}"></div>
+
+</main>
+<footer class='site-footer'>
+<a class='back-to-top' href='#'>
+<span class='icon-triangle-up'></span>
+nach oben
+</a>
+<div class='footer-nav'>
+<div class='container'>
+<ul class='main-links'>
+<li>
+<a id="footer-nav-about" href="/de/was-ist-aklamio">Über Aklamio</a>
+</li>
+<li>
+<a id="footer-nav-careers" target="_blank" rel="nofollow" href="https://aklamio-jobs.personio.de/?language=de">Karriere</a>
+</li>
+<li>
+<a id="footer-nav-help" href="/de/hilfe">Fragen &amp; Antworten</a>
+</li>
+<li>
+<a id="footer-nav-cashbar" href="/de/tools/cashbar">Cashbar</a>
+</li>
+<li>
+<a id="footer-nav-companies" href="/de/fuer-unternehmen">Für Unternehmen</a>
+</li>
+</ul>
+<ul class='social-links'>
+<li>
+<a target="_blank" id="footer-social-facebook" href="https://www.facebook.com/aklamio"><span class='icon-facebook'></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-twitter" href="https://twitter.com/aklamio"><span class='icon-twitter'></span>
+</a></li>
+<li>
+<a target="_blank" id="footer-social-linkedin" href="https://www.linkedin.com/company/aklamio-gmbh/"><span class='icon-linkedin'></span>
+</a></li>
+</ul>
+<ul class='legal-links'>
+<li>
+<a id="footer-nav-privacy" href="/de/datenschutz">Datenschutzerklärung</a>
+</li>
+<li>
+<a id="footer-nav-terms" href="/de/agb">AGB</a>
+</li>
+<li>
+<a id="footer-nav-imprint" href="/de/impressum">Impressum</a>
+</li>
+</ul>
+</div>
+</div>
+<div class='footer-bottom'>
+<div class='container'>
+<div class='shop-country-select'>
+<span class='icon-shop'></span>
+<label>Shops aus</label>
+<select class='js-shop-country-select'>
+<option data-url='https://www.aklamio.com/de/uebersicht?shop_country=de' selected='true' value='de'>
+Deutschland
+</option>
+<option data-url='https://www.aklamio.com/de/uebersicht?shop_country=at' value='at'>
+Österreich
+</option>
+<option data-url='https://www.aklamio.com/de/uebersicht?shop_country=ch' value='ch'>
+Schweiz
+</option>
+<option data-url='https://www.aklamio.com/de/uebersicht?shop_country=es' value='es'>
+Spanien
+</option>
+<option data-url='https://www.aklamio.com/de/uebersicht?shop_country=gb' value='gb'>
+Großbritannien
+</option>
+<option data-url='https://www.aklamio.com/de/uebersicht?shop_country=fr' value='fr'>
+Frankreich
+</option>
+<option data-url='https://www.aklamio.com/de/uebersicht?shop_country=it' value='it'>
+Italien
+</option>
+</select>
+</div>
+<div class='language-select'>
+<span class='icon-globe'></span>
+<label>Sprache</label>
+<select class='js-language-select'>
+<option selected='true' value='https://www.aklamio.com/de/uebersicht?update_user_locale=true'>
+Deutsch
+</option>
+<option value='https://www.aklamio.com/en/dashboard?update_user_locale=true'>
+English
+</option>
+<option value='https://www.aklamio.com/es/vista-general?update_user_locale=true'>
+Español
+</option>
+<option value='https://www.aklamio.com/fr/vue-generale?update_user_locale=true'>
+Français
+</option>
+<option value='https://www.aklamio.com/it/dashboard?update_user_locale=true'>
+Italiano
+</option>
+<option value='https://www.aklamio.com/nl/dashboard?update_user_locale=true'>
+Nederlands
+</option>
+<option value='https://www.aklamio.com/pl/pulpit?update_user_locale=true'>
+Polski
+</option>
+<option value='https://www.aklamio.com/pt/painel?update_user_locale=true'>
+Português
+</option>
+</select>
+</div>
+<div class='copyright'>
+© 2019 aklamio GmbH
+</div>
+<div class='eu-union'>
+<div class='logo-eu' data-hint='Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.'>
+<img src="/assets/www/aklamio-branding/logos/eu-flag-4db4c8712abfabd68e563751137183dbf6a9d551d1970dde4633fcef2f900037.jpg" alt="Eu flag" />
+</div>
+<span class='eu-union-desc'>
+<span class='eu-union-headline'>
+EUROPÄISCHE UNION
+</span>
+<span class='eu-union-sub'>
+Europäischer Fonds für regionale Entwicklung
+</span>
+</span>
+<p class='eu-union-hint-mobile'>
+Der Europäische Fonds für regionale Entwicklung unterstützt Aklamio finanziell bei der Umsetzung eines Projektes zur Erforschung, Messbarkeit und Darstellung des wirtschaftlichen Einflusses von Mundpropaganda.
+</p>
+</div>
+</div>
+</div>
+</footer>
+
+<script src="/assets/main-b6529cc3db2be7924dc261dd4b04cf73a98ff9077cf4a7148a28f99d5bb82ebb.js"></script>
+
+<!-- setting utm params dynamically -->
+<script>
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-24140910-1']);
+  _gaq.push (['_gat._anonymizeIp']);
+  _gaq.push(['_setDomainName', 'aklamio.com']);
+  
+  
+  
+  
+  
+  
+  
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</body>
+</html>

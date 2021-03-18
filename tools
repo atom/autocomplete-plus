@@ -1,0 +1,266 @@
+shoppingandmore34.wordpress.com!DOCTYPE html>
+<html >
+<head>
+<title>Bitly | Tools</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta content="IE=edge" http-equiv="X-UA-Compatible">
+<meta name="referrer" content="always">
+<meta name="keywords" content="bitly, awesome, save, share, shorten" />
+<meta name="description" content="Use our Chrome extension, and mobile apps to increase productivity. Focus on your links and optimize your customer's journey." />
+<meta name="viewport" content="width=device-width,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
+<link rel="icon" type="image/png" href="//dl6fh5ptkejqa.cloudfront.net/0482a3c938673192a591f2845b9eb275.png" />
+<script src="//d1ayxb9ooonjts.cloudfront.net/6d6d14d8f5655f776334196a131d4351.js" type="text/javascript"></script>
+
+
+<link href="//d1ayxb9ooonjts.cloudfront.net/c1edd02853096598d3b210e778f2903e.css" rel="stylesheet" type="text/css">
+
+<script>
+(function(d) {
+var config = {
+kitId: 'mys2uzu',
+scriptTimeout: 3000,
+async: true
+},
+h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+})(document);
+</script>
+</head>
+<body class="tools-page">
+<div class="stage">
+
+
+<header id="header" data-template="stage-header" class="fixed-high-index static-page">
+<div id="header-inner" class="fixed-header">
+<div class="container container-pod container-pod-short">
+<h1 class="header-logo"><a href="/" rel="nofollow"></a></h1>
+<nav class="navigation" role="navigation">
+<ul>
+<li><a href="/pages/link-management?utm_content=site-lmp-page&amp;utm_source=organic&amp;utm_medium=website&amp;utm_campaign=null&amp;utm_cta=web-blank-blank-topnav-linkmanagement-none-linkmanagement">Link Management</a></li>
+<li><a href="/pages/enterprise?utm_content=site-enterprise-topnav&amp;utm_source=organic&amp;utm_medium=website&amp;utm_campaign=null&amp;utm_cta=web-blank-blank-topnav-enterprise-none-enterprise">Enterprise</a></li>
+<li><a href="/pages/resources">Resources</a></li>
+<li><a href="/blog/">Blog</a></li>
+</ul>
+</nav>
+<div class="header-button-wrapper">
+<a class="header-login" href="/a/sign_in">Login</a>
+<a class="header-signup" href="/a/sign_up?utm_content=site-free-button&amp;utm_source=organic&amp;utm_medium=website&amp;utm_campaign=null&amp;utm_cta=site-free-button">Sign Up</a>
+<a class="enterprise" href="https://bitly.is/LMP-EnterpriseButton">Get Enterprise</a>
+</div>
+<div class="mobile-sign-in">
+<a class="login" href="/a/sign_in">Login</a>
+<a class="signup" href="/a/sign_up?utm_content=site-free-button&amp;utm_source=organic&amp;utm_medium=website&amp;utm_campaign=null&amp;utm_cta=site-free-button">Sign Up</a>
+<a id="header-mobile-menu-button" href="#">
+<i class="icon-menu-open"></i>
+</a>
+</div>
+</div>
+
+</div>
+</header>
+
+
+<div id="container" class="clearfix">
+
+
+<div class="container container-pod content-top-margin">
+
+<div class="container">
+<div class="mid-container t-center">
+<h2 class="flush-top main-header">STREAMLINE YOUR WORKFLOW</h2>
+<p class="main-subheader">
+Use our handy tools to increase productivity. Spend more time focused on the  performance of your links and optimizing your customer’s journey.
+</p>
+<div class="mobile-separator"></div>
+</div>
+</div>
+<div class="container">
+<div class="tools-wrapper">
+<div class="h3-proxima">Browser Extensions</div>
+<div class="tool-description">A super easy way to create and share Bitlinks right from your browser.</div>
+<div class="cta-button">
+<a href="https://bitly.is/chrome" class="button secondary multiple" target="_blank">Install Chrome Extension</a>
+<a href="https://bitly.is/firefox" class="button secondary multiple" target="_blank">Install Firefox Extension</a>
+</div>
+<div class="chrome-extension-img"></div>
+</div>
+</div>
+<a name="mobile"></a>
+<div class="container t-center">
+<div class="mobile-app-hr"></div>
+<div class="mobile-app-wrapper">
+<div class="h3-proxima">Mobile Apps</div>
+<div>The Bitly app is a free app that gives you the best of Bitly on the go. Create and share your Bitlinks and track their performance all from your own mobile device.</div>
+<div class="cta-button">
+<a href="https://bitly.is/android-app" class="button secondary multiple">INSTALL ANDROID APP</a>
+<a href="https://bitly.is/iOS-download" class="button secondary multiple">INSTALL iOS APP</a>
+</div>
+<div class="mobile-app-img"></div>
+</div>
+</div>
+
+</div>
+
+<div id="bottom">
+
+
+</div>
+</div>
+
+
+<div class="bitly-dev-container">
+<div class="container">
+<div class="chauncey-img"></div>
+<div class="bitly-dev">
+<div class="h3-proxima">Bitly <3’s Developers</div>
+<p>
+Oh hey there, devies! Do you like coming up with new and interesting ways to work with Bitlink data? We have a site full of documentation, best practices, code libraries, and more! <a href="https://bitly.is/dev-resources" class="link-blue">Check it out <i class="blue-arrow-small"></i></a>
+</p>
+</div>
+</div>
+</div>
+<div class="stage-pod stage-pod-dark">
+<div class="container container-pod request-demo">
+<div class="button-toolbar-counter">
+<a href="/a/sign_up" class="bitly-form button button-primary button-large counter-button">
+Create your free account
+</a>
+<div class="centered lead inverse flush-bottom request-enterprise">
+<a href="/pages/enterprise" >Take a tour of enterprise <i class="white-arrow-small"></i></a>
+</div>
+</div>
+</div>
+</div>
+<footer id="footer" role="contentinfo" data-template="stage-footer">
+<section class="stage-pod">
+<div class="container container-pod t-center">
+<div class="footer-links">
+<ul id="menu-footer-menu" class="nav footer-nav clearfix">
+<li><a href="/pages/about">About</a></li>
+<li><a href="http://blog.bitly.com/">Blog</a></li>
+<li><a href="http://support.bitly.com/">Support</a></li>
+<li><a href="/pages/contact">Contact</a></li>
+<li><a href="https://dev.bitly.com/">Developers</a></li>
+<li><a href="/pages/privacy">Privacy Policy</a></li>
+<li><a href="/pages/terms-of-service">Terms Of Service</a></li>
+<li><a href="/pages/partners">Partners</a></li>
+<li><a href="/pages/careers">Careers</a></li>
+</ul>
+</div>
+<div class="footer-attribution">
+<a href="../../" class="footer-logo"></a>
+</div>
+<ul class="footer-social-links">
+<li class="footer-social-link footer-social-link-facebook">
+<a href="http://www.facebook.com/bitly" target="_blank"></a>
+</li>
+<li class="footer-social-link footer-social-link-twitter">
+<a href="http://twitter.com/bitly" target="_blank"></a>
+</li>
+<li class="footer-social-link footer-social-link-linkedin">
+<a href="http://www.linkedin.com/company/552285" target="_blank"></a>
+</li>
+<li class="footer-social-link footer-social-link-instagram">
+<a href="http://instagram.com/bitly" target="_blank"></a>
+</li>
+</ul>
+<div class="footer-attribution">
+<p class="small source-org copyright flush-bottom">
+© 2019 Bitly™&nbsp;&nbsp;Handmade in NYC
+</p>
+</div>
+</div>
+</section>
+</footer>
+
+
+<!-- Promo -->
+
+
+</div>
+
+<div id="stage-sidebar">
+<div id="stage-sidebar-scrollable" class="container-scrollable ps-container">
+<div class="container container-pod container-pod-short">
+<ul id="menu-mobile-menu" class="nav top-nav clearfix">
+<li><a href="/">Home</a></li>
+<li><a href="/pages/link-management?utm_content=site-lmp-page&amp;utm_source=organic&amp;utm_medium=website&amp;utm_campaign=null&amp;utm_cta=web-blank-blank-topnav-linkmanagement-none-linkmanagement">Link Management</a></li>
+<li><a href="/pages/enterprise?utm_content=site-enterprise-topnav&amp;utm_source=organic&amp;utm_medium=website&amp;utm_campaign=null&amp;utm_cta=web-blank-blank-topnav-enterprise-none-enterprise">Enterprise</a></li>
+<li><a href="/pages/resources">Resources</a></li>
+<li><a href="/pages/about">Company</a></li>
+<li><a href="/pages/contact">Contact</a></li>
+<li><a href="/pages/careers">Careers</a></li>
+<li><a href="/pages/press">Press Room</a></li>
+<li><a href="/pages/partners">Partners</a></li>
+<li><a href="/a/sign_in">Login</a></li>
+<li><a href="/a/sign_up?utm_content=site-free-button&amp;utm_source=organic&amp;utm_medium=website&amp;utm_campaign=null&amp;utm_cta=site-free-button">Sign Up</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script>
+$('.testimonial-individual').click(function(e) {
+var selectedPartner = $(e.target).closest('.testimonial-individual').data('partner');
+$('#testimonial-billboard, #testimonial-selection').removeClass('comedyCentral wenner vissla cox').addClass(selectedPartner);
+});
+//Add ga events tracking
+$(".create-free-account").bind('click', function() {
+if (window.ga) window.ga('send','event', 'button-click', 'pricing-free-cta', 'Pricing Free CTA Click');
+});
+</script>
+
+<script type="text/plain" data-cookie-setter>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+(function(w,d) {
+
+var gaId = 'UA-25224921-3';
+
+
+var accountType = 'user';
+
+
+w.ga('create', gaId, 'auto');
+
+
+w.ga('set', 'dimension2', accountType);
+
+w.ga('send', 'pageview');
+
+})(window,document);
+</script>
+
+
+<script type="text/plain" data-cookie-setter>
+(function() {
+var didInit = false;
+function initMunchkin() {
+if(didInit === false) {
+didInit = true;
+Munchkin.init('754-KBJ-733');
+}
+}
+var s = document.createElement('script');
+s.type = 'text/javascript';
+s.async = true;
+s.src = '//munchkin.marketo.net/munchkin.js';
+s.onreadystatechange = function() {
+if (this.readyState == 'complete' || this.readyState == 'loaded') {
+initMunchkin();
+}
+};
+s.onload = initMunchkin;
+document.getElementsByTagName('head')[0].appendChild(s);
+})();
+</script>
+
+
+</body>
+</html>

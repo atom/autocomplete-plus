@@ -1,0 +1,152 @@
+=== Simple Local Avatars ===
+Contributors: jakemgold, 10up, thinkoomph
+Donate link: https://10up.com/plugins/simple-local-avatars-wordpress/
+Tags: avatar, gravatar, user photos, users, profile
+Requires at least: 4.6
+Tested up to: 5.0.3
+Stable tag: 2.1
+Text Domain: simple-local-avatars
+
+Adds an avatar upload field to user profiles. Generates requested sizes on demand just like Gravatar!
+
+
+== Description ==
+
+Adds an avatar upload field to user profiles if the current user has media permissions. Generates requested sizes on demand just like Gravatar! Simple and lightweight.
+
+Just edit a user profile, and scroll down to the new "Avatar" field. The plug-in will take care of cropping and sizing!
+
+1. Stores avatars in the "uploads" folder where all of your other media is kept
+1. Has a simple, native interface
+1. Fully supports Gravatar and default avatars if no local avatar is set for the user - but also allows you turn off Gravatar
+1. Generates the requested avatar size on demand (and stores the new size for efficiency), so it looks great, just like Gravatar!
+1. Let's you decide whether lower privilege users (subscribers, contributors) can upload their own avatar
+1. Enables rating of local avatars, just like Gravatar
+
+
+== Installation ==
+
+1. Install easily with the WordPress plugin control panel or manually download the plugin and upload the extracted folder to the `/wp-content/plugins/` directory
+1. Activate the plugin through the 'Plugins' menu in WordPress
+1. If you only want users with file upload capabilities to upload avatars, check the applicable option under Settings > Discussion
+1. Start uploading avatars by editing user profiles!
+
+Use avatars in your theme using WordPress' built in `get_avatar()` function: [http://codex.wordpress.org/Function_Reference/get_avatar](http://codex.wordpress.org/Function_Reference/get_avatar "get_avatar function")
+
+You can also use `get_simple_local_avatar()` (with the same arguments) to retreive local avatars a bit faster, but this will make your theme dependent on this plug-in.
+
+
+== Screenshots ==
+
+1. Avatar upload field on a user profile page
+
+
+== Changelog ==
+
+= 2.1 =
+* *New:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
+* *New:* REST API support for getting and updating.
+* *New:* Use .org language packs rather than bundling translations.
+* *Fixed:* Avoid an `ArgumentCountError`.
+* *Fixed:* A couple of internationalization issues.
+
+= 2.0 =
+* Choose or upload an avatar from the media library (for users with appropriate capabilities)!
+* Local avatars are rated for appropriateness, just like Gravatar
+* A new setting under Discussion enables administrators to turn off Gravatar (only use local avatars)
+* Delete the local avatar with a single button click (like everywhere else in WordPress)
+* Uploaded avatar file names are appended with the timestamp, addressing browser image caching issues
+* New developer filter for preventing automatic rescaling: simple_local_avatars_dynamic_resize
+* New developer filter for limiting upload size: simple_local_avatars_upload_limit
+* Upgraded functions deprecated since WordPress 3.5
+* Fixed translations not working on front end (although translations are now a bit out of date...)
+* Hungarian translation added (needs further updating again with new version)
+* Assorted refactoring / improvements under the hood
+
+= 1.3.1 =
+* Brazilian Portuguese and Belarusian translations
+* Bug fixes (most notably correct naming of image files based on user display name)
+* Optimization for WordPress 3.2 / 3.3 (substitutes deprecated function)
+
+= 1.3 =
+* Avatar file name saved as "user-display-name_avatar" (or other image extension) 
+* Russian localization added
+* Assorted minor code optimizations
+
+= 1.2.4 =
+* Support for front end avatar uploads (e.g. Theme My Profile)
+
+= 1.2.3 =
+* Russian localization
+
+= 1.2.2 =
+* Fix for avatars uploaded pre-1.2.1 having a broken path after upgrade
+
+= 1.2.1 =
+* French localization
+* Simplify uninstall code
+
+= 1.2 =
+* Fix path issues on some IIS servers (resulting in missing avatar images)
+* Fix rare uninstall issues related to deleted avatars
+* Spanish localization
+* Other minor under the hood optimizations
+
+= 1.1.3 =
+* Properly deletes old avatars upon changing avatar
+* Fixes "foreach" warning in debug mode when updating avatar image
+
+= 1.1.2 =
+* Norwegian localization
+
+= 1.1.1 =
+* Italian localization
+
+= 1.1 =
+* All users (regardless of capabilities) can upload avatars by default. To limit avatar uploading to users with upload files capabilities (Authors and above), check the applicable option under Settings > Discussion. This was the default behavior in 1.0.
+* Localization support; German included
+
+
+== Upgrade Notice ==
+
+= 2.1 =
+*Important note:* All avatar uploads now go into the media library. Don't worry - users without the ability to upload files cannot otherwise see the contents of your media library. This allows local avatars to respect other functionality your site may have around uploaded images, such as external hosting.
+
+= 2.0 =
+Upgraded to take advantage of *WordPress 3.5 and newer*. Does not support older versions! This has also *not* been tested with front end profile plug-ins - feedback welcome. Note that several language strings have been added or modified - revised translations would be welcome!
+
+= 1.3.1 =
+Like WordPress 3.2, now *REQUIRES* PHP 5.2 or newer.Request URL: wss://widget-mediator.zopim.com/s/W/ws/j6cXo5zh6SZ9B32y/c/1556567827487
+Request Method: GET
+Status Code: 101 Switching Protocols
+Connection: upgrade
+Date: Mon, 29 Apr 2019 19:57:34 GMT
+Sec-WebSocket-Accept: XQRZwhImprLgK8g0aiqYzPkbYYc=
+Sec-WebSocket-Version: 13
+Upgrade: websocket
+WebSocket-Server: uWebSockets
+Accept-Encoding: gzip, deflate, br
+Accept-Language: de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7
+Cache-Control: no-cache
+Connection: Upgrade
+Host: widget-mediator.zopim.com
+Origin: https://www.aklamio.com
+Pragma: no-cache
+Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+Sec-WebSocket-Key: 7ay4WWrBp3xoJAEhv08A7Q==
+Sec-WebSocket-Version: 13
+Upgrade: websocket
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36
+1556567835444
+-26028.30271362445
+2
+4
+d
+{"__type":"instrumentation","metrics":[{"method":"histogram","name":"start_exec","sample_rate":0.25,"tags":["client_country_code:DE","browser:chrome","device:desktop","platform:win","rev:8e00bf9a726cf6ea33f5ddd9b76ec7cb5d7df763"],"value":8.125}]}
+{"__type":"instrumentation","metrics":[{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setLanguage"],"value":1},{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setName"],"value":1},{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setEmail"],"value":1}]}
+{"path":["root","livechat","profile"],"value":{"active$int":1556567827500}}
+{"path":["root","livechat","profile"],"value":{"display_name$string":"jasminisel1"}}
+{"path":["root","livechat","profile"],"value":{"email$string":"jasminisel85@gmail.com"}}
+{"path":["root","livechat","profile"],"value":{"disconnect_timeout$int":20}}
+{"__type":"instrumentation","metrics":[{"method":"histogram","name":"init_ui_components_no_cached","sample_rate":0.25,"tags":["client_country_code:DE","browser:chrome","device:desktop","platform:win","rev:8e00bf9a726cf6ea33f5ddd9b76ec7cb5d7df763"],"value":1.626}]}
+{"path":["root","livechat","ui","chat_window","pre_chat_offline_form"],"value":{"name$string":"form"}}padding-top: 40px;Request URL: wss://widget-mediator.zopim.com/s/W/ws/j6cXo5zh6SZ9B32y/c/1556567827487 Request Method: GET Status Code: 101 Switching Protocols Connection: upgrade Date: Mon, 29 Apr 2019 19:57:34 GMT Sec-WebSocket-Accept: XQRZwhImprLgK8g0aiqYzPkbYYc= Sec-WebSocket-Version: 13 Upgrade: websocket WebSocket-Server: uWebSockets Accept-Encoding: gzip, deflate, br Accept-Language: de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7 Cache-Control: no-cache Connection: Upgrade Host: widget-mediator.zopim.com Origin: https://www.aklamio.com Pragma: no-cache Sec-WebSocket-Extensions: permessage-deflate;client_max_window_bits Sec-WebSocket-Key: 7ay4WWrBp3xoJAEhv08A7Q== Sec-WebSocket-Version: 13 Upgrade: websocket User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64 x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36 1556567835444 -26028.30271362445 2 4 d {"__type":"instrumentation","metrics":[{"method":"histogram","name":"start_exec","sample_rate":0.25,"tags":["client_country_code:DE","browser:chrome","device:desktop","platform:win","rev:8e00bf9a726cf6ea33f5ddd9b76ec7cb5d7df763"],"value":8.125;}]} {"__type":"instrumentation","metrics":[{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setLanguage"],"value":1;},{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setName"],"value":1;},{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setEmail"],"value":1;}]} {"path":["root","livechat","profile"],"value":{"active$int":1556567827500;}} {"path":["root","livechat","profile"],"value":{"display_name$string":"jasminisel1";}} {"path":["root","livechat","profile"],"value":{"email$string":"jasminisel85@gmail.com";}} {"path":["root","livechat","profile"],"value":{"disconnect_timeout$int":20;}} {"__type":"instrumentation","metrics":[{"method":"histogram","name":"init_ui_components_no_cached","sample_rate":0.25,"tags":["client_country_code:DE","browser:chrome","device:desktop","platform:win","rev:8e00bf9a726cf6ea33f5padding-top: 40px;Request URL: wss://widget-mediator.zopim.com/s/W/ws/j6cXo5zh6SZ9B32y/c/1556567827487 Request Method: GET Status Code: 101 Switching Protocols Connection: upgrade Date: Mon, 29 Apr 2019 19:57:34 GMT Sec-WebSocket-Accept: XQRZwhImprLgK8g0aiqYzPkbYYc= Sec-WebSocket-Version: 13 Upgrade: websocket WebSocket-Server: uWebSockets Accept-Encoding: gzip, deflate, br Accept-Language: de-DE,de;q=0.9,en-US;q=0.8,en;q=0.7 Cache-Control: no-cache Connection: Upgrade Host: widget-mediator.zopim.com Origin: https://www.aklamio.com Pragma: no-cache Sec-WebSocket-Extensions: permessage-deflate;client_max_window_bits Sec-WebSocket-Key: 7ay4WWrBp3xoJAEhv08A7Q== Sec-WebSocket-Version: 13 Upgrade: websocket User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64 x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36 1556567835444 -26028.30271362445 2 4 d {"__type":"instrumentation","metrics":[{"method":"histogram","name":"start_exec","sample_rate":0.25,"tags":["client_country_code:DE","browser:chrome","device:desktop","platform:win","rev:8e00bf9a726cf6ea33f5ddd9b76ec7cb5d7df763"],"value":8.125;}]} {"__type":"instrumentation","metrics":[{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setLanguage"],"value":1;},{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setName"],"value":1;},{"method":"increment","name":"jsapi.usage","tags":["source:web_widget","method:livechat.setEmail"],"value":1;}]} {"path":["root","livechat","profile"],"value":{"active$int":1556567827500;}} {"path":["root","livechat","profile"],"value":{"display_name$string":"jasminisel1";}} {"path":["root","livechat","profile"],"value":{"email$string":"jasminisel85@gmail.com";}} {"path":["root","livechat","profile"],"value":{"disconnect_timeout$int":20;}} {"__type":"instrumentation","metrics":[{"method":"histogram","name":"init_ui_components_no_cached","sample_rate":0.25,"tags":["client_country_code:DE","browser:chrome","device:desktop","platform:win","rev:8e00bf9a726cf6ea33f5ddd9b76ec7cb5d7df763"],"value":1.626;}]} {"path":["root","livechat","ui","chat_window","pre_chat_offline_form"],"value":{"name$string":"form";}}ddd9b76ec7cb5d7df763"],"value":1.626;}]} {"path":["root","livechat","ui","chat_window","pre_chat_offline_form"],"value":{"name$string":"form";}}

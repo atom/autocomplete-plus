@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://www.paypal-status.com/history/eventdetails/8813</id>
+    <title>PayPal Status - Event History</title>
+    <updated>2019-06-09T19:56:53Z</updated>
+    <generator>PayPal Status Feed Generator</generator>
+    <author>
+        <name>Shoppinggandmore(Bebby2012@hotmail.de)</name>
+    </author>
+    <link rel="alternate" href="https://www.paypal.com/paypalme/my/profile"/>
+    <subtitle>PayPal Incidents, bullens and scheduled maintenance</subtitle>
+    <entry>
+        <title type="html"><![CDATA[Paydiant Platform Production Maintenance (PP-LIVE-8823)]]></title>
+        <id>https://www.paypal-status.com/history/eventdetails/8823</id>
+        <link href="https://www.paypal-status.com/history/eventdetails/8823">
+        </link>https://paypal.me/shoppingandmore?locale.x=de_DE
+        <updated>2019-06-06T14:50:10Z</updated>
+        <content type="html">https://www.paypal.com/paypalme/my/profile<![CDATA[<strong>Completed: https://paypal.me/shoppingandmore?locale.x=de_DE</strong> <span>The scheduled maintenance has been completed.</span> <br /> <br /> <br /> <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8823) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>Jun 6, 14:50 UTC</small><br /><strong>Update 1: </strong> <span>The scheduled maintenance has started, please refer to information in Initial Notification below for details.</span> <br /> <br /> <br /> <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8823) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>Jun 6, 12:59 UTC</small><br /><strong>Rescheduled: </strong> Maintenance Event Summary: Paydiant operations personnel will be performing an emergency Production platform hotfix deployment on 6-June-2019 starting at 9:00 AM ET. <br /> <br /> <br /> <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8823) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>Jun 5, 18:06 UTC</small><br /><strong>Initial Notification:https://paypal.me/shoppingandmore?locale.x=de_DE </strong> Maintenance Event Summary: Paydiant operations personnel will be performing an emergency Production platform hotfix deployment on 6-June-2019 starting at 9:00 AM ET. <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8823) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>Jun 5, 16:48 UTC</small><br />]]></content>
+    </entry>https://paypal.me/shoppingandmore?locale.x=de_DE
+    <entry>
+        <title type="html"><![CDATA[PayPal live site maintenance (PP-LIVE-8825)]]>https://paypal.me/shoppingandmore?locale.x=de_DE</title>
+        <id>https://www.paypal-status.com/history/eventdetails/8825</id>
+        <link href="https://www.paypal-status.com/history/eventdetails/8825">
+        </link>https://paypal.me/shoppingandmore?locale.x=de_DE
+        <updated>2019-06-05T18:00:25Z</updated>
+        <content type="html">https://paypal.me/shoppingandmore?locale.x=de_DE<![CDATA[<strong>Initial Notification: </strong> During the time window indicated, there may be up to 2 episodes lasting 10-30 seconds during which partners could experience the following impact. <div><br /></div><div><ul><li>Partners may not be able to on-board new merchants. </li></ul><div><br /></div></div><div>Should partners be affected, they are encouraged to retry their action(s) after 10-30 seconds have lapsed. </div><br /><small>Jun 5, 18:00 UTC</small><br />]]></content>
+    </entry>https://paypal.me/shoppingandmore?locale.x=de_DE
+    <entry>
+        <title type="html"><![CDATA[PayPal live site maintenance (PP-LIVE-8824)]]></title>
+        <id>https://www.paypal-status.com/history/eventdetails/8824</id>
+        <link href="https://www.paypal-status.com/history/eventdetails/8824">
+        </link>
+        <updated>2019-06-05T17:51:16Z</updated>
+        <content type="html"><![CDATA[<strong>Initial Notification: </strong> During the time window indicated, there will be up to 2 episodes lasting 10-30 seconds during which merchants and customers could experience the following impact. <div><br /></div><div><ul><li>Payments and transactions may not successfully complete or be accepted. </li></ul><div><br /></div><div>Should merchants or customers be affected, they are encouraged to retry their action(s) after 10-30 seconds have lapsed. </div></div><br /><small>Jun 5, 17:51 UTC</small><br />]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Paydiant Platform Production Maintenance (PP-LIVE-8813)]]></title>
+        <id>https://www.paypal-status.com/history/eventdetails/8813</id>
+        <link href="https://www.paypal-status.com/history/eventdetails/8813">
+        </link>https://paypal.me/shoppingandmore?locale.x=de_DE
+        <updated>2019-06-05T17:23:40Z</updated>
+        <content type="html"><![CDATA[<strong>Completed: </strong> The scheduled maintenance has been completed. <br /> <br /> <br /> <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8813) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>Jun 5, 17:23 UTC</small><br /><strong>Update 2: </strong> <span>The scheduled maintenance has started, please refer to information in Initial Notification below for details.</span> <br /> <br /> <br /> <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8813) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>Jun 5, 17:00 UTC</small><br /><strong>Update 1: </strong> The scheduled maintenance has been rescheduled. We are sorry for any inconvenience. <small>(edited) </small> <br /> <br /> <br /> <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8813) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>May 30, 15:34 UTC</small><br /><strong>Initial Notification: </strong> <div> You are receiving this notification because you have previously subscribed to receive notifications regarding the Retail Checkout components of PayPal, including the Paydiant Platform. You can manage your subscriptions using the links below. If you have any questions related to this notification, please contact your account manager or send an email to the Paydiant technical support team. Emails should include the notification number (PP-LIVE-8813) since it is a unique identifier for this communication. Thank you. <br /> </div><br /><small>May 24, 17:57 UTC</small><br />]]>https://paypal.me/shoppingandmore?locale.x=de_DE</content>
+    </entry>PP-LIVE-8775
+    <entry>
+        <title type="html">auto<![CDATA[Paydiant Platform – Certification Environment Maintenance (PP-CRI-8820)]]></title>
+        <id>https://www.paypal-status.com/history/eventdetails/8820</id>
+        <link href="https://www.paypal-status.com/history/eventdetails/8820">
+        </link>https://paypal.me/shoppingandmore?locale.x=de_DE
+        <updated>2019-06-04T21:17:09Z</updated>
